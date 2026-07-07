@@ -35,6 +35,10 @@ This folder organizes the project baseline as Sprint 0, then leaves room for fut
 
 - [ ] [Decisions Index](./decisions/index.md)
 
+## Work Items
+
+- [ ] [Work Items Index](./work-items/index.md)
+
 ## Source Document
 
 - [ ] [Baseline Context](./sprint-0/00-context.md)

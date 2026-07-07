@@ -14,3 +14,4 @@ tags:
 Use this folder for architecture and implementation decisions that support Sprint 0 and future extensions.
 
 - [ ] [Client Identity Namespace](./01-client-identity-namespace.md)
+- [ ] [Rails Schema Format](./02-rails-schema-format.md)
