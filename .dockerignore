@@ -1,0 +1,11 @@
+.git
+.gitignore
+.bundle
+.yardoc
+coverage
+log
+tmp
+.DS_Store
+.env
+.env.*
+.private

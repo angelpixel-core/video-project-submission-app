@@ -29,6 +29,7 @@ Work items are implementation documents. Each one should map back to the docs it
 - `## Goal`
 - `## Scope`
 - `## Affected Docs`
+- `## Affected Ops`
 - `## Checklist`
 - `## Validation`
 - `## Notes`
