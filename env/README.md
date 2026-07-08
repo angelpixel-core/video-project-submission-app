@@ -10,6 +10,7 @@ This directory stores environment-specific configuration for local development, 
 - `staging/` - Staging values.
 - `prod/` - Production values.
 - `example/` - Non-secret reference values and templates.
+- `repo/` - Repository creation defaults and local overrides.
 
 Each environment is split by consumer:
 
