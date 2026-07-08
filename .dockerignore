@@ -9,3 +9,4 @@ tmp
 .env
 .env.*
 .private
+env/

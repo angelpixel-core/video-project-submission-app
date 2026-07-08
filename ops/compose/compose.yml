@@ -3,7 +3,7 @@ services:
     image: mysql:8.4
     container_name: video-project-submission-app-db
     env_file:
-      - ../../env/example/db.env
+      - ../../env/${STACK_ENV}/db/bootstrap.env
     environment:
       MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD:-root_password}"
       MYSQL_DATABASE: "${MYSQL_DATABASE:-video_project_submission_app_development}"
