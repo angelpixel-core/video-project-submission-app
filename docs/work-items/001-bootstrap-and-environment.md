@@ -50,6 +50,7 @@ Set up the application baseline and development environment for the Rails projec
 
 - `Makefile`
 - `ops/scripts/stack.sh`
+- `ops/scripts/repo/create.sh`
 - `.dockerignore`
 - `ops/compose/compose.yml`
 - `ops/containers/app/Dockerfile`
@@ -68,6 +69,10 @@ Set up the application baseline and development environment for the Rails projec
 - `env/example/app/db.env`
 - `env/example/db/bootstrap.env`
 - `env/example/stack/compose.env`
+- `config/database.yml`
+- `env/repo/README.md`
+- `env/repo/create.env`
+- `env/repo/create.local.env`
 - `env/qa/README.md`
 - `env/qa/app/core.env`
 - `env/qa/stack/compose.env`
@@ -100,6 +105,7 @@ Set up the application baseline and development environment for the Rails projec
 - [ ] `make stack/up` starts the database and app services.
 - [ ] `make stack/config` renders the compose configuration.
 - [ ] `make stack/doctor` validates the stack configuration.
+- [ ] `make repo/create` can provision or reconfigure the repository from `env/repo/create.env`.
 - [ ] MySQL starts via Compose.
 - [ ] The Rails app can connect to the database.
 - [ ] Schema dumps are generated as `schema.rb`.
@@ -113,6 +119,8 @@ Set up the application baseline and development environment for the Rails projec
 - Use `env/<env>/app/core.env`, `env/<env>/app/db.env`, `env/<env>/db/bootstrap.env`, and `env/<env>/stack/compose.env` to avoid cross-consumer leakage.
 - `stack/secrets/sync/gh`, `stack/secrets/sync/ci`, and `stack/secrets/sync/vercel` are the standardized secret-sync entry points.
 - `prod/`, `qa/`, and `staging/` keep non-secret stack/core env files versioned while local DB credential files remain ignored.
+- `env/repo/create.env` is the versioned default for repository provisioning, with `create.local.env` reserved for local overrides.
+- `ssl_mode: disabled` is set in `config/database.yml` for local development and test to avoid MySQL 8.4 self-signed TLS issues.
 
 ## Related Docs
 

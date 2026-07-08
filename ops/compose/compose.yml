@@ -1,4 +1,39 @@
 services:
+  web:
+    build:
+      context: ../..
+      dockerfile: ops/containers/app/Dockerfile
+      target: dev
+      args:
+        RUBY_VERSION: "${RUBY_VERSION:-4.0.3}"
+        BUNDLE_DEPLOYMENT: "${BUNDLE_DEPLOYMENT:-1}"
+        BUNDLE_PATH: "${BUNDLE_PATH:-/usr/local/bundle}"
+        BUNDLE_WITHOUT: "${BUNDLE_WITHOUT:-development:test}"
+        BUNDLE_JOBS: "${BUNDLE_JOBS:-4}"
+        BUNDLE_RETRY: "${BUNDLE_RETRY:-3}"
+        UID: "${UID:-1000}"
+        GID: "${GID:-1000}"
+    container_name: video-project-submission-app-web
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - ../../env/${STACK_ENV}/app/core.env
+      - ../../env/${STACK_ENV}/app/db.env
+    environment:
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD:-root_password}"
+      MARIADB_TLS_DISABLE_PEER_VERIFICATION: "1"
+    volumes:
+      - ../..:/app
+      - deps_cache:/usr/local/bundle
+    entrypoint: ["/bin/sh", "/app/ops/containers/app/entrypoint.sh"]
+    command:
+      ["bundle", "exec", "rails", "server", "-b", "0.0.0.0", "-p", "3000"]
+    ports:
+      - "${APP_PORT:-3000}:3000"
+    networks:
+      - video_project_submission_app_net
+
   db:
     image: mysql:8.4
     container_name: video-project-submission-app-db
@@ -13,7 +48,7 @@ services:
       - "${MYSQL_PORT:-3306}:3306"
     volumes:
       - db_data:/var/lib/mysql
-      - ../containers/mysql/init:/docker-entrypoint-initdb.d:ro
+      - ../containers/db/entrypoint/initdb.d:/docker-entrypoint-initdb.d:ro
     healthcheck:
       test:
         [
@@ -23,7 +58,19 @@ services:
       interval: 5s
       timeout: 5s
       retries: 20
+    networks:
+      - video_project_submission_app_net
 
 volumes:
   db_data:
     name: video_project_submission_app_db_data
+  deps_cache:
+    name: video_project_submission_app_deps_cache
+
+networks:
+  video_project_submission_app_net:
+    name: video_project_submission_app_net
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.28.0.0/16

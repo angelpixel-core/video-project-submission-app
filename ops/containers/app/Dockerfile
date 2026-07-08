@@ -17,10 +17,12 @@ ENV BUNDLE_DEPLOYMENT="${BUNDLE_DEPLOYMENT}" \
     BUNDLE_PATH="${BUNDLE_PATH}" \
     BUNDLE_WITHOUT="${BUNDLE_WITHOUT}" \
     BUNDLE_JOBS="${BUNDLE_JOBS}" \
-    BUNDLE_RETRY="${BUNDLE_RETRY}"
+    BUNDLE_RETRY="${BUNDLE_RETRY}" \
+    MARIADB_TLS_DISABLE_PEER_VERIFICATION=1
 
 RUN apk add --no-cache \
   tzdata \
+  netcat-openbsd \
   mysql-client \
   mariadb-connector-c \
   yaml
