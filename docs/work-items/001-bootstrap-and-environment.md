@@ -28,7 +28,7 @@ Set up the application baseline and development environment for the Rails projec
 - MySQL service via Docker Compose.
 - Database initialization scripts.
 - Rails schema output using `schema.rb`.
-- Environment templates separated by stage.
+- Environment templates separated by stage and consumer.
 
 ## Out of Scope
 
@@ -48,13 +48,35 @@ Set up the application baseline and development environment for the Rails projec
 
 ## Affected Ops
 
+- `Makefile`
+- `ops/scripts/stack.sh`
+- `.dockerignore`
 - `ops/compose/compose.yml`
 - `ops/containers/app/Dockerfile`
 - `ops/containers/app/entrypoint.sh`
 - `ops/containers/mysql/init/001-bootstrap.sql`
-- `env/example/app.env`
-- `env/example/compose.env`
-- `env/example/db.env`
+- `env/.gitignore`
+- `env/dev/app/core.env`
+- `env/dev/app/db.env`
+- `env/dev/db/bootstrap.env`
+- `env/dev/stack/compose.env`
+- `env/test/app/core.env`
+- `env/test/app/db.env`
+- `env/test/db/bootstrap.env`
+- `env/test/stack/compose.env`
+- `env/example/app/core.env`
+- `env/example/app/db.env`
+- `env/example/db/bootstrap.env`
+- `env/example/stack/compose.env`
+- `env/qa/README.md`
+- `env/qa/app/core.env`
+- `env/qa/stack/compose.env`
+- `env/staging/README.md`
+- `env/staging/app/core.env`
+- `env/staging/stack/compose.env`
+- `env/prod/README.md`
+- `env/prod/app/core.env`
+- `env/prod/stack/compose.env`
 
 ## Checklist
 
@@ -68,13 +90,16 @@ Set up the application baseline and development environment for the Rails projec
 - [ ] Add database initialization scripts under `ops/containers/mysql/init/`.
 - [ ] Initialize the database and application users through the init scripts.
 - [ ] Grant the required MySQL privileges for local development.
-- [ ] Keep environment templates under `env/example/`.
+- [ ] Keep environment templates under `env/<env>/{app,db,stack}/`.
 - [ ] Configure Rails to use `schema.rb`.
 - [ ] Inject `RUBY_VERSION` from environment variables instead of hardcoding it in the Dockerfile.
 
 ## Validation
 
-- [ ] `docker compose --env-file env/example/compose.env -f ops/compose/compose.yml up --build` starts the database and app services.
+- [ ] `docker compose --env-file env/dev/stack/compose.env -f ops/compose/compose.yml up --build` starts the database and app services.
+- [ ] `make stack/up` starts the database and app services.
+- [ ] `make stack/config` renders the compose configuration.
+- [ ] `make stack/doctor` validates the stack configuration.
 - [ ] MySQL starts via Compose.
 - [ ] The Rails app can connect to the database.
 - [ ] Schema dumps are generated as `schema.rb`.
@@ -85,6 +110,9 @@ Set up the application baseline and development environment for the Rails projec
 - If MySQL-specific SQL features are not required, prefer `schema.rb` over `structure.sql`.
 - The current bootstrap scope only covers the database and app boundary needed for the Rails baseline.
 - `RUBY_VERSION` should come from the environment and be shared across `.tool-versions`, compose, and Docker build args.
+- Use `env/<env>/app/core.env`, `env/<env>/app/db.env`, `env/<env>/db/bootstrap.env`, and `env/<env>/stack/compose.env` to avoid cross-consumer leakage.
+- `stack/secrets/sync/gh`, `stack/secrets/sync/ci`, and `stack/secrets/sync/vercel` are the standardized secret-sync entry points.
+- `prod/`, `qa/`, and `staging/` keep non-secret stack/core env files versioned while local DB credential files remain ignored.
 
 ## Related Docs
 
