@@ -52,4 +52,8 @@ Work items are implementation documents. Each one should map back to the docs it
 
 ## Third Item
 
-- [ ] [Frontend Toolchain](./003-frontend-toolchain.md)
+- [ ] [CI/CD and Environments](./003-ci-cd-and-environments.md)
+
+## Fourth Item
+
+- [ ] [Frontend Toolchain](./004-frontend-toolchain.md)

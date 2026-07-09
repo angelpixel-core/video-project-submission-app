@@ -47,6 +47,7 @@ spec/
     factory_bot.rb
     webmock.rb
     vcr.rb
+    vcr_cassettes/
     shared_examples/
       api_error_responses.rb
       authentication.rb
@@ -209,7 +210,7 @@ spec/
 
 ## Checklist
 
-- [ ] Core RSpec bootstrap and shared support files exist.
+- [x] Core RSpec bootstrap and shared support files exist.
 - [ ] Unit, request, integration, smoke, acceptance, contract, and performance directories exist under `spec/`.
 - [ ] Cucumber acceptance features live under `spec/acceptance/features`.
 - [ ] Manual acceptance reports have a stable output directory.
@@ -236,7 +237,7 @@ spec/
 
 ## Related Docs
 
-- `docs/work-items/003-frontend-toolchain.md`
+- `docs/work-items/004-frontend-toolchain.md`
 - `docs/overview.md`
 - `docs/sprints/00-foundation/06-quality-and-performance.md`
 - `docs/sprints/00-foundation/07-acceptance-criteria.md`

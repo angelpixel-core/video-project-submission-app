@@ -88,8 +88,8 @@ Set up the application baseline and development environment for the Rails projec
 
 - [x] Create or confirm the Rails app baseline.
 - [x] Configure Ruby dependencies.
-- [->] Add jQuery support. Backlink: [Frontend Toolchain](./003-frontend-toolchain.md)
-- [->] Add Bootstrap support. Backlink: [Frontend Toolchain](./003-frontend-toolchain.md)
+- [->] Add jQuery support. Backlink: [Frontend Toolchain](./004-frontend-toolchain.md)
+- [->] Add Bootstrap support. Backlink: [Frontend Toolchain](./004-frontend-toolchain.md)
 - [x] Add a Dockerfile for the app.
 - [x] Add `compose.yml` for the app and MySQL under `ops/compose/`.
 - [x] Use a minimal MySQL image suitable for local development.
