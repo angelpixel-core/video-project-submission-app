@@ -25,7 +25,7 @@ Set up the application baseline and development environment for the Rails projec
 
 - Rails application baseline.
 - Ruby and dependency setup.
-- jQuery and Bootstrap asset support.
+- Frontend asset support is handled by later work items.
 - MySQL service via Docker Compose.
 - Database initialization scripts.
 - Rails schema output using `schema.rb`.
@@ -88,8 +88,8 @@ Set up the application baseline and development environment for the Rails projec
 
 - [x] Create or confirm the Rails app baseline.
 - [x] Configure Ruby dependencies.
-- [->] Add jQuery support. Backlink: [Frontend Toolchain](./002-frontend-toolchain.md)
-- [->] Add Bootstrap support. Backlink: [Frontend Toolchain](./002-frontend-toolchain.md)
+- [->] Add jQuery support. Backlink: [Frontend Toolchain](./003-frontend-toolchain.md)
+- [->] Add Bootstrap support. Backlink: [Frontend Toolchain](./003-frontend-toolchain.md)
 - [x] Add a Dockerfile for the app.
 - [x] Add `compose.yml` for the app and MySQL under `ops/compose/`.
 - [x] Use a minimal MySQL image suitable for local development.

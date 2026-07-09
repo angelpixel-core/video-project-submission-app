@@ -48,4 +48,8 @@ Work items are implementation documents. Each one should map back to the docs it
 
 ## Second Item
 
-- [ ] [Frontend Toolchain](./002-frontend-toolchain.md)
+- [ ] [Testing Foundation](./002-testing-foundation.md)
+
+## Third Item
+
+- [ ] [Frontend Toolchain](./003-frontend-toolchain.md)

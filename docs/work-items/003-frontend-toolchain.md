@@ -8,8 +8,8 @@ tags:
   - bootstrap
   - jquery
 depends_on:
-  - bootstrap-and-environment
-order: 2
+  - testing-foundation
+order: 3
 phase: work-items
 status: draft
 title: Frontend Toolchain
@@ -32,6 +32,7 @@ Set up Vite as the frontend toolchain and manage Bootstrap/jQuery as frontend de
 ## Affected Docs
 
 - `docs/work-items/001-bootstrap-and-environment.md`
+- `docs/work-items/002-testing-foundation.md`
 - `docs/sprints/00-foundation/06-quality-and-performance.md`
 
 ## Affected Ops
@@ -69,6 +70,7 @@ Set up Vite as the frontend toolchain and manage Bootstrap/jQuery as frontend de
 ## Related Docs
 
 - `docs/work-items/001-bootstrap-and-environment.md`
+- `docs/work-items/002-testing-foundation.md`
 - `docs/overview.md`
 
 ## Related Sections
