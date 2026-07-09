@@ -1,10 +1,6 @@
 ---
 id: bootstrap-and-environment
-title: Bootstrap and Environment
-phase: work-items
-order: 1
-status: draft
-depends_on: []
+aliases: []
 tags:
   - work-items
   - bootstrap
@@ -12,6 +8,11 @@ tags:
   - rails
   - mysql
   - schema
+depends_on: []
+order: 1
+phase: work-items
+status: draft
+title: Bootstrap and Environment
 ---
 
 # Bootstrap and Environment
@@ -87,8 +88,8 @@ Set up the application baseline and development environment for the Rails projec
 
 - [x] Create or confirm the Rails app baseline.
 - [x] Configure Ruby dependencies.
-- [ ] Add jQuery support.
-- [ ] Add Bootstrap support.
+- [->] Add jQuery support. Backlink: [Frontend Toolchain](./002-frontend-toolchain.md)
+- [->] Add Bootstrap support. Backlink: [Frontend Toolchain](./002-frontend-toolchain.md)
 - [x] Add a Dockerfile for the app.
 - [x] Add `compose.yml` for the app and MySQL under `ops/compose/`.
 - [x] Use a minimal MySQL image suitable for local development.

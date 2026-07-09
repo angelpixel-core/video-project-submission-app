@@ -45,3 +45,7 @@ Work items are implementation documents. Each one should map back to the docs it
 ## First Item
 
 - [ ] [Bootstrap and Environment](./001-bootstrap-and-environment.md)
+
+## Second Item
+
+- [ ] [Frontend Toolchain](./002-frontend-toolchain.md)
