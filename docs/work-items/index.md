@@ -29,6 +29,7 @@ Work items are implementation documents. Each one should map back to the docs it
 - `## Goal`
 - `## Scope`
 - `## Affected Docs`
+- `## Affected Ops`
 - `## Checklist`
 - `## Validation`
 - `## Notes`
@@ -44,3 +45,15 @@ Work items are implementation documents. Each one should map back to the docs it
 ## First Item
 
 - [ ] [Bootstrap and Environment](./001-bootstrap-and-environment.md)
+
+## Second Item
+
+- [ ] [Testing Foundation](./002-testing-foundation.md)
+
+## Third Item
+
+- [ ] [CI/CD and Environments](./003-ci-cd-and-environments.md)
+
+## Fourth Item
+
+- [ ] [Frontend Toolchain](./004-frontend-toolchain.md)
