@@ -2,6 +2,7 @@ STACK_ENV ?= dev
 STACK_SCRIPT := ops/scripts/stack.sh
 REPO_SCRIPT := ops/scripts/repo/create.sh
 TEST_SCRIPT := ops/scripts/test.sh
+TEST_ARGS ?=
 
 .PHONY: stack/%
 stack/%:
@@ -13,4 +14,4 @@ repo/create:
 
 .PHONY: test/%
 test/%:
-	@TEST_ENV="$(TEST_ENV)" sh $(TEST_SCRIPT) "$*"
+	@TEST_ENV="$(TEST_ENV)" TEST_ARGS="$(TEST_ARGS)" sh $(TEST_SCRIPT) "$*"
