@@ -221,6 +221,7 @@ spec/
 ## Validation
 
 - [ ] `bin/rspec` runs unit and request specs without manual asset steps.
+- [ ] `ops/scripts/test.sh verify` builds the `test` image stage and loads Rails successfully.
 - [ ] External HTTP calls are blocked unless explicitly recorded.
 - [ ] `VCR` artifacts can be reviewed and shared.
 - [ ] `bin/cucumber` runs manually and emits persistent reports.
