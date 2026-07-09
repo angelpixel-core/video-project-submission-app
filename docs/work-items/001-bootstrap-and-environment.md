@@ -55,7 +55,7 @@ Set up the application baseline and development environment for the Rails projec
 - `ops/compose/compose.yml`
 - `ops/containers/app/Dockerfile`
 - `ops/containers/app/entrypoint.sh`
-- `ops/containers/mysql/init/001-bootstrap.sql`
+- `ops/containers/db/entrypoint/initdb.d/001-bootstrap.sh`
 - `env/.gitignore`
 - `env/dev/app/core.env`
 - `env/dev/app/db.env`
@@ -85,19 +85,20 @@ Set up the application baseline and development environment for the Rails projec
 
 ## Checklist
 
-- [ ] Create or confirm the Rails app baseline.
-- [ ] Configure Ruby dependencies.
+- [x] Create or confirm the Rails app baseline.
+- [x] Configure Ruby dependencies.
 - [ ] Add jQuery support.
 - [ ] Add Bootstrap support.
-- [ ] Add a Dockerfile for the app.
-- [ ] Add `compose.yml` for the app and MySQL under `ops/compose/`.
-- [ ] Use a minimal MySQL image suitable for local development.
-- [ ] Add database initialization scripts under `ops/containers/mysql/init/`.
-- [ ] Initialize the database and application users through the init scripts.
-- [ ] Grant the required MySQL privileges for local development.
-- [ ] Keep environment templates under `env/<env>/{app,db,stack}/`.
-- [ ] Configure Rails to use `schema.rb`.
-- [ ] Inject `RUBY_VERSION` from environment variables instead of hardcoding it in the Dockerfile.
+- [x] Add a Dockerfile for the app.
+- [x] Add `compose.yml` for the app and MySQL under `ops/compose/`.
+- [x] Use a minimal MySQL image suitable for local development.
+- [x] Add database initialization scripts under `ops/containers/db/entrypoint/initdb.d/`.
+- [x] Initialize the database and application users through the init scripts.
+- [x] Grant the required MySQL privileges for local development.
+- [x] Keep environment templates under `env/<env>/{app,db,stack}/`.
+- [x] Add command automation for stack and repo workflows via `Makefile` and shell scripts.
+- [x] Configure Rails to use `schema.rb`.
+- [x] Inject `RUBY_VERSION` from environment variables instead of hardcoding it in the Dockerfile.
 
 ## Validation
 
