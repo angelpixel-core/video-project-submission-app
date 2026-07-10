@@ -96,9 +96,9 @@ title: CI/CD and Environments
 
 ### Two-Lane Flow
 
-- [ ] `push` to `work-items/*` runs fast checks only.
+- [x] `push` to `work-items/*` runs fast checks only.
 - [ ] A green `push` opens or updates the PR to `development`.
-- [ ] `pull_request` to `development` runs the merge gate checks.
+- [x] `pull_request` to `development` runs the merge gate checks.
 - [ ] A green PR is merged manually into `development`.
 - [ ] Merge into `development` triggers the automated `qa` deploy.
 - [ ] A green `qa` promotes automatically to `staging`.
@@ -135,8 +135,8 @@ flowchart LR
 
 ### Branch Push and Pull Request
 
-- Run linting once at the earliest CI stage.
-- Run fast automated test coverage: unit, contracts, integration, and request tests.
+- `push` to `work-items/*` runs lint and `make test/ci`.
+- `pull_request` to `development` runs lint, Brakeman, Bundler Audit, Importmap audit, and `make test/ci`.
 - Use the `test` image stage for deterministic test execution via `make test/ci`.
 - Avoid re-running the same lint step in later stages unless a new artifact requires it.
 
