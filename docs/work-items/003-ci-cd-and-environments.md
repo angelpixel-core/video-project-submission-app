@@ -97,13 +97,21 @@ title: CI/CD and Environments
 ### Two-Lane Flow
 
 - [x] `push` to `work-items/*` runs fast checks only.
-- [ ] A green `push` opens or updates the PR to `development`.
+- [x] A green `push` opens or updates the PR to `development`.
 - [x] `pull_request` to `development` runs the merge gate checks.
 - [ ] A green PR is merged manually into `development`.
 - [ ] Merge into `development` triggers the automated `qa` deploy.
 - [ ] A green `qa` promotes automatically to `staging`.
 - [ ] A green `staging` promotes to `prod` with GitHub Environment approval.
 - [ ] `prod` runs smoke validation after approval.
+
+### PR Automation
+
+- [x] Create or update a normal PR from `work-items/*` to `development` after the push lane passes.
+- [x] Cancel obsolete runs when a newer push lands on the same branch.
+- [ ] Provision a dedicated repository secret token for PR creation.
+- [ ] Protect `development` with required checks and required approvals.
+- [ ] Decide whether auto-merge is enabled after approvals or kept manual.
 
 ```mermaid
 flowchart LR
@@ -135,10 +143,12 @@ flowchart LR
 
 ### Branch Push and Pull Request
 
-- `push` to `work-items/*` runs lint and `make test/ci`.
+- `push` to `work-items/*` runs lint and `make test/ci`, then creates or updates the PR to `development`.
 - `pull_request` to `development` runs lint, Brakeman, Bundler Audit, Importmap audit, and `make test/ci`.
 - Use the `test` image stage for deterministic test execution via `make test/ci`.
 - Avoid re-running the same lint step in later stages unless a new artifact requires it.
+- PR creation should use a normal PR, not a draft, so branch protection can manage review and merge control.
+- PR automation should use a dedicated token secret, not the default `GITHUB_TOKEN`, so the created PR triggers the expected downstream workflow.
 
 ### QA Deployment
 
@@ -186,6 +196,7 @@ flowchart LR
 - [x] Staging has a documented promotion rule from QA.
 - [x] Production has a documented minimal-image and smoke-only validation policy.
 - [x] QA handback documents how defects return to development.
+- [x] PR automation strategy is documented and actionable.
 
 ## Related Docs
 
