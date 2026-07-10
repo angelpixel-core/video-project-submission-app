@@ -24,7 +24,7 @@ title: CI/CD and Environments
 
 ## Goal
 
-Define the delivery pipeline, the environment-specific Docker image strategy, and the test gates that control promotion from local development to QA, staging, and production.
+- [ ] Define the delivery pipeline, the environment-specific Docker image strategy, and the test gates that control promotion from local development to QA, staging, and production.
 
 ## Scope
 
@@ -33,6 +33,44 @@ Define the delivery pipeline, the environment-specific Docker image strategy, an
 - Promotion rules from CI to QA to staging to production.
 - Explicit handoff points for exploratory QA findings and regression fixes.
 - Separation of caches and runtime artifacts by environment and purpose.
+
+## Implementation Tasks
+
+### Environment Model
+
+- [ ] Confirm the environment map: `local/dev`, `ci/test`, `qa`, `staging`, and `prod`.
+- [ ] Confirm the image stages: `dev`, `test`, `qa`, `staging`, and `prod`.
+- [ ] Document which artifacts are immutable and promoted between environments.
+
+### CI Gates
+
+- [ ] Define the earliest lint gate and keep it single-pass.
+- [ ] Define the automated test bundle for push and pull request events.
+- [ ] Define which tests are required before a QA deploy.
+
+### QA Flow
+
+- [ ] Define the automated QA deploy step.
+- [ ] Define the manual QA signoff step.
+- [ ] Define the exploratory failure handback path to development.
+
+### Staging Flow
+
+- [ ] Define the promotion rule from QA to staging.
+- [ ] Define the staging smoke checks that run after deploy.
+- [ ] Define the release-readiness criterion for staging.
+
+### Production Flow
+
+- [ ] Define the production promotion rule from staging.
+- [ ] Define the minimal production runtime image constraints.
+- [ ] Define the post-deploy smoke validation for production.
+
+### Artifact and Cache Rules
+
+- [ ] Define how compiled assets are rebuilt for each promoted artifact.
+- [ ] Define which caches stay environment-scoped.
+- [ ] Define which tooling must never reach the `prod` image.
 
 ## Environment Map
 
@@ -95,6 +133,15 @@ Define the delivery pipeline, the environment-specific Docker image strategy, an
 - Move the ticket back to the development state with the documented failure.
 - Add or update automated coverage before re-promoting the fix.
 - Re-run the relevant automated checks before QA revalidation.
+
+## Validation
+
+- [ ] The pipeline map is explicit for each environment and image stage.
+- [ ] Linting is defined as a single-pass early gate.
+- [ ] QA has a documented automated deploy plus manual signoff path.
+- [ ] Staging has a documented promotion rule from QA.
+- [ ] Production has a documented minimal-image and smoke-only validation policy.
+- [ ] QA handback documents how defects return to development.
 
 ## Related Docs
 
