@@ -24,7 +24,7 @@ title: CI/CD and Environments
 
 ## Goal
 
-- [ ] Define the delivery pipeline, the environment-specific Docker image strategy, and the test gates that control promotion from local development to QA, staging, and production.
+- [x] Define the delivery pipeline, the environment-specific Docker image strategy, and the test gates that control promotion from local development to QA, staging, and production.
 
 ## Scope
 
@@ -38,39 +38,39 @@ title: CI/CD and Environments
 
 ### Environment Model
 
-- [ ] Confirm the environment map: `local/dev`, `ci/test`, `qa`, `staging`, and `prod`.
-- [ ] Confirm the image stages: `dev`, `test`, `qa`, `staging`, and `prod`.
-- [ ] Document which artifacts are immutable and promoted between environments.
+- [x] Confirm the environment map: `local/dev`, `ci/test`, `qa`, `staging`, and `prod`.
+- [x] Confirm the image stages: `dev`, `test`, `qa`, `staging`, and `prod`.
+- [x] Document which artifacts are immutable and promoted between environments.
 
 ### CI Gates
 
-- [ ] Define the earliest lint gate and keep it single-pass.
-- [ ] Define the automated test bundle for push and pull request events.
-- [ ] Define which tests are required before a QA deploy.
+- [x] Define the earliest lint gate and keep it single-pass.
+- [x] Define the automated test bundle for push and pull request events.
+- [x] Define which tests are required before a QA deploy.
 
-### QA Flow
+### QA Flow 
 
-- [ ] Define the automated QA deploy step.
-- [ ] Define the manual QA signoff step.
-- [ ] Define the exploratory failure handback path to development.
+- [x] Define the automated QA deploy step.
+- [x] Define the manual QA signoff step.
+- [x] Define the exploratory failure handback path to development.
 
 ### Staging Flow
 
-- [ ] Define the promotion rule from QA to staging.
-- [ ] Define the staging smoke checks that run after deploy.
-- [ ] Define the release-readiness criterion for staging.
+- [x] Define the promotion rule from QA to staging.
+- [x] Define the staging smoke checks that run after deploy.
+- [x] Define the release-readiness criterion for staging.
 
 ### Production Flow
 
-- [ ] Define the production promotion rule from staging.
-- [ ] Define the minimal production runtime image constraints.
-- [ ] Define the post-deploy smoke validation for production.
+- [x] Define the production promotion rule from staging.
+- [x] Define the minimal production runtime image constraints.
+- [x] Define the post-deploy smoke validation for production.
 
 ### Artifact and Cache Rules
 
-- [ ] Define how compiled assets are rebuilt for each promoted artifact.
-- [ ] Define which caches stay environment-scoped.
-- [ ] Define which tooling must never reach the `prod` image.
+- [x] Define how compiled assets are rebuilt for each promoted artifact.
+- [x] Define which caches stay environment-scoped.
+- [x] Define which tooling must never reach the `prod` image.
 
 ## Environment Map
 
@@ -87,21 +87,26 @@ title: CI/CD and Environments
 ### Local Development
 
 - `standardrb` or equivalent linting may be run manually or via a fast pre-push hook.
-- `RSpec` unit/request coverage runs as needed by the developer.
+- `make test/unit` covers unit specs.
+- `make test/integration` covers contracts, integration, and request specs.
+- `make test/smoke` covers smoke specs.
+- `make test/acceptance` covers cucumber acceptance specs.
+- `make test/performance` covers performance specs.
 - Full smoke, acceptance, and mutation testing remain optional locally unless explicitly requested.
 
 ### Branch Push and Pull Request
 
 - Run linting once at the earliest CI stage.
-- Run fast automated test coverage: unit, request, and selected integration tests.
-- Use the `test` image stage for deterministic test execution.
+- Run fast automated test coverage: unit, contracts, integration, and request tests.
+- Use the `test` image stage for deterministic test execution via `make test/ci`.
 - Avoid re-running the same lint step in later stages unless a new artifact requires it.
 
 ### QA Deployment
 
 - Deploy the CI-approved artifact to `qa`.
-- Run post-deploy smoke tests automatically.
-- Run selected acceptance scenarios automatically when practical.
+- Require lint, `make test/ci`, Brakeman, Bundler Audit, and Importmap audit before promotion.
+- Run post-deploy smoke tests automatically with `make test/smoke`.
+- Run selected acceptance scenarios automatically when practical with `make test/acceptance`.
 - Require manual QA validation after the automated gates pass.
 - Document exploratory findings, even when the failure is outside the scripted suite.
 
@@ -109,7 +114,7 @@ title: CI/CD and Environments
 
 - Promote only after QA signs off manually.
 - Use the same build artifact that passed QA, or an immutable promoted digest from the same commit.
-- Run a smaller post-deploy smoke suite if needed.
+- Run a smaller post-deploy smoke suite if needed with `make test/smoke`.
 - Treat staging as the final release readiness environment before production.
 
 ### Production Deployment
@@ -117,7 +122,7 @@ title: CI/CD and Environments
 - Promote only the staging-approved artifact.
 - Keep the runtime image minimal.
 - Skip test and dev dependencies in the final image.
-- Prefer smoke-only post-deploy validation.
+- Prefer smoke-only post-deploy validation with `make test/smoke`.
 
 ## Artifact Rules
 
@@ -136,12 +141,12 @@ title: CI/CD and Environments
 
 ## Validation
 
-- [ ] The pipeline map is explicit for each environment and image stage.
-- [ ] Linting is defined as a single-pass early gate.
-- [ ] QA has a documented automated deploy plus manual signoff path.
-- [ ] Staging has a documented promotion rule from QA.
-- [ ] Production has a documented minimal-image and smoke-only validation policy.
-- [ ] QA handback documents how defects return to development.
+- [x] The pipeline map is explicit for each environment and image stage.
+- [x] Linting is defined as a single-pass early gate.
+- [x] QA has a documented automated deploy plus manual signoff path.
+- [x] Staging has a documented promotion rule from QA.
+- [x] Production has a documented minimal-image and smoke-only validation policy.
+- [x] QA handback documents how defects return to development.
 
 ## Related Docs
 
