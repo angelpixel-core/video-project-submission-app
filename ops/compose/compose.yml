@@ -3,7 +3,7 @@ services:
     build:
       context: ../..
       dockerfile: ops/containers/app/Dockerfile
-      target: dev
+      target: "${APP_IMAGE_STAGE:-dev}"
       args:
         RUBY_VERSION: "${RUBY_VERSION:-4.0.3}"
         BUNDLE_DEPLOYMENT: "${BUNDLE_DEPLOYMENT:-1}"
