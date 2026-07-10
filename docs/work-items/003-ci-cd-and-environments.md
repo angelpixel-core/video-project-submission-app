@@ -203,6 +203,11 @@ flowchart LR
 - `docs/work-items/001-bootstrap-and-environment.md`
 - `docs/work-items/002-testing-foundation.md`
 - `docs/work-items/004-frontend-toolchain.md`
+- `docs/decisions/05-render-infrastructure-target.md`
+- `docs/decisions/06-database-engine-matrix.md`
+- `docs/decisions/07-infrastructure-as-code-strategy.md`
+- `docs/work-items/006-render-infrastructure-requirements.md`
+- `docs/work-items/007-database-engine-and-iac-strategy.md`
 - `docs/overview.md`
 
 ## Notes
