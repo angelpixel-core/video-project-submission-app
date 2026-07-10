@@ -6,6 +6,14 @@ on:
   push:
     branches: [ "work-items/**" ]
 
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: ci-${{ github.event.pull_request.head.ref || github.ref_name }}
+  cancel-in-progress: true
+
 jobs:
   push_fast_checks:
     if: github.event_name == 'push'
@@ -25,6 +33,34 @@ jobs:
 
       - name: Run Dockerized automated tests
         run: make test/ci
+
+  sync_pr_to_development:
+    if: github.event_name == 'push'
+    needs: push_fast_checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Create or update PR
+        env:
+          GH_TOKEN: ${{ secrets.WORKITEM_PR_SYNC_TOKEN }}
+          BRANCH: ${{ github.ref_name }}
+          BASE_BRANCH: development
+        run: |
+          set -eu
+
+          TITLE="chore: promote ${BRANCH} to development"
+          BODY="Automated PR opened or updated after a green push to ${BRANCH}."
+
+          PR_NUMBER=$(gh pr list --head "$BRANCH" --base "$BASE_BRANCH" --state open --json number --jq '.[0].number // empty')
+
+          if [ -n "$PR_NUMBER" ]; then
+            gh pr edit "$PR_NUMBER" --title "$TITLE" --body "$BODY"
+          else
+            gh pr create --base "$BASE_BRANCH" --head "$BRANCH" --title "$TITLE" --body "$BODY"
+          fi
 
   pr_merge_gate:
     if: github.event_name == 'pull_request'
