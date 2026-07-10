@@ -94,6 +94,45 @@ title: CI/CD and Environments
 - `make test/performance` covers performance specs.
 - Full smoke, acceptance, and mutation testing remain optional locally unless explicitly requested.
 
+### Two-Lane Flow
+
+- [ ] `push` to `work-items/*` runs fast checks only.
+- [ ] A green `push` opens or updates the PR to `development`.
+- [ ] `pull_request` to `development` runs the merge gate checks.
+- [ ] A green PR is merged manually into `development`.
+- [ ] Merge into `development` triggers the automated `qa` deploy.
+- [ ] A green `qa` promotes automatically to `staging`.
+- [ ] A green `staging` promotes to `prod` with GitHub Environment approval.
+- [ ] `prod` runs smoke validation after approval.
+
+```mermaid
+flowchart LR
+  subgraph Lane1[Lane 1: work-items -> PR -> development]
+    W[work-items/xxx push] --> F1[fast checks]
+    F1 --> F2[lint]
+    F1 --> F3[unit + integration]
+    F3 --> PR[open PR to development]
+    PR --> MG[merge gate]
+    MG --> M1[lint]
+    MG --> M2[security]
+    MG --> M3[tests]
+    M3 --> MERGE[merge manually to development]
+  end
+
+  subgraph Lane2[Lane 2: development -> qa -> staging -> prod]
+    MERGE --> QADEPLOY[auto deploy to qa]
+    QADEPLOY --> QACHECKS[qa checks]
+    QACHECKS --> QS[smoke]
+    QACHECKS --> QAAC[acceptance]
+    QAAC --> STAGE[auto promote to staging]
+    STAGE --> STCHECKS[staging checks]
+    STCHECKS --> SS[smoke]
+    SS --> PRODDEPLOY[prod deploy]
+    PRODDEPLOY --> APPROVAL[GitHub Environment approval]
+    APPROVAL --> PRODSMOKE[prod smoke]
+  end
+```
+
 ### Branch Push and Pull Request
 
 - Run linting once at the earliest CI stage.
