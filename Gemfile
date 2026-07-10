@@ -42,6 +42,8 @@ group :development, :test do
 
   gem "rspec-rails"
   gem "capybara"
+  gem "cucumber"
+  gem "cucumber-rails", require: false
   gem "database_cleaner-active_record"
   gem "factory_bot_rails"
   gem "webmock"

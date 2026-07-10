@@ -211,21 +211,22 @@ spec/
 ## Checklist
 
 - [x] Core RSpec bootstrap and shared support files exist.
-- [ ] Unit, request, integration, smoke, acceptance, contract, and performance directories exist under `spec/`.
-- [ ] Cucumber acceptance features live under `spec/acceptance/features`.
-- [ ] Manual acceptance reports have a stable output directory.
-- [ ] Contract specs reserve a future OpenAPI / Swagger path.
+- [x] Unit, request, integration, smoke, acceptance, contract, and performance directories exist under `spec/`.
+- [x] Cucumber acceptance features live under `spec/acceptance/features`.
+- [x] Manual acceptance reports have a stable output directory.
+- [x] Contract specs reserve a future OpenAPI / Swagger path.
 - [ ] Frontend assets are available automatically during test runs.
-- [ ] The testing hierarchy remains entirely under `spec/`.
+- [x] The testing hierarchy remains entirely under `spec/`.
 
 ## Validation
 
-- [ ] `bin/rspec` runs unit and request specs without manual asset steps.
+- [x] `bin/rspec` runs unit and request specs without manual asset steps.
+- [x] `ops/scripts/test.sh verify` builds the `test` image stage, starts the isolated test DB, and loads Rails successfully.
 - [ ] External HTTP calls are blocked unless explicitly recorded.
 - [ ] `VCR` artifacts can be reviewed and shared.
-- [ ] `bin/cucumber` runs manually and emits persistent reports.
+- [x] `bin/cucumber` runs manually and emits persistent reports.
 - [ ] Mutant is not invoked automatically by the agent flow.
-- [ ] Example directories exist for each testing layer under `spec/`.
+- [x] Example directories exist for each testing layer under `spec/`.
 
 ## Notes
 
@@ -234,6 +235,7 @@ spec/
 - Treat request specs as the base for any future OpenAPI/Swagger layer.
 - Keep all test architecture under `spec/` so tooling follows the repo's structure, not the other way around.
 - Test asset bootstrapping should be transparent to day-to-day commands.
+- Implemented so far: core setup, unit, request, integration, smoke, acceptance, contracts, and performance layers.
 
 ## Related Docs
 

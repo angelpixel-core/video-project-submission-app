@@ -1,6 +1,6 @@
 # Scripts
 
-This directory contains shell helpers used by `make stack/*` and `make repo/*` targets.
+This directory contains shell helpers used by `make stack/*`, `make test/*`, and `make repo/*` targets.
 
 ## Notes
 
