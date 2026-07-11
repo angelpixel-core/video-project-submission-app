@@ -109,7 +109,7 @@ title: CI/CD and Environments
 
 - [x] Create or update a normal PR from `work-items/*` to `development` after the push lane passes.
 - [x] Cancel obsolete runs when a newer push lands on the same branch.
-- [ ] Provision a dedicated repository secret token for PR creation.
+- [x] Provision a dedicated repository secret token for PR creation.
 - [x] Protect `development` with required checks and required approvals.
 - [x] Decide whether auto-merge is enabled after approvals or kept manual.
 
