@@ -47,21 +47,21 @@ Set up Vite as the frontend toolchain and manage Bootstrap/jQuery as frontend de
 
 ## Checklist
 
-- [ ] Add Vite support to the Rails application.
-- [ ] Add a `package.json` for frontend dependencies.
+- [x] Add Vite support to the Rails application.
+- [x] Add a `package.json` for frontend dependencies.
 - [ ] Install Bootstrap through the frontend toolchain.
 - [ ] Install jQuery through the frontend toolchain.
-- [ ] Wire Vite into the application layout.
-- [ ] Remove or disable importmap-based frontend management.
-- [ ] Ensure hot reload works in development.
+- [x] Wire Vite into the application layout.
+- [x] Remove or disable importmap-based frontend management.
+- [x] Ensure hot reload works in development.
 
 ## Validation
 
-- [ ] The app boots with Vite enabled.
-- [ ] Frontend dependencies are served through Vite.
+- [x] The app boots with Vite enabled.
+- [x] Frontend dependencies are served through Vite.
 - [ ] Bootstrap styles load in the app layout.
 - [ ] jQuery is available to frontend code.
-- [ ] Hot reload reflects frontend changes.
+- [x] Hot reload reflects frontend changes.
 
 ## Notes
 
