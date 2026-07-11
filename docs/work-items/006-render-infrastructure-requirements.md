@@ -74,7 +74,7 @@ title: Render Infrastructure Requirements
 
 ## Checklist
 
-- [ ] Define the Render service map for `qa`, `staging`, and `prod`.
+- [x] Define the Render service map for `qa`, `staging`, and `prod`.
 - [ ] Define the web service for each environment.
 - [ ] Choose the PostgreSQL deployment mode on Render.
 - [ ] Define the custom domains and TLS requirements for each environment.
@@ -85,7 +85,7 @@ title: Render Infrastructure Requirements
 
 ## Validation
 
-- [ ] I can point to the exact web service and database service for each environment without ambiguity.
+- [x] I can point to the exact web service and database service for each environment without ambiguity.
 - [ ] I can describe what runs in each Render web service and which branch/promotion path feeds it.
 - [ ] I can state whether it is one managed database per environment and why that choice was made.
 - [ ] I can name the hostname for each environment and confirm who terminates TLS.
