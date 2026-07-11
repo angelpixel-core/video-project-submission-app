@@ -99,7 +99,7 @@ title: CI/CD and Environments
 - [x] `push` to `work-items/*` runs fast checks only.
 - [x] A green `push` opens or updates the PR to `development`.
 - [x] `pull_request` to `development` runs the merge gate checks.
-- [ ] A green PR is merged manually into `development`.
+- [x] A green PR is merged manually into `development`.
 - [ ] Merge into `development` triggers the automated `qa` deploy.
 - [ ] A green `qa` promotes automatically to `staging`.
 - [ ] A green `staging` promotes to `prod` with GitHub Environment approval.
@@ -110,8 +110,8 @@ title: CI/CD and Environments
 - [x] Create or update a normal PR from `work-items/*` to `development` after the push lane passes.
 - [x] Cancel obsolete runs when a newer push lands on the same branch.
 - [ ] Provision a dedicated repository secret token for PR creation.
-- [ ] Protect `development` with required checks and required approvals.
-- [ ] Decide whether auto-merge is enabled after approvals or kept manual.
+- [x] Protect `development` with required checks and required approvals.
+- [x] Decide whether auto-merge is enabled after approvals or kept manual.
 
 ```mermaid
 flowchart LR
@@ -215,3 +215,5 @@ flowchart LR
 - Keep `qa` and `staging` separate on purpose: QA validates the automated pipeline and exploratory findings, staging validates manual signoff on the promoted release artifact.
 - Linting should run once in the earliest sensible pipeline stage, not be repeated at every hop.
 - Automatic test execution should happen when the pipeline reaches its intended stage, not manually in ad hoc commands.
+- The remaining deployment-promotion items in `Two-Lane Flow` are intentionally deferred until work items `005`, `006`, and `007` land, after which this document resumes at the merge-to-qa path.
+- The auto-synced PR stays open across additional pushes; a failed push does not merge anything and the PR only becomes mergeable again after a subsequent green push updates the checks.
