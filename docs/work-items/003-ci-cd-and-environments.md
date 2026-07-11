@@ -16,7 +16,7 @@ depends_on:
   - frontend-toolchain
 order: 3
 phase: work-items
-status: draft
+status: done
 title: CI/CD and Environments
 ---
 

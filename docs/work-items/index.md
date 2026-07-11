@@ -44,16 +44,28 @@ Work items are implementation documents. Each one should map back to the docs it
 
 ## First Item
 
-- [ ] [Bootstrap and Environment](./001-bootstrap-and-environment.md)
+- [x] [Bootstrap and Environment](./001-bootstrap-and-environment.md)
 
 ## Second Item
 
-- [ ] [Testing Foundation](./002-testing-foundation.md)
+- [x] [Testing Foundation](./002-testing-foundation.md)
 
 ## Third Item
 
-- [ ] [CI/CD and Environments](./003-ci-cd-and-environments.md)
+- [x] [CI/CD and Environments](./003-ci-cd-and-environments.md)
 
 ## Fourth Item
 
-- [ ] [Frontend Toolchain](./004-frontend-toolchain.md)
+- [x] [Frontend Toolchain](./004-frontend-toolchain.md)
+
+## Fifth Item
+
+- [ ] [SSH Authentication and Commit Signing](./005-ssh-authentication-and-commit-signing.md)
+
+## Sixth Item
+
+- [ ] [Render Infrastructure Requirements](./006-render-infrastructure-requirements.md)
+
+## Seventh Item
+
+- [ ] [Database Engine and IaC Strategy](./007-database-engine-and-iac-strategy.md)
