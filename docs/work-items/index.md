@@ -60,7 +60,7 @@ Work items are implementation documents. Each one should map back to the docs it
 
 ## Fifth Item
 
-- [ ] [SSH Authentication and Commit Signing](./005-ssh-authentication-and-commit-signing.md)
+- [x] [SSH Authentication and Commit Signing](./005-ssh-authentication-and-commit-signing.md)
 
 ## Sixth Item
 

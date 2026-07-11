@@ -11,7 +11,7 @@ depends_on:
   - ci-cd-and-environments
 order: 5
 phase: work-items
-status: draft
+status: done
 title: SSH Authentication and Commit Signing
 ---
 
@@ -19,7 +19,7 @@ title: SSH Authentication and Commit Signing
 
 ## Goal
 
-- [ ] Document and apply the local SSH authentication and commit-signing setup using separate keys for auth and signing.
+- [x] Document and apply the local SSH authentication and commit-signing setup using separate keys for auth and signing.
 
 ## Scope
 
@@ -43,20 +43,20 @@ title: SSH Authentication and Commit Signing
 
 ## Checklist
 
-- [ ] Keep the GitHub authentication key separate from the commit-signing key.
-- [ ] Register the signing public key in GitHub as a signing key.
-- [ ] Configure `git config --global gpg.format ssh`.
-- [ ] Configure `git config --global user.signingkey <placeholder-signing-key>.pub`.
-- [ ] Configure `git config --global commit.gpgsign true`.
-- [ ] Optionally configure `gpg.ssh.allowedSignersFile` for local verification.
-- [ ] Verify signed commits with `git log --show-signature -1`.
+- [x] Keep the GitHub authentication key separate from the commit-signing key.
+- [x] Register the signing public key in GitHub as a signing key.
+- [x] Configure `git config --global gpg.format ssh`.
+- [x] Configure `git config --global user.signingkey <placeholder-signing-key>.pub`.
+- [x] Configure `git config --global commit.gpgsign true`.
+- [x] Optionally configure `gpg.ssh.allowedSignersFile` for local verification.
+- [x] Verify signed commits with `git log --show-signature -1`.
 
 ## Validation
 
-- [ ] `ssh -T <github-host-alias>` succeeds with the auth key.
-- [ ] `git log --show-signature -1` reports a verified signature on the latest commit.
-- [ ] GitHub shows `Verified` for a signed commit.
-- [ ] Local verification works if `gpg.ssh.allowedSignersFile` is configured.
+- [x] `ssh -T <github-host-alias>` succeeds with the auth key.
+- [x] `git log --show-signature -1` reports a verified signature on the latest commit.
+- [x] GitHub shows `Verified` for a signed commit.
+- [x] Local verification works if `gpg.ssh.allowedSignersFile` is configured.
 
 ## Notes
 
