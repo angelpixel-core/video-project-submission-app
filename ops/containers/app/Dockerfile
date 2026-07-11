@@ -94,3 +94,9 @@ USER app
 
 ENTRYPOINT ["/app/ops/containers/app/entrypoint.sh"]
 CMD ["bundle", "exec", "ruby", "scripts/ruby/run_flow.rb"]
+
+FROM final AS qa
+
+FROM final AS staging
+
+FROM final AS prod

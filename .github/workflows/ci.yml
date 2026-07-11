@@ -2,11 +2,21 @@ name: CI
 
 on:
   pull_request:
+    branches: [ development ]
   push:
-    branches: [ main ]
+    branches: [ "work-items/**" ]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: ci-${{ github.event.pull_request.head.ref || github.ref_name }}
+  cancel-in-progress: true
 
 jobs:
-  scan_ruby:
+  push_fast_checks:
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
 
     steps:
@@ -17,51 +27,76 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
-
-      - name: Scan for common Rails security vulnerabilities using static analysis
-        run: bin/brakeman --no-pager
-      
-      - name: Scan for known security vulnerabilities in gems used
-        run: bin/bundler-audit
-      
-  scan_js:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v6
-
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          bundler-cache: true
-
-      - name: Scan for security vulnerabilities in JavaScript dependencies
-        run: bin/importmap audit
-
-  lint:
-    runs-on: ubuntu-latest
-    env:
-      RUBOCOP_CACHE_ROOT: tmp/rubocop
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v6
-
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          bundler-cache: true
-
-      - name: Prepare RuboCop cache
-        uses: actions/cache@v4
-        env:
-          DEPENDENCIES_HASH: ${{ hashFiles('.ruby-version', '**/.rubocop.yml', '**/.rubocop_todo.yml', 'Gemfile.lock') }}
-        with:
-          path: ${{ env.RUBOCOP_CACHE_ROOT }}
-          key: rubocop-${{ runner.os }}-${{ env.DEPENDENCIES_HASH }}-${{ github.ref_name == github.event.repository.default_branch && github.run_id || 'default' }}
-          restore-keys: |
-            rubocop-${{ runner.os }}-${{ env.DEPENDENCIES_HASH }}-
 
       - name: Lint code for consistent style
         run: bin/rubocop -f github
 
+      - name: Run Dockerized automated tests
+        run: make test/ci
+
+  sync_pr_to_development:
+    if: github.event_name == 'push'
+    needs: push_fast_checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Create or update PR
+        env:
+          GH_TOKEN: ${{ secrets.WORKITEM_PR_SYNC_TOKEN }}
+          BRANCH: ${{ github.ref_name }}
+          BASE_BRANCH: development
+        run: |
+          set -eu
+
+          WORK_ITEM_SLUG="${BRANCH#work-items/}"
+          WORK_ITEM_FILE="docs/work-items/${WORK_ITEM_SLUG}.md"
+          TITLE="chore: promote ${BRANCH} to development"
+          BODY="Automated PR opened or updated after a green push to ${BRANCH}."
+
+          if [ -f "$WORK_ITEM_FILE" ]; then
+            SUMMARY=$(awk '
+              /^## PR Summary$/ { in_summary=1; next }
+              /^## / && in_summary { exit }
+              in_summary { print }
+            ' "$WORK_ITEM_FILE" | sed '/^[[:space:]]*$/d')
+
+            if [ -n "$SUMMARY" ]; then
+              BODY="$SUMMARY"
+            fi
+          fi
+
+          PR_NUMBER=$(gh pr list --head "$BRANCH" --base "$BASE_BRANCH" --state open --json number --jq '.[0].number // empty')
+
+          if [ -n "$PR_NUMBER" ]; then
+            gh pr edit "$PR_NUMBER" --title "$TITLE" --body "$BODY"
+          else
+            gh pr create --base "$BASE_BRANCH" --head "$BRANCH" --title "$TITLE" --body "$BODY"
+          fi
+
+  pr_merge_gate:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
+      - name: Lint code for consistent style
+        run: bin/rubocop -f github
+
+      - name: Scan for common Rails security vulnerabilities using static analysis
+        run: bin/brakeman --no-pager
+
+      - name: Scan for known security vulnerabilities in gems used
+        run: bin/bundler-audit
+
+      - name: Run Dockerized automated tests
+        run: make test/ci

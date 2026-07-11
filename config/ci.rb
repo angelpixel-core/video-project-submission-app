@@ -5,8 +5,9 @@ CI.run do
 
   step "Style: Ruby", "bin/rubocop"
 
+  step "Tests: CI layers", "make test/ci"
+
   step "Security: Gem audit", "bin/bundler-audit"
-  step "Security: Importmap vulnerability audit", "bin/importmap audit"
   step "Security: Brakeman code analysis", "bin/brakeman --quiet --no-pager --exit-on-warn --exit-on-error"
 
 

@@ -15,3 +15,4 @@ Use this folder for architecture and implementation decisions that support Sprin
 
 - [ ] [Client Identity Namespace](./01-client-identity-namespace.md)
 - [ ] [Rails Schema Format](./02-rails-schema-format.md)
+- [ ] [CI PR Promotion Strategy](./03-ci-pr-promotion-strategy.md)
