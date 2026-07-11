@@ -14,7 +14,7 @@ depends_on:
   - bootstrap-and-environment
 order: 2
 phase: work-items
-status: draft
+status: done
 title: Testing Foundation
 ---
 

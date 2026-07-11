@@ -13,6 +13,10 @@ tags:
 
 Use this folder for architecture and implementation decisions that support Sprint 0 and future extensions.
 
-- [ ] [Client Identity Namespace](./01-client-identity-namespace.md)
-- [ ] [Rails Schema Format](./02-rails-schema-format.md)
-- [ ] [CI PR Promotion Strategy](./03-ci-pr-promotion-strategy.md)
+- [x] [Client Identity Namespace](./01-client-identity-namespace.md)
+- [x] [Rails Schema Format](./02-rails-schema-format.md)
+- [x] [CI PR Promotion Strategy](./03-ci-pr-promotion-strategy.md)
+- [x] [SSH Authentication and Commit Signing](./04-ssh-authentication-and-commit-signing.md)
+- [x] [Render Infrastructure Target](./05-render-infrastructure-target.md)
+- [x] [Database Engine Matrix](./06-database-engine-matrix.md)
+- [x] [Infrastructure as Code Strategy](./07-infrastructure-as-code-strategy.md)

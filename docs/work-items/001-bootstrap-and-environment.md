@@ -11,7 +11,7 @@ tags:
 depends_on: []
 order: 1
 phase: work-items
-status: draft
+status: done
 title: Bootstrap and Environment
 ---
 

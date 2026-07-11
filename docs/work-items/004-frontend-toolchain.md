@@ -11,7 +11,7 @@ depends_on:
   - testing-foundation
 order: 4
 phase: work-items
-status: draft
+status: done
 title: Frontend Toolchain
 ---
 
