@@ -51,8 +51,22 @@ jobs:
         run: |
           set -eu
 
+          WORK_ITEM_SLUG="${BRANCH#work-items/}"
+          WORK_ITEM_FILE="docs/work-items/${WORK_ITEM_SLUG}.md"
           TITLE="chore: promote ${BRANCH} to development"
           BODY="Automated PR opened or updated after a green push to ${BRANCH}."
+
+          if [ -f "$WORK_ITEM_FILE" ]; then
+            SUMMARY=$(awk '
+              /^## PR Summary$/ { in_summary=1; next }
+              /^## / && in_summary { exit }
+              in_summary { print }
+            ' "$WORK_ITEM_FILE" | sed '/^[[:space:]]*$/d')
+
+            if [ -n "$SUMMARY" ]; then
+              BODY="$SUMMARY"
+            fi
+          fi
 
           PR_NUMBER=$(gh pr list --head "$BRANCH" --base "$BASE_BRANCH" --state open --json number --jq '.[0].number // empty')
 

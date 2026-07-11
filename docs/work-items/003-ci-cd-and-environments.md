@@ -198,6 +198,13 @@ flowchart LR
 - [x] QA handback documents how defects return to development.
 - [x] PR automation strategy is documented and actionable.
 
+## PR Summary
+
+- Implemented the CI lane split for `push` and `pull_request` events.
+- Added automatic PR create/update from green `work-items/*` pushes into `development`.
+- Kept the merge step manual while branch protection controls when the PR is eligible to merge.
+- Deferred the deploy-promotion path to the follow-up infrastructure work items.
+
 ## Related Docs
 
 - `docs/work-items/001-bootstrap-and-environment.md`
@@ -217,3 +224,4 @@ flowchart LR
 - Automatic test execution should happen when the pipeline reaches its intended stage, not manually in ad hoc commands.
 - The remaining deployment-promotion items in `Two-Lane Flow` are intentionally deferred until work items `005`, `006`, and `007` land, after which this document resumes at the merge-to-qa path.
 - The auto-synced PR stays open across additional pushes; a failed push does not merge anything and the PR only becomes mergeable again after a subsequent green push updates the checks.
+- `## PR Summary` is the source text for the auto-created pull request body.
