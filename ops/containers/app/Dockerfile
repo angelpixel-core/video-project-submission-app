@@ -24,6 +24,8 @@ RUN apk add --no-cache \
   tzdata \
   netcat-openbsd \
   mysql-client \
+  nodejs \
+  npm \
   mariadb-connector-c \
   yaml
 
@@ -43,6 +45,10 @@ COPY Gemfile Gemfile.lock ./
 RUN --mount=type=cache,target=/usr/local/bundle \
   bundle install && \
   rm -rf /usr/local/bundle/cache /root/.bundle/cache /usr/lib/apk/cache
+
+COPY package.json package-lock.json ./
+RUN --mount=type=cache,target=/root/.npm \
+  npm ci
 
 COPY . .
 
@@ -74,6 +80,10 @@ COPY Gemfile Gemfile.lock ./
 RUN --mount=type=cache,target=/usr/local/bundle \
   bundle install && \
   rm -rf /usr/local/bundle/cache /root/.bundle/cache /usr/lib/apk/cache
+
+COPY package.json package-lock.json ./
+RUN --mount=type=cache,target=/root/.npm \
+  npm ci
 
 COPY . .
 
