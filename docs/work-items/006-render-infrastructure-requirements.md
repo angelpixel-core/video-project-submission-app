@@ -32,6 +32,29 @@ title: Render Infrastructure Requirements
 - Capacity and cost drivers for the deployment target.
 - GitHub Actions handoff into Render.
 
+## Render Service Map
+
+### Render Runtime Environments
+
+| Environment | Web Service | Database | Domain | Notes |
+| --- | --- | --- | --- | --- |
+| `qa` | `video-project-submission-app-qa` | Managed PostgreSQL | `qa.<placeholder-domain>` | Used for automated deploy + QA validation. |
+| `staging` | `video-project-submission-app-staging` | Managed PostgreSQL | `staging.<placeholder-domain>` | Used for release candidate validation. |
+| `prod` | `video-project-submission-app-prod` | Managed PostgreSQL | `<placeholder-domain>` | Human-approved release target. |
+
+### Local Development Context
+
+| Environment | Web Service | Database | Domain | Notes |
+| --- | --- | --- | --- | --- |
+| `dev` | Local Rails web service | Local MySQL | `dev.lvh.me` | Developer loop only; not a Render environment. |
+| `test` | Local Rails web service | Local MySQL | `test.lvh.me` | Automated test context; not a Render environment. |
+
+### Naming Convention
+
+- Use long, explicit service names for Render to keep the environment role obvious in multi-environment operations.
+- Keep local `dev` and `test` as separate context rows so the full runtime picture stays readable without implying they are Render targets.
+- Use `lvh.me` for local subdomains because it resolves to `127.0.0.1` and supports host-based local routing without extra host file entries.
+
 ## Affected Docs
 
 - `docs/decisions/05-render-infrastructure-target.md`
