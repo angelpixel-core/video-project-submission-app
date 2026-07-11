@@ -144,7 +144,7 @@ flowchart LR
 ### Branch Push and Pull Request
 
 - `push` to `work-items/*` runs lint and `make test/ci`, then creates or updates the PR to `development`.
-- `pull_request` to `development` runs lint, Brakeman, Bundler Audit, Importmap audit, and `make test/ci`.
+- `pull_request` to `development` runs lint, Brakeman, Bundler Audit, and `make test/ci`.
 - Use the `test` image stage for deterministic test execution via `make test/ci`.
 - Avoid re-running the same lint step in later stages unless a new artifact requires it.
 - PR creation should use a normal PR, not a draft, so branch protection can manage review and merge control.
@@ -153,7 +153,7 @@ flowchart LR
 ### QA Deployment
 
 - Deploy the CI-approved artifact to `qa`.
-- Require lint, `make test/ci`, Brakeman, Bundler Audit, and Importmap audit before promotion.
+- Require lint, `make test/ci`, Brakeman, and Bundler Audit before promotion.
 - Run post-deploy smoke tests automatically with `make test/smoke`.
 - Run selected acceptance scenarios automatically when practical with `make test/acceptance`.
 - Require manual QA validation after the automated gates pass.
@@ -225,3 +225,4 @@ flowchart LR
 - The remaining deployment-promotion items in `Two-Lane Flow` are intentionally deferred until work items `005`, `006`, and `007` land, after which this document resumes at the merge-to-qa path.
 - The auto-synced PR stays open across additional pushes; a failed push does not merge anything and the PR only becomes mergeable again after a subsequent green push updates the checks.
 - `## PR Summary` is the source text for the auto-created pull request body.
+- Importmap cleanup belongs to `004-frontend-toolchain`; `003` only drops the importmap audit from its CI gate.
