@@ -23,4 +23,5 @@ Each environment is split by consumer:
 - Keep consumer-specific variables in the matching subdirectory.
 - Avoid mixing app runtime values with database bootstrap values unless a target explicitly needs both.
 - Ignore local secret files named `secrets.local.env`; they are synced separately to external secret stores.
-- In `prod/`, `qa/`, and `staging/`, keep `app/db.env` and `db/bootstrap.env` local-only; version the non-secret `app/core.env` and `stack/compose.env` files instead.
+- In `prod/`, `qa/`, and `staging/`, version the environment files with placeholders and fill the live values manually in Render or the local secret store.
+- When a Render environment file is checked into git, keep secrets and live connection strings as placeholders only.
