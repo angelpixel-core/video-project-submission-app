@@ -205,7 +205,7 @@ Use one Render-managed PostgreSQL database per runtime environment.
 
 ## Checklist
 
-- [ ] Create or confirm the Render account/workspace.
+- [x] Create or confirm the Render account/workspace.
 - [ ] Record the Render workspace URL and owner/team name.
 - [ ] Create a Render API token for automation.
 - [x] Record the Render onboarding choices for the workspace.
