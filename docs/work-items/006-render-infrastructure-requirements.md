@@ -49,6 +49,13 @@ title: Render Infrastructure Requirements
 | `dev` | Local Rails web service | Local MySQL | `dev.lvh.me` | Developer loop only; not a Render environment. |
 | `test` | Local Rails web service | Local MySQL | `test.lvh.me` | Automated test context; not a Render environment. |
 
+### Render vs Local Boundary
+
+- Render runtime environments are only `qa`, `staging`, and `prod`.
+- Local `dev` and `test` are separate contexts for developer flow and automated checks.
+- Local `dev/test` keep MySQL because that is the current baseline for development and CI.
+- `dev.lvh.me` and `test.lvh.me` are local-only domains and do not imply a Render deployment target.
+
 ### Naming Convention
 
 - Use long, explicit service names for Render to keep the environment role obvious in multi-environment operations.
@@ -95,7 +102,7 @@ title: Render Infrastructure Requirements
 - [x] Define the `staging` web service.
 - [x] Define the `prod` web service.
 - [ ] Define the deployment source for `qa`, `staging`, and `prod`.
-- [ ] Distinguish Render runtime environments from local `dev/test` contexts.
+- [x] Distinguish Render runtime environments from local `dev/test` contexts.
 - [ ] Choose the PostgreSQL deployment mode on Render.
 - [ ] Define the custom domains and TLS requirements for each environment.
 - [ ] Define the app secrets and database variables per environment.
@@ -110,7 +117,7 @@ title: Render Infrastructure Requirements
 - [x] I can explain what runs in the `staging` web service.
 - [x] I can explain what runs in the `prod` web service.
 - [ ] I can point to the branch or promotion path that feeds `qa`, `staging`, and `prod`.
-- [ ] I can distinguish Render runtime environments from local `dev/test` contexts.
+- [x] I can distinguish Render runtime environments from local `dev/test` contexts.
 - [ ] I can state whether it is one managed database per environment and why that choice was made.
 - [ ] I can name the hostname for each environment and confirm who terminates TLS.
 - [ ] I can list the required secrets/vars for each environment and where they must live.
