@@ -46,6 +46,23 @@ title: Render Infrastructure Requirements
 | Primary capability | `Developer velocity` | I can justify that fast deploy feedback matters more than advanced platform capabilities at this stage. |
 | Secondary capability | `Security` | I can keep access control and credentials management explicit from the start. |
 
+### Web Service Bootstrap Snapshot
+
+| Field | Selected Value | Manual Verification |
+| --- | --- | --- |
+| Source code | `angelpixel-core / video-project-submission-app` | I can confirm the service is connected to the correct repository. |
+| Service name | `video-project-submission-app` | I can see the current service name in Render. |
+| Language | `Ruby` | I can confirm Render is treating the app as a Ruby runtime. |
+| Branch | `development` | I can confirm the service deploys from the `development` branch. |
+| Region | `Oregon (US West)` | I can confirm the Render region for this service. |
+| Build command | `bundle install && npm ci && bundle exec vite build` | I can confirm the build step installs Ruby and Node dependencies and compiles assets. |
+| Start command | `bundle exec puma -C config/puma.rb` | I can confirm the service starts through Puma. |
+| Env var | `RAILS_LOG_TO_STDOUT=true` | I can confirm Rails logs are routed to stdout. |
+| Env var | `RAILS_MASTER_KEY=<secret>` | I can confirm the Rails master key is configured as a secret. |
+| Env var | `DATABASE_URL=<secret>` | I can confirm the service reads its DB connection from Render secrets. |
+
+- If this service is the `qa` runtime, prefer renaming it to `video-project-submission-app-qa` before the first deploy so the service role is explicit.
+
 ### Render Workspace
 
 | Item | Manual Verification |
@@ -70,6 +87,26 @@ title: Render Infrastructure Requirements
 | Keep Render access credentials out of git. | I know where the token lives and can rotate it without a repo change. |
 | Keep DNS provider credentials out of git. | I know which secret store or account holds DNS access. |
 | Keep deployment tokens separate from human login credentials. | I can distinguish the automation token from personal account access. |
+
+### PostgreSQL Bootstrap Snapshot
+
+| Item | Selected Value | Manual Verification |
+| --- | --- | --- |
+| Database name | `video_project_submission_app_qa_db` | I can identify the QA database by a stable environment-specific name. |
+| Database user | `video_project_submission_app_qa` | I can identify the dedicated DB user for the QA environment. |
+| Region | `Oregon (US West)` | I can confirm the database lives in the same region as the app service. |
+| PostgreSQL version | `18` | I can confirm the version selected in Render. |
+| Plan | `Free` | I can confirm the initial plan choice for the bootstrap phase. |
+| Storage | `1 GB` | I can confirm the initial storage allocation. |
+| Storage autoscaling | `Disabled` | I can confirm autoscaling is off for the bootstrap database. |
+| High availability | `Disabled` | I can confirm HA is off for the bootstrap database. |
+| Inbound IP policy | `0.0.0.0/0` visible in the UI | I can confirm the current network exposure setting that Render shows for this database. |
+
+### DATABASE_URL Source
+
+- Use the Render **Internal Database URL** for the web service `DATABASE_URL` environment variable.
+- Do not use the external URL for the app runtime unless you have a specific off-platform client that needs it.
+- Treat the password and full connection string as secrets and keep them out of git.
 
 ## Render Service Map
 
@@ -160,6 +197,8 @@ Use one Render-managed PostgreSQL database per runtime environment.
 - [ ] Record the Render workspace URL and owner/team name.
 - [ ] Create a Render API token for automation.
 - [x] Record the Render onboarding choices for the workspace.
+- [x] Record the current Render web service bootstrap snapshot.
+- [x] Record the PostgreSQL bootstrap snapshot for the QA database.
 - [ ] Define the public URLs for `qa`, `staging`, and `prod`.
 - [ ] Define the DNS registrar/provider access path.
 - [ ] Define the GitHub Actions secret names needed for deployment.
@@ -185,6 +224,7 @@ Use one Render-managed PostgreSQL database per runtime environment.
 - [ ] I can point to the exact Render workspace URL and the responsible team/owner.
 - [ ] I can identify the token name and where it is stored without exposing the secret value.
 - [x] I can point to the saved workspace name and selected onboarding options.
+- [x] I can point to the current Render web service bootstrap snapshot.
 - [ ] I can name the hostname for each public environment.
 - [ ] I can say who controls DNS and how records will be updated.
 - [ ] I can list the secret names required for Render promotion and deploys.
@@ -198,6 +238,8 @@ Use one Render-managed PostgreSQL database per runtime environment.
 - [ ] I can point to the branch or promotion path that feeds `qa`, `staging`, and `prod`.
 - [x] I can distinguish Render runtime environments from local `dev/test` contexts.
 - [x] I can state whether it is one managed database per environment and why that choice was made.
+- [x] I can point to the saved QA PostgreSQL bootstrap snapshot.
+- [x] I can identify the Internal Database URL as the source for `DATABASE_URL`.
 - [ ] I can name the hostname for each environment and confirm who terminates TLS.
 - [ ] I can list the required secrets/vars for each environment and where they must live.
 - [ ] I can state whether persistence/backups are required and what retention expectation exists.
