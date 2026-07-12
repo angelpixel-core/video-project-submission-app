@@ -55,6 +55,22 @@ title: Render Infrastructure Requirements
 - Keep local `dev` and `test` as separate context rows so the full runtime picture stays readable without implying they are Render targets.
 - Use `lvh.me` for local subdomains because it resolves to `127.0.0.1` and supports host-based local routing without extra host file entries.
 
+### Web Service by Environment
+
+| Environment | Web Service | Purpose | Deployment Source | Notes |
+| --- | --- | --- | --- | --- |
+| `qa` | `video-project-submission-app-qa` | Automated deploy + QA validation | GitHub Actions promotion from `work-items/*` -> `development` | Public Render environment. |
+| `staging` | `video-project-submission-app-staging` | Release candidate validation | Promoted from QA after approval | Public Render environment. |
+| `prod` | `video-project-submission-app-prod` | Production runtime | Manual release promotion from staging | Public Render environment. |
+
+### Manual Verification
+
+- I can explain what runs in the `qa` web service.
+- I can explain what runs in the `staging` web service.
+- I can explain what runs in the `prod` web service.
+- I can point to the branch or promotion path that feeds `qa`, `staging`, and `prod`.
+- I can distinguish Render runtime environments from local `dev/test` contexts.
+
 ## Affected Docs
 
 - `docs/decisions/05-render-infrastructure-target.md`
@@ -75,7 +91,11 @@ title: Render Infrastructure Requirements
 ## Checklist
 
 - [x] Define the Render service map for `qa`, `staging`, and `prod`.
-- [ ] Define the web service for each environment.
+- [x] Define the `qa` web service.
+- [x] Define the `staging` web service.
+- [x] Define the `prod` web service.
+- [ ] Define the deployment source for `qa`, `staging`, and `prod`.
+- [ ] Distinguish Render runtime environments from local `dev/test` contexts.
 - [ ] Choose the PostgreSQL deployment mode on Render.
 - [ ] Define the custom domains and TLS requirements for each environment.
 - [ ] Define the app secrets and database variables per environment.
@@ -86,7 +106,11 @@ title: Render Infrastructure Requirements
 ## Validation
 
 - [x] I can point to the exact web service and database service for each environment without ambiguity.
-- [ ] I can describe what runs in each Render web service and which branch/promotion path feeds it.
+- [x] I can explain what runs in the `qa` web service.
+- [x] I can explain what runs in the `staging` web service.
+- [x] I can explain what runs in the `prod` web service.
+- [ ] I can point to the branch or promotion path that feeds `qa`, `staging`, and `prod`.
+- [ ] I can distinguish Render runtime environments from local `dev/test` contexts.
 - [ ] I can state whether it is one managed database per environment and why that choice was made.
 - [ ] I can name the hostname for each environment and confirm who terminates TLS.
 - [ ] I can list the required secrets/vars for each environment and where they must live.
