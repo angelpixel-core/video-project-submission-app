@@ -27,6 +27,7 @@ title: Database Engine and IaC Strategy
 
 - MySQL for `dev` and `test`.
 - PostgreSQL for `qa`, `staging`, and `prod`.
+- Rails app compatibility for PostgreSQL on Render.
 - Rails database adapter configuration per environment.
 - Schema format choice and portability guardrails.
 - Terraform-based provisioning for Render resources.
@@ -42,6 +43,8 @@ title: Database Engine and IaC Strategy
 
 ## Affected Ops
 
+- `Gemfile`
+- `Gemfile.lock`
 - `config/database.yml`
 - `db/schema.rb`
 - `ops/infra/terraform/`
@@ -51,7 +54,8 @@ title: Database Engine and IaC Strategy
 
 - [ ] Document the MySQL-to-PostgreSQL environment matrix.
 - [ ] Confirm `schema.rb` remains the default schema format.
-- [ ] Update Rails database configuration for the extra `qa` and `staging` environments.
+- [ ] Update Rails database configuration for PostgreSQL in `qa`, `staging`, and `prod`.
+- [ ] Add the production PostgreSQL driver dependency.
 - [ ] Define the Terraform layout for Render provisioning.
 - [ ] Define the infra pipeline triggers for `fmt`, `validate`, `plan`, and `apply`.
 - [ ] Define the provisioning inputs for domain, TLS, app service, and database resources.
@@ -61,6 +65,7 @@ title: Database Engine and IaC Strategy
 - [ ] The environment matrix is explicit and documented.
 - [ ] The Terraform strategy is explicit and documented.
 - [ ] The Rails database configuration supports all runtime environments.
+- [ ] The Rails app can connect to PostgreSQL in Render without affecting local MySQL.
 - [ ] The infra pipeline can be run independently of app feature work.
 
 ## Notes
