@@ -6,6 +6,11 @@ gem "rails", "~> 8.1.3"
 gem "propshaft"
 # Use mysql as the database for Active Record
 gem "mysql2", "~> 0.5"
+
+group :production do
+  # Use PostgreSQL for Render runtime environments.
+  gem "pg", "~> 1.5"
+end
 # Use the Puma web server [https://github.com/puma/puma]
 gem "puma", ">= 5.0"
 # Use Vite for frontend assets [https://github.com/ElMassimo/vite_ruby]
