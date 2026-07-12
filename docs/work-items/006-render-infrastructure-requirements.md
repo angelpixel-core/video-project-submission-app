@@ -35,6 +35,17 @@ title: Render Infrastructure Requirements
 
 ## Access Bootstrap
 
+### Render Onboarding Choices
+
+| Item | Selected Value | Manual Verification |
+| --- | --- | --- |
+| Workspace name | `video-project-submission-app` | I can identify the workspace by the repo name without ambiguity. |
+| Workspace type | `Work` | I can confirm the workspace is for a real project, not a personal sandbox. |
+| Team size | `Just me` | I can confirm the workspace is currently scoped to a solo maintainer. |
+| What are you building? | `Website / landing page` | I can treat the app as a customer-facing web application in Render onboarding language. |
+| Primary capability | `Developer velocity` | I can justify that fast deploy feedback matters more than advanced platform capabilities at this stage. |
+| Secondary capability | `Security` | I can keep access control and credentials management explicit from the start. |
+
 ### Render Workspace
 
 | Item | Manual Verification |
@@ -42,6 +53,7 @@ title: Render Infrastructure Requirements
 | Create or confirm the Render account/workspace. | I can sign in to Render and see the workspace that will host the app. |
 | Record the Render workspace URL and owner/team name. | I can point to the exact Render workspace URL and the responsible team/owner. |
 | Create a Render API token for automation. | I can identify the token name and where it is stored without exposing the secret value. |
+| Confirm the onboarding responses are recorded for the workspace. | I can point to the saved workspace name and selected onboarding options. |
 
 ### URLs and External Access
 
@@ -147,6 +159,7 @@ Use one Render-managed PostgreSQL database per runtime environment.
 - [ ] Create or confirm the Render account/workspace.
 - [ ] Record the Render workspace URL and owner/team name.
 - [ ] Create a Render API token for automation.
+- [x] Record the Render onboarding choices for the workspace.
 - [ ] Define the public URLs for `qa`, `staging`, and `prod`.
 - [ ] Define the DNS registrar/provider access path.
 - [ ] Define the GitHub Actions secret names needed for deployment.
@@ -171,6 +184,7 @@ Use one Render-managed PostgreSQL database per runtime environment.
 - [ ] I can sign in to Render and see the workspace that will host the app.
 - [ ] I can point to the exact Render workspace URL and the responsible team/owner.
 - [ ] I can identify the token name and where it is stored without exposing the secret value.
+- [x] I can point to the saved workspace name and selected onboarding options.
 - [ ] I can name the hostname for each public environment.
 - [ ] I can say who controls DNS and how records will be updated.
 - [ ] I can list the secret names required for Render promotion and deploys.
