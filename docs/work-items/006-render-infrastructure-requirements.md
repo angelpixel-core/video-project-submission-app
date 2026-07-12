@@ -80,6 +80,18 @@ title: Render Infrastructure Requirements
 | Define the DNS registrar/provider access path. | I can say who controls DNS and how records will be updated. |
 | Define the GitHub Actions secret names needed for deployment. | I can list the secret names required for Render promotion and deploys. |
 
+### Custom Domains and TLS
+
+| Environment | Public Hostname | TLS Termination | Notes |
+| --- | --- | --- | --- |
+| `qa` | `qa.<placeholder-domain>` | Render-managed certificate | Used for automated deploy and QA validation. |
+| `staging` | `staging.<placeholder-domain>` | Render-managed certificate | Used for release candidate validation. |
+| `prod` | `<placeholder-domain>` | Render-managed certificate | Human-approved release target. |
+
+- Render should terminate TLS for each public hostname.
+- Keep the hostname values as placeholders until the real DNS zone is finalized.
+- DNS records should point the public hostname to the matching Render service target.
+
 ### Keys and Tokens
 
 | Item | Manual Verification |
@@ -212,7 +224,7 @@ Use one Render-managed PostgreSQL database per runtime environment.
 - [x] Define the deployment source for `qa`, `staging`, and `prod`.
 - [x] Distinguish Render runtime environments from local `dev/test` contexts.
 - [x] Choose the PostgreSQL deployment mode on Render.
-- [ ] Define the custom domains and TLS requirements for each environment.
+- [x] Define the custom domains and TLS requirements for each environment.
 - [ ] Define the app secrets and database variables per environment.
 - [ ] Define persistent storage and backup expectations for PostgreSQL.
 - [ ] Define capacity assumptions for web concurrency, database size, and request volume.
@@ -240,7 +252,7 @@ Use one Render-managed PostgreSQL database per runtime environment.
 - [x] I can state whether it is one managed database per environment and why that choice was made.
 - [x] I can point to the saved QA PostgreSQL bootstrap snapshot.
 - [x] I can identify the Internal Database URL as the source for `DATABASE_URL`.
-- [ ] I can name the hostname for each environment and confirm who terminates TLS.
+- [x] I can name the hostname for each environment and confirm who terminates TLS.
 - [ ] I can list the required secrets/vars for each environment and where they must live.
 - [ ] I can state whether persistence/backups are required and what retention expectation exists.
 - [ ] I can estimate initial sizing without guessing or leaving it implicit.
