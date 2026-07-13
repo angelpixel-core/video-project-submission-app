@@ -140,6 +140,7 @@ render services -o text
 
 | Item | Manual Verification |
 | --- | --- |
+| Create a Render API token for automation. | I can confirm the API key exists and is stored as the `RENDER_API_KEY` GitHub Actions secret. |
 | Keep Render access credentials out of git. | I know where the token lives and can rotate it without a repo change. |
 | Keep DNS provider credentials out of git. | I know which secret store or account holds DNS access. |
 | Keep deployment tokens separate from human login credentials. | I can distinguish the automation token from personal account access. |
@@ -251,7 +252,7 @@ Use one Render-managed PostgreSQL database per runtime environment.
 
 - [x] Create or confirm the Render account/workspace.
 - [x] Record the Render workspace URL and owner/team name.
-- [ ] Create a Render API token for automation.
+- [x] Create a Render API token for automation.
 - [x] Record the Render onboarding choices for the workspace.
 - [x] Record the current Render web service bootstrap snapshot.
 - [x] Record the PostgreSQL bootstrap snapshot for the QA database.
@@ -278,7 +279,7 @@ Use one Render-managed PostgreSQL database per runtime environment.
 
 - [x] I can sign in to Render and see the workspace that will host the app.
 - [x] I can point to the exact Render workspace URL and the responsible team/owner.
-- [ ] I can identify the token name and where it is stored without exposing the secret value.
+- [x] I can identify the token name and where it is stored without exposing the secret value.
 - [x] I can point to the saved workspace name and selected onboarding options.
 - [x] I can point to the current Render web service bootstrap snapshot.
 - [ ] I can name the hostname for each public environment.
