@@ -17,6 +17,7 @@ Each environment is split by consumer:
 - `app/` - Application runtime variables.
 - `db/` - Database bootstrap variables.
 - `stack/` - Stack-level compose/build variables.
+- `secrets.local.env` - Ignored local secrets file in each consumer directory when needed.
 
 ## Notes
 
