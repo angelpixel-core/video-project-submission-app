@@ -223,6 +223,25 @@ render services -o text
 - For versioned placeholder files, keep `env/*/secrets.local.env` checked in with `__SET_MANUALLY__` placeholders.
 - If the workflow needs repeated secret setup, add a small helper script later instead of copying ad hoc commands.
 
+### Secret Automation Interface
+
+Use `make` as the user-facing entry point and `ops/scripts/secrets.sh` as the implementation layer.
+
+| Command | Purpose | Target |
+| --- | --- | --- |
+| `make secrets/init ENV=qa` | Ensure placeholder secret files exist for the selected environment. | local filesystem |
+| `make secrets/set ENV=qa TARGET=github` | Push secret values from the selected environment into GitHub Actions secrets. | GitHub |
+| `make secrets/set ENV=qa TARGET=render` | Prepare or validate Render-side deployment secrets. | Render |
+| `make secrets/set ENV=qa TARGET=local` | Materialize local Docker/runtime secret values from the selected environment. | local Docker |
+| `make secrets/list ENV=qa TARGET=github` | List secret metadata for the selected environment. | GitHub |
+| `make secrets/validate ENV=qa TARGET=github` | Smoke-test that GitHub Actions can read the configured secrets at runtime. | GitHub Actions |
+
+- `Makefile` should remain a thin wrapper around `ops/scripts/secrets.sh`.
+- `ops/scripts/secrets.sh` should read from `env/${ENV}/app/secrets.local.env`, `env/${ENV}/db/secrets.local.env`, and `env/${ENV}/stack/secrets.local.env`.
+- Keep `TARGET` explicit so the same command shape works for GitHub, Render, and local Docker.
+- A future `rotate` command can reuse the same script once the first pass is stable.
+- Local `TARGET=local` can write or export values for Compose-based development, but it should still treat the checked-in files as the source of truth for placeholders.
+
 ### PostgreSQL Bootstrap Snapshot
 
 | Item | Selected Value | Manual Verification |
@@ -325,6 +344,8 @@ Use one Render-managed PostgreSQL database per runtime environment.
 - GitHub Actions deployment workflow
 - Render API token / automation credentials
 - DNS provider API token / access credentials
+- `Makefile`
+- `ops/scripts/secrets.sh`
 
 ## Checklist
 
@@ -389,3 +410,4 @@ Use one Render-managed PostgreSQL database per runtime environment.
 - Treat Redis as optional until the application actually needs it.
 - Use placeholders for domains and secret names when the real values are not yet finalized.
 - This work item should stay limited to requirements that unblock the remaining deployment-promotion steps in `docs/work-items/003-ci-cd-and-environments.md`.
+- The secret-management interface is intentionally thin: `make` delegates to `ops/scripts/secrets.sh`.
