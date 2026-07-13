@@ -174,6 +174,22 @@ render services -o text
 - `GITHUB_TOKEN` is provided by GitHub Actions automatically and does not need a manual secret entry.
 - The GitHub CLI can set these secrets with `gh secret set`.
 
+### Secret Operations
+
+| Operation | Tool / Protocol | Notes |
+| --- | --- | --- |
+| Generate | Render dashboard / provider UI | Create the secret at the source system first. |
+| Set | `gh secret set` | Store repository or environment secrets in GitHub Actions. |
+| Bulk set | `gh secret set -f <dotenv-file>` | Load multiple secret names from a dotenv-formatted file. |
+| List / verify presence | `gh secret list` | Confirms the secret name exists and shows metadata only. |
+| Validate runtime use | GitHub Actions smoke job | Confirms the workflow can read the secret without exposing the value. |
+
+- Do not expect a true `get` for secret values from GitHub; GitHub only exposes metadata for security.
+- For Render API keys, generate in Render first, then store the resulting value in `RENDER_API_KEY`.
+- For deployment service IDs, copy the IDs from Render CLI or dashboard and store them in GitHub Actions secrets.
+- For versioned placeholder files, keep `env/*/secrets.local.env` checked in with `__SET_MANUALLY__` placeholders.
+- If the workflow needs repeated secret setup, add a small helper script later instead of copying ad hoc commands.
+
 ### PostgreSQL Bootstrap Snapshot
 
 | Item | Selected Value | Manual Verification |
