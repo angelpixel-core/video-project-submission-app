@@ -68,7 +68,7 @@ title: Render Infrastructure Requirements
 | Item | Manual Verification |
 | --- | --- |
 | Render workspace URL | `https://dashboard.render.com/project/prj-d9a05upo3t8c7383lhag` | I can open the exact Render project page for this workspace. |
-| Owner / team name | `Angel Szymczak` | I can identify the workspace owner from the account settings view. |
+| Owner / team name | `video-project-submission-app` | I can identify the workspace team from the CLI workspace listing. |
 | Create or confirm the Render account/workspace. | I can sign in to Render and see the workspace that will host the app. |
 | Record the Render workspace URL and owner/team name. | I can point to the exact Render workspace URL and the responsible team/owner. |
 | Create a Render API token for automation. | I can identify the token name and where it is stored without exposing the secret value. |
@@ -123,6 +123,18 @@ render services -o text
 | Define the public URLs for `qa`, `staging`, and `prod`. | I can name the hostname for each public environment. |
 | Define the DNS registrar/provider access path. | I can say who controls DNS and how records will be updated. |
 | Define the GitHub Actions secret names needed for deployment. | I can list the secret names required for Render promotion and deploys. |
+
+### Public URLs
+
+| Environment | Public URL | Notes |
+| --- | --- | --- |
+| `qa` | `https://video-project-submission-app-qa.onrender.com` | Confirmed from the Render CLI. |
+| `staging` | `https://staging.<placeholder-domain>` | Placeholder until the custom domain is assigned. |
+| `prod` | `https://<placeholder-domain>` | Placeholder until the custom domain is assigned. |
+
+- Use the Render-generated `onrender.com` URL for QA until the custom domain is ready.
+- Keep staging and prod as placeholders for now.
+- Update these URLs again once the custom domains are wired up in DNS.
 
 ### Custom Domains and TLS
 
@@ -256,7 +268,7 @@ Use one Render-managed PostgreSQL database per runtime environment.
 - [x] Record the Render onboarding choices for the workspace.
 - [x] Record the current Render web service bootstrap snapshot.
 - [x] Record the PostgreSQL bootstrap snapshot for the QA database.
-- [ ] Define the public URLs for `qa`, `staging`, and `prod`.
+- [x] Define the public URLs for `qa`, `staging`, and `prod`.
 - [ ] Define the DNS registrar/provider access path.
 - [ ] Define the GitHub Actions secret names needed for deployment.
 - [ ] Keep Render access credentials out of git.
@@ -282,7 +294,7 @@ Use one Render-managed PostgreSQL database per runtime environment.
 - [x] I can identify the token name and where it is stored without exposing the secret value.
 - [x] I can point to the saved workspace name and selected onboarding options.
 - [x] I can point to the current Render web service bootstrap snapshot.
-- [ ] I can name the hostname for each public environment.
+- [x] I can name the hostname for each public environment.
 - [ ] I can say who controls DNS and how records will be updated.
 - [ ] I can list the secret names required for Render promotion and deploys.
 - [ ] I know where the Render token lives and can rotate it without a repo change.
