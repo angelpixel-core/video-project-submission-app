@@ -161,6 +161,19 @@ render services -o text
 | Keep DNS provider credentials out of git. | I know which secret store or account holds DNS access. |
 | Keep deployment tokens separate from human login credentials. | I can distinguish the automation token from personal account access. |
 
+### GitHub Actions Secrets
+
+| Secret Name | Purpose |
+| --- | --- |
+| `RENDER_API_KEY` | Authenticates the Render CLI in GitHub Actions. |
+| `RENDER_QA_SERVICE_ID` | Targets the QA Render web service. |
+| `RENDER_STAGING_SERVICE_ID` | Targets the staging Render web service. |
+| `RENDER_PROD_SERVICE_ID` | Targets the production Render web service. |
+
+- Use one service ID secret per environment so deploys stay explicit.
+- `GITHUB_TOKEN` is provided by GitHub Actions automatically and does not need a manual secret entry.
+- The GitHub CLI can set these secrets with `gh secret set`.
+
 ### PostgreSQL Bootstrap Snapshot
 
 | Item | Selected Value | Manual Verification |
@@ -274,7 +287,7 @@ Use one Render-managed PostgreSQL database per runtime environment.
 - [x] Record the PostgreSQL bootstrap snapshot for the QA database.
 - [x] Define the public URLs for `qa`, `staging`, and `prod`.
 - [ ] Define the DNS registrar/provider access path.
-- [ ] Define the GitHub Actions secret names needed for deployment.
+- [x] Define the GitHub Actions secret names needed for deployment.
 - [ ] Keep Render access credentials out of git.
 - [ ] Keep DNS provider credentials out of git.
 - [ ] Keep deployment tokens separate from human login credentials.
@@ -300,7 +313,7 @@ Use one Render-managed PostgreSQL database per runtime environment.
 - [x] I can point to the current Render web service bootstrap snapshot.
 - [x] I can name the hostname for each public environment.
 - [ ] I can say who controls DNS and how records will be updated.
-- [ ] I can list the secret names required for Render promotion and deploys.
+- [x] I can list the secret names required for Render promotion and deploys.
 - [ ] I know where the Render token lives and can rotate it without a repo change.
 - [ ] I know which secret store or account holds DNS access.
 - [ ] I can distinguish the automation token from personal account access.
