@@ -66,6 +66,9 @@ Set up the application baseline and development environment for the Rails projec
 - `env/test/app/db.env`
 - `env/test/db/bootstrap.env`
 - `env/test/stack/compose.env`
+- `env/test/app/secrets.local.env`
+- `env/test/db/secrets.local.env`
+- `env/test/stack/secrets.local.env`
 - `env/example/app/core.env`
 - `env/example/app/db.env`
 - `env/example/db/bootstrap.env`
@@ -76,12 +79,21 @@ Set up the application baseline and development environment for the Rails projec
 - `env/repo/create.local.env`
 - `env/qa/README.md`
 - `env/qa/app/core.env`
+- `env/qa/app/secrets.local.env`
+- `env/qa/db/secrets.local.env`
+- `env/qa/stack/secrets.local.env`
 - `env/qa/stack/compose.env`
 - `env/staging/README.md`
 - `env/staging/app/core.env`
+- `env/staging/app/secrets.local.env`
+- `env/staging/db/secrets.local.env`
+- `env/staging/stack/secrets.local.env`
 - `env/staging/stack/compose.env`
 - `env/prod/README.md`
 - `env/prod/app/core.env`
+- `env/prod/app/secrets.local.env`
+- `env/prod/db/secrets.local.env`
+- `env/prod/stack/secrets.local.env`
 - `env/prod/stack/compose.env`
 
 ## Checklist
@@ -118,9 +130,9 @@ Set up the application baseline and development environment for the Rails projec
 - If MySQL-specific SQL features are not required, prefer `schema.rb` over `structure.sql`.
 - The current bootstrap scope only covers the database and app boundary needed for the Rails baseline.
 - `RUBY_VERSION` should come from the environment and be shared across `.tool-versions`, compose, and Docker build args.
-- Use `env/<env>/app/core.env`, `env/<env>/app/db.env`, `env/<env>/db/bootstrap.env`, and `env/<env>/stack/compose.env` to avoid cross-consumer leakage.
+- Use `env/<env>/app/core.env`, `env/<env>/app/db.env`, `env/<env>/app/secrets.local.env`, `env/<env>/db/bootstrap.env`, `env/<env>/db/secrets.local.env`, `env/<env>/stack/compose.env`, and `env/<env>/stack/secrets.local.env` to avoid cross-consumer leakage.
 - `stack/secrets/sync/gh`, `stack/secrets/sync/ci`, and `stack/secrets/sync/vercel` are the standardized secret-sync entry points.
-- `prod/`, `qa/`, and `staging/` keep non-secret stack/core env files versioned while local DB credential files remain ignored.
+- `prod/`, `qa/`, and `staging/` keep non-secret stack/core env files versioned while secret placeholder files are versioned alongside them.
 - `env/repo/create.env` is the versioned default for repository provisioning, with `create.local.env` reserved for local overrides.
 - `ssl_mode: disabled` is set in `config/database.yml` for local development and test to avoid MySQL 8.4 self-signed TLS issues.
 

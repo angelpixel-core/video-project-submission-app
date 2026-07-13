@@ -9,4 +9,4 @@ This directory contains staging app runtime values.
 
 ## Notes
 
-- `db.env` should be treated as a local secret file in staging.
+- `db.env` and `secrets.local.env` can hold placeholder secret values in staging.

@@ -4,7 +4,7 @@ This directory contains production database bootstrap values.
 
 ## Files
 
-- `bootstrap.env` - Local-only bootstrap values.
+- `bootstrap.env` - Bootstrap values; use `secrets.local.env` for placeholder secret overrides when needed.
 
 ## Notes
 

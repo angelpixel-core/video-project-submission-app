@@ -5,7 +5,7 @@ This directory contains environment variables used by the MySQL bootstrap proces
 ## Files
 
 - `bootstrap.env` - Values consumed by the database container at bootstrap time.
-- `secrets.local.env` - Ignored local overrides for sensitive database bootstrap values.
+- `secrets.local.env` - Versioned placeholder overrides for sensitive database bootstrap values.
 
 ## Notes
 

@@ -9,4 +9,4 @@ This directory contains QA app runtime values.
 
 ## Notes
 
-- `db.env` should be treated as a local secret file in QA.
+- `db.env` and `secrets.local.env` can hold placeholder secret values in QA.

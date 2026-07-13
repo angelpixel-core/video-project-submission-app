@@ -11,5 +11,5 @@ This directory is reserved for staging environment files.
 ## Notes
 
 - Version `app/core.env` and `stack/compose.env` when they are non-secret.
-- Keep `app/db.env` and `db/bootstrap.env` local-only and sync them to the secret store.
-- Use `secrets.local.env` files in `app/`, `db/`, and `stack/` for ignored local secret overrides when needed.
+- Keep `app/db.env` and `db/bootstrap.env` versioned with placeholders when values are not yet final.
+- Use `secrets.local.env` files in `app/`, `db/`, and `stack/` for versioned placeholder secret values when needed.

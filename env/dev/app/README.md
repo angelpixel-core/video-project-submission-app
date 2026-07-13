@@ -6,7 +6,7 @@ This directory contains environment variables consumed by the application contai
 
 - `core.env` - Runtime settings.
 - `db.env` - Database connection settings for the app.
-- `secrets.local.env` - Ignored local overrides for sensitive app values.
+- `secrets.local.env` - Versioned placeholder overrides for sensitive app values.
 
 ## Notes
 
