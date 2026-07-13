@@ -62,10 +62,10 @@ title: Database Engine and IaC Strategy
   - [x] Add or adjust a QA-specific Rails config so `DATABASE_URL` is consumed in the deployed environment.
 - [x] Add the production PostgreSQL driver dependency.
   - [x] `pg` is already present in the production bundle group in `Gemfile`.
-- [ ] Define the infra layout for Render provisioning.
-  - [ ] Create a tool-agnostic `ops/infra/render/` tree organized by platform and environment.
-  - [ ] Add reusable component/module directories for `web`, `worker`, `postgres`, and `dns`.
-  - [ ] Add environment directories for `qa`, `staging`, and `prod`.
+- [x] Define the infra layout for Render provisioning.
+  - [x] Create a tool-agnostic `ops/infra/render/` tree organized by platform and environment.
+  - [x] Add reusable component/module directories for `web`, `worker`, `postgres`, and `dns`.
+  - [x] Add environment directories for `qa`, `staging`, and `prod`.
 - [ ] Define the infra inventory for each environment.
   - [ ] Provision one web service, one worker service, and one managed PostgreSQL service per environment.
   - [ ] Keep QA and staging workers separate so queue/config boundaries stay isolated.
@@ -85,7 +85,7 @@ title: Database Engine and IaC Strategy
 - [ ] The Rails app can connect to PostgreSQL in Render without affecting local MySQL.
   - [ ] This still needs a QA deploy/config validation run.
 - [ ] The infra pipeline can be run independently of app feature work.
-  - [ ] `ops/infra/render/` and its workflow are not created yet.
+  - [ ] `ops/infra/render/` exists, but its workflow is not created yet.
 
 ## Notes
 
