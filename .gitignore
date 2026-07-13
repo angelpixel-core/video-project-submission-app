@@ -33,6 +33,18 @@
 # Ignore key files for decrypting credentials and more.
 /config/*.key
 
+env/qa/app/secrets.local.env
+env/qa/db/secrets.local.env
+env/qa/stack/secrets.local.env
+
+env/staging/app/secrets.local.env
+env/staging/db/secrets.local.env
+env/staging/stack/secrets.local.env
+
+env/prod/app/secrets.local.env
+env/prod/db/secrets.local.env
+env/prod/stack/secrets.local.env
+
 
 # Vite Ruby
 /public/vite*
