@@ -161,6 +161,39 @@ render services -o text
 | Keep DNS provider credentials out of git. | I know which secret store or account holds DNS access. |
 | Keep deployment tokens separate from human login credentials. | I can distinguish the automation token from personal account access. |
 
+### Credential Policies
+
+#### Render Access Credentials
+
+| Credential | Stored In | Never Commit | Rotation | Verification |
+| --- | --- | --- | --- | --- |
+| Render API key | GitHub Actions secret `RENDER_API_KEY` | Raw key material, CLI token dumps, or Render dashboard exports | Recreate in Render, then update the GitHub secret | `gh secret list --repo angelpixel-core/video-project-submission-app --app actions` |
+| Render CLI token | Local Render CLI config (`~/.render/cli.yaml`) | Local config files, dotfiles, or repo env files | Re-run `render login` | `render workspaces -o text` |
+| Render service IDs | GitHub Actions secrets `RENDER_QA_SERVICE_ID`, `RENDER_STAGING_SERVICE_ID`, `RENDER_PROD_SERVICE_ID` | Service ID values in tracked env files | Recopy from Render after service changes | `gh secret list --repo angelpixel-core/video-project-submission-app --app actions` |
+
+#### DNS Provider Credentials
+
+| Credential | Stored In | Never Commit | Rotation | Verification |
+| --- | --- | --- | --- | --- |
+| DNS API key / token | DNS provider account or secret store | `env/`, docs, or repo secrets unless the provider is the system of record | Reissue in the DNS provider and update the secret store | Provider dashboard and secret inventory |
+| DNS zone ownership | Registrar / DNS provider account | Repo files or Render settings | Update registrar access when ownership changes | Domain registrar / DNS console |
+
+- DNS provider access remains undecided until a custom domain exists.
+- When the provider is chosen, store its credentials in the provider or a secret store, not in git.
+
+#### Deployment Tokens
+
+| Token Type | Stored In | Never Commit | Rotation | Verification |
+| --- | --- | --- | --- | --- |
+| GitHub Actions runtime token | GitHub-managed `GITHUB_TOKEN` | Hardcoded token values | Automatic per workflow run | Presence in workflow context |
+| Render deploy automation secret | GitHub Actions secret `RENDER_API_KEY` | Repo files or plaintext envs | Recreate in Render, then update the secret | Smoke workflow or `gh secret list` |
+| Human login credentials | Human password / SSO / browser session | Any repo file or automation secret | Account settings / identity provider | Login in browser or SSO flow |
+
+- Keep human login credentials and automation tokens in separate systems.
+- Use `gh secret set` for repository or environment secrets.
+- Use `gh secret list` for metadata-only verification.
+- Use a workflow smoke test to confirm the token works at runtime.
+
 ### GitHub Actions Secrets
 
 | Secret Name | Purpose |
@@ -304,9 +337,9 @@ Use one Render-managed PostgreSQL database per runtime environment.
 - [x] Define the public URLs for `qa`, `staging`, and `prod`.
 - [ ] Define the DNS registrar/provider access path.
 - [x] Define the GitHub Actions secret names needed for deployment.
-- [ ] Keep Render access credentials out of git.
-- [ ] Keep DNS provider credentials out of git.
-- [ ] Keep deployment tokens separate from human login credentials.
+- [x] Keep Render access credentials out of git.
+- [x] Keep DNS provider credentials out of git.
+- [x] Keep deployment tokens separate from human login credentials.
 - [x] Define the Render service map for `qa`, `staging`, and `prod`.
 - [x] Define the `qa` web service.
 - [x] Define the `staging` web service.
@@ -330,9 +363,9 @@ Use one Render-managed PostgreSQL database per runtime environment.
 - [x] I can name the hostname for each public environment.
 - [ ] I can say who controls DNS and how records will be updated.
 - [x] I can list the secret names required for Render promotion and deploys.
-- [ ] I know where the Render token lives and can rotate it without a repo change.
+- [x] I know where the Render token lives and can rotate it without a repo change.
 - [ ] I know which secret store or account holds DNS access.
-- [ ] I can distinguish the automation token from personal account access.
+- [x] I can distinguish the automation token from personal account access.
 - [x] I can point to the exact web service and database service for each environment without ambiguity.
 - [x] I can explain what runs in the `qa` web service.
 - [x] I can explain what runs in the `staging` web service.
