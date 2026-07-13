@@ -22,6 +22,10 @@ services:
     env_file:
       - ../../env/${STACK_ENV}/app/core.env
       - ../../env/${STACK_ENV}/app/db.env
+      - ../../env/${STACK_ENV}/app/secrets.local.env
+      - ../../env/${STACK_ENV}/db/secrets.local.env
+      - ../../env/${STACK_ENV}/stack/secrets.local.env
+      - ../../env/.local/${STACK_ENV}.env
     environment:
       MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD:-root_password}"
       VITE_RUBY_HOST: "${VITE_RUBY_HOST:-host.docker.internal}"

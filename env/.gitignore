@@ -1,8 +1,1 @@
-**/secrets.local.env
-qa/app/db.env
-qa/db/bootstrap.env
-staging/app/db.env
-staging/db/bootstrap.env
-prod/app/db.env
-prod/db/bootstrap.env
-repo/*.local.env
+.local/

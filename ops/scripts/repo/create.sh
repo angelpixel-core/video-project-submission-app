@@ -2,7 +2,7 @@
 set -eu
 
 SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
-ROOT_DIR=$(CDPATH= cd -- "${SCRIPT_DIR}/../.." && pwd)
+ROOT_DIR=$(CDPATH= cd -- "${SCRIPT_DIR}/../../.." && pwd)
 
 load_env_file() {
   [ -f "$1" ] || return 0
@@ -11,8 +11,8 @@ load_env_file() {
   set +a
 }
 
-load_env_file "${ROOT_DIR}/env/repo/create.env"
-load_env_file "${ROOT_DIR}/env/repo/create.local.env"
+load_env_file "${ROOT_DIR}/ops/repo/create.env"
+load_env_file "${ROOT_DIR}/ops/repo/create.local.env"
 
 REPO_PROVIDER="${REPO_PROVIDER:-github}"
 REPO_HOST="${REPO_HOST:-github.com}"
@@ -30,7 +30,8 @@ usage() {
   cat <<'EOF'
 Usage: sh ops/scripts/repo/create.sh
 
-Defaults are loaded from env/repo/create.env and env/repo/create.local.env.
+Defaults are loaded from ops/repo/create.env and ops/repo/create.local.env.
+This profile is repository provisioning metadata, not an application runtime env.
 You can override them with OWNER, NAME, DESCRIPTION, LICENSE, PRIVATE, PUBLIC, REPO_PROVIDER, REPO_HOST, REPO_WEB_BASE_URL, REPO_API_BASE_URL, and REPO_GIT_REMOTE_URL.
 
 Creates or configures a repository using the selected provider adapter.
