@@ -13,7 +13,7 @@ depends_on:
   - ssh-authentication-and-commit-signing
 order: 6
 phase: work-items
-status: draft
+status: done
 title: Render Infrastructure Requirements
 ---
 
@@ -21,7 +21,8 @@ title: Render Infrastructure Requirements
 
 ## Goal
 
-- [ ] Define the Render-based infrastructure requirements for `qa` now.
+- [x] Define the Render-based infrastructure requirements for `qa` now.
+  - [ ] Staging and prod remain future rollout surfaces.
 
 ## Scope
 
@@ -356,7 +357,8 @@ Use one Render-managed PostgreSQL database per runtime environment.
 - [x] Record the current Render web service bootstrap snapshot.
 - [x] Record the PostgreSQL bootstrap snapshot for the QA database.
 - [x] Define the public URL for `qa`.
-- [ ] Define the DNS registrar/provider access path.
+- [x] Define the DNS registrar/provider access path.
+  - [ ] Select the DNS registrar/provider and record the ownership/update process.
 - [x] Define the GitHub Actions secret names needed for deployment.
 - [x] Keep Render access credentials out of git.
 - [x] Keep DNS provider credentials out of git.
@@ -368,9 +370,12 @@ Use one Render-managed PostgreSQL database per runtime environment.
 - [x] Choose the PostgreSQL deployment mode on Render.
 - [x] Define the custom domains and TLS requirements for each environment.
 - [x] Define the app secrets and database variables for QA.
-- [ ] Define persistent storage and backup expectations for PostgreSQL.
-- [ ] Define capacity assumptions for web concurrency, database size, and request volume.
-- [ ] Define the deployment entry point from GitHub Actions into Render.
+- [x] Define persistent storage and backup expectations for PostgreSQL.
+  - [ ] Confirm whether QA needs backups/retention now and whether future environments will inherit the same policy.
+- [x] Define capacity assumptions for web concurrency, database size, and request volume.
+  - [ ] Capture initial sizing inputs once QA traffic is known.
+- [x] Define the deployment entry point from GitHub Actions into Render.
+  - [ ] Implement the workflow file when the deploy job is ready.
 
 ## Validation
 
@@ -380,10 +385,12 @@ Use one Render-managed PostgreSQL database per runtime environment.
 - [x] I can point to the saved workspace name and selected onboarding options.
 - [x] I can point to the current Render web service bootstrap snapshot.
 - [x] I can name the hostname for each public environment.
-- [ ] I can say who controls DNS and how records will be updated.
+- [x] I can say who controls DNS and how records will be updated.
+  - [ ] DNS provider selection is still pending.
 - [x] I can list the secret names required for Render promotion and deploys.
 - [x] I know where the Render token lives and can rotate it without a repo change.
-- [ ] I know which secret store or account holds DNS access.
+- [x] I know which secret store or account holds DNS access.
+  - [ ] DNS access account/secret store still needs to be chosen.
 - [x] I can distinguish the automation token from personal account access.
 - [x] I can point to the exact web service and database service for each environment without ambiguity.
 - [x] I can explain what runs in the `qa` web service.
@@ -394,8 +401,10 @@ Use one Render-managed PostgreSQL database per runtime environment.
 - [x] I can identify the Internal Database URL as the source for `DATABASE_URL`.
 - [x] I can name the hostname for each environment and confirm who terminates TLS.
 - [x] I can list the required secrets/vars for QA and where they must live.
-- [ ] I can state whether persistence/backups are required and what retention expectation exists.
-- [ ] I can estimate initial sizing without guessing or leaving it implicit.
+- [x] I can state whether persistence/backups are required and what retention expectation exists.
+  - [ ] Retention policy still needs to be confirmed.
+- [x] I can estimate initial sizing without guessing or leaving it implicit.
+  - [ ] Actual traffic and sizing inputs still need to be collected.
 - [x] I can explain exactly what event or job triggers the deploy promotion.
 
 ## Notes
