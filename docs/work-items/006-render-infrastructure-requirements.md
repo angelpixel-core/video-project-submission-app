@@ -67,10 +67,42 @@ title: Render Infrastructure Requirements
 
 | Item | Manual Verification |
 | --- | --- |
+| Render workspace URL | `https://dashboard.render.com/project/prj-d9a05upo3t8c7383lhag` | I can open the exact Render project page for this workspace. |
+| Owner / team name | `Angel Szymczak` | I can identify the workspace owner from the account settings view. |
 | Create or confirm the Render account/workspace. | I can sign in to Render and see the workspace that will host the app. |
 | Record the Render workspace URL and owner/team name. | I can point to the exact Render workspace URL and the responsible team/owner. |
 | Create a Render API token for automation. | I can identify the token name and where it is stored without exposing the secret value. |
 | Confirm the onboarding responses are recorded for the workspace. | I can point to the saved workspace name and selected onboarding options. |
+
+### Render CLI
+
+Use the Render CLI to confirm the workspace, list services, and validate deployment access from the terminal.
+
+#### Install
+
+```shell
+brew update
+brew install render
+```
+
+Alternative macOS/Linux install:
+
+```shell
+curl -fsSL https://raw.githubusercontent.com/render-oss/cli/refs/heads/main/bin/install.sh | sh
+```
+
+#### Validate
+
+```shell
+render login
+render workspaces -o text
+render workspace set
+render services -o text
+```
+
+- Use `render login` for an interactive local session.
+- Use a Render API key with `RENDER_API_KEY` for automation and CI.
+- Use the CLI to confirm the active workspace before relying on any workspace-scoped commands.
 
 ### URLs and External Access
 
@@ -206,7 +238,7 @@ Use one Render-managed PostgreSQL database per runtime environment.
 ## Checklist
 
 - [x] Create or confirm the Render account/workspace.
-- [ ] Record the Render workspace URL and owner/team name.
+- [x] Record the Render workspace URL and owner/team name.
 - [ ] Create a Render API token for automation.
 - [x] Record the Render onboarding choices for the workspace.
 - [x] Record the current Render web service bootstrap snapshot.
@@ -233,7 +265,7 @@ Use one Render-managed PostgreSQL database per runtime environment.
 ## Validation
 
 - [ ] I can sign in to Render and see the workspace that will host the app.
-- [ ] I can point to the exact Render workspace URL and the responsible team/owner.
+- [x] I can point to the exact Render workspace URL and the responsible team/owner.
 - [ ] I can identify the token name and where it is stored without exposing the secret value.
 - [x] I can point to the saved workspace name and selected onboarding options.
 - [x] I can point to the current Render web service bootstrap snapshot.
