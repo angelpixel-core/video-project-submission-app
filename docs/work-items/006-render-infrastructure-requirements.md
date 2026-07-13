@@ -74,6 +74,18 @@ title: Render Infrastructure Requirements
 | Create a Render API token for automation. | I can identify the token name and where it is stored without exposing the secret value. |
 | Confirm the onboarding responses are recorded for the workspace. | I can point to the saved workspace name and selected onboarding options. |
 
+### CLI Validation Snapshot
+
+| Command | Result |
+| --- | --- |
+| `render --version` | `render v2.21.0` |
+| `render workspaces -o text` | `video-project-submission-app / angel.szymczak@hotmail.com / tea-d99u3cnaqgkc738r033g` |
+| `render services -o text` | `video-project-submission-app-qa` and `video-project-submission-app-qa-db` are visible in the active workspace. |
+
+- The CLI installation is confirmed locally.
+- The CLI can list the active workspace and services without exposing secrets.
+- Use this snapshot as the terminal-side validation for the Render workspace bootstrap.
+
 ### Render CLI
 
 Use the Render CLI to confirm the workspace, list services, and validate deployment access from the terminal.
@@ -264,7 +276,7 @@ Use one Render-managed PostgreSQL database per runtime environment.
 
 ## Validation
 
-- [ ] I can sign in to Render and see the workspace that will host the app.
+- [x] I can sign in to Render and see the workspace that will host the app.
 - [x] I can point to the exact Render workspace URL and the responsible team/owner.
 - [ ] I can identify the token name and where it is stored without exposing the secret value.
 - [x] I can point to the saved workspace name and selected onboarding options.
