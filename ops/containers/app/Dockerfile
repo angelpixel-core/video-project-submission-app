@@ -24,6 +24,7 @@ RUN apk add --no-cache \
   tzdata \
   netcat-openbsd \
   mysql-client \
+  postgresql-libs \
   nodejs \
   npm \
   mariadb-connector-c \
@@ -38,6 +39,7 @@ RUN apk add --no-cache \
   git \
   linux-headers \
   pkgconf \
+  postgresql-dev \
   yaml-dev \
   mariadb-connector-c-dev
 
@@ -73,6 +75,7 @@ RUN apk add --no-cache \
   git \
   linux-headers \
   pkgconf \
+  postgresql-dev \
   yaml-dev \
   mariadb-connector-c-dev
 
