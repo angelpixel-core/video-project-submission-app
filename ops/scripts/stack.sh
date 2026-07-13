@@ -6,6 +6,7 @@ SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 ROOT_DIR=$(CDPATH= cd -- "${SCRIPT_DIR}/../.." && pwd)
 STACK_COMPOSE_FILE="${ROOT_DIR}/ops/compose/compose.yml"
 STACK_ENV_FILE="${ROOT_DIR}/env/${STACK_ENV}/stack/compose.env"
+STACK_LOCAL_SECRET_FILE="${ROOT_DIR}/env/.local/${STACK_ENV}.env"
 
 require_file() {
   if [ ! -f "$1" ]; then
@@ -16,6 +17,8 @@ require_file() {
 
 run_compose() {
   require_file "$STACK_ENV_FILE"
+  mkdir -p "$(dirname "$STACK_LOCAL_SECRET_FILE")"
+  [ -f "$STACK_LOCAL_SECRET_FILE" ] || : > "$STACK_LOCAL_SECRET_FILE"
   docker compose --env-file "$STACK_ENV_FILE" -f "$STACK_COMPOSE_FILE" "$@"
 }
 

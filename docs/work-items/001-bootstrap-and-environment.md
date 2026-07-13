@@ -74,9 +74,9 @@ Set up the application baseline and development environment for the Rails projec
 - `env/example/db/bootstrap.env`
 - `env/example/stack/compose.env`
 - `config/database.yml`
-- `env/repo/README.md`
-- `env/repo/create.env`
-- `env/repo/create.local.env`
+- `ops/repo/README.md`
+- `ops/repo/create.env`
+- `ops/repo/create.local.env`
 - `env/qa/README.md`
 - `env/qa/app/core.env`
 - `env/qa/app/secrets.local.env`
@@ -119,7 +119,7 @@ Set up the application baseline and development environment for the Rails projec
 - [ ] `make stack/up` starts the database and app services.
 - [ ] `make stack/config` renders the compose configuration.
 - [ ] `make stack/doctor` validates the stack configuration.
-- [ ] `make repo/create` can provision or reconfigure the repository from `env/repo/create.env`.
+- [ ] `make repo/create` can provision or reconfigure the repository from `ops/repo/create.env`.
 - [ ] MySQL starts via Compose.
 - [ ] The Rails app can connect to the database.
 - [ ] Schema dumps are generated as `schema.rb`.
@@ -133,7 +133,8 @@ Set up the application baseline and development environment for the Rails projec
 - Use `env/<env>/app/core.env`, `env/<env>/app/db.env`, `env/<env>/app/secrets.local.env`, `env/<env>/db/bootstrap.env`, `env/<env>/db/secrets.local.env`, `env/<env>/stack/compose.env`, and `env/<env>/stack/secrets.local.env` to avoid cross-consumer leakage.
 - `stack/secrets/sync/gh`, `stack/secrets/sync/ci`, and `stack/secrets/sync/vercel` are the standardized secret-sync entry points.
 - `prod/`, `qa/`, and `staging/` keep non-secret stack/core env files versioned while secret placeholder files are versioned alongside them.
-- `env/repo/create.env` is the versioned default for repository provisioning, with `create.local.env` reserved for local overrides.
+- `ops/repo/create.env` is the versioned default for repository provisioning, with `create.local.env` reserved for local overrides.
+- `ops/repo/` is a provisioning profile for repository automation, not a runtime environment alongside `dev`, `test`, `qa`, `staging`, and `prod`.
 - `ssl_mode: disabled` is set in `config/database.yml` for local development and test to avoid MySQL 8.4 self-signed TLS issues.
 
 ## Related Docs

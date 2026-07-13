@@ -21,17 +21,19 @@ title: Render Infrastructure Requirements
 
 ## Goal
 
-- [ ] Define the Render-based infrastructure requirements for `qa`, `staging`, and `prod` so the deployment target is explicit before implementation continues.
+- [ ] Define the Render-based infrastructure requirements for `qa` now.
 
 ## Scope
 
-- Render service map for `qa`, `staging`, and `prod`.
+- Render service map for `qa`.
 - Render account, workspace, and access bootstrap.
 - PostgreSQL deployment strategy on Render.
 - Custom domains, TLS, and DNS requirements.
 - Environment variables, secrets, and resource sizing.
 - Capacity and cost drivers for the deployment target.
 - GitHub Actions handoff into Render.
+
+- Current implementation target is QA only.
 
 ## Access Bootstrap
 
@@ -120,7 +122,7 @@ render services -o text
 
 | Item | Manual Verification |
 | --- | --- |
-| Define the public URLs for `qa`, `staging`, and `prod`. | I can name the hostname for each public environment. |
+| Define the public URL for `qa`. | I can name the hostname for the active public environment. |
 | Define the DNS registrar/provider access path. | I can say who controls DNS and how records will be updated. |
 | Define the GitHub Actions secret names needed for deployment. | I can list the secret names required for Render promotion and deploys. |
 
@@ -128,29 +130,26 @@ render services -o text
 - QA currently uses the Render-managed `onrender.com` hostname, so no external DNS change is needed yet.
 - Revisit this section once a custom domain is chosen.
 
+
 ### Public URLs
 
 | Environment | Public URL | Notes |
 | --- | --- | --- |
 | `qa` | `https://video-project-submission-app-qa.onrender.com` | Confirmed from the Render CLI. |
-| `staging` | `https://staging.<placeholder-domain>` | Placeholder until the custom domain is assigned. |
-| `prod` | `https://<placeholder-domain>` | Placeholder until the custom domain is assigned. |
 
 - Use the Render-generated `onrender.com` URL for QA until the custom domain is ready.
-- Keep staging and prod as placeholders for now.
-- Update these URLs again once the custom domains are wired up in DNS.
+
 
 ### Custom Domains and TLS
 
 | Environment | Public Hostname | TLS Termination | Notes |
 | --- | --- | --- | --- |
 | `qa` | `qa.<placeholder-domain>` | Render-managed certificate | Used for automated deploy and QA validation. |
-| `staging` | `staging.<placeholder-domain>` | Render-managed certificate | Used for release candidate validation. |
-| `prod` | `<placeholder-domain>` | Render-managed certificate | Human-approved release target. |
 
 - Render should terminate TLS for each public hostname.
 - Keep the hostname values as placeholders until the real DNS zone is finalized.
-- DNS records should point the public hostname to the matching Render service target.
+- DNS records should point the public hostname to the matching Render service target when QA leaves placeholder mode.
+
 
 ### Keys and Tokens
 
@@ -169,7 +168,9 @@ render services -o text
 | --- | --- | --- | --- | --- |
 | Render API key | GitHub Actions secret `RENDER_API_KEY` | Raw key material, CLI token dumps, or Render dashboard exports | Recreate in Render, then update the GitHub secret | `gh secret list --repo angelpixel-core/video-project-submission-app --app actions` |
 | Render CLI token | Local Render CLI config (`~/.render/cli.yaml`) | Local config files, dotfiles, or repo env files | Re-run `render login` | `render workspaces -o text` |
-| Render service IDs | GitHub Actions secrets `RENDER_QA_SERVICE_ID`, `RENDER_STAGING_SERVICE_ID`, `RENDER_PROD_SERVICE_ID` | Service ID values in tracked env files | Recopy from Render after service changes | `gh secret list --repo angelpixel-core/video-project-submission-app --app actions` |
+| Render service ID for QA | GitHub Actions secret `RENDER_QA_SERVICE_ID` | Service ID values in tracked env files | Recopy from Render after service changes | `gh secret list --repo angelpixel-core/video-project-submission-app --app actions` |
+
+
 
 #### DNS Provider Credentials
 
@@ -200,8 +201,6 @@ render services -o text
 | --- | --- |
 | `RENDER_API_KEY` | Authenticates the Render CLI in GitHub Actions. |
 | `RENDER_QA_SERVICE_ID` | Targets the QA Render web service. |
-| `RENDER_STAGING_SERVICE_ID` | Targets the staging Render web service. |
-| `RENDER_PROD_SERVICE_ID` | Targets the production Render web service. |
 
 - Use one service ID secret per environment so deploys stay explicit.
 - `GITHUB_TOKEN` is provided by GitHub Actions automatically and does not need a manual secret entry.
@@ -230,17 +229,21 @@ Use `make` as the user-facing entry point and `ops/scripts/secrets.sh` as the im
 | Command | Purpose | Target |
 | --- | --- | --- |
 | `make secrets/init ENV=qa` | Ensure placeholder secret files exist for the selected environment. | local filesystem |
-| `make secrets/set ENV=qa TARGET=github` | Push secret values from the selected environment into GitHub Actions secrets. | GitHub |
+| `make secrets/set ENV=qa TARGET=github` | Push exported `RENDER_*` values or one-off `SECRET_NAME/SECRET_VALUE` pairs into GitHub Actions secrets. | GitHub |
 | `make secrets/set ENV=qa TARGET=render` | Prepare or validate Render-side deployment secrets. | Render |
 | `make secrets/set ENV=qa TARGET=local` | Materialize local Docker/runtime secret values from the selected environment. | local Docker |
 | `make secrets/list ENV=qa TARGET=github` | List secret metadata for the selected environment. | GitHub |
 | `make secrets/validate ENV=qa TARGET=github` | Smoke-test that GitHub Actions can read the configured secrets at runtime. | GitHub Actions |
 
 - `Makefile` should remain a thin wrapper around `ops/scripts/secrets.sh`.
-- `ops/scripts/secrets.sh` should read from `env/${ENV}/app/secrets.local.env`, `env/${ENV}/db/secrets.local.env`, and `env/${ENV}/stack/secrets.local.env`.
+- `ops/scripts/secrets.sh` should read versioned placeholders from `env/${ENV}/app/secrets.local.env`, `env/${ENV}/db/secrets.local.env`, and `env/${ENV}/stack/secrets.local.env`, then write runtime values to `env/.local/${ENV}.env`.
+- GitHub secret sync should use exported `RENDER_*` environment variables or `SECRET_NAME`/`SECRET_VALUE` for one-off updates.
 - Keep `TARGET` explicit so the same command shape works for GitHub, Render, and local Docker.
 - A future `rotate` command can reuse the same script once the first pass is stable.
-- Local `TARGET=local` can write or export values for Compose-based development, but it should still treat the checked-in files as the source of truth for placeholders.
+- Local `TARGET=local` writes runtime values to `env/.local/${ENV}.env` so Compose can read them without dirtying git.
+- `SECRET_NAME` and `SECRET_VALUE` can be used for one-off secret operations when a single value needs to be generated, set, or read.
+- `TARGET=local` writes to the ignored `env/.local/${ENV}.env` overlay, and the stack wrapper ensures that file exists for Compose.
+- `RENDER_API_BASE_URL` can be overridden in tests or mocks; production defaults to the Render API.
 
 ### PostgreSQL Bootstrap Snapshot
 
@@ -269,8 +272,8 @@ Use `make` as the user-facing entry point and `ops/scripts/secrets.sh` as the im
 | Environment | Web Service | Database | Domain | Notes |
 | --- | --- | --- | --- | --- |
 | `qa` | `video-project-submission-app-qa` | Managed PostgreSQL | `qa.<placeholder-domain>` | Used for automated deploy + QA validation. |
-| `staging` | `video-project-submission-app-staging` | Managed PostgreSQL | `staging.<placeholder-domain>` | Used for release candidate validation. |
-| `prod` | `video-project-submission-app-prod` | Managed PostgreSQL | `<placeholder-domain>` | Human-approved release target. |
+
+- QA is the only active deployment target right now.
 
 ### Local Development Context
 
@@ -281,7 +284,7 @@ Use `make` as the user-facing entry point and `ops/scripts/secrets.sh` as the im
 
 ### Render vs Local Boundary
 
-- Render runtime environments are only `qa`, `staging`, and `prod`.
+- The runtime environments documented in this work item currently cover `qa`.
 - Local `dev` and `test` are separate contexts for developer flow and automated checks.
 - Local `dev/test` keep MySQL because that is the current baseline for development and CI.
 - `dev.lvh.me` and `test.lvh.me` are local-only domains and do not imply a Render deployment target.
@@ -299,30 +302,27 @@ Use one Render-managed PostgreSQL database per runtime environment.
 | Environment | Database Mode | Notes |
 | --- | --- | --- |
 | `qa` | Managed PostgreSQL service | Dedicated database for QA validation. |
-| `staging` | Managed PostgreSQL service | Dedicated database for release candidate validation. |
-| `prod` | Managed PostgreSQL service | Dedicated production database. |
 
 ### Rationale
 
 - Keep database boundaries aligned with environment boundaries.
-- Avoid sharing state between QA, staging, and production.
+- Avoid sharing state between runtime targets.
 - Use the native managed PostgreSQL product offered by Render.
 - Keep local `dev/test` on MySQL, since those contexts are already defined outside Render.
+
 
 ### Web Service by Environment
 
 | Environment | Web Service | Purpose | Deployment Source | Notes |
 | --- | --- | --- | --- | --- |
 | `qa` | `video-project-submission-app-qa` | Automated deploy + QA validation | GitHub Actions promotion from `work-items/*` -> `development` | Public Render environment. |
-| `staging` | `video-project-submission-app-staging` | Release candidate validation | Promoted from QA after approval | Public Render environment. |
-| `prod` | `video-project-submission-app-prod` | Production runtime | Manual release promotion from staging | Public Render environment. |
+
+
 
 ### Manual Verification
 
 - I can explain what runs in the `qa` web service.
-- I can explain what runs in the `staging` web service.
-- I can explain what runs in the `prod` web service.
-- I can point to the branch or promotion path that feeds `qa`, `staging`, and `prod`.
+- I can point to the branch or promotion path that feeds QA.
 - I can distinguish Render runtime environments from local `dev/test` contexts.
 
 ## Affected Docs
@@ -337,7 +337,7 @@ Use one Render-managed PostgreSQL database per runtime environment.
 
 - Render account / workspace
 - Render dashboard / workspace
-- Render web services for `qa`, `staging`, and `prod`
+- Render web service for `qa`
 - Render managed PostgreSQL services
 - Render persistent storage / backups
 - DNS provider / registrar
@@ -355,21 +355,19 @@ Use one Render-managed PostgreSQL database per runtime environment.
 - [x] Record the Render onboarding choices for the workspace.
 - [x] Record the current Render web service bootstrap snapshot.
 - [x] Record the PostgreSQL bootstrap snapshot for the QA database.
-- [x] Define the public URLs for `qa`, `staging`, and `prod`.
+- [x] Define the public URL for `qa`.
 - [ ] Define the DNS registrar/provider access path.
 - [x] Define the GitHub Actions secret names needed for deployment.
 - [x] Keep Render access credentials out of git.
 - [x] Keep DNS provider credentials out of git.
 - [x] Keep deployment tokens separate from human login credentials.
-- [x] Define the Render service map for `qa`, `staging`, and `prod`.
+- [x] Define the Render service map for `qa`.
 - [x] Define the `qa` web service.
-- [x] Define the `staging` web service.
-- [x] Define the `prod` web service.
-- [x] Define the deployment source for `qa`, `staging`, and `prod`.
+- [x] Define the deployment source for `qa`.
 - [x] Distinguish Render runtime environments from local `dev/test` contexts.
 - [x] Choose the PostgreSQL deployment mode on Render.
 - [x] Define the custom domains and TLS requirements for each environment.
-- [ ] Define the app secrets and database variables per environment.
+- [x] Define the app secrets and database variables for QA.
 - [ ] Define persistent storage and backup expectations for PostgreSQL.
 - [ ] Define capacity assumptions for web concurrency, database size, and request volume.
 - [ ] Define the deployment entry point from GitHub Actions into Render.
@@ -389,15 +387,13 @@ Use one Render-managed PostgreSQL database per runtime environment.
 - [x] I can distinguish the automation token from personal account access.
 - [x] I can point to the exact web service and database service for each environment without ambiguity.
 - [x] I can explain what runs in the `qa` web service.
-- [x] I can explain what runs in the `staging` web service.
-- [x] I can explain what runs in the `prod` web service.
-- [x] I can point to the branch or promotion path that feeds `qa`, `staging`, and `prod`.
+- [x] I can point to the branch or promotion path that feeds `qa`.
 - [x] I can distinguish Render runtime environments from local `dev/test` contexts.
 - [x] I can state whether it is one managed database per environment and why that choice was made.
 - [x] I can point to the saved QA PostgreSQL bootstrap snapshot.
 - [x] I can identify the Internal Database URL as the source for `DATABASE_URL`.
 - [x] I can name the hostname for each environment and confirm who terminates TLS.
-- [ ] I can list the required secrets/vars for each environment and where they must live.
+- [x] I can list the required secrets/vars for QA and where they must live.
 - [ ] I can state whether persistence/backups are required and what retention expectation exists.
 - [ ] I can estimate initial sizing without guessing or leaving it implicit.
 - [x] I can explain exactly what event or job triggers the deploy promotion.
@@ -405,7 +401,8 @@ Use one Render-managed PostgreSQL database per runtime environment.
 ## Notes
 
 - Prefer separate services for the web runtime and the database.
-- Use PostgreSQL on Render for `qa`, `staging`, and `prod` to match the deployment target.
+- Use PostgreSQL on Render for `qa` to match the deployment target.
+- Future rollout note: `staging` and `prod` are intentionally out of scope for this work item.
 - Keep the document focused on infrastructure requirements, not implementation details.
 - Treat Redis as optional until the application actually needs it.
 - Use placeholders for domains and secret names when the real values are not yet finalized.
