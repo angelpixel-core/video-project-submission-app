@@ -58,8 +58,8 @@ title: Database Engine and IaC Strategy
   - [x] Keep `dev` and `test` on MySQL and `qa` on PostgreSQL, with staging/prod reserved for future rollout.
 - [x] Confirm `schema.rb` remains the default schema format.
   - [x] The schema strategy is already captured in `docs/decisions/02-rails-schema-format.md`.
-- [ ] Update Rails database configuration for PostgreSQL in `qa`.
-  - [ ] Add or adjust a QA-specific Rails config so `DATABASE_URL` is consumed in the deployed environment.
+- [x] Update Rails database configuration for PostgreSQL in `qa`.
+  - [x] Add or adjust a QA-specific Rails config so `DATABASE_URL` is consumed in the deployed environment.
 - [x] Add the production PostgreSQL driver dependency.
   - [x] `pg` is already present in the production bundle group in `Gemfile`.
 - [ ] Define the Terraform layout for Render provisioning.
@@ -73,8 +73,8 @@ title: Database Engine and IaC Strategy
 
 - [x] The environment matrix is explicit and documented.
 - [x] The Terraform strategy is explicit and documented.
-- [ ] The Rails database configuration supports all runtime environments.
-  - [ ] QA-specific Rails database config still needs to be added or adjusted.
+- [x] The Rails database configuration supports all runtime environments.
+  - [x] QA-specific Rails database config is present and wired through `DATABASE_URL`.
 - [ ] The Rails app can connect to PostgreSQL in Render without affecting local MySQL.
   - [ ] This still needs a QA deploy/config validation run.
 - [ ] The infra pipeline can be run independently of app feature work.
