@@ -124,6 +124,10 @@ render services -o text
 | Define the DNS registrar/provider access path. | I can say who controls DNS and how records will be updated. |
 | Define the GitHub Actions secret names needed for deployment. | I can list the secret names required for Render promotion and deploys. |
 
+- DNS provider is not yet selected because the custom domain has not been purchased or wired up.
+- QA currently uses the Render-managed `onrender.com` hostname, so no external DNS change is needed yet.
+- Revisit this section once a custom domain is chosen.
+
 ### Public URLs
 
 | Environment | Public URL | Notes |
