@@ -49,7 +49,7 @@ title: Database Engine and IaC Strategy
 - `Gemfile.lock`
 - `config/database.yml`
 - `db/schema.rb`
-- `ops/infra/terraform/`
+- `ops/infra/render/`
 - GitHub Actions infra workflow
 
 ## Checklist
@@ -62,11 +62,18 @@ title: Database Engine and IaC Strategy
   - [x] Add or adjust a QA-specific Rails config so `DATABASE_URL` is consumed in the deployed environment.
 - [x] Add the production PostgreSQL driver dependency.
   - [x] `pg` is already present in the production bundle group in `Gemfile`.
-- [ ] Define the Terraform layout for Render provisioning.
-  - [ ] Create the `ops/infra/terraform/` tree and resource modules.
+- [ ] Define the infra layout for Render provisioning.
+  - [ ] Create a tool-agnostic `ops/infra/render/` tree organized by platform and environment.
+  - [ ] Add reusable component/module directories for `web`, `worker`, `postgres`, and `dns`.
+  - [ ] Add environment directories for `qa`, `staging`, and `prod`.
+- [ ] Define the infra inventory for each environment.
+  - [ ] Provision one web service, one worker service, and one managed PostgreSQL service per environment.
+  - [ ] Keep QA and staging workers separate so queue/config boundaries stay isolated.
+  - [ ] Capture env vars, secrets, hostname, and TLS requirements per environment.
 - [ ] Define the infra pipeline triggers for `fmt`, `validate`, `plan`, and `apply`.
   - [ ] Add GitHub Actions wiring for infra-only validation and approval-gated apply.
-- [ ] Define the provisioning inputs for domain, TLS, app service, and database resources.
+- [ ] Define the adoption path for existing QA Render resources.
+  - [ ] Document how Terraform will adopt the live QA Render state before staging is introduced.
   - [ ] Capture the concrete Render resource names and hostnames when the Terraform stack is introduced.
 
 ## Validation 
@@ -78,7 +85,7 @@ title: Database Engine and IaC Strategy
 - [ ] The Rails app can connect to PostgreSQL in Render without affecting local MySQL.
   - [ ] This still needs a QA deploy/config validation run.
 - [ ] The infra pipeline can be run independently of app feature work.
-  - [ ] `ops/infra/terraform/` and its workflow are not created yet.
+  - [ ] `ops/infra/render/` and its workflow are not created yet.
 
 ## Notes
 
