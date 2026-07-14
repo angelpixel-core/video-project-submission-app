@@ -34,6 +34,15 @@ title: Database Engine and IaC Strategy
 - Terraform-based provisioning for Render resources.
 - Staging and prod will follow the same pattern when they are activated.
 
+## Implementation Plan
+
+- [ ] Create the Terraform base files for each environment under `ops/infra/render/envs/{qa,staging,prod}`.
+- [ ] Create reusable modules under `ops/infra/render/components/{web,worker,postgres,dns}`.
+- [ ] Start with `qa` and wire it to the live Render web service and PostgreSQL service.
+- [ ] Express QA adoption with Terraform `import` blocks.
+- [ ] Keep `staging` and `prod` in the same shape, but without live state yet.
+- [ ] Validate with `terraform fmt`, `terraform init -backend=false`, and `terraform plan` for `qa`.
+
 ## Affected Docs
 
 - `docs/decisions/05-render-infrastructure-target.md`
