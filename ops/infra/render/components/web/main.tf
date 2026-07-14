@@ -16,12 +16,12 @@ resource "render_web_service" "this" {
       auto_deploy_trigger = var.auto_deploy_trigger
       build_filter = {
         paths = [
-          "app",
-          "bin",
-          "config",
-          "db",
-          "lib",
-          "public",
+          "app/**",
+          "bin/**",
+          "config/**",
+          "db/**",
+          "lib/**",
+          "public/**",
           "Gemfile",
           "Gemfile.lock",
           "package.json",
@@ -30,11 +30,14 @@ resource "render_web_service" "this" {
           "config/vite.json",
         ]
         ignored_paths = [
-          "docs",
-          "spec",
-          "env",
-          "ops",
+          "docs/**",
+          "spec/**",
+          "*.md",
           "README.md",
+          ".github/**",
+          "env/**",
+          "ops/**",
+          ".DS_Store",
         ]
       }
     }

@@ -45,7 +45,7 @@ title: Database Engine and IaC Strategy
   - [x] Run `terraform -chdir=ops/infra/render/envs/qa init -input=false -backend=false`.
   - [x] Run `terraform -chdir=ops/infra/render/envs/qa plan` and confirm the existing QA web service and Postgres are adopted, not recreated.
   - [x] Confirm the worker stays absent until a real QA worker exists in Render.
-- [ ] Reconcile the imported QA Render state to reduce provider-normalized plan drift.
+- [x] Reconcile the imported QA Render state to reduce provider-normalized plan drift.
 - [ ] Mirror the same structure into `staging` and `prod` without live state yet.
 
 ## Affected Docs

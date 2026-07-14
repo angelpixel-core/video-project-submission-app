@@ -32,3 +32,12 @@ variable "region" {
   description = "Render region for the database."
   type        = string
 }
+
+variable "ip_allow_list" {
+  description = "Allow list entries for the database."
+  type = list(object({
+    cidr_block  = string
+    description = string
+  }))
+  default = []
+}

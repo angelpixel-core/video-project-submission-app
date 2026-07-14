@@ -32,4 +32,10 @@ module "postgres" {
   plan             = "free"
   postgres_version = "18"
   region           = "oregon"
+  ip_allow_list = [
+    {
+      cidr_block  = "0.0.0.0/0"
+      description = "everywhere"
+    }
+  ]
 }
