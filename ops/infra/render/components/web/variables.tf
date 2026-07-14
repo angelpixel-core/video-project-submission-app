@@ -3,11 +3,6 @@ variable "name" {
   type        = string
 }
 
-variable "environment" {
-  description = "Render environment name."
-  type        = string
-}
-
 variable "branch" {
   description = "Git branch used for deploys."
   type        = string
@@ -37,4 +32,27 @@ variable "instance_type" {
 variable "region" {
   description = "Render region for the web service."
   type        = string
+}
+
+variable "environment_id" {
+  description = "Render environment identifier for the web service."
+  type        = string
+}
+
+variable "auto_deploy" {
+  description = "Whether Render should auto-deploy this service."
+  type        = bool
+}
+
+variable "auto_deploy_trigger" {
+  description = "Automatic deploy trigger for the web service."
+  type        = string
+}
+
+variable "env_vars" {
+  description = "Environment variables for the web service."
+  type = map(object({
+    value          = optional(string)
+    generate_value = optional(bool)
+  }))
 }

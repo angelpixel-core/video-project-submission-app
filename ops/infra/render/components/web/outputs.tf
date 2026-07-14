@@ -2,10 +2,6 @@ output "name" {
   value = render_web_service.this.name
 }
 
-output "environment" {
-  value = var.environment
-}
-
 output "branch" {
   value = var.branch
 }

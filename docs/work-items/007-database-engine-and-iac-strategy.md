@@ -40,11 +40,11 @@ title: Database Engine and IaC Strategy
 - [x] Create reusable modules under `ops/infra/render/components/{web,worker,postgres,dns}`.
 - [x] Wire `qa` to the live Render web service and PostgreSQL service.
 - [x] Express QA adoption with Terraform `import` blocks.
-- [ ] Validate the QA wiring with `terraform fmt`, `terraform init -backend=false`, and `terraform plan`.
+- [x] Validate the QA wiring with `terraform fmt`, `terraform init -backend=false`, and `terraform plan`.
   - [x] Run `terraform fmt -recursive ops/infra/render`.
   - [x] Run `terraform -chdir=ops/infra/render/envs/qa init -input=false -backend=false`.
-  - [ ] Run `terraform -chdir=ops/infra/render/envs/qa plan` and confirm the existing QA web service and Postgres are adopted, not recreated. (Blocked until `RENDER_API_KEY` is set.)
-  - [ ] Confirm the worker stays absent until a real QA worker exists in Render.
+  - [x] Run `terraform -chdir=ops/infra/render/envs/qa plan` and confirm the existing QA web service and Postgres are adopted, not recreated.
+  - [x] Confirm the worker stays absent until a real QA worker exists in Render.
 - [ ] Mirror the same structure into `staging` and `prod` without live state yet.
 
 ## Affected Docs

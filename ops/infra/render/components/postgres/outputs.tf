@@ -29,3 +29,8 @@ output "region" {
 output "id" {
   value = render_postgres.this.id
 }
+
+output "connection_info" {
+  value     = render_postgres.this.connection_info
+  sensitive = true
+}
