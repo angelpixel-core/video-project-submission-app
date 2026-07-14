@@ -32,6 +32,17 @@ title: Database Engine and IaC Strategy
 - Keep the manual `Promote` gate and `development -> main` release PR flow active.
 - Leave staging and production deploy triggers in the repo, but disable the steps that actually deploy to those environments until the workspace plan changes.
 
+## Current Flow
+
+| Event | Workflow | Action |
+| --- | --- | --- |
+| Push to `work-items/*` | `ci.yml` | Run lint and tests, then open or update the PR to `development`. |
+| Merge to `development` | Render deploy path | Deploy the active runtime to QA. |
+| Manual approval in QA | `promote-staging.yml` | Keep the `Promote` gate, but do not deploy to staging on Hobby. |
+| QA approval succeeds | `promote-staging.yml` | Create or update the `development -> main` release PR. |
+| Push / merge to `main` | release flow | Run the usual checks and create the release tag when applicable. |
+| Any staging/prod deploy trigger | `promote-staging.yml` / infra workflows | Disabled until the workspace plan changes. |
+
 ## Scope
 
 - MySQL for `dev` and `test`.
