@@ -26,6 +26,7 @@ curl -fsS https://video-project-submission-app-qa.onrender.com/up/db
 ```
 
 - Expected response: `ok`
+- Verified: `ok`
 
 ## Notes
 

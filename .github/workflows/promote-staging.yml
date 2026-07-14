@@ -1,0 +1,61 @@
+name: Promote Staging
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: promote-staging
+  cancel-in-progress: false
+
+jobs:
+  deploy_staging:
+    name: deploy staging
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Require development ref
+        shell: bash
+        run: |
+          set -eu
+          if [ "${GITHUB_REF_NAME}" != "development" ]; then
+            echo "Promote must be run from the development branch." >&2
+            exit 1
+          fi
+
+      - name: Staging deploy disabled on Hobby plan
+        shell: bash
+        run: |
+          set -eu
+          echo "Skipping the real staging deploy and smoke checks until the workspace plan changes."
+
+  release_pr:
+    name: sync release pr
+    runs-on: ubuntu-latest
+    needs: deploy_staging
+    if: success()
+    env:
+      GH_TOKEN: ${{ secrets.RELEASE_PR_SYNC_TOKEN }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create or update release PR
+        shell: bash
+        run: |
+          set -eu
+
+          TITLE="release: promote development to main"
+          BODY="Automated release PR created after a successful staging promotion for ${GITHUB_SHA}."
+          PR_NUMBER=$(gh pr list --head development --base main --state open --json number --jq '.[0].number // empty')
+
+          if [ -n "$PR_NUMBER" ]; then
+            gh pr edit "$PR_NUMBER" --title "$TITLE" --body "$BODY"
+          else
+            gh pr create --base main --head development --title "$TITLE" --body "$BODY"
+          fi

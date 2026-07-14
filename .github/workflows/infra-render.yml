@@ -13,8 +13,6 @@ on:
         type: choice
         options:
           - qa
-          - staging
-          - prod
 
 permissions:
   contents: read
@@ -66,6 +64,10 @@ jobs:
     runs-on: ubuntu-latest
     needs: discover
     if: github.event_name == 'pull_request'
+    env:
+      RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+      TF_VAR_rails_master_key: ${{ secrets.RAILS_MASTER_KEY }}
+      TF_VAR_environment_id: ${{ vars.RENDER_QA_ENVIRONMENT_ID }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -93,7 +95,7 @@ jobs:
     if: github.event_name == 'pull_request'
     strategy:
       matrix:
-        environment: [qa, staging]
+        environment: [qa]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -101,6 +103,20 @@ jobs:
       - name: Setup Terraform
         if: needs.discover.outputs.has_files == 'true'
         uses: hashicorp/setup-terraform@v3
+
+      - name: Configure Render API key
+        if: needs.discover.outputs.has_files == 'true'
+        run: echo "RENDER_API_KEY=${{ secrets.RENDER_API_KEY }}" >> "$GITHUB_ENV"
+
+      - name: Set Terraform variables
+        if: needs.discover.outputs.has_files == 'true'
+        run: |
+          case "${{ matrix.environment }}" in
+            qa)
+              echo "TF_VAR_rails_master_key=${{ secrets.RAILS_MASTER_KEY }}" >> "$GITHUB_ENV"
+              echo "TF_VAR_environment_id=${{ vars.RENDER_QA_ENVIRONMENT_ID }}" >> "$GITHUB_ENV"
+              ;;
+          esac
 
       - name: Terraform init
         if: needs.discover.outputs.has_files == 'true'
@@ -120,6 +136,10 @@ jobs:
     needs: discover
     if: github.event_name == 'workflow_dispatch'
     environment: ${{ inputs.environment }}
+    env:
+      RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+      TF_VAR_rails_master_key: ${{ secrets.RAILS_MASTER_KEY }}
+      TF_VAR_environment_id: ${{ vars.RENDER_QA_ENVIRONMENT_ID }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4

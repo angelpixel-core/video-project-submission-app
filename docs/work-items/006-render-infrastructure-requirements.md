@@ -21,8 +21,8 @@ title: Render Infrastructure Requirements
 
 ## Goal
 
-- [x] Define the Render-based infrastructure requirements for `qa` now.
-  - [ ] Staging and prod remain future rollout surfaces.
+- [x] Define the Render-based infrastructure requirements for `production` now.
+  - [ ] `qa` and `staging` remain future rollout surfaces to be created separately.
 
 ## Scope
 
@@ -34,7 +34,12 @@ title: Render Infrastructure Requirements
 - Capacity and cost drivers for the deployment target.
 - GitHub Actions handoff into Render.
 
-- Current implementation target is QA only.
+- Current implementation target is production; `qa` and `staging` will be created separately.
+
+## Operational Note
+
+- The active Render environment is `Production`, even though the current service slug still carries a legacy `-qa` suffix.
+- Treat the existing service and database as the production runtime until the new `qa` and `staging` environments are provisioned.
 
 ## Access Bootstrap
 
@@ -64,7 +69,7 @@ title: Render Infrastructure Requirements
 | Env var | `RAILS_MASTER_KEY=<secret>` | I can confirm the Rails master key is configured as a secret. |
 | Env var | `DATABASE_URL=<secret>` | I can confirm the service reads its DB connection from Render secrets. |
 
-- If this service is the `qa` runtime, prefer renaming it to `video-project-submission-app-qa` before the first deploy so the service role is explicit.
+- If this service is the production runtime, keep the legacy `-qa` slug in mind until the service is renamed or replaced.
 
 ### Render Workspace
 
@@ -123,12 +128,12 @@ render services -o text
 
 | Item | Manual Verification |
 | --- | --- |
-| Define the public URL for `qa`. | I can name the hostname for the active public environment. |
+| Define the public URL for `production`. | I can name the hostname for the active public environment. |
 | Define the DNS registrar/provider access path. | I can say who controls DNS and how records will be updated. |
 | Define the GitHub Actions secret names needed for deployment. | I can list the secret names required for Render promotion and deploys. |
 
 - DNS provider is not yet selected because the custom domain has not been purchased or wired up.
-- QA currently uses the Render-managed `onrender.com` hostname, so no external DNS change is needed yet.
+- Production currently uses the Render-managed `onrender.com` hostname, so no external DNS change is needed yet.
 - Revisit this section once a custom domain is chosen.
 
 
@@ -169,7 +174,7 @@ render services -o text
 | --- | --- | --- | --- | --- |
 | Render API key | GitHub Actions secret `RENDER_API_KEY` | Raw key material, CLI token dumps, or Render dashboard exports | Recreate in Render, then update the GitHub secret | `gh secret list --repo angelpixel-core/video-project-submission-app --app actions` |
 | Render CLI token | Local Render CLI config (`~/.render/cli.yaml`) | Local config files, dotfiles, or repo env files | Re-run `render login` | `render workspaces -o text` |
-| Render service ID for QA | GitHub Actions secret `RENDER_QA_SERVICE_ID` | Service ID values in tracked env files | Recopy from Render after service changes | `gh secret list --repo angelpixel-core/video-project-submission-app --app actions` |
+| Render service ID for production | GitHub Actions secret `RENDER_PROD_SERVICE_ID` | Service ID values in tracked env files | Recopy from Render after service changes | `gh secret list --repo angelpixel-core/video-project-submission-app --app actions` |
 
 
 
@@ -196,16 +201,24 @@ render services -o text
 - Use `gh secret list` for metadata-only verification.
 - Use a workflow smoke test to confirm the token works at runtime.
 
-### GitHub Actions Secrets
+### GitHub Actions Secrets and Vars
 
-| Secret Name | Purpose |
-| --- | --- |
-| `RENDER_API_KEY` | Authenticates the Render CLI in GitHub Actions. |
-| `RENDER_QA_SERVICE_ID` | Targets the QA Render web service. |
+| Kind | Name | Purpose |
+| --- | --- | --- |
+| Secret | `RENDER_API_KEY` | Authenticates the Render CLI in GitHub Actions. |
+| Secret | `RAILS_MASTER_KEY` | Shared Rails master key for QA, staging, and prod. |
+| Secret | `RENDER_QA_SERVICE_ID` | Targets the QA Render web service. |
+| Secret | `RENDER_STAGING_SERVICE_ID` | Targets the staging Render web service. |
+| Secret | `RENDER_PROD_SERVICE_ID` | Targets the production Render web service. |
+| Variable | `RENDER_QA_ENVIRONMENT_ID` | Supplies the QA Render environment ID to Terraform. |
+| Variable | `RENDER_STAGING_ENVIRONMENT_ID` | Supplies the staging Render environment ID to Terraform. |
+| Variable | `RENDER_PROD_ENVIRONMENT_ID` | Supplies the production Render environment ID to Terraform. |
 
+- Use one Rails master key secret unless the app later proves it needs per-environment keys.
 - Use one service ID secret per environment so deploys stay explicit.
+- Use one environment ID variable per environment so Terraform stays readable.
 - `GITHUB_TOKEN` is provided by GitHub Actions automatically and does not need a manual secret entry.
-- The GitHub CLI can set these secrets with `gh secret set`.
+- The GitHub CLI can set these secrets with `gh secret set` and repository variables with `gh variable set`.
 
 ### Secret Operations
 
@@ -231,14 +244,17 @@ Use `make` as the user-facing entry point and `ops/scripts/secrets.sh` as the im
 | --- | --- | --- |
 | `make secrets/init ENV=qa` | Ensure placeholder secret files exist for the selected environment. | local filesystem |
 | `make secrets/set ENV=qa TARGET=github` | Push exported `RENDER_*` values or one-off `SECRET_NAME/SECRET_VALUE` pairs into GitHub Actions secrets. | GitHub |
+| `make secrets/set ENV=prod TARGET=github-vars` | Push `RENDER_*_ENVIRONMENT_ID` values or one-off `SECRET_NAME/SECRET_VALUE` pairs into GitHub repository variables. | GitHub |
 | `make secrets/set ENV=qa TARGET=render` | Prepare or validate Render-side deployment secrets. | Render |
 | `make secrets/set ENV=qa TARGET=local` | Materialize local Docker/runtime secret values from the selected environment. | local Docker |
 | `make secrets/list ENV=qa TARGET=github` | List secret metadata for the selected environment. | GitHub |
+| `make secrets/list ENV=prod TARGET=github-vars` | List repository variable metadata for the selected environment. | GitHub |
 | `make secrets/validate ENV=qa TARGET=github` | Smoke-test that GitHub Actions can read the configured secrets at runtime. | GitHub Actions |
 
 - `Makefile` should remain a thin wrapper around `ops/scripts/secrets.sh`.
 - `ops/scripts/secrets.sh` should read versioned placeholders from `env/${ENV}/app/secrets.local.env`, `env/${ENV}/db/secrets.local.env`, and `env/${ENV}/stack/secrets.local.env`, then write runtime values to `env/.local/${ENV}.env`.
 - GitHub secret sync should use exported `RENDER_*` environment variables or `SECRET_NAME`/`SECRET_VALUE` for one-off updates.
+- GitHub repository variable sync should use exported `RENDER_*_ENVIRONMENT_ID` variables or `SECRET_NAME`/`SECRET_VALUE` for one-off updates.
 - Keep `TARGET` explicit so the same command shape works for GitHub, Render, and local Docker.
 - A future `rotate` command can reuse the same script once the first pass is stable.
 - Local `TARGET=local` writes runtime values to `env/.local/${ENV}.env` so Compose can read them without dirtying git.
@@ -272,9 +288,9 @@ Use `make` as the user-facing entry point and `ops/scripts/secrets.sh` as the im
 
 | Environment | Web Service | Database | Domain | Notes |
 | --- | --- | --- | --- | --- |
-| `qa` | `video-project-submission-app-qa` | Managed PostgreSQL | `qa.<placeholder-domain>` | Used for automated deploy + QA validation. |
+| `production` | `video-project-submission-app-qa` | Managed PostgreSQL | `production.<placeholder-domain>` | Active production runtime; legacy service slug still uses `-qa`. |
 
-- QA is the only active deployment target right now.
+- Production is the only active deployment target right now.
 
 ### Local Development Context
 
@@ -285,7 +301,7 @@ Use `make` as the user-facing entry point and `ops/scripts/secrets.sh` as the im
 
 ### Render vs Local Boundary
 
-- The runtime environments documented in this work item currently cover `qa`.
+- The runtime environments documented in this work item currently cover `production`.
 - Local `dev` and `test` are separate contexts for developer flow and automated checks.
 - Local `dev/test` keep MySQL because that is the current baseline for development and CI.
 - `dev.lvh.me` and `test.lvh.me` are local-only domains and do not imply a Render deployment target.
@@ -302,7 +318,7 @@ Use one Render-managed PostgreSQL database per runtime environment.
 
 | Environment | Database Mode | Notes |
 | --- | --- | --- |
-| `qa` | Managed PostgreSQL service | Dedicated database for QA validation. |
+| `production` | Managed PostgreSQL service | Dedicated database for the active production runtime. |
 
 ### Rationale
 
@@ -316,7 +332,7 @@ Use one Render-managed PostgreSQL database per runtime environment.
 
 | Environment | Web Service | Purpose | Deployment Source | Notes |
 | --- | --- | --- | --- | --- |
-| `qa` | `video-project-submission-app-qa` | Automated deploy + QA validation | GitHub Actions promotion from `work-items/*` -> `development` | Public Render environment. |
+| `production` | `video-project-submission-app-qa` | Active production runtime | GitHub Actions promotion from the release branch | Legacy slug remains `-qa` until renamed. |
 
 
 
@@ -356,7 +372,7 @@ Use one Render-managed PostgreSQL database per runtime environment.
 - [x] Record the Render onboarding choices for the workspace.
 - [x] Record the current Render web service bootstrap snapshot.
 - [x] Record the PostgreSQL bootstrap snapshot for the QA database.
-- [x] Define the public URL for `qa`.
+- [x] Define the public URL for `production`.
 - [x] Define the DNS registrar/provider access path.
   - [ ] Select the DNS registrar/provider and record the ownership/update process.
 - [x] Define the GitHub Actions secret names needed for deployment.

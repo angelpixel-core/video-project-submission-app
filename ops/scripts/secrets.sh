@@ -19,7 +19,7 @@ Usage: secrets.sh {init|set|get|list|validate}
 
 Environment:
   ENV or SECRET_ENV      Secret environment to operate on (dev, test, qa, staging, prod)
-  TARGET                 Destination: github, render, or local
+  TARGET                 Destination: github, github-vars, render, or local
   SECRET_NAME            Optional single secret name to operate on
   SECRET_VALUE           Optional single secret value for set operations
   RENDER_API_KEY         Render API key for Render target operations
@@ -268,6 +268,13 @@ github_required_names() {
     "RENDER_PROD_SERVICE_ID"
 }
 
+github_var_required_names() {
+  printf '%s\n' \
+    "RENDER_QA_ENVIRONMENT_ID" \
+    "RENDER_STAGING_ENVIRONMENT_ID" \
+    "RENDER_PROD_ENVIRONMENT_ID"
+}
+
 github_required_value() {
   case "$1" in
     RENDER_API_KEY) printf '%s\n' "${RENDER_API_KEY:-}" ;;
@@ -275,6 +282,15 @@ github_required_value() {
     RENDER_STAGING_SERVICE_ID) printf '%s\n' "${RENDER_STAGING_SERVICE_ID:-}" ;;
     RENDER_PROD_SERVICE_ID) printf '%s\n' "${RENDER_PROD_SERVICE_ID:-}" ;;
     *) die "Unsupported GitHub secret: $1" ;;
+  esac
+}
+
+github_var_required_value() {
+  case "$1" in
+    RENDER_QA_ENVIRONMENT_ID) printf '%s\n' "${RENDER_QA_ENVIRONMENT_ID:-}" ;;
+    RENDER_STAGING_ENVIRONMENT_ID) printf '%s\n' "${RENDER_STAGING_ENVIRONMENT_ID:-}" ;;
+    RENDER_PROD_ENVIRONMENT_ID) printf '%s\n' "${RENDER_PROD_ENVIRONMENT_ID:-}" ;;
+    *) die "Unsupported GitHub variable: $1" ;;
   esac
 }
 
@@ -295,6 +311,13 @@ github_set_one() {
   gh secret set "$name" --repo "$repo" --app actions --body "$value" >/dev/null
 }
 
+github_var_set_one() {
+  repo="$1"
+  name="$2"
+  value="$3"
+  gh variable set "$name" --repo "$repo" --body "$value" >/dev/null
+}
+
 github_get_one() {
   repo="$1"
   name="$2"
@@ -304,6 +327,33 @@ github_get_one() {
     echo "${name}: missing"
     return 1
   fi
+}
+
+github_var_exists() {
+  repo="$1"
+  name="$2"
+  found=0
+  for existing in $(gh variable list --repo "$repo" --json name --jq '.[].name'); do
+    [ "$existing" = "$name" ] && found=1
+  done
+  [ "$found" -eq 1 ]
+}
+
+github_var_get_one() {
+  repo="$1"
+  name="$2"
+  if github_var_exists "$repo" "$name"; then
+    echo "${name}: present"
+  else
+    echo "${name}: missing"
+    return 1
+  fi
+}
+
+github_var_validate_one() {
+  repo="$1"
+  name="$2"
+  github_var_exists "$repo" "$name" >/dev/null 2>&1 || die "Missing GitHub variable: ${name}"
 }
 
 github_validate_one() {
@@ -381,6 +431,11 @@ set_single_secret() {
       require_command ruby
       render_set_one "$key" "$value"
       ;;
+    github-vars)
+      require_command gh
+      repo="$(get_github_repo)"
+      github_var_set_one "$repo" "$key" "$value"
+      ;;
     local)
       local_upsert "$key" "$value"
       ;;
@@ -403,6 +458,18 @@ set_bulk_secrets() {
         found=1
       done
       [ "$found" -eq 1 ] || die "No GitHub secret values provided; use SECRET_NAME/SECRET_VALUE or export RENDER_* variables"
+      ;;
+    github-vars)
+      require_command gh
+      repo="$(get_github_repo)"
+      found=0
+      for key in $(github_var_required_names); do
+        value="$(github_var_required_value "$key")"
+        [ -n "$value" ] || continue
+        github_var_set_one "$repo" "$key" "$value"
+        found=1
+      done
+      [ "$found" -eq 1 ] || die "No GitHub variable values provided; use SECRET_NAME/SECRET_VALUE or export RENDER_*_ENVIRONMENT_ID variables"
       ;;
     render)
       require_command curl
@@ -442,6 +509,11 @@ get_single_secret() {
       repo="$(get_github_repo)"
       github_get_one "$repo" "$key"
       ;;
+    github-vars)
+      require_command gh
+      repo="$(get_github_repo)"
+      github_var_get_one "$repo" "$key"
+      ;;
     render)
       require_command curl
       require_command ruby
@@ -462,6 +534,11 @@ get_bulk_secrets() {
       require_command gh
       repo="$(get_github_repo)"
       github_list_names "$repo"
+      ;;
+    github-vars)
+      require_command gh
+      repo="$(get_github_repo)"
+      gh variable list --repo "$repo" --json name --jq '.[].name'
       ;;
     render)
       require_command curl
@@ -497,6 +574,11 @@ validate_single_secret() {
       repo="$(get_github_repo)"
       github_validate_one "$repo" "$key"
       ;;
+    github-vars)
+      require_command gh
+      repo="$(get_github_repo)"
+      github_var_validate_one "$repo" "$key"
+      ;;
     render)
       require_command curl
       require_command ruby
@@ -527,6 +609,18 @@ validate_bulk_secrets() {
         found=1
       done
       [ "$found" -eq 1 ] || die "No GitHub secret names provided; use SECRET_NAME or export RENDER_* variables"
+      ;;
+    github-vars)
+      require_command gh
+      repo="$(get_github_repo)"
+      found=0
+      for key in $(github_var_required_names); do
+        value="$(github_var_required_value "$key")"
+        [ -n "$value" ] || continue
+        github_var_validate_one "$repo" "$key"
+        found=1
+      done
+      [ "$found" -eq 1 ] || die "No GitHub variable names provided; use SECRET_NAME or export RENDER_*_ENVIRONMENT_ID variables"
       ;;
     render)
       require_command curl

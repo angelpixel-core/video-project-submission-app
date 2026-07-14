@@ -13,7 +13,7 @@ depends_on:
   - ssh-authentication-and-commit-signing
 order: 7
 phase: work-items
-status: draft
+status: done
 title: Database Engine and IaC Strategy
 ---
 
@@ -21,8 +21,27 @@ title: Database Engine and IaC Strategy
 
 ## Goal
 
-- [ ] Define and implement the database engine matrix and Terraform-based infrastructure strategy for QA now.
-  - [ ] Staging and prod remain future extension points.
+- [x] Define and implement the database engine matrix and Terraform-based infrastructure strategy for QA now.
+  - [x] Staging and prod remain future extension points.
+
+## Operational Note
+
+- The currently deployed Render environment is now treated as `production`.
+- `qa` and `staging` will be created as new environments rather than reusing the existing production runtime.
+- Because the workspace is on Render Hobby, keep QA as the only active deploy target for now.
+- Keep the manual `Promote` gate and `development -> main` release PR flow active.
+- Leave staging and production deploy triggers in the repo, but disable the steps that actually deploy to those environments until the workspace plan changes.
+
+## Current Flow
+
+| Event | Workflow | Action |
+| --- | --- | --- |
+| Push to `work-items/*` | `ci.yml` | Run lint and tests, then open or update the PR to `development`. |
+| Merge to `development` | Render deploy path | Deploy the active runtime to QA. |
+| Manual approval in QA | `promote-staging.yml` | Keep the `Promote` gate, but do not deploy to staging on Hobby. |
+| QA approval succeeds | `promote-staging.yml` | Create or update the `development -> main` release PR. |
+| Push / merge to `main` | release flow | Run the usual checks and create the release tag when applicable. |
+| Any staging/prod deploy trigger | `promote-staging.yml` / infra workflows | Disabled until the workspace plan changes. |
 
 ## Scope
 
@@ -33,6 +52,71 @@ title: Database Engine and IaC Strategy
 - Schema format choice and portability guardrails.
 - Terraform-based provisioning for Render resources.
 - Staging and prod will follow the same pattern when they are activated.
+
+## Implementation Plan
+
+- [x] Create the Terraform base files for each environment under `ops/infra/render/envs/{qa,staging,prod}`.
+- [x] Create reusable modules under `ops/infra/render/components/{web,worker,database,dns}`.
+- [x] Wire `qa` to the live Render web service and PostgreSQL service.
+- [x] Express QA adoption with Terraform `import` blocks.
+- [x] Validate the QA wiring with `terraform fmt`, `terraform init -backend=false`, and `terraform plan`.
+  - [x] Run `terraform fmt -recursive ops/infra/render`.
+  - [x] Run `terraform -chdir=ops/infra/render/envs/qa init -input=false -backend=false`.
+  - [x] Run `terraform -chdir=ops/infra/render/envs/qa plan` and confirm the existing QA web service and Postgres are adopted, not recreated.
+  - [x] Confirm the worker stays absent until a real QA worker exists in Render.
+- [x] Reconcile the imported QA Render state to reduce provider-normalized plan drift.
+- [x] Mirror the same structure into `staging` without live state yet.
+  - [x] Add a manual `Promote` workflow in GitHub Actions that preserves the approval gate.
+  - [x] Create the `development -> main` PR automatically after the approval gate succeeds.
+  - [x] Keep the staging deploy steps present in the workflow, but disabled for the current Hobby plan.
+  - [x] Keep the production deploy steps present in the workflow, but disabled for the current Hobby plan.
+
+### Staging Scaffold Checklist
+
+- [x] `ops/infra/render/envs/staging/versions.tf`
+  - [x] Keep the same Terraform and provider constraints as QA.
+- [x] `ops/infra/render/envs/staging/providers.tf`
+  - [x] Wire `owner_id` and `RENDER_API_KEY` the same way as QA.
+- [x] `ops/infra/render/envs/staging/variables.tf`
+  - [x] Define `rails_master_key` and `environment_id` as required inputs.
+- [x] `ops/infra/render/envs/staging/main.tf`
+  - [x] Mirror the QA module layout for `web` and `database` without live IDs or imports.
+  - [x] Keep `worker` absent unless staging explicitly needs it.
+- [x] `ops/infra/render/envs/staging/outputs.tf`
+  - [x] Expose the IDs and URLs needed for validation and promotion.
+- [x] `ops/infra/render/envs/staging/imports.tf`
+  - [x] Leave empty or placeholder-only until staging has live Render state.
+- [x] `ops/infra/render/envs/staging/README.md`
+  - [x] Document staging as the manual signoff and promotion gate after QA.
+- [x] `.github/workflows/promote-staging.yml`
+  - [x] Add `workflow_dispatch` so QA can trigger `Promote` from GitHub Actions.
+  - [x] Deploy the QA-approved artifact to staging.
+  - [x] Run staging smoke checks after deploy.
+  - [x] Create or update the `development -> main` PR only after staging succeeds.
+- [x] `docs/work-items/003-ci-cd-and-environments.md`
+  - [x] Update the delivery flow to show QA approval -> Promote -> staging -> release PR -> main -> prod.
+- [x] `docs/decisions/03-ci-pr-promotion-strategy.md`
+  - [x] Record that the release PR is system-created after staging success.
+  - [x] Record that the release PR uses a dedicated token.
+
+### Production Scaffold Checklist
+
+- [x] `ops/infra/render/envs/prod/versions.tf`
+  - [x] Keep the same Terraform and provider constraints as QA.
+- [x] `ops/infra/render/envs/prod/providers.tf`
+  - [x] Wire `owner_id` and `RENDER_API_KEY` the same way as QA.
+- [x] `ops/infra/render/envs/prod/variables.tf`
+  - [x] Define `rails_master_key` and `environment_id` as required inputs.
+  - [x] Define a worker enablement input so the prod worker can be prepared without turning it on yet.
+- [x] `ops/infra/render/envs/prod/main.tf`
+  - [x] Mirror the staging module layout for `web` and `database` without live IDs or imports.
+  - [x] Prepare the `worker` module wiring, but keep it disabled by default until prod actually needs it.
+- [x] `ops/infra/render/envs/prod/outputs.tf`
+  - [x] Expose the IDs and URLs needed for validation and promotion.
+- [x] `ops/infra/render/envs/prod/imports.tf`
+  - [x] Leave empty or placeholder-only until production has live Render state.
+- [x] `ops/infra/render/envs/prod/README.md`
+  - [x] Document prod as the final release environment after the release tag is created.
 
 ## Affected Docs
 
@@ -50,6 +134,10 @@ title: Database Engine and IaC Strategy
 - `config/database.yml`
 - `db/schema.rb`
 - `ops/infra/render/`
+- `ops/infra/render/components/database/`
+- `ops/infra/render/envs/staging/`
+- `ops/infra/render/envs/prod/`
+- `.github/workflows/promote-staging.yml`
 - GitHub Actions infra workflow
 
 ## Checklist
@@ -64,7 +152,7 @@ title: Database Engine and IaC Strategy
   - [x] `pg` is already present in the production bundle group in `Gemfile`.
 - [x] Define the infra layout for Render provisioning.
   - [x] Create a tool-agnostic `ops/infra/render/` tree organized by platform and environment.
-  - [x] Add reusable component/module directories for `web`, `worker`, `postgres`, and `dns`.
+  - [x] Add reusable component/module directories for `web`, `worker`, `database`, and `dns`.
   - [x] Add environment directories for `qa`, `staging`, and `prod`.
 - [x] Define the infra inventory for each environment.
   - [x] Provision one web service, one worker service, and one managed PostgreSQL service per environment.
@@ -86,10 +174,10 @@ title: Database Engine and IaC Strategy
 - [x] The Terraform strategy is explicit and documented.
 - [x] The Rails database configuration supports all runtime environments.
   - [x] QA-specific Rails database config is present and wired through `DATABASE_URL`.
-- [ ] The Rails app can connect to PostgreSQL in Render without affecting local MySQL.
-  - [ ] Run `curl -fsS https://video-project-submission-app-qa.onrender.com/up/db` after the QA deploy finishes.
-- [ ] The infra pipeline can be run independently of app feature work.
-  - [ ] `ops/infra/render/` exists, and the workflow is in place, but the Terraform config is not created yet.
+- [x] The Rails app can connect to PostgreSQL in Render without affecting local MySQL.
+  - [x] Verified with `curl -fsS https://video-project-submission-app-qa.onrender.com/up/db` after the QA deploy finished.
+- [x] The infra pipeline can be run independently of app feature work.
+  - [x] `ops/infra/render/` exists, the workflow is in place, and QA `terraform fmt`, `init`, and `plan` are validated.
 
 ## Notes
 
