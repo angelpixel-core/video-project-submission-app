@@ -7,8 +7,8 @@ gem "propshaft"
 # Use mysql as the database for Active Record
 gem "mysql2", "~> 0.5"
 
-group :production do
-  # Use PostgreSQL for Render runtime environments.
+group :production, :qa do
+  # Use PostgreSQL for Render runtime environments, including QA.
   gem "pg", "~> 1.5"
 end
 # Use the Puma web server [https://github.com/puma/puma]
