@@ -81,8 +81,8 @@ title: Database Engine and IaC Strategy
 
 ### Production Scaffold Checklist
 
-- [ ] `ops/infra/render/envs/prod/versions.tf`
-  - [ ] Keep the same Terraform and provider constraints as QA.
+- [x] `ops/infra/render/envs/prod/versions.tf`
+  - [x] Keep the same Terraform and provider constraints as QA.
 - [ ] `ops/infra/render/envs/prod/providers.tf`
   - [ ] Wire `owner_id` and `RENDER_API_KEY` the same way as QA.
 - [ ] `ops/infra/render/envs/prod/variables.tf`
