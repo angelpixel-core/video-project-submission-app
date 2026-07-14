@@ -13,8 +13,6 @@ on:
         type: choice
         options:
           - qa
-          - staging
-          - prod
 
 permissions:
   contents: read
@@ -68,7 +66,7 @@ jobs:
     if: github.event_name == 'pull_request'
     env:
       TF_VAR_rails_master_key: ${{ secrets.RAILS_MASTER_KEY }}
-      TF_VAR_environment_id: ${{ vars.RENDER_PROD_ENVIRONMENT_ID }}
+      TF_VAR_environment_id: ${{ vars.RENDER_QA_ENVIRONMENT_ID }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -96,7 +94,7 @@ jobs:
     if: github.event_name == 'pull_request'
     strategy:
       matrix:
-        environment: [qa, staging]
+        environment: [qa]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -112,10 +110,6 @@ jobs:
             qa)
               echo "TF_VAR_rails_master_key=${{ secrets.RAILS_MASTER_KEY }}" >> "$GITHUB_ENV"
               echo "TF_VAR_environment_id=${{ vars.RENDER_QA_ENVIRONMENT_ID }}" >> "$GITHUB_ENV"
-              ;;
-            staging)
-              echo "TF_VAR_rails_master_key=${{ secrets.RAILS_MASTER_KEY }}" >> "$GITHUB_ENV"
-              echo "TF_VAR_environment_id=${{ vars.RENDER_STAGING_ENVIRONMENT_ID }}" >> "$GITHUB_ENV"
               ;;
           esac
 
@@ -139,7 +133,7 @@ jobs:
     environment: ${{ inputs.environment }}
     env:
       TF_VAR_rails_master_key: ${{ secrets.RAILS_MASTER_KEY }}
-      TF_VAR_environment_id: ${{ inputs.environment == 'qa' && vars.RENDER_QA_ENVIRONMENT_ID || inputs.environment == 'staging' && vars.RENDER_STAGING_ENVIRONMENT_ID || vars.RENDER_PROD_ENVIRONMENT_ID }}
+      TF_VAR_environment_id: ${{ vars.RENDER_QA_ENVIRONMENT_ID }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4

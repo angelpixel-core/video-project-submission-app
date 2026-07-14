@@ -28,6 +28,9 @@ title: Database Engine and IaC Strategy
 
 - The currently deployed Render environment is now treated as `production`.
 - `qa` and `staging` will be created as new environments rather than reusing the existing production runtime.
+- Because the workspace is on Render Hobby, keep QA as the only active deploy target for now.
+- Keep the manual `Promote` gate and `development -> main` release PR flow active.
+- Leave staging and production deploy triggers in the repo, but disable the steps that actually deploy to those environments until the workspace plan changes.
 
 ## Scope
 
@@ -52,9 +55,10 @@ title: Database Engine and IaC Strategy
   - [x] Confirm the worker stays absent until a real QA worker exists in Render.
 - [x] Reconcile the imported QA Render state to reduce provider-normalized plan drift.
 - [x] Mirror the same structure into `staging` without live state yet.
-  - [x] Add a manual `Promote` workflow in GitHub Actions that deploys the QA-approved artifact to `staging`.
-  - [x] Create the `development -> main` PR automatically only after `staging` deploys and smoke checks succeed.
-  - [x] Leave `prod` for the next rollout step after the staging path is stable.
+  - [x] Add a manual `Promote` workflow in GitHub Actions that preserves the approval gate.
+  - [x] Create the `development -> main` PR automatically after the approval gate succeeds.
+  - [x] Keep the staging deploy steps present in the workflow, but disabled for the current Hobby plan.
+  - [x] Keep the production deploy steps present in the workflow, but disabled for the current Hobby plan.
 
 ### Staging Scaffold Checklist
 
