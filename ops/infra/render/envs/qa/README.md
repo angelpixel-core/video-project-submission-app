@@ -21,3 +21,37 @@
 
 - QA is the first deployed compatibility checkpoint.
 - Terraform should adopt this live state rather than recreate it.
+- Render currently shows the QA web service environment as `Production`; treat that as a Render platform quirk, not the project environment.
+
+## Adoption Path
+
+- Use Terraform `import` blocks as the final adoption mechanism.
+- Adopt the existing QA web service and PostgreSQL service into the QA Terraform state.
+- Leave the QA worker absent until the service actually exists in Render.
+
+### Verified Render Resources
+
+| Resource | Render ID | Status |
+| --- | --- | --- |
+| Web service | `srv-d9a05ut7vvec738cb0n0` | Exists |
+| PostgreSQL service | `dpg-d9a0goecjfls73928u5g-a` | Exists |
+| Worker service | n/a | Not created yet |
+
+### Import Blocks
+
+```hcl
+import {
+  to = render_service.web
+  id = "srv-d9a05ut7vvec738cb0n0"
+}
+
+import {
+  to = render_postgresql.database
+  id = "dpg-d9a0goecjfls73928u5g-a"
+}
+```
+
+### Follow-Up
+
+- After import, run plan until the QA state is fully represented in code.
+- Only add a worker import once a QA worker service is created in Render.

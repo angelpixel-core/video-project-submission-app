@@ -76,9 +76,9 @@ title: Database Engine and IaC Strategy
   - [x] Trigger `apply` manually, one environment at a time.
   - [x] Gate `apply` with approval or protected environment rules.
   - [x] Add GitHub Actions wiring for infra-only validation and approval-gated apply.
-- [ ] Define the adoption path for existing QA Render resources.
-  - [ ] Document how Terraform will adopt the live QA Render state before staging is introduced.
-  - [ ] Capture the concrete Render resource names and hostnames when the Terraform stack is introduced.
+- [x] Define the adoption path for existing QA Render resources.
+  - [x] Document how Terraform will adopt the live QA Render state before staging is introduced.
+  - [x] Capture the concrete Render resource names and hostnames when the Terraform stack is introduced.
 
 ## Validation 
 
