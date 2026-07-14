@@ -79,6 +79,25 @@ title: Database Engine and IaC Strategy
   - [x] Record that the release PR is system-created after staging success.
   - [x] Record that the release PR uses a dedicated token.
 
+### Production Scaffold Checklist
+
+- [ ] `ops/infra/render/envs/prod/versions.tf`
+  - [ ] Keep the same Terraform and provider constraints as QA.
+- [ ] `ops/infra/render/envs/prod/providers.tf`
+  - [ ] Wire `owner_id` and `RENDER_API_KEY` the same way as QA.
+- [ ] `ops/infra/render/envs/prod/variables.tf`
+  - [ ] Define `rails_master_key` and `environment_id` as required inputs.
+  - [ ] Define a worker enablement input so the prod worker can be prepared without turning it on yet.
+- [ ] `ops/infra/render/envs/prod/main.tf`
+  - [ ] Mirror the staging module layout for `web` and `postgres` without live IDs or imports.
+  - [ ] Prepare the `worker` module wiring, but keep it disabled by default until prod actually needs it.
+- [ ] `ops/infra/render/envs/prod/outputs.tf`
+  - [ ] Expose the IDs and URLs needed for validation and promotion.
+- [ ] `ops/infra/render/envs/prod/imports.tf`
+  - [ ] Leave empty or placeholder-only until production has live Render state.
+- [ ] `ops/infra/render/envs/prod/README.md`
+  - [ ] Document prod as the final release environment after the release tag is created.
+
 ## Affected Docs
 
 - `docs/decisions/05-render-infrastructure-target.md`
@@ -96,6 +115,7 @@ title: Database Engine and IaC Strategy
 - `db/schema.rb`
 - `ops/infra/render/`
 - `ops/infra/render/envs/staging/`
+- `ops/infra/render/envs/prod/`
 - `.github/workflows/promote-staging.yml`
 - GitHub Actions infra workflow
 
