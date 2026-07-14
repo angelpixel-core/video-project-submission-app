@@ -91,8 +91,8 @@ title: Database Engine and IaC Strategy
 - [x] `ops/infra/render/envs/prod/main.tf`
   - [x] Mirror the staging module layout for `web` and `database` without live IDs or imports.
   - [x] Prepare the `worker` module wiring, but keep it disabled by default until prod actually needs it.
-- [ ] `ops/infra/render/envs/prod/outputs.tf`
-  - [ ] Expose the IDs and URLs needed for validation and promotion.
+- [x] `ops/infra/render/envs/prod/outputs.tf`
+  - [x] Expose the IDs and URLs needed for validation and promotion.
 - [ ] `ops/infra/render/envs/prod/imports.tf`
   - [ ] Leave empty or placeholder-only until production has live Render state.
 - [ ] `ops/infra/render/envs/prod/README.md`
