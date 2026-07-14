@@ -46,7 +46,38 @@ title: Database Engine and IaC Strategy
   - [x] Run `terraform -chdir=ops/infra/render/envs/qa plan` and confirm the existing QA web service and Postgres are adopted, not recreated.
   - [x] Confirm the worker stays absent until a real QA worker exists in Render.
 - [x] Reconcile the imported QA Render state to reduce provider-normalized plan drift.
-- [ ] Mirror the same structure into `staging` and `prod` without live state yet.
+- [ ] Mirror the same structure into `staging` without live state yet.
+  - [ ] Add a manual `Promote` workflow in GitHub Actions that deploys the QA-approved artifact to `staging`.
+  - [ ] Create the `development -> main` PR automatically only after `staging` deploys and smoke checks succeed.
+  - [ ] Leave `prod` for the next rollout step after the staging path is stable.
+
+### Staging Scaffold Checklist
+
+- [ ] `ops/infra/render/envs/staging/versions.tf`
+  - [ ] Keep the same Terraform and provider constraints as QA.
+- [ ] `ops/infra/render/envs/staging/providers.tf`
+  - [ ] Wire `owner_id` and `RENDER_API_KEY` the same way as QA.
+- [ ] `ops/infra/render/envs/staging/variables.tf`
+  - [ ] Define `rails_master_key` as a required sensitive input.
+- [ ] `ops/infra/render/envs/staging/main.tf`
+  - [ ] Mirror the QA module layout for `web` and `postgres` without live IDs or imports.
+  - [ ] Keep `worker` absent unless staging explicitly needs it.
+- [ ] `ops/infra/render/envs/staging/outputs.tf`
+  - [ ] Expose the IDs and URLs needed for validation and promotion.
+- [ ] `ops/infra/render/envs/staging/imports.tf`
+  - [ ] Leave empty or placeholder-only until staging has live Render state.
+- [ ] `ops/infra/render/envs/staging/README.md`
+  - [ ] Document staging as the manual signoff and promotion gate after QA.
+- [ ] `.github/workflows/promote-staging.yml`
+  - [ ] Add `workflow_dispatch` so QA can trigger `Promote` from GitHub Actions.
+  - [ ] Deploy the QA-approved artifact to staging.
+  - [ ] Run staging smoke checks after deploy.
+  - [ ] Create or update the `development -> main` PR only after staging succeeds.
+- [ ] `docs/work-items/003-ci-cd-and-environments.md`
+  - [ ] Update the delivery flow to show QA approval -> Promote -> staging -> release PR -> main -> prod.
+- [ ] `docs/decisions/03-ci-pr-promotion-strategy.md`
+  - [ ] Record that the release PR is system-created after staging success.
+  - [ ] Record that the release PR uses a dedicated token.
 
 ## Affected Docs
 
@@ -64,6 +95,8 @@ title: Database Engine and IaC Strategy
 - `config/database.yml`
 - `db/schema.rb`
 - `ops/infra/render/`
+- `ops/infra/render/envs/staging/`
+- `.github/workflows/promote-staging.yml`
 - GitHub Actions infra workflow
 
 ## Checklist
