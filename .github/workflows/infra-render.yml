@@ -25,7 +25,7 @@ jobs:
       has_files: ${{ steps.scan.outputs.has_files }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Scan for Terraform files
         id: scan
@@ -45,7 +45,7 @@ jobs:
     if: github.event_name == 'pull_request'
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Setup Terraform
         if: needs.discover.outputs.has_files == 'true'
@@ -70,7 +70,7 @@ jobs:
       TF_VAR_environment_id: ${{ vars.RENDER_QA_ENVIRONMENT_ID }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Setup Terraform
         if: needs.discover.outputs.has_files == 'true'
@@ -98,7 +98,7 @@ jobs:
         environment: [qa]
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Setup Terraform
         if: needs.discover.outputs.has_files == 'true'
@@ -142,7 +142,7 @@ jobs:
       TF_VAR_environment_id: ${{ vars.RENDER_QA_ENVIRONMENT_ID }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Setup Terraform
         if: needs.discover.outputs.has_files == 'true'
