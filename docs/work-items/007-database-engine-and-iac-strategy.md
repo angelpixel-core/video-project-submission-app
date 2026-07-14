@@ -37,7 +37,7 @@ title: Database Engine and IaC Strategy
 ## Implementation Plan
 
 - [x] Create the Terraform base files for each environment under `ops/infra/render/envs/{qa,staging,prod}`.
-- [x] Create reusable modules under `ops/infra/render/components/{web,worker,postgres,dns}`.
+- [x] Create reusable modules under `ops/infra/render/components/{web,worker,database,dns}`.
 - [x] Wire `qa` to the live Render web service and PostgreSQL service.
 - [x] Express QA adoption with Terraform `import` blocks.
 - [x] Validate the QA wiring with `terraform fmt`, `terraform init -backend=false`, and `terraform plan`.
@@ -60,7 +60,7 @@ title: Database Engine and IaC Strategy
 - [x] `ops/infra/render/envs/staging/variables.tf`
   - [x] Define `rails_master_key` and `environment_id` as required inputs.
 - [x] `ops/infra/render/envs/staging/main.tf`
-  - [x] Mirror the QA module layout for `web` and `postgres` without live IDs or imports.
+  - [x] Mirror the QA module layout for `web` and `database` without live IDs or imports.
   - [x] Keep `worker` absent unless staging explicitly needs it.
 - [x] `ops/infra/render/envs/staging/outputs.tf`
   - [x] Expose the IDs and URLs needed for validation and promotion.
@@ -89,7 +89,7 @@ title: Database Engine and IaC Strategy
   - [x] Define `rails_master_key` and `environment_id` as required inputs.
   - [x] Define a worker enablement input so the prod worker can be prepared without turning it on yet.
 - [x] `ops/infra/render/envs/prod/main.tf`
-  - [x] Mirror the staging module layout for `web` and `postgres` without live IDs or imports.
+  - [x] Mirror the staging module layout for `web` and `database` without live IDs or imports.
   - [x] Prepare the `worker` module wiring, but keep it disabled by default until prod actually needs it.
 - [ ] `ops/infra/render/envs/prod/outputs.tf`
   - [ ] Expose the IDs and URLs needed for validation and promotion.
@@ -114,6 +114,7 @@ title: Database Engine and IaC Strategy
 - `config/database.yml`
 - `db/schema.rb`
 - `ops/infra/render/`
+- `ops/infra/render/components/database/`
 - `ops/infra/render/envs/staging/`
 - `ops/infra/render/envs/prod/`
 - `.github/workflows/promote-staging.yml`
@@ -131,7 +132,7 @@ title: Database Engine and IaC Strategy
   - [x] `pg` is already present in the production bundle group in `Gemfile`.
 - [x] Define the infra layout for Render provisioning.
   - [x] Create a tool-agnostic `ops/infra/render/` tree organized by platform and environment.
-  - [x] Add reusable component/module directories for `web`, `worker`, `postgres`, and `dns`.
+  - [x] Add reusable component/module directories for `web`, `worker`, `database`, and `dns`.
   - [x] Add environment directories for `qa`, `staging`, and `prod`.
 - [x] Define the infra inventory for each environment.
   - [x] Provision one web service, one worker service, and one managed PostgreSQL service per environment.

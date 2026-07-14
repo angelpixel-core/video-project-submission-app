@@ -11,9 +11,9 @@ output "web_service_url" {
 }
 
 output "postgres_id" {
-  value = module.postgres.id
+  value = module.database.id
 }
 
 output "postgres_name" {
-  value = module.postgres.name
+  value = module.database.name
 }

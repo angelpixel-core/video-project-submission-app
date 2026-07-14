@@ -12,7 +12,7 @@ module "web" {
   auto_deploy_trigger = "checksPass"
   env_vars = {
     DATABASE_URL = {
-      value = module.postgres.connection_info.internal_connection_string
+      value = module.database.connection_info.internal_connection_string
     }
     RAILS_LOG_TO_STDOUT = {
       value = "true"
@@ -23,8 +23,8 @@ module "web" {
   }
 }
 
-module "postgres" {
-  source           = "../../components/postgres"
+module "database" {
+  source           = "../../components/database"
   name             = "video-project-submission-app-staging-db"
   environment      = "staging"
   database_name    = "video_project_submission_app_staging"

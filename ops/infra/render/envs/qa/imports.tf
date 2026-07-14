@@ -4,6 +4,6 @@ import {
 }
 
 import {
-  to = module.postgres.render_postgres.this
+  to = module.database.render_postgres.this
   id = "dpg-d9a0goecjfls73928u5g-a"
 }
