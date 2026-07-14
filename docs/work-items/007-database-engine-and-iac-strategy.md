@@ -13,7 +13,7 @@ depends_on:
   - ssh-authentication-and-commit-signing
 order: 7
 phase: work-items
-status: draft
+status: done
 title: Database Engine and IaC Strategy
 ---
 
@@ -21,8 +21,8 @@ title: Database Engine and IaC Strategy
 
 ## Goal
 
-- [ ] Define and implement the database engine matrix and Terraform-based infrastructure strategy for QA now.
-  - [ ] Staging and prod remain future extension points.
+- [x] Define and implement the database engine matrix and Terraform-based infrastructure strategy for QA now.
+  - [x] Staging and prod remain future extension points.
 
 ## Scope
 
