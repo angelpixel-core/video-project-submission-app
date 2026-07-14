@@ -1,5 +1,5 @@
 output "name" {
-  value = var.name
+  value = render_background_worker.this.name
 }
 
 output "environment" {
@@ -12,4 +12,12 @@ output "branch" {
 
 output "instance_type" {
   value = var.instance_type
+}
+
+output "region" {
+  value = var.region
+}
+
+output "id" {
+  value = render_background_worker.this.id
 }

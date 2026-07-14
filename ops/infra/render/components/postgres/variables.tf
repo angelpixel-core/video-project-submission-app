@@ -27,3 +27,8 @@ variable "postgres_version" {
   description = "PostgreSQL major version."
   type        = string
 }
+
+variable "region" {
+  description = "Render region for the database."
+  type        = string
+}

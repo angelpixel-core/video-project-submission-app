@@ -23,8 +23,7 @@ variable "instance_type" {
   type        = string
 }
 
-variable "auto_deploy" {
-  description = "Whether Render should auto-deploy this worker."
-  type        = bool
-  default     = false
+variable "region" {
+  description = "Render region for the worker service."
+  type        = string
 }

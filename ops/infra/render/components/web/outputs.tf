@@ -1,5 +1,5 @@
 output "name" {
-  value = var.name
+  value = render_web_service.this.name
 }
 
 output "environment" {
@@ -16,4 +16,12 @@ output "health_check_path" {
 
 output "instance_type" {
   value = var.instance_type
+}
+
+output "region" {
+  value = var.region
+}
+
+output "id" {
+  value = render_web_service.this.id
 }

@@ -1,5 +1,5 @@
 output "name" {
-  value = var.name
+  value = render_postgres.this.name
 }
 
 output "environment" {
@@ -20,4 +20,12 @@ output "plan" {
 
 output "postgres_version" {
   value = var.postgres_version
+}
+
+output "region" {
+  value = var.region
+}
+
+output "id" {
+  value = render_postgres.this.id
 }
