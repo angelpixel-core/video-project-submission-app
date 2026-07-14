@@ -3,3 +3,8 @@ variable "rails_master_key" {
   type        = string
   sensitive   = true
 }
+
+variable "environment_id" {
+  description = "Staging Render environment identifier."
+  type        = string
+}

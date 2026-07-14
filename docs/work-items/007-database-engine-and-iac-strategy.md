@@ -58,10 +58,10 @@ title: Database Engine and IaC Strategy
 - [x] `ops/infra/render/envs/staging/providers.tf`
   - [x] Wire `owner_id` and `RENDER_API_KEY` the same way as QA.
 - [x] `ops/infra/render/envs/staging/variables.tf`
-  - [x] Define `rails_master_key` as a required sensitive input.
-- [ ] `ops/infra/render/envs/staging/main.tf`
-  - [ ] Mirror the QA module layout for `web` and `postgres` without live IDs or imports.
-  - [ ] Keep `worker` absent unless staging explicitly needs it.
+  - [x] Define `rails_master_key` and `environment_id` as required inputs.
+- [x] `ops/infra/render/envs/staging/main.tf`
+  - [x] Mirror the QA module layout for `web` and `postgres` without live IDs or imports.
+  - [x] Keep `worker` absent unless staging explicitly needs it.
 - [ ] `ops/infra/render/envs/staging/outputs.tf`
   - [ ] Expose the IDs and URLs needed for validation and promotion.
 - [ ] `ops/infra/render/envs/staging/imports.tf`
