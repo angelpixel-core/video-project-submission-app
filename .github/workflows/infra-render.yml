@@ -65,6 +65,7 @@ jobs:
     needs: discover
     if: github.event_name == 'pull_request'
     env:
+      RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
       TF_VAR_rails_master_key: ${{ secrets.RAILS_MASTER_KEY }}
       TF_VAR_environment_id: ${{ vars.RENDER_QA_ENVIRONMENT_ID }}
     steps:
@@ -103,6 +104,10 @@ jobs:
         if: needs.discover.outputs.has_files == 'true'
         uses: hashicorp/setup-terraform@v3
 
+      - name: Configure Render API key
+        if: needs.discover.outputs.has_files == 'true'
+        run: echo "RENDER_API_KEY=${{ secrets.RENDER_API_KEY }}" >> "$GITHUB_ENV"
+
       - name: Set Terraform variables
         if: needs.discover.outputs.has_files == 'true'
         run: |
@@ -132,6 +137,7 @@ jobs:
     if: github.event_name == 'workflow_dispatch'
     environment: ${{ inputs.environment }}
     env:
+      RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
       TF_VAR_rails_master_key: ${{ secrets.RAILS_MASTER_KEY }}
       TF_VAR_environment_id: ${{ vars.RENDER_QA_ENVIRONMENT_ID }}
     steps:
