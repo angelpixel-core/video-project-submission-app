@@ -1,23 +1,29 @@
-# Staging
+# Staging Environment
 
-## Inventory
+`staging` is the release-readiness environment between QA and production.
 
-| Resource | Name | Notes |
-| --- | --- | --- |
-| Web service | `video-project-submission-app-staging` | Planned Render web runtime for staging. |
-| Worker service | `video-project-submission-app-staging-worker` | Planned background worker for staging queue processing. |
-| PostgreSQL service | `video-project-submission-app-staging-db` | Planned managed Postgres for staging. |
-| Hostname | `staging.<placeholder-domain>` | Placeholder until DNS is finalized. |
-| TLS | Render-managed | Certificate termination handled by Render. |
+## Purpose
 
-## Runtime Inputs
+- Receive the QA-approved artifact.
+- Run staging deploy and smoke checks.
+- Gate creation of the `development -> main` release PR.
 
-- `RAILS_ENV=staging`
-- `RAILS_LOG_TO_STDOUT=true`
-- `RAILS_MASTER_KEY`
-- `DATABASE_URL`
+## Current State
+
+- No live Render state is imported yet.
+- No staging `import` blocks are defined yet.
+- `Promote` is triggered manually from GitHub Actions.
+- No staging worker is defined yet.
+
+## Promotion Flow
+
+1. QA approves the artifact.
+2. QA triggers `Promote`.
+3. The workflow deploys to staging.
+4. Staging smoke checks pass.
+5. The system creates or updates the `development -> main` PR.
 
 ## Notes
 
-- Staging should mirror QA and production behavior as closely as possible.
-- Keep the worker separate from QA to preserve promotion boundaries.
+- `prod` is intentionally out of scope for now.
+- Keep this environment aligned with QA unless release requirements change.

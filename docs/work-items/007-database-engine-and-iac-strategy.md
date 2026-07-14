@@ -66,8 +66,8 @@ title: Database Engine and IaC Strategy
   - [x] Expose the IDs and URLs needed for validation and promotion.
 - [x] `ops/infra/render/envs/staging/imports.tf`
   - [x] Leave empty or placeholder-only until staging has live Render state.
-- [ ] `ops/infra/render/envs/staging/README.md`
-  - [ ] Document staging as the manual signoff and promotion gate after QA.
+- [x] `ops/infra/render/envs/staging/README.md`
+  - [x] Document staging as the manual signoff and promotion gate after QA.
 - [ ] `.github/workflows/promote-staging.yml`
   - [ ] Add `workflow_dispatch` so QA can trigger `Promote` from GitHub Actions.
   - [ ] Deploy the QA-approved artifact to staging.
