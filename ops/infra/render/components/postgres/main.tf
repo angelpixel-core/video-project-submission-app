@@ -6,6 +6,5 @@ resource "render_postgres" "this" {
   database_name             = var.database_name
   database_user             = var.database_user
   disk_size_gb              = 1
-  environment_id            = var.environment
   high_availability_enabled = false
 }
