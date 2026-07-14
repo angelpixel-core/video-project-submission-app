@@ -38,8 +38,8 @@ title: Database Engine and IaC Strategy
 
 - [x] Create the Terraform base files for each environment under `ops/infra/render/envs/{qa,staging,prod}`.
 - [x] Create reusable modules under `ops/infra/render/components/{web,worker,postgres,dns}`.
-- [ ] Start with `qa` and wire it to the live Render web service and PostgreSQL service.
-- [ ] Express QA adoption with Terraform `import` blocks.
+- [x] Start with `qa` and wire it to the live Render web service and PostgreSQL service.
+- [x] Express QA adoption with Terraform `import` blocks.
 - [ ] Keep `staging` and `prod` in the same shape, but without live state yet.
 - [ ] Validate with `terraform fmt`, `terraform init -backend=false`, and `terraform plan` for `qa`.
 
