@@ -101,9 +101,12 @@ title: CI/CD and Environments
 - [x] `pull_request` to `development` runs the merge gate checks.
 - [x] A green PR is merged manually into `development`.
 - [ ] Merge into `development` triggers the automated `qa` deploy.
-- [ ] A green `qa` promotes automatically to `staging`.
-- [ ] A green `staging` promotes to `prod` with GitHub Environment approval.
-- [ ] `prod` runs smoke validation after approval.
+- [ ] A green `qa` requires manual signoff before `Promote` is triggered in GitHub Actions.
+- [ ] `Promote` deploys the QA-approved artifact to `staging`.
+- [ ] A green `staging` creates or updates the release PR from `development` to `main`.
+- [ ] A green release PR is merged manually into `main`.
+- [ ] Merge into `main` triggers the automated `prod` deploy.
+- [ ] `prod` runs smoke validation after deploy.
 
 ### PR Automation
 
@@ -127,17 +130,19 @@ flowchart LR
     M3 --> MERGE[merge manually to development]
   end
 
-  subgraph Lane2[Lane 2: development -> qa -> staging -> prod]
+  subgraph Lane2[Lane 2: development -> qa -> staging -> main -> prod]
     MERGE --> QADEPLOY[auto deploy to qa]
     QADEPLOY --> QACHECKS[qa checks]
     QACHECKS --> QS[smoke]
     QACHECKS --> QAAC[acceptance]
-    QAAC --> STAGE[auto promote to staging]
+    QAAC --> PROMOTE[manual Promote]
+    PROMOTE --> STAGE[deploy to staging]
     STAGE --> STCHECKS[staging checks]
     STCHECKS --> SS[smoke]
-    SS --> PRODDEPLOY[prod deploy]
-    PRODDEPLOY --> APPROVAL[GitHub Environment approval]
-    APPROVAL --> PRODSMOKE[prod smoke]
+    STCHECKS --> RELEASEPR[create release PR]
+    RELEASEPR --> MAIN[merge release PR to main]
+    MAIN --> PRODDEPLOY[prod deploy]
+    PRODDEPLOY --> PRODSMOKE[prod smoke]
   end
 ```
 
@@ -157,6 +162,7 @@ flowchart LR
 - Run post-deploy smoke tests automatically with `make test/smoke`.
 - Run selected acceptance scenarios automatically when practical with `make test/acceptance`.
 - Require manual QA validation after the automated gates pass.
+- Trigger the `Promote` workflow in GitHub Actions only after QA signoff.
 - Document exploratory findings, even when the failure is outside the scripted suite.
 
 ### Staging Deployment
@@ -165,10 +171,11 @@ flowchart LR
 - Use the same build artifact that passed QA, or an immutable promoted digest from the same commit.
 - Run a smaller post-deploy smoke suite if needed with `make test/smoke`.
 - Treat staging as the final release readiness environment before production.
+- Create or update the release PR from `development` to `main` only after staging passes.
 
 ### Production Deployment
 
-- Promote only the staging-approved artifact.
+- Promote only after the release PR has been approved and merged into `main`.
 - Keep the runtime image minimal.
 - Skip test and dev dependencies in the final image.
 - Prefer smoke-only post-deploy validation with `make test/smoke`.
@@ -203,7 +210,8 @@ flowchart LR
 - Implemented the CI lane split for `push` and `pull_request` events.
 - Added automatic PR create/update from green `work-items/*` pushes into `development`.
 - Kept the merge step manual while branch protection controls when the PR is eligible to merge.
-- Deferred the deploy-promotion path to the follow-up infrastructure work items.
+- Added the QA `Promote` path to staging, with automatic release PR creation to `main` after staging succeeds.
+- Kept the final merge into `main` manual before production deploy.
 
 ## Related Docs
 
@@ -222,7 +230,7 @@ flowchart LR
 - Keep `qa` and `staging` separate on purpose: QA validates the automated pipeline and exploratory findings, staging validates manual signoff on the promoted release artifact.
 - Linting should run once in the earliest sensible pipeline stage, not be repeated at every hop.
 - Automatic test execution should happen when the pipeline reaches its intended stage, not manually in ad hoc commands.
-- The remaining deployment-promotion items in `Two-Lane Flow` are intentionally deferred until work items `005`, `006`, and `007` land, after which this document resumes at the merge-to-qa path.
+- The remaining deployment-promotion items in `Two-Lane Flow` now depend on the staging promotion workflow and release PR automation.
 - The auto-synced PR stays open across additional pushes; a failed push does not merge anything and the PR only becomes mergeable again after a subsequent green push updates the checks.
 - `## PR Summary` is the source text for the auto-created pull request body.
 - Importmap cleanup belongs to `004-frontend-toolchain`; `003` only drops the importmap audit from its CI gate.
