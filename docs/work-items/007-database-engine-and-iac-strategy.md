@@ -86,8 +86,8 @@ title: Database Engine and IaC Strategy
 - [x] The Terraform strategy is explicit and documented.
 - [x] The Rails database configuration supports all runtime environments.
   - [x] QA-specific Rails database config is present and wired through `DATABASE_URL`.
-- [ ] The Rails app can connect to PostgreSQL in Render without affecting local MySQL.
-  - [ ] Run `curl -fsS https://video-project-submission-app-qa.onrender.com/up/db` after the QA deploy finishes.
+- [x] The Rails app can connect to PostgreSQL in Render without affecting local MySQL.
+  - [x] Verified with `curl -fsS https://video-project-submission-app-qa.onrender.com/up/db` after the QA deploy finished.
 - [ ] The infra pipeline can be run independently of app feature work.
   - [ ] `ops/infra/render/` exists, and the workflow is in place, but the Terraform config is not created yet.
 
