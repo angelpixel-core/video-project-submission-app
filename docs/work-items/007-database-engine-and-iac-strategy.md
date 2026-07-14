@@ -62,8 +62,8 @@ title: Database Engine and IaC Strategy
 - [x] `ops/infra/render/envs/staging/main.tf`
   - [x] Mirror the QA module layout for `web` and `postgres` without live IDs or imports.
   - [x] Keep `worker` absent unless staging explicitly needs it.
-- [ ] `ops/infra/render/envs/staging/outputs.tf`
-  - [ ] Expose the IDs and URLs needed for validation and promotion.
+- [x] `ops/infra/render/envs/staging/outputs.tf`
+  - [x] Expose the IDs and URLs needed for validation and promotion.
 - [ ] `ops/infra/render/envs/staging/imports.tf`
   - [ ] Leave empty or placeholder-only until staging has live Render state.
 - [ ] `ops/infra/render/envs/staging/README.md`
