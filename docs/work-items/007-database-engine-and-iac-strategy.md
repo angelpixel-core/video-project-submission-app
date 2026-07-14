@@ -87,7 +87,7 @@ title: Database Engine and IaC Strategy
 - [x] The Rails database configuration supports all runtime environments.
   - [x] QA-specific Rails database config is present and wired through `DATABASE_URL`.
 - [ ] The Rails app can connect to PostgreSQL in Render without affecting local MySQL.
-  - [ ] This still needs a QA deploy/config validation run.
+  - [ ] Run `curl -fsS https://video-project-submission-app-qa.onrender.com/up/db` after the QA deploy finishes.
 - [ ] The infra pipeline can be run independently of app feature work.
   - [ ] `ops/infra/render/` exists, and the workflow is in place, but the Terraform config is not created yet.
 

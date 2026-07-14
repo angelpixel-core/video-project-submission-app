@@ -17,6 +17,16 @@
 - `RAILS_MASTER_KEY`
 - `DATABASE_URL`
 
+## Validation Command
+
+- Run this from your local machine after the QA deploy finishes:
+
+```shell
+curl -fsS https://video-project-submission-app-qa.onrender.com/up/db
+```
+
+- Expected response: `ok`
+
 ## Notes
 
 - QA is the first deployed compatibility checkpoint.
