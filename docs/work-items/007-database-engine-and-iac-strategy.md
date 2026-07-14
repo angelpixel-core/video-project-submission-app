@@ -93,10 +93,10 @@ title: Database Engine and IaC Strategy
   - [x] Prepare the `worker` module wiring, but keep it disabled by default until prod actually needs it.
 - [x] `ops/infra/render/envs/prod/outputs.tf`
   - [x] Expose the IDs and URLs needed for validation and promotion.
-- [ ] `ops/infra/render/envs/prod/imports.tf`
-  - [ ] Leave empty or placeholder-only until production has live Render state.
-- [ ] `ops/infra/render/envs/prod/README.md`
-  - [ ] Document prod as the final release environment after the release tag is created.
+- [x] `ops/infra/render/envs/prod/imports.tf`
+  - [x] Leave empty or placeholder-only until production has live Render state.
+- [x] `ops/infra/render/envs/prod/README.md`
+  - [x] Document prod as the final release environment after the release tag is created.
 
 ## Affected Docs
 

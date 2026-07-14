@@ -1,23 +1,29 @@
-# Prod
+# Production Environment
 
-## Inventory
+`prod` is the final release environment after the merged `main` release commit is tagged.
 
-| Resource | Name | Notes |
-| --- | --- | --- |
-| Web service | `video-project-submission-app` | Planned production web runtime. |
-| Worker service | `video-project-submission-app-worker` | Planned production background worker. |
-| PostgreSQL service | `video-project-submission-app-db` | Planned managed Postgres for production. |
-| Hostname | `<placeholder-domain>` | Placeholder until the real domain is chosen. |
-| TLS | Render-managed | Certificate termination handled by Render. |
+## Purpose
 
-## Runtime Inputs
+- Receive the release-tagged artifact from `main`.
+- Run the final production deploy.
+- Validate the live release with smoke checks.
 
-- `RAILS_ENV=production`
-- `RAILS_LOG_TO_STDOUT=true`
-- `RAILS_MASTER_KEY`
-- `DATABASE_URL`
+## Current State
+
+- No live Render state is imported yet.
+- No production `import` blocks are defined yet.
+- The worker is scaffolded but disabled by default.
+
+## Release Flow
+
+1. QA signs off.
+2. `Promote` deploys to staging.
+3. Staging passes and creates the release PR.
+4. The release PR is approved and merged into `main`.
+5. A release tag is created from `main`.
+6. Production deploys from the tagged release.
 
 ## Notes
 
-- Production stays reserved until the release path is ready.
-- Keep the shape aligned with QA and staging so promotion stays predictable.
+- Keep the structure aligned with staging.
+- Enable the worker only when prod actually needs it.
