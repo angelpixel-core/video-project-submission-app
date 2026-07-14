@@ -53,8 +53,8 @@ title: Database Engine and IaC Strategy
 
 ### Staging Scaffold Checklist
 
-- [ ] `ops/infra/render/envs/staging/versions.tf`
-  - [ ] Keep the same Terraform and provider constraints as QA.
+- [x] `ops/infra/render/envs/staging/versions.tf`
+  - [x] Keep the same Terraform and provider constraints as QA.
 - [ ] `ops/infra/render/envs/staging/providers.tf`
   - [ ] Wire `owner_id` and `RENDER_API_KEY` the same way as QA.
 - [ ] `ops/infra/render/envs/staging/variables.tf`
