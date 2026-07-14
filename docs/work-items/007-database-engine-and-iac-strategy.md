@@ -64,8 +64,8 @@ title: Database Engine and IaC Strategy
   - [x] Keep `worker` absent unless staging explicitly needs it.
 - [x] `ops/infra/render/envs/staging/outputs.tf`
   - [x] Expose the IDs and URLs needed for validation and promotion.
-- [ ] `ops/infra/render/envs/staging/imports.tf`
-  - [ ] Leave empty or placeholder-only until staging has live Render state.
+- [x] `ops/infra/render/envs/staging/imports.tf`
+  - [x] Leave empty or placeholder-only until staging has live Render state.
 - [ ] `ops/infra/render/envs/staging/README.md`
   - [ ] Document staging as the manual signoff and promotion gate after QA.
 - [ ] `.github/workflows/promote-staging.yml`
