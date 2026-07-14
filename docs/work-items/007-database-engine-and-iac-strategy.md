@@ -45,6 +45,7 @@ title: Database Engine and IaC Strategy
   - [x] Run `terraform -chdir=ops/infra/render/envs/qa init -input=false -backend=false`.
   - [x] Run `terraform -chdir=ops/infra/render/envs/qa plan` and confirm the existing QA web service and Postgres are adopted, not recreated.
   - [x] Confirm the worker stays absent until a real QA worker exists in Render.
+- [ ] Reconcile the imported QA Render state to reduce provider-normalized plan drift.
 - [ ] Mirror the same structure into `staging` and `prod` without live state yet.
 
 ## Affected Docs
@@ -101,8 +102,8 @@ title: Database Engine and IaC Strategy
   - [x] QA-specific Rails database config is present and wired through `DATABASE_URL`.
 - [x] The Rails app can connect to PostgreSQL in Render without affecting local MySQL.
   - [x] Verified with `curl -fsS https://video-project-submission-app-qa.onrender.com/up/db` after the QA deploy finished.
-- [ ] The infra pipeline can be run independently of app feature work.
-  - [ ] `ops/infra/render/` exists, and the workflow is in place, but the Terraform config is not created yet.
+- [x] The infra pipeline can be run independently of app feature work.
+  - [x] `ops/infra/render/` exists, the workflow is in place, and QA `terraform fmt`, `init`, and `plan` are validated.
 
 ## Notes
 
