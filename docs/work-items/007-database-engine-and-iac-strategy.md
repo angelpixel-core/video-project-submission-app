@@ -24,6 +24,11 @@ title: Database Engine and IaC Strategy
 - [x] Define and implement the database engine matrix and Terraform-based infrastructure strategy for QA now.
   - [x] Staging and prod remain future extension points.
 
+## Operational Note
+
+- The currently deployed Render environment is now treated as `production`.
+- `qa` and `staging` will be created as new environments rather than reusing the existing production runtime.
+
 ## Scope
 
 - MySQL for `dev` and `test`.

@@ -68,7 +68,7 @@ jobs:
     if: github.event_name == 'pull_request'
     env:
       TF_VAR_rails_master_key: ${{ secrets.RAILS_MASTER_KEY }}
-      TF_VAR_environment_id: ${{ vars.RENDER_QA_ENVIRONMENT_ID }}
+      TF_VAR_environment_id: ${{ vars.RENDER_PROD_ENVIRONMENT_ID }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
