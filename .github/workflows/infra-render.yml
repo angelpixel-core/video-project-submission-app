@@ -66,6 +66,7 @@ jobs:
     if: github.event_name == 'pull_request'
     env:
       RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+      TF_VAR_owner_id: ${{ vars.RENDER_OWNER_ID }}
       TF_VAR_rails_master_key: ${{ secrets.RAILS_MASTER_KEY }}
       TF_VAR_environment_id: ${{ vars.RENDER_QA_ENVIRONMENT_ID }}
     steps:
@@ -106,7 +107,9 @@ jobs:
 
       - name: Configure Render API key
         if: needs.discover.outputs.has_files == 'true'
-        run: echo "RENDER_API_KEY=${{ secrets.RENDER_API_KEY }}" >> "$GITHUB_ENV"
+        run: |
+          echo "RENDER_API_KEY=${{ secrets.RENDER_API_KEY }}" >> "$GITHUB_ENV"
+          echo "TF_VAR_owner_id=${{ vars.RENDER_OWNER_ID }}" >> "$GITHUB_ENV"
 
       - name: Set Terraform variables
         if: needs.discover.outputs.has_files == 'true'
@@ -138,6 +141,7 @@ jobs:
     environment: ${{ inputs.environment }}
     env:
       RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+      TF_VAR_owner_id: ${{ vars.RENDER_OWNER_ID }}
       TF_VAR_rails_master_key: ${{ secrets.RAILS_MASTER_KEY }}
       TF_VAR_environment_id: ${{ vars.RENDER_QA_ENVIRONMENT_ID }}
     steps:

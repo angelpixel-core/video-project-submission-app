@@ -69,3 +69,7 @@ Work items are implementation documents. Each one should map back to the docs it
 ## Seventh Item
 
 - [ ] [Database Engine and IaC Strategy](./007-database-engine-and-iac-strategy.md)
+
+## Eighth Item
+
+- [ ] [Render Stack Portability](./008-render-stack-portability.md)
