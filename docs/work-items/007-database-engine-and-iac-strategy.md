@@ -83,11 +83,11 @@ title: Database Engine and IaC Strategy
 
 - [x] `ops/infra/render/envs/prod/versions.tf`
   - [x] Keep the same Terraform and provider constraints as QA.
-- [ ] `ops/infra/render/envs/prod/providers.tf`
-  - [ ] Wire `owner_id` and `RENDER_API_KEY` the same way as QA.
-- [ ] `ops/infra/render/envs/prod/variables.tf`
-  - [ ] Define `rails_master_key` and `environment_id` as required inputs.
-  - [ ] Define a worker enablement input so the prod worker can be prepared without turning it on yet.
+- [x] `ops/infra/render/envs/prod/providers.tf`
+  - [x] Wire `owner_id` and `RENDER_API_KEY` the same way as QA.
+- [x] `ops/infra/render/envs/prod/variables.tf`
+  - [x] Define `rails_master_key` and `environment_id` as required inputs.
+  - [x] Define a worker enablement input so the prod worker can be prepared without turning it on yet.
 - [ ] `ops/infra/render/envs/prod/main.tf`
   - [ ] Mirror the staging module layout for `web` and `postgres` without live IDs or imports.
   - [ ] Prepare the `worker` module wiring, but keep it disabled by default until prod actually needs it.
