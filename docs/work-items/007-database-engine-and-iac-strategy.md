@@ -66,10 +66,10 @@ title: Database Engine and IaC Strategy
   - [x] Create a tool-agnostic `ops/infra/render/` tree organized by platform and environment.
   - [x] Add reusable component/module directories for `web`, `worker`, `postgres`, and `dns`.
   - [x] Add environment directories for `qa`, `staging`, and `prod`.
-- [ ] Define the infra inventory for each environment.
-  - [ ] Provision one web service, one worker service, and one managed PostgreSQL service per environment.
-  - [ ] Keep QA and staging workers separate so queue/config boundaries stay isolated.
-  - [ ] Capture env vars, secrets, hostname, and TLS requirements per environment.
+- [x] Define the infra inventory for each environment.
+  - [x] Provision one web service, one worker service, and one managed PostgreSQL service per environment.
+  - [x] Keep QA and staging workers separate so queue/config boundaries stay isolated.
+  - [x] Capture env vars, secrets, hostname, and TLS requirements per environment.
 - [ ] Define the infra pipeline triggers for `fmt`, `validate`, `plan`, and `apply`.
   - [ ] Add GitHub Actions wiring for infra-only validation and approval-gated apply.
 - [ ] Define the adoption path for existing QA Render resources.
