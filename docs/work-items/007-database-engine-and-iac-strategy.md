@@ -71,6 +71,10 @@ title: Database Engine and IaC Strategy
   - [x] Keep QA and staging workers separate so queue/config boundaries stay isolated.
   - [x] Capture env vars, secrets, hostname, and TLS requirements per environment.
 - [ ] Define the infra pipeline triggers for `fmt`, `validate`, `plan`, and `apply`.
+  - [ ] Run `fmt` and `validate` on pull requests that touch `ops/infra/render/**`.
+  - [ ] Run `plan` for `qa` and `staging` on pull requests that touch `ops/infra/render/**`.
+  - [ ] Trigger `apply` manually, one environment at a time.
+  - [ ] Gate `apply` with approval or protected environment rules.
   - [ ] Add GitHub Actions wiring for infra-only validation and approval-gated apply.
 - [ ] Define the adoption path for existing QA Render resources.
   - [ ] Document how Terraform will adopt the live QA Render state before staging is introduced.
