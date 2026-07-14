@@ -36,7 +36,7 @@ title: Database Engine and IaC Strategy
 
 ## Implementation Plan
 
-- [ ] Create the Terraform base files for each environment under `ops/infra/render/envs/{qa,staging,prod}`.
+- [x] Create the Terraform base files for each environment under `ops/infra/render/envs/{qa,staging,prod}`.
 - [ ] Create reusable modules under `ops/infra/render/components/{web,worker,postgres,dns}`.
 - [ ] Start with `qa` and wire it to the live Render web service and PostgreSQL service.
 - [ ] Express QA adoption with Terraform `import` blocks.
