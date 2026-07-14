@@ -68,11 +68,11 @@ title: Database Engine and IaC Strategy
   - [x] Leave empty or placeholder-only until staging has live Render state.
 - [x] `ops/infra/render/envs/staging/README.md`
   - [x] Document staging as the manual signoff and promotion gate after QA.
-- [ ] `.github/workflows/promote-staging.yml`
-  - [ ] Add `workflow_dispatch` so QA can trigger `Promote` from GitHub Actions.
-  - [ ] Deploy the QA-approved artifact to staging.
-  - [ ] Run staging smoke checks after deploy.
-  - [ ] Create or update the `development -> main` PR only after staging succeeds.
+- [x] `.github/workflows/promote-staging.yml`
+  - [x] Add `workflow_dispatch` so QA can trigger `Promote` from GitHub Actions.
+  - [x] Deploy the QA-approved artifact to staging.
+  - [x] Run staging smoke checks after deploy.
+  - [x] Create or update the `development -> main` PR only after staging succeeds.
 - [ ] `docs/work-items/003-ci-cd-and-environments.md`
   - [ ] Update the delivery flow to show QA approval -> Promote -> staging -> release PR -> main -> prod.
 - [ ] `docs/decisions/03-ci-pr-promotion-strategy.md`
