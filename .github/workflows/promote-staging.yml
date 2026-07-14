@@ -15,10 +15,6 @@ jobs:
   deploy_staging:
     name: deploy staging
     runs-on: ubuntu-latest
-    env:
-      RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
-      RENDER_STAGING_SERVICE_ID: ${{ secrets.RENDER_STAGING_SERVICE_ID }}
-      STAGING_SMOKE_URL: https://video-project-submission-app-staging.onrender.com/up/db
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -32,69 +28,11 @@ jobs:
             exit 1
           fi
 
-      - name: Trigger staging deploy
-        id: deploy
+      - name: Staging deploy disabled on Hobby plan
         shell: bash
         run: |
           set -eu
-          response=$(curl -fsS \
-            -X POST \
-            -H 'accept: application/json' \
-            -H "authorization: Bearer ${RENDER_API_KEY}" \
-            -H 'content-type: application/json' \
-            --data "{\"commitId\":\"${GITHUB_SHA}\"}" \
-            "https://api.render.com/v1/services/${RENDER_STAGING_SERVICE_ID}/deploys")
-          deploy_id=$(printf '%s' "$response" | jq -r '.id')
-          if [ -z "$deploy_id" ] || [ "$deploy_id" = "null" ]; then
-            echo "Unable to determine Render deploy id." >&2
-            printf '%s\n' "$response" >&2
-            exit 1
-          fi
-          printf 'deploy_id=%s\n' "$deploy_id" >> "$GITHUB_OUTPUT"
-
-      - name: Wait for staging deploy
-        shell: bash
-        env:
-          DEPLOY_ID: ${{ steps.deploy.outputs.deploy_id }}
-        run: |
-          set -eu
-          attempt=0
-          while [ "$attempt" -lt 90 ]; do
-            status=$(curl -fsS \
-              -H 'accept: application/json' \
-              -H "authorization: Bearer ${RENDER_API_KEY}" \
-              "https://api.render.com/v1/services/${RENDER_STAGING_SERVICE_ID}/deploys/${DEPLOY_ID}" | jq -r '.status')
-
-            case "$status" in
-              live)
-                echo "Staging deploy is live."
-                break
-                ;;
-              created|queued|build_in_progress|update_in_progress|pre_deploy_in_progress)
-                attempt=$((attempt + 1))
-                sleep 20
-                ;;
-              build_failed|update_failed|pre_deploy_failed|canceled|deactivated)
-                echo "Staging deploy failed with status: $status" >&2
-                exit 1
-                ;;
-              *)
-                echo "Unexpected staging deploy status: $status" >&2
-                exit 1
-                ;;
-            esac
-          done
-
-          if [ "$attempt" -ge 90 ]; then
-            echo "Timed out waiting for staging deploy to become live." >&2
-            exit 1
-          fi
-
-      - name: Run staging smoke checks
-        shell: bash
-        run: |
-          set -eu
-          curl -fsS "$STAGING_SMOKE_URL"
+          echo "Skipping the real staging deploy and smoke checks until the workspace plan changes."
 
   release_pr:
     name: sync release pr
