@@ -196,16 +196,24 @@ render services -o text
 - Use `gh secret list` for metadata-only verification.
 - Use a workflow smoke test to confirm the token works at runtime.
 
-### GitHub Actions Secrets
+### GitHub Actions Secrets and Vars
 
-| Secret Name | Purpose |
-| --- | --- |
-| `RENDER_API_KEY` | Authenticates the Render CLI in GitHub Actions. |
-| `RENDER_QA_SERVICE_ID` | Targets the QA Render web service. |
+| Kind | Name | Purpose |
+| --- | --- | --- |
+| Secret | `RENDER_API_KEY` | Authenticates the Render CLI in GitHub Actions. |
+| Secret | `RAILS_MASTER_KEY` | Shared Rails master key for QA, staging, and prod. |
+| Secret | `RENDER_QA_SERVICE_ID` | Targets the QA Render web service. |
+| Secret | `RENDER_STAGING_SERVICE_ID` | Targets the staging Render web service. |
+| Secret | `RENDER_PROD_SERVICE_ID` | Targets the production Render web service. |
+| Variable | `RENDER_QA_ENVIRONMENT_ID` | Supplies the QA Render environment ID to Terraform. |
+| Variable | `RENDER_STAGING_ENVIRONMENT_ID` | Supplies the staging Render environment ID to Terraform. |
+| Variable | `RENDER_PROD_ENVIRONMENT_ID` | Supplies the production Render environment ID to Terraform. |
 
+- Use one Rails master key secret unless the app later proves it needs per-environment keys.
 - Use one service ID secret per environment so deploys stay explicit.
+- Use one environment ID variable per environment so Terraform stays readable.
 - `GITHUB_TOKEN` is provided by GitHub Actions automatically and does not need a manual secret entry.
-- The GitHub CLI can set these secrets with `gh secret set`.
+- The GitHub CLI can set these secrets with `gh secret set` and repository variables with `gh variable set`.
 
 ### Secret Operations
 

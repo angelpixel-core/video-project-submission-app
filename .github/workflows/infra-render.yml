@@ -66,6 +66,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: discover
     if: github.event_name == 'pull_request'
+    env:
+      TF_VAR_rails_master_key: ${{ secrets.RAILS_MASTER_KEY }}
+      TF_VAR_environment_id: ${{ vars.RENDER_QA_ENVIRONMENT_ID }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -102,6 +105,20 @@ jobs:
         if: needs.discover.outputs.has_files == 'true'
         uses: hashicorp/setup-terraform@v3
 
+      - name: Set Terraform variables
+        if: needs.discover.outputs.has_files == 'true'
+        run: |
+          case "${{ matrix.environment }}" in
+            qa)
+              echo "TF_VAR_rails_master_key=${{ secrets.RAILS_MASTER_KEY }}" >> "$GITHUB_ENV"
+              echo "TF_VAR_environment_id=${{ vars.RENDER_QA_ENVIRONMENT_ID }}" >> "$GITHUB_ENV"
+              ;;
+            staging)
+              echo "TF_VAR_rails_master_key=${{ secrets.RAILS_MASTER_KEY }}" >> "$GITHUB_ENV"
+              echo "TF_VAR_environment_id=${{ vars.RENDER_STAGING_ENVIRONMENT_ID }}" >> "$GITHUB_ENV"
+              ;;
+          esac
+
       - name: Terraform init
         if: needs.discover.outputs.has_files == 'true'
         run: terraform -chdir=ops/infra/render/envs/${{ matrix.environment }} init -input=false -backend=false
@@ -120,6 +137,9 @@ jobs:
     needs: discover
     if: github.event_name == 'workflow_dispatch'
     environment: ${{ inputs.environment }}
+    env:
+      TF_VAR_rails_master_key: ${{ secrets.RAILS_MASTER_KEY }}
+      TF_VAR_environment_id: ${{ inputs.environment == 'qa' && vars.RENDER_QA_ENVIRONMENT_ID || inputs.environment == 'staging' && vars.RENDER_STAGING_ENVIRONMENT_ID || vars.RENDER_PROD_ENVIRONMENT_ID }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
