@@ -25,6 +25,7 @@ Use a normal pull request from `work-items/*` into `development` as the gate bet
 - `development` is protected with required status checks and required approvals.
 - PR creation uses a dedicated repository secret token such as `WORKITEM_PR_SYNC_TOKEN` so the resulting PR can trigger the normal `pull_request` workflow.
 - Release PR creation from `development` to `main` uses a dedicated repository secret token such as `RELEASE_PR_SYNC_TOKEN` so the resulting PR can trigger the normal `pull_request` workflow.
+- Release tags are created from the merged `main` commit, never from `development`.
 - Older runs for the same branch are cancelled when a newer push arrives.
 - Auto-merge is deferred until branch protection and review policy are fully in place.
 
@@ -40,3 +41,4 @@ Use a normal pull request from `work-items/*` into `development` as the gate bet
 - The token should be provisioned as a repository secret, preferably a fine-grained PAT or GitHub App token with `pull_requests: write` and the minimum required repo scope.
 - Branch protection/ruleset configuration lives in GitHub settings unless later codified separately.
 - The release PR token should also be provisioned as a repository secret with the minimum required repo scope.
+- Tag creation should happen in the release workflow after the `main` merge, so production can deploy from a stable release point.

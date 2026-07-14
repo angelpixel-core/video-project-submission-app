@@ -73,11 +73,11 @@ title: Database Engine and IaC Strategy
   - [x] Deploy the QA-approved artifact to staging.
   - [x] Run staging smoke checks after deploy.
   - [x] Create or update the `development -> main` PR only after staging succeeds.
-- [ ] `docs/work-items/003-ci-cd-and-environments.md`
-  - [ ] Update the delivery flow to show QA approval -> Promote -> staging -> release PR -> main -> prod.
-- [ ] `docs/decisions/03-ci-pr-promotion-strategy.md`
-  - [ ] Record that the release PR is system-created after staging success.
-  - [ ] Record that the release PR uses a dedicated token.
+- [x] `docs/work-items/003-ci-cd-and-environments.md`
+  - [x] Update the delivery flow to show QA approval -> Promote -> staging -> release PR -> main -> prod.
+- [x] `docs/decisions/03-ci-pr-promotion-strategy.md`
+  - [x] Record that the release PR is system-created after staging success.
+  - [x] Record that the release PR uses a dedicated token.
 
 ## Affected Docs
 

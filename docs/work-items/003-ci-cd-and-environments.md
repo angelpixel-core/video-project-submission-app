@@ -63,6 +63,7 @@ title: CI/CD and Environments
 ### Production Flow
 
 - [x] Define the production promotion rule from staging.
+- [x] Define release tag creation from the merged `main` release commit.
 - [x] Define the minimal production runtime image constraints.
 - [x] Define the post-deploy smoke validation for production.
 
@@ -130,7 +131,7 @@ flowchart LR
     M3 --> MERGE[merge manually to development]
   end
 
-  subgraph Lane2[Lane 2: development -> qa -> staging -> main -> prod]
+  subgraph Lane2[Lane 2: development -> qa -> staging -> main -> tag -> prod]
     MERGE --> QADEPLOY[auto deploy to qa]
     QADEPLOY --> QACHECKS[qa checks]
     QACHECKS --> QS[smoke]
@@ -141,7 +142,8 @@ flowchart LR
     STCHECKS --> SS[smoke]
     STCHECKS --> RELEASEPR[create release PR]
     RELEASEPR --> MAIN[merge release PR to main]
-    MAIN --> PRODDEPLOY[prod deploy]
+    MAIN --> TAG[create release tag]
+    TAG --> PRODDEPLOY[prod deploy]
     PRODDEPLOY --> PRODSMOKE[prod smoke]
   end
 ```
@@ -176,6 +178,7 @@ flowchart LR
 ### Production Deployment
 
 - Promote only after the release PR has been approved and merged into `main`.
+- Create the release tag from the merged `main` commit before production deploy, or as part of the production release workflow.
 - Keep the runtime image minimal.
 - Skip test and dev dependencies in the final image.
 - Prefer smoke-only post-deploy validation with `make test/smoke`.
@@ -212,6 +215,7 @@ flowchart LR
 - Kept the merge step manual while branch protection controls when the PR is eligible to merge.
 - Added the QA `Promote` path to staging, with automatic release PR creation to `main` after staging succeeds.
 - Kept the final merge into `main` manual before production deploy.
+- Added release tag creation after the merged `main` release commit.
 
 ## Related Docs
 
@@ -231,6 +235,7 @@ flowchart LR
 - Linting should run once in the earliest sensible pipeline stage, not be repeated at every hop.
 - Automatic test execution should happen when the pipeline reaches its intended stage, not manually in ad hoc commands.
 - The remaining deployment-promotion items in `Two-Lane Flow` now depend on the staging promotion workflow and release PR automation.
+- Release tags are created from the merged `main` commit, not from `development`.
 - The auto-synced PR stays open across additional pushes; a failed push does not merge anything and the PR only becomes mergeable again after a subsequent green push updates the checks.
 - `## PR Summary` is the source text for the auto-created pull request body.
 - Importmap cleanup belongs to `004-frontend-toolchain`; `003` only drops the importmap audit from its CI gate.
