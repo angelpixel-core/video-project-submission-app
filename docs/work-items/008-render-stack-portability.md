@@ -80,3 +80,4 @@ title: Render Stack Portability
 
 - This work item is about portability and reuse, not about unlocking the Hobby plan limits.
 - Keep the code minimal and favor variables for anything account-specific.
+- Follow-up validation and bootstrap guidance should live in separate work items.
