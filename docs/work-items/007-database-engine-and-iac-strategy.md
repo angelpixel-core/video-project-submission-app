@@ -46,10 +46,10 @@ title: Database Engine and IaC Strategy
   - [x] Run `terraform -chdir=ops/infra/render/envs/qa plan` and confirm the existing QA web service and Postgres are adopted, not recreated.
   - [x] Confirm the worker stays absent until a real QA worker exists in Render.
 - [x] Reconcile the imported QA Render state to reduce provider-normalized plan drift.
-- [ ] Mirror the same structure into `staging` without live state yet.
-  - [ ] Add a manual `Promote` workflow in GitHub Actions that deploys the QA-approved artifact to `staging`.
-  - [ ] Create the `development -> main` PR automatically only after `staging` deploys and smoke checks succeed.
-  - [ ] Leave `prod` for the next rollout step after the staging path is stable.
+- [x] Mirror the same structure into `staging` without live state yet.
+  - [x] Add a manual `Promote` workflow in GitHub Actions that deploys the QA-approved artifact to `staging`.
+  - [x] Create the `development -> main` PR automatically only after `staging` deploys and smoke checks succeed.
+  - [x] Leave `prod` for the next rollout step after the staging path is stable.
 
 ### Staging Scaffold Checklist
 
