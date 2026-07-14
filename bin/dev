@@ -1,0 +1,39 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+APP_ROOT = File.expand_path("..", __dir__)
+
+def spawn_process(label, command)
+  puts "Starting #{label}: #{command.join(' ')}"
+  spawn(*command, chdir: APP_ROOT, out: $stdout, err: $stderr)
+end
+
+children = {
+  web: spawn_process("web", ["bundle", "exec", "rails", "server", *ARGV]),
+  vite: spawn_process("vite", ["bundle", "exec", "vite", "dev"]),
+}
+
+%w[INT TERM].each do |signal|
+  trap(signal) do
+    children.each_value do |pid|
+      Process.kill(signal, pid) rescue nil
+    end
+  end
+end
+
+begin
+  loop do
+    pid = Process.wait
+    children.delete(children.key(pid))
+    break if children.empty?
+
+    children.each_value do |remaining|
+      Process.kill("TERM", remaining) rescue nil
+    end
+  end
+rescue Errno::ECHILD
+ensure
+  children.each_value do |pid|
+    Process.kill("TERM", pid) rescue nil
+  end
+end
