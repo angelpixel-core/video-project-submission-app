@@ -70,12 +70,12 @@ title: Database Engine and IaC Strategy
   - [x] Provision one web service, one worker service, and one managed PostgreSQL service per environment.
   - [x] Keep QA and staging workers separate so queue/config boundaries stay isolated.
   - [x] Capture env vars, secrets, hostname, and TLS requirements per environment.
-- [ ] Define the infra pipeline triggers for `fmt`, `validate`, `plan`, and `apply`.
-  - [ ] Run `fmt` and `validate` on pull requests that touch `ops/infra/render/**`.
-  - [ ] Run `plan` for `qa` and `staging` on pull requests that touch `ops/infra/render/**`.
-  - [ ] Trigger `apply` manually, one environment at a time.
-  - [ ] Gate `apply` with approval or protected environment rules.
-  - [ ] Add GitHub Actions wiring for infra-only validation and approval-gated apply.
+- [x] Define the infra pipeline triggers for `fmt`, `validate`, `plan`, and `apply`.
+  - [x] Run `fmt` and `validate` on pull requests that touch `ops/infra/render/**`.
+  - [x] Run `plan` for `qa` and `staging` on pull requests that touch `ops/infra/render/**`.
+  - [x] Trigger `apply` manually, one environment at a time.
+  - [x] Gate `apply` with approval or protected environment rules.
+  - [x] Add GitHub Actions wiring for infra-only validation and approval-gated apply.
 - [ ] Define the adoption path for existing QA Render resources.
   - [ ] Document how Terraform will adopt the live QA Render state before staging is introduced.
   - [ ] Capture the concrete Render resource names and hostnames when the Terraform stack is introduced.
@@ -89,7 +89,7 @@ title: Database Engine and IaC Strategy
 - [ ] The Rails app can connect to PostgreSQL in Render without affecting local MySQL.
   - [ ] This still needs a QA deploy/config validation run.
 - [ ] The infra pipeline can be run independently of app feature work.
-  - [ ] `ops/infra/render/` exists, but its workflow is not created yet.
+  - [ ] `ops/infra/render/` exists, and the workflow is in place, but the Terraform config is not created yet.
 
 ## Notes
 
