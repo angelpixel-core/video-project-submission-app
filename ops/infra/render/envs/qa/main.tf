@@ -7,7 +7,7 @@ module "web" {
   health_check_path   = "/up"
   instance_type       = "free"
   region              = "oregon"
-  environment_id      = "evm-d9a05upo3t8c7383lhb0"
+  environment_id      = var.adopted_environment_id
   auto_deploy         = true
   auto_deploy_trigger = "checksPass"
   env_vars = {
