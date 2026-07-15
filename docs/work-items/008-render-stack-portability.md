@@ -44,7 +44,7 @@ title: Render Stack Portability
 - [x] Add `RENDER_OWNER_ID` to the GitHub repository variables interface.
 - [x] Keep the current workspace resource IDs out of reusable defaults.
 - [x] Keep the hardcoded vs variable matrix documented in the work items.
-- [ ] Validate that QA `terraform plan` still succeeds with the portable inputs.
+- [x] Validate that QA `terraform plan` still succeeds with the portable inputs.
 
 ## Affected Docs
 
@@ -74,7 +74,7 @@ title: Render Stack Portability
 ## Validation
 
 - [ ] A different Render workspace can reuse the same Terraform structure by setting its own `RENDER_OWNER_ID` and resource IDs.
-- [ ] The current QA workflow still plans successfully.
+- [x] The current QA workflow still plans successfully.
 
 ## Notes
 
