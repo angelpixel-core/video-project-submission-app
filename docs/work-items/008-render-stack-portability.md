@@ -12,7 +12,7 @@ depends_on:
   - render-infrastructure-requirements
 order: 8
 phase: work-items
-status: draft
+status: done
 title: Render Stack Portability
 ---
 

@@ -72,7 +72,7 @@ Work items are implementation documents. Each one should map back to the docs it
 
 ## Eighth Item
 
-- [ ] [Render Stack Portability](./008-render-stack-portability.md)
+- [x] [Render Stack Portability](./008-render-stack-portability.md)
 
 ## Ninth Item
 
