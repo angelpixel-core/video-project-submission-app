@@ -13,7 +13,7 @@ depends_on:
   - testing-foundation
 order: 11
 phase: work-items
-status: draft
+status: done
 title: Sprint 0 Data Model
 ---
 
@@ -21,7 +21,7 @@ title: Sprint 0 Data Model
 
 ## Goal
 
-- [ ] Implement the Sprint 0 domain model with migrations, seeds/fixtures, and basic validations.
+- [x] Implement the Sprint 0 domain model with migrations, seeds/fixtures, and basic validations.
 
 ## Scope
 
@@ -38,12 +38,12 @@ title: Sprint 0 Data Model
 
 ## Implementation Plan
 
-- [ ] Add/adjust Active Record models for the Sprint 0 entities.
-- [ ] Create the migrations needed for the relationships and constraints.
-- [ ] Seed the default PM and the initial catalog of video types.
-- [ ] Add basic validations on model attributes and associations.
-- [ ] Add or update the minimal model specs needed to verify the relationships and validations.
-- [ ] Confirm MySQL compatibility with the existing environment setup.
+- [x] Add/adjust Active Record models for the Sprint 0 entities.
+- [x] Create the migrations needed for the relationships and constraints.
+- [x] Seed the default PM and the initial catalog of video types.
+- [x] Add basic validations on model attributes and associations.
+- [x] Add or update the minimal model specs needed to verify the relationships and validations.
+- [x] Confirm MySQL compatibility with the existing environment setup.
 
 ## Affected Docs
 
@@ -62,16 +62,16 @@ title: Sprint 0 Data Model
 
 ## Checklist
 
-- [ ] The Sprint 0 models and relationships exist in Rails.
-- [ ] The database migrations support the modeled relationships.
-- [ ] The seeded PM and video types are available for development and validation.
-- [ ] Basic validations prevent invalid records.
+- [x] The Sprint 0 models and relationships exist in Rails.
+- [x] The database migrations support the modeled relationships.
+- [x] The seeded PM and video types are available for development and validation.
+- [x] Basic validations prevent invalid records.
 
 ## Validation
 
-- [ ] The model tests/specs pass.
-- [ ] The seeded data loads successfully.
-- [ ] The relationships match the Sprint 0 domain docs.
+- [x] The model tests/specs pass.
+- [x] The seeded data loads successfully.
+- [x] The relationships match the Sprint 0 domain docs.
 
 ## Notes
 
