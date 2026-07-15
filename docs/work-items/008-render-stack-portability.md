@@ -20,7 +20,7 @@ title: Render Stack Portability
 
 ## Goal
 
-- [ ] Make the Render/Terraform stack portable across Render accounts by parameterizing account-specific values.
+- [x] Make the Render/Terraform stack portable across Render accounts by parameterizing account-specific values.
 
 ## Scope
 
@@ -39,9 +39,9 @@ title: Render Stack Portability
 
 ## Implementation Plan
 
-- [ ] Parameterize `owner_id` in every Render provider block.
-- [ ] Pass `TF_VAR_owner_id` through GitHub Actions jobs that run Terraform.
-- [ ] Add `RENDER_OWNER_ID` to the GitHub repository variables interface.
+- [x] Parameterize `owner_id` in every Render provider block.
+- [x] Pass `TF_VAR_owner_id` through GitHub Actions jobs that run Terraform.
+- [x] Add `RENDER_OWNER_ID` to the GitHub repository variables interface.
 - [ ] Keep the current workspace resource IDs out of reusable defaults.
 - [ ] Keep the hardcoded vs variable matrix documented in the work items.
 - [ ] Validate that QA `terraform plan` still succeeds with the portable inputs.
@@ -66,7 +66,7 @@ title: Render Stack Portability
 
 ## Checklist
 
-- [ ] Externalize the Render workspace owner ID.
+- [x] Externalize the Render workspace owner ID.
 - [ ] Keep API keys and resource IDs outside the code.
 - [ ] Document the portability boundary for another Render account.
 - [ ] Verify the QA Terraform plan still passes after parameterization.
