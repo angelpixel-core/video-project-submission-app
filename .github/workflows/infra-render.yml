@@ -67,6 +67,9 @@ jobs:
     env:
       RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
       TF_VAR_owner_id: ${{ vars.RENDER_OWNER_ID }}
+      TF_VAR_adopted_web_service_id: ${{ vars.RENDER_QA_ADOPTED_WEB_SERVICE_ID }}
+      TF_VAR_adopted_database_id: ${{ vars.RENDER_QA_ADOPTED_DATABASE_ID }}
+      TF_VAR_adopted_environment_id: ${{ vars.RENDER_QA_ADOPTED_ENVIRONMENT_ID }}
       TF_VAR_rails_master_key: ${{ secrets.RAILS_MASTER_KEY }}
       TF_VAR_environment_id: ${{ vars.RENDER_QA_ENVIRONMENT_ID }}
     steps:
@@ -110,6 +113,9 @@ jobs:
         run: |
           echo "RENDER_API_KEY=${{ secrets.RENDER_API_KEY }}" >> "$GITHUB_ENV"
           echo "TF_VAR_owner_id=${{ vars.RENDER_OWNER_ID }}" >> "$GITHUB_ENV"
+          echo "TF_VAR_adopted_web_service_id=${{ vars.RENDER_QA_ADOPTED_WEB_SERVICE_ID }}" >> "$GITHUB_ENV"
+          echo "TF_VAR_adopted_database_id=${{ vars.RENDER_QA_ADOPTED_DATABASE_ID }}" >> "$GITHUB_ENV"
+          echo "TF_VAR_adopted_environment_id=${{ vars.RENDER_QA_ADOPTED_ENVIRONMENT_ID }}" >> "$GITHUB_ENV"
 
       - name: Set Terraform variables
         if: needs.discover.outputs.has_files == 'true'
@@ -142,6 +148,9 @@ jobs:
     env:
       RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
       TF_VAR_owner_id: ${{ vars.RENDER_OWNER_ID }}
+      TF_VAR_adopted_web_service_id: ${{ vars.RENDER_QA_ADOPTED_WEB_SERVICE_ID }}
+      TF_VAR_adopted_database_id: ${{ vars.RENDER_QA_ADOPTED_DATABASE_ID }}
+      TF_VAR_adopted_environment_id: ${{ vars.RENDER_QA_ADOPTED_ENVIRONMENT_ID }}
       TF_VAR_rails_master_key: ${{ secrets.RAILS_MASTER_KEY }}
       TF_VAR_environment_id: ${{ vars.RENDER_QA_ENVIRONMENT_ID }}
     steps:

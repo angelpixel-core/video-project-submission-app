@@ -37,6 +37,20 @@ title: Render Stack Portability
 - The stack should remain reusable by another account as long as that account supplies its own owner ID, API key, and resource IDs.
 - The `Hobby` plan still limits the active promotion chain, so portability here means configuration reuse, not a guarantee of identical live topology.
 
+## Portability Matrix
+
+| Area | Hardcoded | Variable / Secret |
+| --- | --- | --- |
+| Terraform module names | `web`, `database`, `worker`, `dns` | n/a |
+| Environment names | `qa`, `staging`, `prod` | n/a |
+| GitHub Actions workflow names | `CI`, `Infra Render`, `Promote Staging` | n/a |
+| Render workspace owner | n/a | `RENDER_OWNER_ID` |
+| Render API auth | n/a | `RENDER_API_KEY` |
+| Rails master key | n/a | `RAILS_MASTER_KEY` |
+| Render service IDs | n/a | `RENDER_QA_SERVICE_ID`, `RENDER_STAGING_SERVICE_ID`, `RENDER_PROD_SERVICE_ID` |
+| Render environment IDs | n/a | `RENDER_QA_ENVIRONMENT_ID`, `RENDER_STAGING_ENVIRONMENT_ID`, `RENDER_PROD_ENVIRONMENT_ID` |
+| Adopted QA resource IDs | n/a | `RENDER_QA_ADOPTED_WEB_SERVICE_ID`, `RENDER_QA_ADOPTED_DATABASE_ID`, `RENDER_QA_ADOPTED_ENVIRONMENT_ID` |
+
 ## Implementation Plan
 
 - [x] Parameterize `owner_id` in every Render provider block.
@@ -67,13 +81,13 @@ title: Render Stack Portability
 ## Checklist
 
 - [x] Externalize the Render workspace owner ID.
-- [ ] Keep API keys and resource IDs outside the code.
-- [ ] Document the portability boundary for another Render account.
-- [ ] Verify the QA Terraform plan still passes after parameterization.
+- [x] Keep API keys and resource IDs outside the code.
+- [x] Document the portability boundary for another Render account.
+- [x] Verify the QA Terraform plan still passes after parameterization.
 
 ## Validation
 
-- [ ] A different Render workspace can reuse the same Terraform structure by setting its own `RENDER_OWNER_ID` and resource IDs.
+- [x] A different Render workspace can reuse the same Terraform structure by setting its own `RENDER_OWNER_ID` and resource IDs.
 - [x] The current QA workflow still plans successfully.
 
 ## Notes
