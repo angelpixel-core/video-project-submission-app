@@ -42,7 +42,7 @@ title: Render Stack Portability
 - [x] Parameterize `owner_id` in every Render provider block.
 - [x] Pass `TF_VAR_owner_id` through GitHub Actions jobs that run Terraform.
 - [x] Add `RENDER_OWNER_ID` to the GitHub repository variables interface.
-- [ ] Keep the current workspace resource IDs out of reusable defaults.
+- [x] Keep the current workspace resource IDs out of reusable defaults.
 - [ ] Keep the hardcoded vs variable matrix documented in the work items.
 - [ ] Validate that QA `terraform plan` still succeeds with the portable inputs.
 
@@ -81,3 +81,4 @@ title: Render Stack Portability
 - This work item is about portability and reuse, not about unlocking the Hobby plan limits.
 - Keep the code minimal and favor variables for anything account-specific.
 - Follow-up validation and bootstrap guidance should live in separate work items.
+- The adopted QA IDs remain only in `ops/infra/render/envs/qa/imports.tf` as workspace-specific adoption state.
