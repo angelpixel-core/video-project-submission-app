@@ -43,7 +43,7 @@ title: Render Stack Portability
 - [x] Pass `TF_VAR_owner_id` through GitHub Actions jobs that run Terraform.
 - [x] Add `RENDER_OWNER_ID` to the GitHub repository variables interface.
 - [x] Keep the current workspace resource IDs out of reusable defaults.
-- [ ] Keep the hardcoded vs variable matrix documented in the work items.
+- [x] Keep the hardcoded vs variable matrix documented in the work items.
 - [ ] Validate that QA `terraform plan` still succeeds with the portable inputs.
 
 ## Affected Docs
