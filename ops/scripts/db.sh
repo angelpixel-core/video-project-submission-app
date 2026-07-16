@@ -24,12 +24,16 @@ case "${1:-}" in
     shift
     run_compose exec web bundle exec rails db:seed "$@"
     ;;
+  projects/clean)
+    shift
+    run_compose exec web bundle exec rails runner 'Notification.delete_all; VideoTypeSelection.delete_all; Project.delete_all'
+    ;;
   console)
     shift
     run_compose exec web bundle exec rails console "$@"
     ;;
   *)
-    echo "Usage: db.sh {seeds|console}" >&2
+    echo "Usage: db.sh {seeds|projects/clean|console}" >&2
     exit 1
     ;;
 esac

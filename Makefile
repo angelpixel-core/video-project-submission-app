@@ -23,6 +23,10 @@ repo/create:
 db/seeds:
 	@STACK_ENV="$(STACK_ENV)" sh $(DB_SCRIPT) seeds
 
+.PHONY: db/projects/clean
+db/projects/clean:
+	@STACK_ENV="$(STACK_ENV)" sh $(DB_SCRIPT) projects/clean
+
 .PHONY: web/console
 web/console:
 	@STACK_ENV="$(ENV)" sh $(DB_SCRIPT) console
