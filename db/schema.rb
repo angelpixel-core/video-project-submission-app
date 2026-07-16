@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_15_171004) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_15_190000) do
   create_table "clients", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "email", null: false
@@ -44,9 +44,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_15_171004) do
   create_table "projects", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "client_id", null: false
     t.datetime "created_at", null: false
-    t.string "name", null: false
+    t.string "name"
     t.bigint "pm_id", null: false
-    t.string "raw_footage_url", null: false
+    t.string "raw_footage_url"
     t.string "status", default: "draft", null: false
     t.datetime "updated_at", null: false
     t.index ["client_id"], name: "index_projects_on_client_id"

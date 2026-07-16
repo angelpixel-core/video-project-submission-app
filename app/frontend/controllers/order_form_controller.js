@@ -1,10 +1,9 @@
 import { Controller } from "@hotwired/stimulus"
 import Modal from "bootstrap/js/dist/modal"
 
-const STORAGE_KEY = "video-project-order-form"
-
 export default class extends Controller {
   static targets = [
+    "form",
     "name",
     "rawFootageUrl",
     "selectionsJson",
@@ -16,11 +15,15 @@ export default class extends Controller {
     "paymentCardNumber",
     "paymentCardExpiry",
     "paymentCardCvc",
+    "finalize",
   ]
 
   connect() {
     this.modal = this.hasPaymentModalTarget ? new Modal(this.paymentModalTarget) : null
-    this.cart = this.loadState()
+    this.projectId = this.element.dataset.projectId
+    this.autosaveTimer = null
+    this.suspendAutosave = false
+    this.cart = this.loadDraftState()
     this.restoreInputs()
     this.renderCart()
   }
@@ -45,7 +48,7 @@ export default class extends Controller {
     }
 
     quantityInput.value = 1
-    this.persistState()
+    this.scheduleAutosave()
     this.renderCart()
   }
 
@@ -54,7 +57,7 @@ export default class extends Controller {
 
     const videoTypeId = Number(event.currentTarget.dataset.videoTypeId)
     this.cart.items = this.cart.items.filter((item) => item.videoTypeId !== videoTypeId)
-    this.persistState()
+    this.scheduleAutosave()
     this.renderCart()
   }
 
@@ -63,7 +66,7 @@ export default class extends Controller {
     this.cart.rawFootageUrl = this.rawFootageUrlTarget.value
     if (this.hasPaymentNameTarget) this.cart.paymentName = this.paymentNameTarget.value
     if (this.hasPaymentEmailTarget) this.cart.paymentEmail = this.paymentEmailTarget.value
-    this.persistState()
+    this.scheduleAutosave()
     this.renderCart()
   }
 
@@ -81,14 +84,24 @@ export default class extends Controller {
 
   prepareSubmit() {
     this.syncFields()
-    this.selectionsJsonTarget.value = JSON.stringify(this.cart.items)
+    const selections = this.cart.items.map((item) => ({
+      video_type_id: item.videoTypeId,
+      quantity: item.quantity,
+    }))
+
+    this.selectionsJsonTarget.value = JSON.stringify(selections)
+    if (this.hasFinalizeTarget) this.finalizeTarget.value = "1"
   }
 
   submit(event) {
+    this.suspendAutosave = true
+    window.clearTimeout(this.autosaveTimer)
     this.prepareSubmit()
 
     if (this.cart.items.length === 0) {
       event.preventDefault()
+      this.suspendAutosave = false
+      if (this.hasFinalizeTarget) this.finalizeTarget.value = "0"
       this.element.querySelector("[data-order-form-status]").textContent = "Add at least one video type before submitting."
     }
   }
@@ -101,23 +114,36 @@ export default class extends Controller {
     this.renderCart()
   }
 
-  loadState() {
+  loadDraftState() {
     const fallback = { name: "", rawFootageUrl: "", paymentName: "", paymentEmail: "", items: [] }
+    const rawSelections = this.selectionsJsonTarget?.value
 
     try {
-      const raw = sessionStorage.getItem(STORAGE_KEY)
-      return raw ? { ...fallback, ...JSON.parse(raw) } : fallback
+      return {
+        ...fallback,
+        name: this.nameTarget?.value || "",
+        rawFootageUrl: this.rawFootageUrlTarget?.value || "",
+        paymentName: this.paymentNameTarget?.value || "",
+        paymentEmail: this.paymentEmailTarget?.value || "",
+        items: rawSelections ? JSON.parse(rawSelections).map((item) => ({
+          videoTypeId: Number(item.video_type_id),
+          videoTypeName: item.video_type_name || "",
+          priceCents: Number(item.price_cents || 0),
+          quantity: Number(item.quantity || 0),
+        })) : [],
+      }
     } catch {
       return fallback
     }
   }
 
-  persistState() {
-    sessionStorage.setItem(STORAGE_KEY, JSON.stringify(this.cart))
-  }
-
   renderCart() {
-    this.selectionsJsonTarget.value = JSON.stringify(this.cart.items)
+    const selections = this.cart.items.map((item) => ({
+      video_type_id: item.videoTypeId,
+      quantity: item.quantity,
+    }))
+
+    this.selectionsJsonTarget.value = JSON.stringify(selections)
 
     if (this.cartItemsTarget) {
       this.cartItemsTarget.innerHTML = this.cart.items.length
@@ -139,6 +165,37 @@ export default class extends Controller {
         target.textContent = `$${(total / 100).toFixed(2)}`
       })
     }
+  }
+
+  scheduleAutosave() {
+    if (!this.projectId || this.suspendAutosave) return
+
+    window.clearTimeout(this.autosaveTimer)
+    this.autosaveTimer = window.setTimeout(() => {
+      this.autosave()
+    }, 200)
+  }
+
+  autosave() {
+    if (!this.projectId) return
+
+    const formData = new FormData(this.formTarget)
+    formData.set("project[selections_json]", JSON.stringify(this.cart.items.map((item) => ({
+      video_type_id: item.videoTypeId,
+      quantity: item.quantity,
+    }))))
+    formData.set("project[finalize]", "0")
+
+    const token = document.querySelector('meta[name="csrf-token"]')?.content
+
+    fetch(`/projects/${this.projectId}`, {
+      method: "PATCH",
+      headers: {
+        Accept: "text/html",
+        "X-CSRF-Token": token || "",
+      },
+      body: formData,
+    }).catch(() => {})
   }
 
   escapeHtml(value) {
