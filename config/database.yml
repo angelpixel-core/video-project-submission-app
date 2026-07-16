@@ -13,14 +13,19 @@ default: &default
   adapter: mysql2
   encoding: utf8mb4
   max_connections: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-  username: root
-  password:
+  username: <%= ENV.fetch("MYSQL_USER") { "app" } %>
+  password: <%= ENV.fetch("MYSQL_PASSWORD") { "app_password" } %>
   host: <%= ENV.fetch("DB_HOST") { "127.0.0.1" } %>
 
 development:
-  <<: *default
-  database: video_project_submission_app_development
-  ssl_mode: disabled
+  primary: &primary_development
+    <<: *default
+    database: <%= ENV.fetch("DB_NAME") { "video_project_submission_app_development" } %>
+    ssl_mode: disabled
+  queue:
+    <<: *primary_development
+    database: <%= ENV.fetch("DB_QUEUE_NAME") { "video_project_submission_app_development_queue" } %>
+    migrations_paths: db/queue_migrate
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".

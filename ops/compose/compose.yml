@@ -30,6 +30,7 @@ services:
       MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD:-root_password}"
       VITE_RUBY_HOST: "${VITE_RUBY_HOST:-localhost}"
       MARIADB_TLS_DISABLE_PEER_VERIFICATION: "1"
+      RUN_DB_PREPARE: "1"
     volumes:
       - ../..:/app
       - deps_cache:/usr/local/bundle
@@ -39,6 +40,50 @@ services:
       ["bundle", "exec", "rails", "server", "-b", "0.0.0.0", "-p", "3000"]
     ports:
       - "${APP_PORT:-3000}:3000"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:3000/up >/dev/null"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 20s
+    networks:
+      - video_project_submission_app_net
+
+  worker:
+    build:
+      context: ../..
+      dockerfile: ops/containers/app/Dockerfile
+      target: "${APP_IMAGE_STAGE:-dev}"
+      args:
+        RUBY_VERSION: "${RUBY_VERSION:-4.0.3}"
+        BUNDLE_DEPLOYMENT: "${BUNDLE_DEPLOYMENT:-1}"
+        BUNDLE_PATH: "${BUNDLE_PATH:-/usr/local/bundle}"
+        BUNDLE_WITHOUT: "${BUNDLE_WITHOUT:-development:test}"
+        BUNDLE_JOBS: "${BUNDLE_JOBS:-4}"
+        BUNDLE_RETRY: "${BUNDLE_RETRY:-3}"
+        UID: "${UID:-1000}"
+        GID: "${GID:-1000}"
+    container_name: video-project-submission-app-worker
+    depends_on:
+      db:
+        condition: service_healthy
+      web:
+        condition: service_healthy
+    env_file:
+      - ../../env/${STACK_ENV}/app/core.env
+      - ../../env/${STACK_ENV}/app/db.env
+      - ../../env/${STACK_ENV}/app/secrets.local.env
+      - ../../env/${STACK_ENV}/db/secrets.local.env
+      - ../../env/${STACK_ENV}/stack/secrets.local.env
+      - ../../env/.local/${STACK_ENV}.env
+    environment:
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD:-root_password}"
+      MARIADB_TLS_DISABLE_PEER_VERIFICATION: "1"
+    volumes:
+      - ../..:/app
+      - deps_cache:/usr/local/bundle
+    entrypoint: ["/bin/sh", "/app/ops/containers/app/entrypoint.sh"]
+    command: ["bin/jobs"]
     networks:
       - video_project_submission_app_net
 

@@ -43,6 +43,14 @@ Rails.application.configure do
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log
 
+  # Send app logs to stdout so worker/job output shows up in docker logs.
+  config.log_tags = [ :request_id ]
+  config.logger = ActiveSupport::TaggedLogging.logger(STDOUT)
+
+  # Local development uses a real Solid Queue worker process.
+  config.active_job.queue_adapter = :solid_queue
+  config.solid_queue.connects_to = { database: { writing: :queue } }
+
   # Raise an error on page load if there are pending migrations.
   config.active_record.migration_error = :page_load
 
