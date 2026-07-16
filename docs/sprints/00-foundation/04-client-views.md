@@ -14,23 +14,23 @@ tags:
 
 ## Project Index View
 
-- [ ] Show a list of the client's existing projects.
-- [ ] Add a link to the Order Project view.
+- [x] Show a list of the client's existing projects.
+- [x] Add a link to the Order Project view.
 
 ## Order Project View
 
-- [ ] Display a list or grid of available video types with prices.
-- [ ] Allow the customer to add multiple video type selections to the cart.
-- [ ] Let the client name the project.
-- [ ] Let the client supply a link to the raw footage.
-- [ ] Include a Pay button that opens a payment modal.
-- [ ] The modal collects payment details and shows the total due.
+- [x] Display a list or grid of available video types with prices.
+- [x] Allow the customer to add multiple video type selections to the cart.
+- [x] Let the client name the project.
+- [x] Let the client supply a link to the raw footage.
+- [x] Include a Pay button that opens a payment modal.
+- [x] The modal collects payment details and shows the total due.
 
 ## Submission Behavior
 
-- [ ] Create the new Project for the client.
-- [ ] Persist the selected video types as `VideoTypeSelection` records.
-- [ ] Assign the default PM.
-- [ ] Change project status to In Progress.
+- [x] Create the new Project for the client.
+- [x] Persist the selected video types as `VideoTypeSelection` records.
+- [x] Assign the default PM.
+- [x] Change project status to In Progress.
 - [ ] Create a background Notification for the PM.
-- [ ] Redirect to the project index.
+- [x] Redirect to the project index.
