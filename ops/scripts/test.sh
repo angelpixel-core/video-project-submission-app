@@ -64,15 +64,26 @@ run_in_image() {
   load_env_file "$TEST_APP_CORE_ENV_FILE"
   load_env_file "$TEST_APP_DB_ENV_FILE"
 
-  docker run --rm \
-    --network video_project_submission_app_net \
-    --env "RAILS_ENV=${RAILS_ENV:-test}" \
-    --env "RAILS_LOG_TO_STDOUT=${RAILS_LOG_TO_STDOUT:-true}" \
-    --env "DATABASE_URL=${DATABASE_URL:-}" \
-    --env "MYSQL_HOST=${MYSQL_HOST:-db}" \
-    --env "MYSQL_PORT=${MYSQL_PORT:-3306}" \
-    "$IMAGE_NAME" \
-    sh -lc "set -e; until nc -z \"${MYSQL_HOST:-db}\" \"${MYSQL_PORT:-3306}\" >/dev/null 2>&1; do sleep 1; done; $command" sh "$@"
+  if [ -n "${DATABASE_URL:-}" ]; then
+    docker run --rm \
+      --network video_project_submission_app_net \
+      --env "RAILS_ENV=${RAILS_ENV:-test}" \
+      --env "RAILS_LOG_TO_STDOUT=${RAILS_LOG_TO_STDOUT:-true}" \
+      --env "MYSQL_HOST=${MYSQL_HOST:-db}" \
+      --env "MYSQL_PORT=${MYSQL_PORT:-3306}" \
+      --env "DATABASE_URL=${DATABASE_URL}" \
+      "$IMAGE_NAME" \
+      sh -lc "set -e; until nc -z \"${MYSQL_HOST:-db}\" \"${MYSQL_PORT:-3306}\" >/dev/null 2>&1; do sleep 1; done; $command" sh "$@"
+  else
+    docker run --rm \
+      --network video_project_submission_app_net \
+      --env "RAILS_ENV=${RAILS_ENV:-test}" \
+      --env "RAILS_LOG_TO_STDOUT=${RAILS_LOG_TO_STDOUT:-true}" \
+      --env "MYSQL_HOST=${MYSQL_HOST:-db}" \
+      --env "MYSQL_PORT=${MYSQL_PORT:-3306}" \
+      "$IMAGE_NAME" \
+      sh -lc "set -e; until nc -z \"${MYSQL_HOST:-db}\" \"${MYSQL_PORT:-3306}\" >/dev/null 2>&1; do sleep 1; done; $command" sh "$@"
+  fi
 }
 
 case "${1:-}" in
