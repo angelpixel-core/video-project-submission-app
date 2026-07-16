@@ -1,0 +1,33 @@
+<div class="col-12 col-lg-6">
+  <div class="card h-100 shadow-sm border-0">
+    <div class="card-body">
+      <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
+        <div>
+          <h2 class="h5 mb-1"><%= project.name %></h2>
+          <p class="mb-0 text-body-secondary"><%= project.raw_footage_url %></p>
+        </div>
+        <span class="badge text-bg-info text-uppercase"><%= project.status.humanize %></span>
+      </div>
+
+      <div class="mb-3">
+        <p class="text-uppercase small text-body-secondary mb-2">Video types</p>
+        <% if project.video_types.any? %>
+          <ul class="list-unstyled mb-0">
+            <% project.video_type_selections.includes(:video_type).each do |selection| %>
+              <li class="d-flex justify-content-between gap-3 py-1">
+                <span><%= selection.video_type.name %></span>
+                <span class="text-body-secondary">Qty <%= selection.quantity %></span>
+              </li>
+            <% end %>
+          </ul>
+        <% else %>
+          <p class="mb-0 text-body-secondary">No selections recorded yet.</p>
+        <% end %>
+      </div>
+
+      <div class="small text-body-secondary">
+        PM: <%= project.pm.name %>
+      </div>
+    </div>
+  </div>
+</div>
