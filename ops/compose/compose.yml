@@ -28,11 +28,12 @@ services:
       - ../../env/.local/${STACK_ENV}.env
     environment:
       MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD:-root_password}"
-      VITE_RUBY_HOST: "${VITE_RUBY_HOST:-host.docker.internal}"
+      VITE_RUBY_HOST: "${VITE_RUBY_HOST:-localhost}"
       MARIADB_TLS_DISABLE_PEER_VERIFICATION: "1"
     volumes:
       - ../..:/app
       - deps_cache:/usr/local/bundle
+      - assets_node_modules:/app/node_modules
     entrypoint: ["/bin/sh", "/app/ops/containers/app/entrypoint.sh"]
     command:
       ["bundle", "exec", "rails", "server", "-b", "0.0.0.0", "-p", "3000"]
