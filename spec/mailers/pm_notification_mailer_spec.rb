@@ -9,7 +9,7 @@ RSpec.describe PmNotificationMailer do
 
       mail = described_class.project_created(project)
 
-      expect(mail.to).to eq(["pm@example.com"])
+      expect(mail.to).to eq([ "pm@example.com" ])
       expect(mail.subject).to eq("New project created: Project")
       expect(mail.body.encoded).to include("New project created")
       expect(mail.body.encoded).to include("Project: Project")
