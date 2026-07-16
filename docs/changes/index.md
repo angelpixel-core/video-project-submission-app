@@ -15,8 +15,9 @@ Use this folder for future requirement extensions.
 
 Recommended naming:
 
-- [ ] `001-new-requirement.md`
-- [ ] `002-flow-adjustment.md`
-- [ ] `003-data-model-update.md`
+- [x] [001 Remove Legacy Submission Layer](./001-remove-legacy-submission-layer.md)
+- [ ] `002-new-requirement.md`
+- [ ] `003-flow-adjustment.md`
+- [ ] `004-data-model-update.md`
 
 - [ ] Each change document should explain what is changing, why, and which Sprint 0 docs it affects.
