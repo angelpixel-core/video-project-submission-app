@@ -81,3 +81,7 @@ Work items are implementation documents. Each one should map back to the docs it
 ## Tenth Item
 
 - [ ] [Render Bootstrap Guide](./010-render-bootstrap-guide.md)
+
+## Eleventh Item
+
+- [x] [Sprint 0 Data Model](./011-sprint-0-data-model.md)

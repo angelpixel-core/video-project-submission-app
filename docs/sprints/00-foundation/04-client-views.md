@@ -19,8 +19,8 @@ tags:
 
 ## Order Project View
 
-- [ ] Display a list or grid of available videos with prices.
-- [ ] Allow the customer to add multiple videos to the cart.
+- [ ] Display a list or grid of available video types with prices.
+- [ ] Allow the customer to add multiple video type selections to the cart.
 - [ ] Let the client name the project.
 - [ ] Let the client supply a link to the raw footage.
 - [ ] Include a Pay button that opens a payment modal.
@@ -29,6 +29,7 @@ tags:
 ## Submission Behavior
 
 - [ ] Create the new Project for the client.
+- [ ] Persist the selected video types as `VideoTypeSelection` records.
 - [ ] Assign the default PM.
 - [ ] Change project status to In Progress.
 - [ ] Create a background Notification for the PM.

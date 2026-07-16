@@ -15,6 +15,8 @@ tags:
 ## Requirements 
 
 - [ ] Set up the domain entities with appropriate associations.
+- [ ] Model `VideoType` as a customer-facing deliverable category.
+- [ ] Model the client's chosen items as `VideoTypeSelection` records on the project.
 - [ ] Create the database migrations needed to support the model relationships.
 - [ ] Use MySQL as the database.
 

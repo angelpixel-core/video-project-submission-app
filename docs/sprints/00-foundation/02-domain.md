@@ -18,11 +18,13 @@ tags:
 - [ ] Project
 - [ ] PM (Project Manager)
 - [ ] Video Type
+- [ ] Video Type Selection
 - [ ] Notification
 
 ## Relationships
 
 - [ ] A Client has many Projects.
-- [ ] A Project has many Videos.
+- [ ] A Project has many Video Type Selections.
+- [ ] A Video Type has many Video Type Selections.
 - [ ] A Project belongs to a PM.
 - [ ] A PM has many Notifications.
