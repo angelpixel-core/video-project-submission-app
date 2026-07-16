@@ -37,7 +37,8 @@
 
             <div class="mb-0">
               <%= form.label :raw_footage_url, "Raw footage URL", class: "form-label" %>
-              <%= form.url_field :raw_footage_url, class: "form-control", placeholder: "https://...", data: { order_form_target: "rawFootageUrl", action: "input->order-form#syncFields" } %>
+              <%= form.url_field :raw_footage_url, class: "form-control", placeholder: "https://...", data: { order_form_target: "rawFootageUrl", action: "input->order-form#syncFields blur->order-form#validateRawFootageUrl" }, aria: { describedby: "raw-footage-url-feedback" } %>
+              <div id="raw-footage-url-feedback" class="invalid-feedback d-none" data-order-form-target="rawFootageUrlFeedback"></div>
             </div>
           </div>
         </div>
@@ -69,7 +70,7 @@
             </ul>
 
             <div class="d-grid gap-2">
-              <button type="button" class="btn btn-outline-primary" data-action="click->order-form#openPaymentModal">Review and pay</button>
+              <button type="button" class="btn btn-outline-primary disabled" disabled data-order-form-target="reviewButton" data-action="click->order-form#openPaymentModal">Review and pay</button>
             </div>
 
             <p class="small text-body-secondary mb-0 mt-3" data-order-form-status></p>
