@@ -10,7 +10,7 @@ RSpec.describe "Projects requests" do
 
   it "shows the client project index" do
     client = Client.find_by!(email: "client@example.com")
-    project = Project.create!(client: client, pm: Pm.find_by!(email: "pm@example.com"), name: "Project Alpha", raw_footage_url: "https://example.com/raw.mov", status: :in_progress)
+    Project.create!(client: client, pm: Pm.find_by!(email: "pm@example.com"), name: "Project Alpha", raw_footage_url: "https://example.com/raw.mov", status: :in_progress)
     Project.create!(client: client, pm: Pm.find_by!(email: "pm@example.com"), status: :draft)
 
     get projects_path

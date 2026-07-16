@@ -1,13 +1,13 @@
 ---
 id: work-items-index
-title: Work Items Index
-phase: work-items
-order: 0
 aliases: []
 tags:
   - work-items
   - tickets
   - implementation
+order: 0
+phase: work-items
+title: Work Items Index
 ---
 
 # Work Items Index
