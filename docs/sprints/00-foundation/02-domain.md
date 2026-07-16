@@ -14,17 +14,17 @@ tags:
 
 ## Models
 
-- [ ] Client
-- [ ] Project
-- [ ] PM (Project Manager)
-- [ ] Video Type
-- [ ] Video Type Selection
-- [ ] Notification
+- [x] Client
+- [x] Project
+- [x] PM (Project Manager)
+- [x] Video Type
+- [x] Video Type Selection
+- [x] Notification
 
 ## Relationships
 
-- [ ] A Client has many Projects.
-- [ ] A Project has many Video Type Selections.
-- [ ] A Video Type has many Video Type Selections.
-- [ ] A Project belongs to a PM.
-- [ ] A PM has many Notifications.
+- [x] A Client has many Projects.
+- [x] A Project has many Video Type Selections.
+- [x] A Video Type has many Video Type Selections.
+- [x] A Project belongs to a PM.
+- [x] A PM has many Notifications.
