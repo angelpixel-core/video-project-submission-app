@@ -79,7 +79,7 @@ title: Notification Delivery Channels
 
 ## Validation
 
-- [ ] Notification-related specs pass.
+- [x] Notification-related specs pass.
 - [ ] The PM notification still enqueues asynchronously.
 
 ## Notes
