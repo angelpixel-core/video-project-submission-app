@@ -16,13 +16,18 @@ export default class extends Controller {
     "paymentCardExpiry",
     "paymentCardCvc",
     "finalize",
+    "finalizeButton",
+    "finalizeButtonLabel",
+    "finalizeButtonSpinner",
   ]
 
   connect() {
     this.modal = this.hasPaymentModalTarget ? new Modal(this.paymentModalTarget) : null
     this.projectId = this.element.dataset.projectId
     this.autosaveTimer = null
+    this.finalizeTimer = null
     this.suspendAutosave = false
+    this.isFinalizing = false
     this.cart = this.loadDraftState()
     this.restoreInputs()
     this.renderCart()
@@ -82,6 +87,22 @@ export default class extends Controller {
     this.modal?.show()
   }
 
+  beginFinalize(event) {
+    event.preventDefault()
+
+    if (this.cart.items.length === 0 || this.isFinalizing) return
+
+    this.suspendAutosave = true
+    window.clearTimeout(this.autosaveTimer)
+    this.isFinalizing = true
+    this.setFinalizeButtonLoading(true)
+    window.clearTimeout(this.finalizeTimer)
+    this.finalizeTimer = window.setTimeout(() => {
+      this.prepareSubmit()
+      this.formTarget.requestSubmit()
+    }, 3000)
+  }
+
   prepareSubmit() {
     this.syncFields()
     const selections = this.cart.items.map((item) => ({
@@ -101,6 +122,8 @@ export default class extends Controller {
     if (this.cart.items.length === 0) {
       event.preventDefault()
       this.suspendAutosave = false
+      this.isFinalizing = false
+      this.setFinalizeButtonLoading(false)
       if (this.hasFinalizeTarget) this.finalizeTarget.value = "0"
       this.element.querySelector("[data-order-form-status]").textContent = "Add at least one video type before submitting."
     }
@@ -196,6 +219,14 @@ export default class extends Controller {
       },
       body: formData,
     }).catch(() => {})
+  }
+
+  setFinalizeButtonLoading(loading) {
+    if (!this.hasFinalizeButtonTarget) return
+
+    this.finalizeButtonTarget.disabled = loading
+    if (this.hasFinalizeButtonLabelTarget) this.finalizeButtonLabelTarget.classList.toggle("d-none", loading)
+    if (this.hasFinalizeButtonSpinnerTarget) this.finalizeButtonSpinnerTarget.classList.toggle("d-none", !loading)
   }
 
   escapeHtml(value) {
