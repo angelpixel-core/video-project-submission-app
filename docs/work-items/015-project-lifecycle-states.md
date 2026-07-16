@@ -1,0 +1,74 @@
+---
+id: project-lifecycle-states
+aliases: []
+tags:
+  - work-items
+  - projects
+  - workflow
+  - status
+depends_on:
+  - sprint-0-data-model
+  - sprint-0-client-views
+  - in-app-pm-notifications
+order: 15
+phase: work-items
+status: pending
+title: Project Lifecycle States
+---
+
+# Project Lifecycle States
+
+## Goal
+
+- [ ] Update the project workflow to reflect the PM review and completion lifecycle.
+
+## Scope
+
+- Introduce `pending` as the initial post-submit state.
+- Move the project to `in_progress` when the PM accepts it.
+- Keep `completed` as the final state after fulfillment.
+- Enable or disable UI actions according to the current state.
+
+## Operational Note
+
+- This item is the workflow source of truth for project status transitions.
+- The client should no longer land on `in_progress` immediately after submit.
+
+## Implementation Plan
+
+- [ ] Add or adjust the status enum and state transitions.
+- [ ] Update the submit flow to create `pending` projects.
+- [ ] Add the PM accept action that moves projects to `in_progress`.
+- [ ] Gate the finalize action behind `in_progress`.
+- [ ] Update the project list labels and buttons to match the new states.
+
+## Affected Docs
+
+- `docs/sprints/00-foundation/01-scope.md`
+- `docs/sprints/00-foundation/02-domain.md`
+- `docs/sprints/00-foundation/03-data-model.md`
+- `docs/sprints/00-foundation/04-client-views.md`
+
+## Affected Ops
+
+- `app/models/project.rb`
+- `app/controllers/projects_controller.rb`
+- `app/views/`
+- `spec/requests/`
+- `spec/models/`
+
+## Checklist
+
+- [ ] New projects start as `pending`.
+- [ ] PM acceptance moves a project to `in_progress`.
+- [ ] Finalization is only available in `in_progress`.
+
+## Validation
+
+- [ ] Status transition specs pass.
+- [ ] The UI shows the expected labels and enabled actions.
+
+## Notes
+
+- Keep the state machine minimal unless new transitions are actually needed.
+- Avoid coupling the status transition to notification delivery details.
