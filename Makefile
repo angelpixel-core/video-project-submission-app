@@ -1,5 +1,6 @@
 STACK_ENV ?= dev
 STACK_SCRIPT := ops/scripts/stack.sh
+DB_SCRIPT := ops/scripts/db.sh
 SECRETS_SCRIPT := ops/scripts/secrets.sh
 REPO_SCRIPT := ops/scripts/repo/create.sh
 TEST_SCRIPT := ops/scripts/test.sh
@@ -17,6 +18,18 @@ secrets/%:
 .PHONY: repo/create
 repo/create:
 	@OWNER="$(OWNER)" NAME="$(NAME)" DESCRIPTION="$(DESCRIPTION)" LICENSE="$(LICENSE)" PRIVATE="$(PRIVATE)" PUBLIC="$(PUBLIC)" REPO_PROVIDER="$(REPO_PROVIDER)" REPO_HOST="$(REPO_HOST)" REPO_WEB_BASE_URL="$(REPO_WEB_BASE_URL)" REPO_API_BASE_URL="$(REPO_API_BASE_URL)" REPO_GIT_REMOTE_URL="$(REPO_GIT_REMOTE_URL)" REPO_OWNER="$(REPO_OWNER)" REPO_NAME="$(REPO_NAME)" REPO_DESCRIPTION="$(REPO_DESCRIPTION)" REPO_LICENSE="$(REPO_LICENSE)" REPO_PRIVATE="$(REPO_PRIVATE)" REPO_PUBLIC="$(REPO_PUBLIC)" sh $(REPO_SCRIPT)
+
+.PHONY: db/seeds
+db/seeds:
+	@STACK_ENV="$(STACK_ENV)" sh $(DB_SCRIPT) seeds
+
+.PHONY: db/projects/clean
+db/projects/clean:
+	@STACK_ENV="$(STACK_ENV)" sh $(DB_SCRIPT) projects/clean
+
+.PHONY: web/console
+web/console:
+	@STACK_ENV="$(ENV)" sh $(DB_SCRIPT) console
 
 .PHONY: test/unit
 test/unit:

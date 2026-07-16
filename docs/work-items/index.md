@@ -1,13 +1,13 @@
 ---
 id: work-items-index
-title: Work Items Index
-phase: work-items
-order: 0
 aliases: []
 tags:
   - work-items
   - tickets
   - implementation
+order: 0
+phase: work-items
+title: Work Items Index
 ---
 
 # Work Items Index
@@ -42,50 +42,70 @@ Work items are implementation documents. Each one should map back to the docs it
 - Keep the title focused on the implementation outcome.
 - Add one work item per coherent unit of development.
 
-## First Item
+## 1
 
 - [x] [Bootstrap and Environment](./001-bootstrap-and-environment.md)
 
-## Second Item
+## 2
 
 - [x] [Testing Foundation](./002-testing-foundation.md)
 
-## Third Item
+## 3
 
 - [x] [CI/CD and Environments](./003-ci-cd-and-environments.md)
 
-## Fourth Item
+## 4
 
 - [x] [Frontend Toolchain](./004-frontend-toolchain.md)
 
-## Fifth Item
+## 5
 
 - [x] [SSH Authentication and Commit Signing](./005-ssh-authentication-and-commit-signing.md)
 
-## Sixth Item
+## 6
 
 - [ ] [Render Infrastructure Requirements](./006-render-infrastructure-requirements.md)
 
-## Seventh Item
+## 7
 
 - [ ] [Database Engine and IaC Strategy](./007-database-engine-and-iac-strategy.md)
 
-## Eighth Item
+## 8
 
 - [x] [Render Stack Portability](./008-render-stack-portability.md)
 
-## Ninth Item
+## 9
 
 - [ ] [Render Portability Validation](./009-render-portability-validation.md)
 
-## Tenth Item
+## 10
 
 - [ ] [Render Bootstrap Guide](./010-render-bootstrap-guide.md)
 
-## Eleventh Item
+## 11
 
 - [x] [Sprint 0 Data Model](./011-sprint-0-data-model.md)
 
-## Twelfth Item
+## 12
 
-- [ ] [Sprint 0 Client Views](./012-sprint-0-client-views.md)
+- [x] [Sprint 0 Client Views](./012-sprint-0-client-views.md)
+
+## 13
+
+- [ ] [Notification Delivery Channels](./013-notification-delivery-channels.md)
+
+## 14
+
+- [ ] [In-App PM Notifications](./014-in-app-pm-notifications.md)
+
+## 15
+
+- [ ] [Project Lifecycle States](./015-project-lifecycle-states.md)
+
+## 16
+
+- [ ] [Role Switcher Prototype](./016-role-switcher-prototype.md)
+
+## 17
+
+- [ ] [PM Acronym Inflection Cleanup](./017-pm-acronym-inflection-cleanup.md)

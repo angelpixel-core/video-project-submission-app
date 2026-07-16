@@ -24,8 +24,9 @@
 
   <body>
     <% flash.each do |type, message| %>
+      <% alert_type = type.to_s == "notice" ? "success" : "danger" %>
       <div class="container mt-3">
-        <div class="alert alert-<%= type == :notice ? "success" : "danger" %>"><%= message %></div>
+        <div class="alert alert-<%= alert_type %>" role="alert"><%= message %></div>
       </div>
     <% end %>
 

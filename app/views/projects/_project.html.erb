@@ -3,10 +3,15 @@
     <div class="card-body">
       <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
         <div>
-          <h2 class="h5 mb-1"><%= project.name %></h2>
-          <p class="mb-0 text-body-secondary"><%= project.raw_footage_url %></p>
+          <h2 class="h5 mb-1"><%= project.name.presence || "Untitled draft" %></h2>
+          <p class="mb-0 text-body-secondary"><%= project.raw_footage_url.presence || "No footage URL yet" %></p>
         </div>
-        <span class="badge text-bg-info text-uppercase"><%= project.status.humanize %></span>
+        <div class="d-flex flex-column align-items-end gap-2">
+          <span class="badge <%= project.draft? ? "text-bg-warning" : "text-bg-info" %> text-uppercase"><%= project.draft? ? "Borrador" : project.status.humanize %></span>
+          <% if project.draft? %>
+            <%= link_to "Reanudar", edit_project_path(project), class: "btn btn-sm btn-outline-primary" %>
+          <% end %>
+        </div>
       </div>
 
       <div class="mb-3">

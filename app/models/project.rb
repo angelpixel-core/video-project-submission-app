@@ -8,6 +8,6 @@ class Project < ApplicationRecord
 
   enum :status, { draft: "draft", in_progress: "in_progress", completed: "completed" }, default: :draft
 
-  validates :name, presence: true
-  validates :raw_footage_url, presence: true
+  validates :name, presence: true, if: :in_progress?
+  validates :raw_footage_url, presence: true, if: :in_progress?
 end

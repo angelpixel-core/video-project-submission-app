@@ -19,11 +19,11 @@ A video type is a specific kind of edited deliverable such as a highlight reel, 
 
 ## Key Points
 
-- [ ] Clients are already logged in.
-- [ ] Clients select video types from their footage.
-- [ ] Checkout is simulated.
-- [ ] A Project Manager oversees each project.
-- [ ] Video types have pricing and output format.
+- [x] Clients are already logged in.
+- [x] Clients select video types from their footage.
+- [x] Checkout is simulated.
+- [x] A Project Manager oversees each project.
+- [x] Video types have pricing and output format.
 
 ## Source
 
