@@ -88,4 +88,4 @@ Work items are implementation documents. Each one should map back to the docs it
 
 ## Twelfth Item
 
-- [ ] [Sprint 0 Client Views](./012-sprint-0-client-views.md)
+- [x] [Sprint 0 Client Views](./012-sprint-0-client-views.md)

@@ -13,7 +13,7 @@ depends_on:
   - frontend-toolchain
 order: 12
 phase: work-items
-status: draft
+status: done
 title: Sprint 0 Client Views
 ---
 
@@ -21,7 +21,7 @@ title: Sprint 0 Client Views
 
 ## Goal
 
-- [ ] Implement the client-facing project index and order flow for Sprint 0.
+- [x] Implement the client-facing project index and order flow for Sprint 0.
 
 ## Scope
 
@@ -38,12 +38,12 @@ title: Sprint 0 Client Views
 
 ## Implementation Plan
 
-- [ ] Add the project index and order project screens.
-- [ ] Wire the video type selection UI to the existing `VideoType` and `VideoTypeSelection` models.
-- [ ] Add the payment modal and submission flow.
-- [ ] Create the project and selection records on submit.
-- [ ] Redirect back to the project index after a successful submission.
-- [ ] Add minimal UI or controller specs needed to protect the flow.
+- [x] Add the project index and order project screens.
+- [x] Wire the video type selection UI to the existing `VideoType` and `VideoTypeSelection` models.
+- [x] Add the payment modal and submission flow.
+- [x] Create the project and selection records on submit.
+- [x] Redirect back to the project index after a successful submission.
+- [x] Add minimal UI or controller specs needed to protect the flow.
 
 ## Affected Docs
 
@@ -61,16 +61,16 @@ title: Sprint 0 Client Views
 
 ## Checklist
 
-- [ ] The client can see a project index.
-- [ ] The client can start an order from the UI.
-- [ ] Video type selections are persisted through the existing data model.
-- [ ] The payment step completes and redirects successfully.
+- [x] The client can see a project index.
+- [x] The client can start an order from the UI.
+- [x] Video type selections are persisted through the existing data model.
+- [x] The payment step completes and redirects successfully.
 
 ## Validation
 
-- [ ] The relevant UI or request specs pass.
-- [ ] The order flow creates the expected records.
-- [ ] The UI matches the Sprint 0 client-views doc.
+- [x] The relevant UI or request specs pass.
+- [x] The order flow creates the expected records.
+- [x] The UI matches the Sprint 0 client-views doc.
 
 ## Notes
 
