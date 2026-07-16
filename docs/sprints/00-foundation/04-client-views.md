@@ -32,5 +32,5 @@ tags:
 - [x] Persist the selected video types as `VideoTypeSelection` records.
 - [x] Assign the default PM.
 - [x] Change project status to In Progress.
-- [ ] Create a background Notification for the PM.
+- [x] Create a background Notification for the PM.
 - [x] Redirect to the project index.
