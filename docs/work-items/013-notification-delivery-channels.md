@@ -33,12 +33,22 @@ title: Notification Delivery Channels
 - This item is about delivery plumbing, not UI presentation.
 - The logger remains the first working channel and should not be removed.
 
+## Discovery
+
+- `ApplicationMailer` already exists, so the mail channel can use the normal Rails mailer stack.
+- Unit specs already exist for `NotificationService`, `NotificationJob`, and `Notification`, so the refactor can extend the current test shape instead of inventing a new one.
+- The log channel should stay explicit as part of the delivery pipeline, not as an incidental `Rails.logger` call hidden inside the service.
+
 ## Implementation Plan
 
-- [ ] Extract the current log call into a dedicated notification delivery object.
-- [ ] Add the mail channel behind the same service boundary.
-- [ ] Keep the channel interface small and testable.
-- [ ] Add or update specs for each delivery path.
+- [ ] `app/services/notification_service.rb` - keep the orchestrator role and delegate each delivery channel.
+- [ ] `app/services/notification_delivery/logger_channel.rb` - extract the current log line into an explicit logger channel.
+- [ ] `app/mailers/pm_notification_mailer.rb` - add the PM email delivery channel.
+- [ ] `app/views/pm_notification_mailer/` - add the email template and any shared mailer partials needed.
+- [ ] `spec/unit/services/notification_service_spec.rb` - update the orchestration spec to cover the channel handoff.
+- [ ] `spec/unit/jobs/notification_job_spec.rb` - keep the job delegation spec intact.
+- [ ] `spec/mailers/pm_notification_mailer_spec.rb` - add coverage for the PM email delivery.
+- [ ] `spec/unit/services/notification_delivery/logger_channel_spec.rb` - add coverage for the logger channel if it is extracted as its own object.
 
 ## Affected Docs
 
@@ -49,14 +59,23 @@ title: Notification Delivery Channels
 
 - `app/services/notification_service.rb`
 - `app/jobs/notification_job.rb`
+- `app/services/notification_delivery/`
 - `app/mailers/` if mail delivery is implemented through Action Mailer
+- `app/views/pm_notification_mailer/`
 - `spec/`
 
 ## Checklist
 
-- [ ] The log delivery path still works.
-- [ ] The mail delivery path is available behind the same notification flow.
-- [ ] Delivery channels are isolated from the job boundary.
+- [ ] `NotificationService` still orchestrates delivery from a project ID.
+- [ ] The logger channel still emits the PM notification log line.
+- [ ] The PM mailer sends the compact notification email.
+- [ ] `NotificationJob` still only delegates to `NotificationService`.
+
+## Related Sections
+
+- `spec/unit/services/notification_service_spec.rb`
+- `spec/unit/jobs/notification_job_spec.rb`
+- `spec/unit/models/notification_spec.rb`
 
 ## Validation
 
