@@ -11,7 +11,7 @@ depends_on:
   - sprint-0-background-jobs
 order: 13
 phase: work-items
-status: pending
+status: done
 title: Notification Delivery Channels
 ---
 
@@ -19,7 +19,7 @@ title: Notification Delivery Channels
 
 ## Goal
 
-- [ ] Refactor the PM notification flow into explicit delivery channels.
+- [x] Refactor the PM notification flow into explicit delivery channels.
 
 ## Scope
 
@@ -80,7 +80,7 @@ title: Notification Delivery Channels
 ## Validation
 
 - [x] Notification-related specs pass.
-- [ ] The PM notification still enqueues asynchronously.
+- [x] The PM notification still enqueues asynchronously.
 
 ## Notes
 

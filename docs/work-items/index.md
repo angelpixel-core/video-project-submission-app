@@ -92,7 +92,7 @@ Work items are implementation documents. Each one should map back to the docs it
 
 ## 13
 
-- [ ] [Notification Delivery Channels](./013-notification-delivery-channels.md)
+- [x] [Notification Delivery Channels](./013-notification-delivery-channels.md)
 
 ## 14
 
