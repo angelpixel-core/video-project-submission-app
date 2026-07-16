@@ -4,11 +4,20 @@ class NotificationService
   end
 
   def call
-    project = Project.includes(:pm).find(project_id)
-    Rails.logger.info("Notification for PM #{project.pm.email}: project #{project.id} was created")
+    project = load_project
+
+    deliver_notification(project)
   end
 
   private
 
   attr_reader :project_id
+
+  def load_project
+    Project.includes(:pm).find(project_id)
+  end
+
+  def deliver_notification(project)
+    Rails.logger.info("Notification for PM #{project.pm.email}: project #{project.id} was created")
+  end
 end
