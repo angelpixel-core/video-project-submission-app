@@ -20,6 +20,7 @@ class ProjectsController < ApplicationController
 
     if finalize_submission?
       finalize_project!(selections)
+      NotificationJob.perform_later(@project.id)
       redirect_to projects_path, notice: "Project created."
     else
       autosave_project!(selections)

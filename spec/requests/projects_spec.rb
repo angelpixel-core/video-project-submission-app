@@ -68,16 +68,18 @@ RSpec.describe "Projects requests" do
   it "finalizes a draft with selections" do
     draft = Project.create!(client: Client.find_by!(email: "client@example.com"), pm: Pm.find_by!(email: "pm@example.com"), status: :draft)
 
-    patch project_path(draft), params: {
-      project: {
-        name: "Project Gamma",
-        raw_footage_url: "https://example.com/gamma.mov",
-        finalize: "1",
-        selections_json: [
-          { video_type_id: VideoType.find_by!(name: "Highlight Reel").id, quantity: 2 }
-        ].to_json
+    expect do
+      patch project_path(draft), params: {
+        project: {
+          name: "Project Gamma",
+          raw_footage_url: "https://example.com/gamma.mov",
+          finalize: "1",
+          selections_json: [
+            { video_type_id: VideoType.find_by!(name: "Highlight Reel").id, quantity: 2 }
+          ].to_json
+        }
       }
-    }
+    end.to have_enqueued_job(NotificationJob).with(draft.id)
 
     expect(response).to redirect_to(projects_path)
 
