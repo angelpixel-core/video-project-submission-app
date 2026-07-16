@@ -16,7 +16,7 @@ Use this folder for future requirement extensions.
 Recommended naming:
 
 - [x] [001 Remove Legacy Submission Layer](./001-remove-legacy-submission-layer.md)
-- [ ] `002-new-requirement.md`
+- [x] [002 Notification Job and Queue Runtime](./002-notification-job-and-queue-runtime.md)
 - [ ] `003-flow-adjustment.md`
 - [ ] `004-data-model-update.md`
 
