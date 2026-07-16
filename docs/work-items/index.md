@@ -109,3 +109,7 @@ Work items are implementation documents. Each one should map back to the docs it
 ## 17
 
 - [ ] [PM Acronym Inflection Cleanup](./017-pm-acronym-inflection-cleanup.md)
+
+## 18
+
+- [ ] [Mail Delivery Environment Setup](./018-mail-delivery-environment-setup.md)

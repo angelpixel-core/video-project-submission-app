@@ -47,8 +47,8 @@ title: Notification Delivery Channels
 - [x] `app/views/pm_notification_mailer/` - add the email template and any shared mailer partials needed.
 - [x] `spec/mailers/pm_notification_mailer_spec.rb` - add coverage for the PM email delivery.
 - [x] `spec/unit/services/notification_service_spec.rb` - update the orchestration spec to cover the channel handoff.
-- [ ] `spec/unit/jobs/notification_job_spec.rb` - keep the job delegation spec intact.
-- [ ] `spec/unit/services/notification_delivery/logger_channel_spec.rb` - add coverage for the logger channel if it is extracted as its own object.
+- [x] `spec/unit/jobs/notification_job_spec.rb` - keep the job delegation spec intact.
+- [x] `spec/unit/services/notification_delivery/logger_channel_spec.rb` - add coverage for the logger channel if it is extracted as its own object.
 
 ## Affected Docs
 
