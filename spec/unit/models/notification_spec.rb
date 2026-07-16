@@ -14,4 +14,20 @@ RSpec.describe Notification do
     expect(notification.errors[:kind]).to be_present
     expect(notification.errors[:body]).to be_present
   end
+
+  it "defaults to unread and can be marked as read" do
+    client = Client.create!(name: "Client", email: "client@example.com")
+    pm = Pm.create!(name: "PM", email: "pm@example.com")
+    project = Project.create!(client: client, pm: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :in_progress)
+    notification = described_class.create!(project: project, pm: pm, kind: "project_created", body: "Project created")
+
+    expect(described_class.unread).to include(notification)
+    expect(described_class.read).not_to include(notification)
+
+    notification.mark_as_read!
+
+    expect(notification.read_at).to be_present
+    expect(described_class.read).to include(notification)
+    expect(described_class.unread).not_to include(notification)
+  end
 end

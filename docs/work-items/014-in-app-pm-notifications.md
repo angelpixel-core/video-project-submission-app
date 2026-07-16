@@ -26,9 +26,14 @@ title: In-App PM Notifications
 ## Scope
 
 - Persist notifications in the database as the source of truth.
+- Add a `read_at` or `seen_at` field to track acknowledgment.
 - Render pending notifications when the PM enters the PM view.
-- Optionally stream new notifications in real time when the PM has the view open.
+- Optionally stream new notifications in real time when the PM has the view open, but do not block the work item on it.
 - Mark notifications as seen/read when the PM acknowledges them.
+
+## Discovery
+
+- `read_at` already exists in the notifications table and schema, so the first slice only needs model behavior and specs.
 
 ## Operational Note
 
@@ -37,11 +42,14 @@ title: In-App PM Notifications
 
 ## Implementation Plan
 
-- [ ] Decide the read-state attribute name and persistence pattern.
-- [ ] Load unread notifications when the PM view opens.
-- [ ] Render a compact toast/snackbar for each pending notification.
-- [ ] Add an acknowledgment action that marks the notification as read.
-- [ ] Add realtime delivery only if it stays simple enough for the current stack.
+- [x] `db/schema.rb` - confirm the read-state column already exists for `notifications`.
+- [x] `app/models/notification.rb` - add the read-state validation or helper methods needed for unread queries.
+- [ ] `app/controllers/` - load unread notifications when the PM view opens and expose the acknowledgment action.
+- [ ] `app/views/` - render a compact toast/snackbar for each pending notification.
+- [ ] `app/javascript/` or `app/assets/` - add the minimal client behavior for closing/acknowledging the toast.
+- [ ] `spec/system/` - verify the toast appears and can be acknowledged.
+- [x] `spec/models/` or `spec/unit/models/` - verify the unread/read state behavior.
+- [ ] Realtime delivery only if it stays simple enough for the current stack.
 
 ## Affected Docs
 
@@ -55,7 +63,8 @@ title: In-App PM Notifications
 - `app/views/`
 - `app/controllers/`
 - `app/javascript/` or `app/assets/` depending on the UI approach
-- `spec/system/` or `spec/requests/`
+- `spec/system/`
+- `spec/models/` or `spec/unit/models/`
 
 ## Checklist
 
@@ -67,6 +76,7 @@ title: In-App PM Notifications
 
 - [ ] UI specs verify the toast and acknowledgment flow.
 - [ ] Unread notifications are loaded from persistence.
+- [ ] The acknowledgment updates the stored read state.
 
 ## Notes
 
