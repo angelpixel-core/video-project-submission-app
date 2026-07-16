@@ -41,8 +41,8 @@ title: Notification Delivery Channels
 
 ## Implementation Plan
 
-- [ ] `app/services/notification_service.rb` - keep the orchestrator role and delegate each delivery channel.
-- [ ] `app/services/notification_delivery/logger_channel.rb` - extract the current log line into an explicit logger channel.
+- [x] `app/services/notification_service.rb` - keep the orchestrator role and delegate each delivery channel.
+- [x] `app/services/notification_delivery/logger_channel.rb` - extract the current log line into an explicit logger channel.
 - [ ] `app/mailers/pm_notification_mailer.rb` - add the PM email delivery channel.
 - [ ] `app/views/pm_notification_mailer/` - add the email template and any shared mailer partials needed.
 - [ ] `spec/unit/services/notification_service_spec.rb` - update the orchestration spec to cover the channel handoff.
@@ -66,8 +66,8 @@ title: Notification Delivery Channels
 
 ## Checklist
 
-- [ ] `NotificationService` still orchestrates delivery from a project ID.
-- [ ] The logger channel still emits the PM notification log line.
+- [x] `NotificationService` still orchestrates delivery from a project ID.
+- [x] The logger channel still emits the PM notification log line.
 - [ ] The PM mailer sends the compact notification email.
 - [ ] `NotificationJob` still only delegates to `NotificationService`.
 

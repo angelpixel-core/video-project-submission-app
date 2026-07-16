@@ -18,6 +18,6 @@ class NotificationService
   end
 
   def deliver_notification(project)
-    Rails.logger.info("Notification for PM #{project.pm.email}: project #{project.id} was created")
+    NotificationDelivery::LoggerChannel.new(project).call
   end
 end
