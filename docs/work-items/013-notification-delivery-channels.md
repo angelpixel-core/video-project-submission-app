@@ -11,7 +11,7 @@ depends_on:
   - sprint-0-background-jobs
 order: 13
 phase: work-items
-status: pending
+status: done
 title: Notification Delivery Channels
 ---
 
@@ -19,7 +19,7 @@ title: Notification Delivery Channels
 
 ## Goal
 
-- [ ] Refactor the PM notification flow into explicit delivery channels.
+- [x] Refactor the PM notification flow into explicit delivery channels.
 
 ## Scope
 
@@ -41,14 +41,14 @@ title: Notification Delivery Channels
 
 ## Implementation Plan
 
-- [ ] `app/services/notification_service.rb` - keep the orchestrator role and delegate each delivery channel.
-- [ ] `app/services/notification_delivery/logger_channel.rb` - extract the current log line into an explicit logger channel.
-- [ ] `app/mailers/pm_notification_mailer.rb` - add the PM email delivery channel.
-- [ ] `app/views/pm_notification_mailer/` - add the email template and any shared mailer partials needed.
-- [ ] `spec/unit/services/notification_service_spec.rb` - update the orchestration spec to cover the channel handoff.
-- [ ] `spec/unit/jobs/notification_job_spec.rb` - keep the job delegation spec intact.
-- [ ] `spec/mailers/pm_notification_mailer_spec.rb` - add coverage for the PM email delivery.
-- [ ] `spec/unit/services/notification_delivery/logger_channel_spec.rb` - add coverage for the logger channel if it is extracted as its own object.
+- [x] `app/services/notification_service.rb` - keep the orchestrator role and delegate each delivery channel.
+- [x] `app/services/notification_delivery/logger_channel.rb` - extract the current log line into an explicit logger channel.
+- [x] `app/mailers/pm_notification_mailer.rb` - add the PM email delivery channel.
+- [x] `app/views/pm_notification_mailer/` - add the email template and any shared mailer partials needed.
+- [x] `spec/mailers/pm_notification_mailer_spec.rb` - add coverage for the PM email delivery.
+- [x] `spec/unit/services/notification_service_spec.rb` - update the orchestration spec to cover the channel handoff.
+- [x] `spec/unit/jobs/notification_job_spec.rb` - keep the job delegation spec intact.
+- [x] `spec/unit/services/notification_delivery/logger_channel_spec.rb` - add coverage for the logger channel if it is extracted as its own object.
 
 ## Affected Docs
 
@@ -66,10 +66,10 @@ title: Notification Delivery Channels
 
 ## Checklist
 
-- [ ] `NotificationService` still orchestrates delivery from a project ID.
-- [ ] The logger channel still emits the PM notification log line.
-- [ ] The PM mailer sends the compact notification email.
-- [ ] `NotificationJob` still only delegates to `NotificationService`.
+- [x] `NotificationService` still orchestrates delivery from a project ID.
+- [x] The logger channel still emits the PM notification log line.
+- [x] The PM mailer sends the compact notification email.
+- [x] `NotificationJob` still only delegates to `NotificationService`.
 
 ## Related Sections
 
@@ -79,8 +79,8 @@ title: Notification Delivery Channels
 
 ## Validation
 
-- [ ] Notification-related specs pass.
-- [ ] The PM notification still enqueues asynchronously.
+- [x] Notification-related specs pass.
+- [x] The PM notification still enqueues asynchronously.
 
 ## Notes
 

@@ -60,6 +60,28 @@ test/qa: test/smoke test/acceptance
 .PHONY: test/all
 test/all: test/unit test/integration test/smoke test/acceptance test/performance
 
+.PHONY: lint/rubocop
+lint/rubocop:
+	@bin/rubocop -f github
+
+.PHONY: lint/security/brakeman
+lint/security/brakeman:
+	@bin/brakeman --no-pager
+
+.PHONY: lint/security/bundler-audit
+lint/security/bundler-audit:
+	@bin/bundler-audit
+
+.PHONY: lint
+lint: lint/rubocop lint/security/brakeman lint/security/bundler-audit
+
+.PHONY: lint/fix/rubocop
+lint/fix/rubocop:
+	@bin/rubocop -A
+
+.PHONY: lint/fix
+lint/fix: lint/fix/rubocop
+
 .PHONY: test/%
 test/%:
 	@TEST_ENV="$(TEST_ENV)" TEST_ARGS="$(TEST_ARGS)" sh $(TEST_SCRIPT) "$*"

@@ -92,7 +92,7 @@ Work items are implementation documents. Each one should map back to the docs it
 
 ## 13
 
-- [ ] [Notification Delivery Channels](./013-notification-delivery-channels.md)
+- [x] [Notification Delivery Channels](./013-notification-delivery-channels.md)
 
 ## 14
 
@@ -109,3 +109,7 @@ Work items are implementation documents. Each one should map back to the docs it
 ## 17
 
 - [ ] [PM Acronym Inflection Cleanup](./017-pm-acronym-inflection-cleanup.md)
+
+## 18
+
+- [ ] [Mail Delivery Environment Setup](./018-mail-delivery-environment-setup.md)
