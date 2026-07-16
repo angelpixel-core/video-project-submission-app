@@ -85,3 +85,7 @@ Work items are implementation documents. Each one should map back to the docs it
 ## Eleventh Item
 
 - [x] [Sprint 0 Data Model](./011-sprint-0-data-model.md)
+
+## Twelfth Item
+
+- [ ] [Sprint 0 Client Views](./012-sprint-0-client-views.md)

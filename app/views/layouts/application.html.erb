@@ -23,6 +23,12 @@
   </head>
 
   <body>
+    <% flash.each do |type, message| %>
+      <div class="container mt-3">
+        <div class="alert alert-<%= type == :notice ? "success" : "danger" %>"><%= message %></div>
+      </div>
+    <% end %>
+
     <%= yield %>
   </body>
 </html>
