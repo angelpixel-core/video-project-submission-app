@@ -96,7 +96,7 @@ Work items are implementation documents. Each one should map back to the docs it
 
 ## 14
 
-- [ ] [In-App PM Notifications](./014-in-app-pm-notifications.md)
+- [x] [In-App PM Notifications](./014-in-app-pm-notifications.md)
 
 ## 15
 

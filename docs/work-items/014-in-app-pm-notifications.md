@@ -13,7 +13,7 @@ depends_on:
   - sprint-0-data-model
 order: 14
 phase: work-items
-status: postponed
+status: done
 title: In-App PM Notifications
 ---
 
@@ -21,7 +21,7 @@ title: In-App PM Notifications
 
 ## Goal
 
-- [ ] Show PM notifications inside the app as toasts/snackbars and persist their read state.
+- [x] Show PM notifications inside the app as toasts/snackbars and persist their read state.
 
 ## Scope
 
@@ -57,7 +57,7 @@ title: In-App PM Notifications
 - [x] `spec/requests/projects_spec.rb` - verify the PM inbox renders unread notifications and excludes read ones.
 - [x] `spec/system/projects_notifications_spec.rb` - verify the toast appears and can be acknowledged.
 - [x] `spec/models/` or `spec/unit/models/` - verify the unread/read state behavior.
-- [ ] Realtime delivery moved to `docs/work-items/019-optional-realtime-pm-notifications.md`.
+- [x] Realtime delivery moved to `docs/work-items/019-optional-realtime-pm-notifications.md`.
 
 ## Affected Docs
 
