@@ -30,6 +30,7 @@ title: In-App PM Notifications
 - Render pending notifications when the PM enters the PM view.
 - Optionally stream new notifications in real time when the PM has the view open, but do not block the work item on it.
 - Mark notifications as seen/read when the PM acknowledges them.
+- Keep the acknowledgment UI and its minimal non-Bootstrap styling as a contiguous subslice of this work item.
 
 ## Discovery
 
@@ -47,6 +48,7 @@ title: In-App PM Notifications
 - [ ] `app/controllers/` - load unread notifications when the PM view opens and expose the acknowledgment action.
 - [ ] `app/views/` - render a compact toast/snackbar for each pending notification.
 - [ ] `app/javascript/` or `app/assets/` - add the minimal client behavior for closing/acknowledging the toast.
+- [ ] `app/assets/stylesheets/` or the current frontend style layer - add the small custom CSS needed for the toast/ack component.
 - [ ] `spec/system/` - verify the toast appears and can be acknowledged.
 - [x] `spec/models/` or `spec/unit/models/` - verify the unread/read state behavior.
 - [ ] Realtime delivery only if it stays simple enough for the current stack.
