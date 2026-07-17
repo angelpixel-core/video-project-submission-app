@@ -35,6 +35,7 @@ title: In-App PM Notifications
 ## Discovery
 
 - `read_at` already exists in the notifications table and schema, so the first slice only needs model behavior and specs.
+- The PM inbox is rendered server-side on `projects#index` for now; the acknowledgment UI remains a contiguous follow-up slice.
 
 ## Operational Note
 
@@ -45,10 +46,12 @@ title: In-App PM Notifications
 
 - [x] `db/schema.rb` - confirm the read-state column already exists for `notifications`.
 - [x] `app/models/notification.rb` - add the read-state validation or helper methods needed for unread queries.
-- [ ] `app/controllers/` - load unread notifications when the PM view opens and expose the acknowledgment action.
-- [ ] `app/views/` - render a compact toast/snackbar for each pending notification.
+- [x] `app/controllers/projects_controller.rb` - load unread notifications when the PM view opens.
+- [x] `app/views/projects/index.html.erb` - render a compact PM inbox for each pending notification.
+- [x] `app/views/projects/_notification.html.erb` - render the compact notification card/preview.
 - [ ] `app/javascript/` or `app/assets/` - add the minimal client behavior for closing/acknowledging the toast.
 - [ ] `app/assets/stylesheets/` or the current frontend style layer - add the small custom CSS needed for the toast/ack component.
+- [x] `spec/requests/projects_spec.rb` - verify the PM inbox renders unread notifications and excludes read ones.
 - [ ] `spec/system/` - verify the toast appears and can be acknowledged.
 - [x] `spec/models/` or `spec/unit/models/` - verify the unread/read state behavior.
 - [ ] Realtime delivery only if it stays simple enough for the current stack.

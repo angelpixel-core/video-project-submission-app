@@ -10,8 +10,11 @@ RSpec.describe "Projects requests" do
 
   it "shows the client project index" do
     client = Client.find_by!(email: "client@example.com")
-    project = Project.create!(client: client, pm: Pm.find_by!(email: "pm@example.com"), name: "Project Alpha", raw_footage_url: "https://example.com/raw.mov", status: :in_progress)
+    pm = Pm.find_by!(email: "pm@example.com")
+    project = Project.create!(client: client, pm: pm, name: "Project Alpha", raw_footage_url: "https://example.com/raw.mov", status: :in_progress)
     Project.create!(client: client, pm: Pm.find_by!(email: "pm@example.com"), status: :draft)
+    Notification.create!(project: project, pm: pm, kind: "project_created", body: "Unread PM notification")
+    Notification.create!(project: project, pm: pm, kind: "project_created", body: "Read PM notification", read_at: Time.current)
 
     get projects_path
 
@@ -20,6 +23,9 @@ RSpec.describe "Projects requests" do
     expect(response.body).to include("Project Alpha")
     expect(response.body).to include("Borrador")
     expect(response.body).to include("Reanudar")
+    expect(response.body).to include("PM inbox")
+    expect(response.body).to include("Unread PM notification")
+    expect(response.body).not_to include("Read PM notification")
   end
 
   it "creates a draft and redirects to edit" do
