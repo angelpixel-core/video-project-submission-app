@@ -12,7 +12,7 @@ depends_on:
   - in-app-pm-notifications
 order: 15
 phase: work-items
-status: pending
+status: done
 title: Project Lifecycle States
 ---
 
@@ -69,8 +69,8 @@ title: Project Lifecycle States
 
 ## Validation
 
-- [ ] Status transition specs pass.
-- [ ] The UI shows the expected labels and enabled actions.
+- [x] Status transition specs pass.
+- [x] The UI shows the expected labels and enabled actions.
 
 ## Notes
 
