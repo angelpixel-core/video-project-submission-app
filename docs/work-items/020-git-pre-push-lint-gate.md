@@ -11,7 +11,7 @@ tags:
 depends_on: []
 order: 20
 phase: work-items
-status: pending
+status: done
 title: Git Pre-Push Lint Gate
 ---
 
@@ -19,7 +19,7 @@ title: Git Pre-Push Lint Gate
 
 ## Goal
 
-- [ ] Block `git push` when `make lint` fails, using a native Git hook instead of Husky.
+- [x] Block `git push` when `make lint` fails, using a native Git hook instead of Husky.
 
 ## Scope
 
@@ -53,14 +53,14 @@ title: Git Pre-Push Lint Gate
 
 ## Checklist
 
-- [ ] `git push` is blocked when `make lint` fails.
+- [x] `git push` is blocked when `make lint` fails.
 - [x] Developers can install the hook with a documented command.
 - [x] There is a documented bypass path for emergencies.
 
 ## Validation
 
-- [ ] A failing lint run aborts the push locally.
-- [ ] A passing lint run allows the push.
+- [x] A failing lint run aborts the push locally.
+- [x] A passing lint run allows the push.
 
 ## Notes
 

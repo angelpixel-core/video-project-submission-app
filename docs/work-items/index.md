@@ -120,4 +120,4 @@ Work items are implementation documents. Each one should map back to the docs it
 
 ## 20
 
-- [ ] [Git Pre-Push Lint Gate](./020-git-pre-push-lint-gate.md)
+- [x] [Git Pre-Push Lint Gate](./020-git-pre-push-lint-gate.md)
