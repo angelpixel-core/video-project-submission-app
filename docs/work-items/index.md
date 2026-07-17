@@ -100,7 +100,7 @@ Work items are implementation documents. Each one should map back to the docs it
 
 ## 15
 
-- [ ] [Project Lifecycle States](./015-project-lifecycle-states.md)
+- [x] [Project Lifecycle States](./015-project-lifecycle-states.md)
 
 ## 16
 

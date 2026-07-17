@@ -4,12 +4,14 @@
       <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
         <div>
           <h2 class="h5 mb-1"><%= project.name.presence || "Untitled project" %></h2>
-          <p class="mb-0 text-body-secondary"><%= project.raw_footage_url.presence || "No footage URL yet" %></p>
+          <p class="mb-0 text-body-secondary"><%= project.client.name %></p>
         </div>
         <div class="d-flex flex-column align-items-end gap-2">
-          <span class="badge <%= project.draft? ? "text-bg-warning" : project.pending? ? "text-bg-secondary" : project.in_progress? ? "text-bg-info" : "text-bg-success" %> text-uppercase"><%= project.draft? ? "Borrador" : project.pending? ? "Pendiente" : project.in_progress? ? "En progreso" : "Completado" %></span>
-          <% if project.draft? %>
-            <%= link_to "Reanudar", edit_project_path(project), class: "btn btn-sm btn-outline-primary" %>
+          <span class="badge <%= project.pending? ? "text-bg-secondary" : project.in_progress? ? "text-bg-info" : "text-bg-success" %> text-uppercase"><%= project.pending? ? "Pendiente" : project.in_progress? ? "En progreso" : "Completado" %></span>
+          <% if project.pending? %>
+            <%= button_to "Aceptar proyecto", accept_project_path(project), method: :patch, class: "btn btn-sm btn-outline-primary" %>
+          <% elsif project.in_progress? %>
+            <%= button_to "Marcar como completado", complete_project_path(project), method: :patch, class: "btn btn-sm btn-outline-success" %>
           <% end %>
         </div>
       </div>
@@ -31,7 +33,7 @@
       </div>
 
       <div class="small text-body-secondary">
-        PM: <%= project.pm.name %>
+        Client: <%= project.client.name %>
       </div>
     </div>
   </div>

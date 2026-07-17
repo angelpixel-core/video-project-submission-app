@@ -25,4 +25,26 @@ RSpec.describe "PM notifications", type: :system do
     expect(page).not_to have_content("Unread PM notification")
     expect(notification.reload.read_at).to be_present
   end
+
+  it "lets the pm accept and complete projects from the workspace" do
+    client = Client.find_by!(email: "client@example.com")
+    pm = Pm.find_by!(email: "pm@example.com")
+    project = Project.create!(client: client, pm: pm, name: "Project Beta", raw_footage_url: "https://example.com/beta.mov", status: :pending)
+
+    visit projects_path
+
+    expect(page).to have_content("PM workspace")
+    expect(page).to have_button("Aceptar proyecto")
+
+    click_button "Aceptar proyecto"
+
+    expect(page).to have_current_path(projects_path)
+    expect(project.reload.status).to eq("in_progress")
+    expect(page).to have_button("Marcar como completado")
+
+    click_button "Marcar como completado"
+
+    expect(page).to have_current_path(projects_path)
+    expect(project.reload.status).to eq("completed")
+  end
 end

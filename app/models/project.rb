@@ -1,4 +1,6 @@
 class Project < ApplicationRecord
+  include AASM
+
   belongs_to :client
   belongs_to :pm
 
@@ -6,8 +8,29 @@ class Project < ApplicationRecord
   has_many :video_types, through: :video_type_selections
   has_many :notifications, dependent: :destroy
 
-  enum :status, { draft: "draft", in_progress: "in_progress", completed: "completed" }, default: :draft
+  aasm column: :status do
+    state :draft, initial: true
+    state :pending
+    state :in_progress
+    state :completed
 
-  validates :name, presence: true, if: :in_progress?
-  validates :raw_footage_url, presence: true, if: :in_progress?
+    event :submit do
+      transitions from: :draft, to: :pending
+    end
+
+    event :accept do
+      transitions from: :pending, to: :in_progress
+    end
+
+    event :complete do
+      transitions from: :in_progress, to: :completed
+    end
+  end
+
+  validates :name, presence: true, if: :submitted?
+  validates :raw_footage_url, presence: true, if: :submitted?
+
+  def submitted?
+    pending? || in_progress? || completed?
+  end
 end

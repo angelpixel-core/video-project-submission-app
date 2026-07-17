@@ -23,6 +23,24 @@
     </div>
   <% end %>
 
+  <% if @pm_projects.any? %>
+    <div class="card border-0 shadow-sm mt-4">
+      <div class="card-body p-4">
+        <div class="d-flex justify-content-between align-items-center gap-3 mb-3">
+          <div>
+            <p class="text-uppercase text-body-secondary small mb-1">PM workspace</p>
+            <h2 class="h5 mb-0">Assigned projects</h2>
+          </div>
+          <span class="badge text-bg-dark"><%= @pm_projects.size %></span>
+        </div>
+
+        <div class="row g-3">
+          <%= render partial: "pm_project", collection: @pm_projects, as: :project %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
   <% if @unread_notifications.any? %>
     <div class="card border-0 shadow-sm mt-4">
       <div class="card-body p-4">

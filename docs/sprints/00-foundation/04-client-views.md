@@ -31,6 +31,11 @@ tags:
 - [x] Create the new Project for the client.
 - [x] Persist the selected video types as `VideoTypeSelection` records.
 - [x] Assign the default PM.
-- [x] Change project status to In Progress.
+- [x] Change project status to Pending after submission.
 - [x] Create a background Notification for the PM.
 - [x] Redirect to the project index.
+
+## PM Review
+
+- [ ] PM acceptance moves the project from `pending` to `in_progress`.
+- [ ] PM completion moves the project from `in_progress` to `completed`.
