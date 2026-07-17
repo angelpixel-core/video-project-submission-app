@@ -13,7 +13,7 @@ depends_on:
   - sprint-0-data-model
 order: 14
 phase: work-items
-status: pending
+status: postponed
 title: In-App PM Notifications
 ---
 
@@ -37,6 +37,7 @@ title: In-App PM Notifications
 - `read_at` already exists in the notifications table and schema, so the first slice only needs model behavior and specs.
 - The PM inbox is rendered server-side on `projects#index` for now; the acknowledgment UI remains a contiguous follow-up slice.
 - The acknowledgment UI is server-driven (`button_to` + redirect), so this slice does not need `app/javascript`.
+- The realtime delivery slice moved to `docs/work-items/019-optional-realtime-pm-notifications.md`.
 
 ## Operational Note
 
@@ -56,7 +57,7 @@ title: In-App PM Notifications
 - [x] `spec/requests/projects_spec.rb` - verify the PM inbox renders unread notifications and excludes read ones.
 - [x] `spec/system/projects_notifications_spec.rb` - verify the toast appears and can be acknowledged.
 - [x] `spec/models/` or `spec/unit/models/` - verify the unread/read state behavior.
-- [ ] Realtime delivery only if it stays simple enough for the current stack.
+- [ ] Realtime delivery moved to `docs/work-items/019-optional-realtime-pm-notifications.md`.
 
 ## Affected Docs
 
