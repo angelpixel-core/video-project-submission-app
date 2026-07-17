@@ -117,3 +117,7 @@ Work items are implementation documents. Each one should map back to the docs it
 ## 19
 
 - [ ] [Optional Realtime PM Notifications](./019-optional-realtime-pm-notifications.md)
+
+## 20
+
+- [x] [Git Pre-Push Lint Gate](./020-git-pre-push-lint-gate.md)
