@@ -1,1 +1,4 @@
-/* Frontend entrypoint styles live here. */
+html[data-role-mode="client"] [data-role-scope="pm"],
+html[data-role-mode="pm"] [data-role-scope="client"] {
+  display: none !important;
+}

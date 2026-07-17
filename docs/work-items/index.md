@@ -104,7 +104,7 @@ Work items are implementation documents. Each one should map back to the docs it
 
 ## 16
 
-- [ ] [Role Switcher Prototype](./016-role-switcher-prototype.md)
+- [x] [Role Switcher Prototype](./016-role-switcher-prototype.md)
 
 ## 17
 

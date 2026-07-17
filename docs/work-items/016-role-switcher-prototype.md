@@ -12,7 +12,7 @@ depends_on:
   - project-lifecycle-states
 order: 16
 phase: work-items
-status: pending
+status: done
 title: Role Switcher Prototype
 ---
 
@@ -20,7 +20,7 @@ title: Role Switcher Prototype
 
 ## Goal
 
-- [ ] Add a simple frontend-only role switcher for the demo UI.
+- [x] Add a simple frontend-only role switcher for the demo UI.
 
 ## Scope
 
@@ -38,12 +38,12 @@ title: Role Switcher Prototype
 
 ## Implementation Plan
 
-- [ ] Add a global header selector and default state in the layout shell.
-- [ ] Persist the mode in `sessionStorage`.
-- [ ] Read the mode on page load and restore it.
-- [ ] Write the mode to `body` or the root container as a UI state hook.
-- [ ] Switch the visible navigation and actions by mode.
-- [ ] Keep PM mode limited to the projects index workspace in the UI.
+- [x] Add a global header selector and default state in the layout shell.
+- [x] Persist the mode in `sessionStorage`.
+- [x] Read the mode on page load and restore it.
+- [x] Write the mode to `body` or the root container as a UI state hook.
+- [x] Switch the visible navigation and actions by mode.
+- [x] Keep PM mode limited to the projects index workspace in the UI.
 
 ## Affected Docs
 
@@ -61,14 +61,14 @@ title: Role Switcher Prototype
 
 ## Checklist
 
-- [ ] The selector defaults to client.
-- [ ] The selector persists per tab.
-- [ ] The PM view and client view swap correctly in the frontend shell.
-- [ ] The PM mode only exposes the projects index workspace.
+- [x] The selector defaults to client.
+- [x] The selector persists per tab.
+- [x] The PM view and client view swap correctly in the frontend shell.
+- [x] The PM mode only exposes the projects index workspace.
 
 ## Validation
 
-- [ ] UI specs or manual checks confirm tab-isolated state.
+- [x] UI specs or manual checks confirm tab-isolated state.
 
 ## Notes
 
