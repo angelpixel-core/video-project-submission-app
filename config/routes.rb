@@ -14,6 +14,11 @@ Rails.application.routes.draw do
   # root "posts#index"
   root "projects#index"
 
-  resources :projects, only: %i[index new edit update]
+  resources :projects, only: %i[index new edit update] do
+    member do
+      patch :accept
+      patch :complete
+    end
+  end
   resources :notifications, only: %i[update]
 end

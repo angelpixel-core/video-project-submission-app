@@ -23,6 +23,7 @@ RSpec.describe "Projects requests" do
     expect(response.body).to include("Project Alpha")
     expect(response.body).to include("Borrador")
     expect(response.body).to include("Reanudar")
+    expect(response.body).to include("PM workspace")
     expect(response.body).to include("PM inbox")
     expect(response.body).to include("Unread PM notification")
     expect(response.body).not_to include("Read PM notification")
@@ -35,6 +36,14 @@ RSpec.describe "Projects requests" do
 
     expect(response).to redirect_to(edit_project_path(draft))
     expect(draft.status).to eq("draft")
+  end
+
+  it "redirects submitted projects away from the editor" do
+    project = Project.create!(client: Client.find_by!(email: "client@example.com"), pm: Pm.find_by!(email: "pm@example.com"), name: "Project Pending", raw_footage_url: "https://example.com/pending.mov", status: :pending)
+
+    get edit_project_path(project)
+
+    expect(response).to redirect_to(projects_path)
   end
 
   it "renders the draft editor" do
@@ -90,9 +99,31 @@ RSpec.describe "Projects requests" do
     expect(response).to redirect_to(projects_path)
 
     draft.reload
-    expect(draft.status).to eq("in_progress")
+    expect(draft.status).to eq("pending")
     expect(draft.pm.email).to eq("pm@example.com")
     expect(draft.video_type_selections.count).to eq(1)
+  end
+
+  it "accepts a pending project as the pm" do
+    project = Project.create!(client: Client.find_by!(email: "client@example.com"), pm: Pm.find_by!(email: "pm@example.com"), name: "Project Pending", raw_footage_url: "https://example.com/pending.mov", status: :pending)
+
+    patch accept_project_path(project)
+
+    expect(response).to redirect_to(projects_path)
+
+    project.reload
+    expect(project.status).to eq("in_progress")
+  end
+
+  it "completes an in-progress project as the pm" do
+    project = Project.create!(client: Client.find_by!(email: "client@example.com"), pm: Pm.find_by!(email: "pm@example.com"), name: "Project Active", raw_footage_url: "https://example.com/active.mov", status: :in_progress)
+
+    patch complete_project_path(project)
+
+    expect(response).to redirect_to(projects_path)
+
+    project.reload
+    expect(project.status).to eq("completed")
   end
 
   it "rejects finalization without selections" do

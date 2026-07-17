@@ -16,7 +16,7 @@ tags:
 
 ## What
 
-- The project finalize flow now enqueues the PM notification asynchronously.
+- The project submission flow now enqueues the PM notification asynchronously.
 - Development runs the queue locally with Solid Queue and a separate worker process.
 - The app-side database environment contract stays distinct from MySQL container bootstrap defaults.
 

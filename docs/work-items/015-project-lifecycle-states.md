@@ -24,10 +24,11 @@ title: Project Lifecycle States
 
 ## Scope
 
+- Keep `draft` as the client editing state.
 - Introduce `pending` as the initial post-submit state.
 - Move the project to `in_progress` when the PM accepts it.
 - Keep `completed` as the final state after fulfillment.
-- Enable or disable UI actions according to the current state.
+- Gate client editing and PM actions according to the current state.
 
 ## Operational Note
 
@@ -39,8 +40,9 @@ title: Project Lifecycle States
 - [ ] Add or adjust the status enum and state transitions.
 - [ ] Update the submit flow to create `pending` projects.
 - [ ] Add the PM accept action that moves projects to `in_progress`.
-- [ ] Gate the finalize action behind `in_progress`.
+- [ ] Add the completion action that moves projects to `completed`.
 - [ ] Update the project list labels and buttons to match the new states.
+- [ ] Keep client editing limited to `draft` projects.
 
 ## Affected Docs
 
@@ -61,7 +63,8 @@ title: Project Lifecycle States
 
 - [ ] New projects start as `pending`.
 - [ ] PM acceptance moves a project to `in_progress`.
-- [ ] Finalization is only available in `in_progress`.
+- [ ] Completion is only available in `in_progress`.
+- [ ] Client editing is only available in `draft`.
 
 ## Validation
 

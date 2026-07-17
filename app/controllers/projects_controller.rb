@@ -1,9 +1,14 @@
 class ProjectsController < ApplicationController
   before_action :load_project, only: %i[edit update]
+  before_action :ensure_draft_project, only: %i[edit update]
+  before_action :load_pm_project, only: %i[accept complete]
   before_action :load_video_types, only: %i[edit update]
 
   def index
-    @projects = current_client.projects.includes(video_type_selections: :video_type).order(Arel.sql("status = 'draft' DESC"), created_at: :desc)
+    status_order = Arel.sql("CASE status WHEN 'draft' THEN 0 WHEN 'pending' THEN 1 WHEN 'in_progress' THEN 2 WHEN 'completed' THEN 3 ELSE 4 END")
+
+    @projects = current_client.projects.includes(video_type_selections: :video_type).order(status_order, created_at: :desc)
+    @pm_projects = default_pm.projects.where.not(status: :draft).includes(:client, video_type_selections: :video_type).order(status_order, created_at: :desc)
     @unread_notifications = default_pm.notifications.unread.includes(project: :client).order(created_at: :desc)
   end
 
@@ -22,7 +27,7 @@ class ProjectsController < ApplicationController
     if finalize_submission?
       finalize_project!(selections)
       NotificationJob.perform_later(@project.id)
-      redirect_to projects_path, notice: "Project created."
+      redirect_to projects_path, notice: "Project submitted for review."
     else
       autosave_project!(selections)
       head :no_content
@@ -91,10 +96,24 @@ class ProjectsController < ApplicationController
     Project.transaction do
       @project.assign_attributes(project_attributes)
       @project.pm = default_pm
-      @project.status = :in_progress
-      @project.save!
+      @project.submit!
       sync_project_selections(@project, selections)
     end
+  end
+
+  def accept
+    return redirect_to(projects_path, alert: "Only pending projects can be accepted.") unless @pm_project.pending?
+
+    @pm_project.accept!
+    @pm_project.notifications.unread.update_all(read_at: Time.current)
+    redirect_to projects_path, notice: "Project accepted."
+  end
+
+  def complete
+    return redirect_to(projects_path, alert: "Only in-progress projects can be completed.") unless @pm_project.in_progress?
+
+    @pm_project.complete!
+    redirect_to projects_path, notice: "Project completed."
   end
 
   def sync_project_selections(project, selections)
@@ -110,5 +129,15 @@ class ProjectsController < ApplicationController
 
   def load_video_types
     @video_types = VideoType.order(:name)
+  end
+
+  def ensure_draft_project
+    return if @project.draft?
+
+    redirect_to projects_path, alert: "Only draft projects can be edited."
+  end
+
+  def load_pm_project
+    @pm_project = default_pm.projects.find(params[:id])
   end
 end
