@@ -36,6 +36,7 @@ title: In-App PM Notifications
 
 - `read_at` already exists in the notifications table and schema, so the first slice only needs model behavior and specs.
 - The PM inbox is rendered server-side on `projects#index` for now; the acknowledgment UI remains a contiguous follow-up slice.
+- The acknowledgment UI is server-driven (`button_to` + redirect), so this slice does not need `app/javascript`.
 
 ## Operational Note
 
@@ -49,10 +50,11 @@ title: In-App PM Notifications
 - [x] `app/controllers/projects_controller.rb` - load unread notifications when the PM view opens.
 - [x] `app/views/projects/index.html.erb` - render a compact PM inbox for each pending notification.
 - [x] `app/views/projects/_notification.html.erb` - render the compact notification card/preview.
-- [ ] `app/javascript/` or `app/assets/` - add the minimal client behavior for closing/acknowledging the toast.
-- [ ] `app/assets/stylesheets/` or the current frontend style layer - add the small custom CSS needed for the toast/ack component.
+- [x] `app/controllers/notifications_controller.rb` - mark a PM notification as read and redirect back.
+- [x] `config/routes.rb` - add the notification acknowledgment route.
+- [x] `app/assets/stylesheets/application.css` - add the small custom CSS needed for the toast/ack component.
 - [x] `spec/requests/projects_spec.rb` - verify the PM inbox renders unread notifications and excludes read ones.
-- [ ] `spec/system/` - verify the toast appears and can be acknowledged.
+- [x] `spec/system/projects_notifications_spec.rb` - verify the toast appears and can be acknowledged.
 - [x] `spec/models/` or `spec/unit/models/` - verify the unread/read state behavior.
 - [ ] Realtime delivery only if it stays simple enough for the current stack.
 
@@ -67,21 +69,22 @@ title: In-App PM Notifications
 - `app/models/notification.rb`
 - `app/views/`
 - `app/controllers/`
-- `app/javascript/` or `app/assets/` depending on the UI approach
-- `spec/system/`
+- `app/assets/stylesheets/application.css`
+- `config/routes.rb`
+- `spec/system/projects_notifications_spec.rb`
 - `spec/models/` or `spec/unit/models/`
 
 ## Checklist
 
-- [ ] PM notifications are visible in the app.
-- [ ] Pending notifications appear when the PM enters the view.
-- [ ] Acknowledged notifications are marked as read.
+- [x] PM notifications are visible in the app.
+- [x] Pending notifications appear when the PM enters the view.
+- [x] Acknowledged notifications are marked as read.
 
 ## Validation
 
-- [ ] UI specs verify the toast and acknowledgment flow.
-- [ ] Unread notifications are loaded from persistence.
-- [ ] The acknowledgment updates the stored read state.
+- [x] UI specs verify the toast and acknowledgment flow.
+- [x] Unread notifications are loaded from persistence.
+- [x] The acknowledgment updates the stored read state.
 
 ## Notes
 

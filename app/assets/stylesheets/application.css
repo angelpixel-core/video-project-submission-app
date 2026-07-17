@@ -8,3 +8,13 @@
  *
  * Consider organizing styles into separate files for maintainability.
  */
+
+.pm-notification-card {
+  border: 1px solid rgba(13, 110, 253, 0.18);
+  background: linear-gradient(180deg, rgba(13, 110, 253, 0.04), rgba(13, 110, 253, 0.01));
+  box-shadow: 0 0.5rem 1.25rem rgba(15, 23, 42, 0.06);
+}
+
+.pm-notification-check {
+  white-space: nowrap;
+}
