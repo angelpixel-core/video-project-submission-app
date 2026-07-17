@@ -60,6 +60,10 @@ test/qa: test/smoke test/acceptance
 .PHONY: test/all
 test/all: test/unit test/integration test/smoke test/acceptance test/performance
 
+.PHONY: hooks/setup
+hooks/setup:
+	@sh ops/lint/setup-hooks.sh
+
 .PHONY: lint/rubocop
 lint/rubocop:
 	@bin/rubocop -f github

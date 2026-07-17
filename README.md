@@ -5,7 +5,7 @@
 Set up the repository-managed Git hooks:
 
 ```sh
-sh ops/lint/setup-hooks.sh
+make hooks/setup
 ```
 
 The pre-push hook runs `make lint` before allowing a push.

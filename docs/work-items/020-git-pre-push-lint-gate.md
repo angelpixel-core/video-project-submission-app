@@ -37,7 +37,7 @@ title: Git Pre-Push Lint Gate
 
 - [x] `ops/lint/setup-hooks.sh` - set `core.hooksPath` to the repo-managed hook directory.
 - [x] `ops/lint/pre-push` - run `make lint` and abort the push if it fails.
-- [ ] `Makefile` - add a helper target for setting up hooks locally if needed.
+- [x] `Makefile` - add a helper target for setting up hooks locally if needed.
 - [x] `README.md` - document how to install, bypass, and update the hook.
 
 ## Affected Docs
