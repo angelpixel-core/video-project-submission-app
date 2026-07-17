@@ -1,24 +1,17 @@
-# README
+# Video Project Submission App
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+## Local Hooks
 
-Things you may want to cover:
+Set up the repository-managed Git hooks:
 
-* Ruby version
+```sh
+sh ops/lint/setup-hooks.sh
+```
 
-* System dependencies
+The pre-push hook runs `make lint` before allowing a push.
 
-* Configuration
+Bypass the hook for emergencies only:
 
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+```sh
+SKIP_LINT=1 git push
+```
