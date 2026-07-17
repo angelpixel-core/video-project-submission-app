@@ -15,4 +15,5 @@ Rails.application.routes.draw do
   root "projects#index"
 
   resources :projects, only: %i[index new edit update]
+  resources :notifications, only: %i[update]
 end

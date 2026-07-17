@@ -13,7 +13,7 @@ depends_on:
   - sprint-0-data-model
 order: 14
 phase: work-items
-status: pending
+status: done
 title: In-App PM Notifications
 ---
 
@@ -21,14 +21,23 @@ title: In-App PM Notifications
 
 ## Goal
 
-- [ ] Show PM notifications inside the app as toasts/snackbars and persist their read state.
+- [x] Show PM notifications inside the app as toasts/snackbars and persist their read state.
 
 ## Scope
 
 - Persist notifications in the database as the source of truth.
+- Add a `read_at` or `seen_at` field to track acknowledgment.
 - Render pending notifications when the PM enters the PM view.
-- Optionally stream new notifications in real time when the PM has the view open.
+- Optionally stream new notifications in real time when the PM has the view open, but do not block the work item on it.
 - Mark notifications as seen/read when the PM acknowledges them.
+- Keep the acknowledgment UI and its minimal non-Bootstrap styling as a contiguous subslice of this work item.
+
+## Discovery
+
+- `read_at` already exists in the notifications table and schema, so the first slice only needs model behavior and specs.
+- The PM inbox is rendered server-side on `projects#index` for now; the acknowledgment UI remains a contiguous follow-up slice.
+- The acknowledgment UI is server-driven (`button_to` + redirect), so this slice does not need `app/javascript`.
+- The realtime delivery slice moved to `docs/work-items/019-optional-realtime-pm-notifications.md`.
 
 ## Operational Note
 
@@ -37,11 +46,18 @@ title: In-App PM Notifications
 
 ## Implementation Plan
 
-- [ ] Decide the read-state attribute name and persistence pattern.
-- [ ] Load unread notifications when the PM view opens.
-- [ ] Render a compact toast/snackbar for each pending notification.
-- [ ] Add an acknowledgment action that marks the notification as read.
-- [ ] Add realtime delivery only if it stays simple enough for the current stack.
+- [x] `db/schema.rb` - confirm the read-state column already exists for `notifications`.
+- [x] `app/models/notification.rb` - add the read-state validation or helper methods needed for unread queries.
+- [x] `app/controllers/projects_controller.rb` - load unread notifications when the PM view opens.
+- [x] `app/views/projects/index.html.erb` - render a compact PM inbox for each pending notification.
+- [x] `app/views/projects/_notification.html.erb` - render the compact notification card/preview.
+- [x] `app/controllers/notifications_controller.rb` - mark a PM notification as read and redirect back.
+- [x] `config/routes.rb` - add the notification acknowledgment route.
+- [x] `app/assets/stylesheets/application.css` - add the small custom CSS needed for the toast/ack component.
+- [x] `spec/requests/projects_spec.rb` - verify the PM inbox renders unread notifications and excludes read ones.
+- [x] `spec/system/projects_notifications_spec.rb` - verify the toast appears and can be acknowledged.
+- [x] `spec/models/` or `spec/unit/models/` - verify the unread/read state behavior.
+- [x] Realtime delivery moved to `docs/work-items/019-optional-realtime-pm-notifications.md`.
 
 ## Affected Docs
 
@@ -54,19 +70,22 @@ title: In-App PM Notifications
 - `app/models/notification.rb`
 - `app/views/`
 - `app/controllers/`
-- `app/javascript/` or `app/assets/` depending on the UI approach
-- `spec/system/` or `spec/requests/`
+- `app/assets/stylesheets/application.css`
+- `config/routes.rb`
+- `spec/system/projects_notifications_spec.rb`
+- `spec/models/` or `spec/unit/models/`
 
 ## Checklist
 
-- [ ] PM notifications are visible in the app.
-- [ ] Pending notifications appear when the PM enters the view.
-- [ ] Acknowledged notifications are marked as read.
+- [x] PM notifications are visible in the app.
+- [x] Pending notifications appear when the PM enters the view.
+- [x] Acknowledged notifications are marked as read.
 
 ## Validation
 
-- [ ] UI specs verify the toast and acknowledgment flow.
-- [ ] Unread notifications are loaded from persistence.
+- [x] UI specs verify the toast and acknowledgment flow.
+- [x] Unread notifications are loaded from persistence.
+- [x] The acknowledgment updates the stored read state.
 
 ## Notes
 

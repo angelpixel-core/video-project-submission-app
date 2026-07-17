@@ -4,6 +4,7 @@ class ProjectsController < ApplicationController
 
   def index
     @projects = current_client.projects.includes(video_type_selections: :video_type).order(Arel.sql("status = 'draft' DESC"), created_at: :desc)
+    @unread_notifications = default_pm.notifications.unread.includes(project: :client).order(created_at: :desc)
   end
 
   def new

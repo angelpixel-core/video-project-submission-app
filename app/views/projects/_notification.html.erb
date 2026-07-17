@@ -1,0 +1,15 @@
+<div class="pm-notification-card rounded-3 p-3">
+  <div class="d-flex justify-content-between gap-3 mb-2">
+    <div>
+      <p class="text-uppercase text-body-secondary small mb-1">Project update</p>
+      <h3 class="h6 mb-0"><%= notification.project.name %></h3>
+    </div>
+    <div class="d-flex align-items-center gap-2">
+      <span class="badge text-bg-primary">Unread</span>
+      <%= button_to "Mark as read", notification_path(notification), method: :patch, class: "pm-notification-check btn btn-sm btn-outline-dark" %>
+    </div>
+  </div>
+
+  <p class="mb-1"><%= notification.body %></p>
+  <p class="mb-0 text-body-secondary small">Client: <%= notification.project.client.name %></p>
+</div>
