@@ -101,8 +101,10 @@ class ProjectsController < ApplicationController
     end
   end
 
+  public
+
   def accept
-    return redirect_to(projects_path, alert: "Only pending projects can be accepted.") unless @pm_project.pending?
+    return redirect_to(projects_path, alert: "Only pending projects can be accepted.") unless @pm_project.may_accept?
 
     @pm_project.accept!
     @pm_project.notifications.unread.update_all(read_at: Time.current)
@@ -110,11 +112,13 @@ class ProjectsController < ApplicationController
   end
 
   def complete
-    return redirect_to(projects_path, alert: "Only in-progress projects can be completed.") unless @pm_project.in_progress?
+    return redirect_to(projects_path, alert: "Only in-progress projects can be completed.") unless @pm_project.may_complete?
 
     @pm_project.complete!
     redirect_to projects_path, notice: "Project completed."
   end
+
+  private
 
   def sync_project_selections(project, selections)
     project.video_type_selections.delete_all

@@ -1,4 +1,6 @@
 class Project < ApplicationRecord
+  include AASM
+
   belongs_to :client
   belongs_to :pm
 
@@ -6,33 +8,29 @@ class Project < ApplicationRecord
   has_many :video_types, through: :video_type_selections
   has_many :notifications, dependent: :destroy
 
-  enum :status, { draft: "draft", pending: "pending", in_progress: "in_progress", completed: "completed" }, default: :draft
+  aasm column: :status do
+    state :draft, initial: true
+    state :pending
+    state :in_progress
+    state :completed
 
-  validates :name, presence: true, if: :submission_fields_required?
-  validates :raw_footage_url, presence: true, if: :submission_fields_required?
+    event :submit do
+      transitions from: :draft, to: :pending
+    end
 
-  def submit!
-    transition_to!(:pending, :draft)
+    event :accept do
+      transitions from: :pending, to: :in_progress
+    end
+
+    event :complete do
+      transitions from: :in_progress, to: :completed
+    end
   end
 
-  def accept!
-    transition_to!(:in_progress, :pending)
-  end
+  validates :name, presence: true, if: :submitted?
+  validates :raw_footage_url, presence: true, if: :submitted?
 
-  def complete!
-    transition_to!(:completed, :in_progress)
-  end
-
-  def submission_fields_required?
+  def submitted?
     pending? || in_progress? || completed?
-  end
-
-  private
-
-  def transition_to!(target_status, expected_status)
-    return update!(status: target_status) if public_send("#{expected_status}?")
-
-    errors.add(:status, "must be #{expected_status}")
-    raise ActiveRecord::RecordInvalid, self
   end
 end

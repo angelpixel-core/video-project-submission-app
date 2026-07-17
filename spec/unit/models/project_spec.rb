@@ -43,4 +43,12 @@ RSpec.describe Project do
     project.complete!
     expect(project.status).to eq("completed")
   end
+
+  it "rejects invalid lifecycle jumps" do
+    client = Client.create!(name: "Client", email: "client@example.com")
+    pm = Pm.create!(name: "PM", email: "pm@example.com")
+    project = described_class.create!(client: client, pm: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :draft)
+
+    expect { project.accept! }.to raise_error(AASM::InvalidTransition)
+  end
 end
