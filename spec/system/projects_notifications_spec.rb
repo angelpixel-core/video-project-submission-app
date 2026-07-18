@@ -60,7 +60,7 @@ RSpec.describe "PM notifications realtime", type: :system, js: true do
     VideoType.create!(name: "Highlight Reel", description: "Short edit", price_cents: 25_000, output_format: "mp4")
   end
 
-  it "refreshes the inbox when a notification is created" do
+  it "refreshes the inbox when a notification is created or acknowledged" do
     client = Client.find_by!(email: "client@example.com")
     pm = PM.find_by!(email: "pm@example.com")
     project = Project.create!(client: client, pm: pm, status: :draft)
@@ -89,6 +89,17 @@ RSpec.describe "PM notifications realtime", type: :system, js: true do
     using_session(:pm) do
       expect(page).to have_content(notification_body)
       expect(page).to have_no_content("No unread notifications yet.")
+    end
+
+    Thread.new do
+      ActiveRecord::Base.connection_pool.with_connection do
+        Notification.find_by!(project_id: project.id, pm_id: pm.id, body: notification_body).mark_as_read!
+      end
+    end.join
+
+    using_session(:pm) do
+      expect(page).to have_content("No unread notifications yet.")
+      expect(page).to have_no_content(notification_body)
     end
   end
 end
