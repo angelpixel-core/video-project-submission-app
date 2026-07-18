@@ -40,7 +40,7 @@ title: Mail Delivery Environment Setup
 - [x] `config/environments/development.rb` - enable `letter_opener` for development.
 - [x] `config/environments/test.rb` - keep the `:test` delivery method intact.
 - [x] `config/environments/qa.rb` - configure QA mail delivery from environment variables.
-- [ ] `config/environments/production.rb` - configure production mail delivery from environment variables.
+- [x] `config/environments/production.rb` - configure production mail delivery from environment variables.
 - [ ] `env/*/app/*.env` and/or deploy secrets - document the SMTP variables required per environment.
 
 ## Affected Docs
@@ -62,7 +62,7 @@ title: Mail Delivery Environment Setup
 - [ ] Development can preview PM notification emails locally.
 - [ ] Test mail delivery remains isolated and non-networked.
 - [ ] QA can send or capture mail using SMTP settings from environment variables.
-- [ ] Production uses the intended transactional mail settings from environment variables.
+- [x] Production uses the intended transactional mail settings from environment variables.
 - [ ] The repo stays on the `ENV`/secret vars convention for mail secrets.
 
 ## Validation
