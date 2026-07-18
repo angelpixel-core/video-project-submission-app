@@ -9,7 +9,7 @@
         <div class="d-flex flex-column align-items-end gap-2">
           <span class="badge <%= project.draft? ? "text-bg-warning" : project.pending? ? "text-bg-secondary" : project.in_progress? ? "text-bg-info" : "text-bg-success" %> text-uppercase"><%= project.draft? ? "Borrador" : project.pending? ? "Pendiente" : project.in_progress? ? "En progreso" : "Completado" %></span>
           <% if project.draft? %>
-            <%= link_to "Reanudar", edit_project_path(project), class: "btn btn-sm btn-outline-primary" %>
+            <%= link_to "Reanudar", edit_project_path(project), class: "btn btn-sm btn-outline-primary", data: { role_scope: "client" } %>
           <% end %>
         </div>
       </div>

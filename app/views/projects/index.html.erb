@@ -6,25 +6,27 @@
       <p class="text-uppercase text-body-secondary mb-1">Client workspace</p>
       <h1 class="h3 mb-0"><%= current_client.name %> projects</h1>
     </div>
-    <%= link_to "New Order", new_project_path, class: "btn btn-primary" %>
+    <%= link_to "New Order", new_project_path, class: "btn btn-primary", data: { role_scope: "client" } %>
   </div>
 
-  <% if @projects.any? %>
-    <div class="row g-3">
-      <%= render partial: "project", collection: @projects, as: :project %>
-    </div>
-  <% else %>
-    <div class="card border-0 shadow-sm">
-      <div class="card-body p-4">
-        <h2 class="h5">No projects yet</h2>
-        <p class="mb-3 text-body-secondary">Start a new order to create the first project for <%= current_client.name %>.</p>
-        <%= link_to "Create order", new_project_path, class: "btn btn-primary" %>
+  <div data-role-scope="client">
+    <% if @projects.any? %>
+      <div class="row g-3">
+        <%= render partial: "project", collection: @projects, as: :project %>
       </div>
-    </div>
-  <% end %>
+    <% else %>
+      <div class="card border-0 shadow-sm">
+        <div class="card-body p-4">
+          <h2 class="h5">No projects yet</h2>
+          <p class="mb-3 text-body-secondary">Start a new order to create the first project for <%= current_client.name %>.</p>
+          <%= link_to "Create order", new_project_path, class: "btn btn-primary", data: { role_scope: "client" } %>
+        </div>
+      </div>
+    <% end %>
+  </div>
 
   <% if @pm_projects.any? %>
-    <div class="card border-0 shadow-sm mt-4">
+    <div class="card border-0 shadow-sm mt-4" data-role-scope="pm">
       <div class="card-body p-4">
         <div class="d-flex justify-content-between align-items-center gap-3 mb-3">
           <div>
@@ -42,7 +44,7 @@
   <% end %>
 
   <% if @unread_notifications.any? %>
-    <div class="card border-0 shadow-sm mt-4">
+    <div class="card border-0 shadow-sm mt-4" data-role-scope="pm">
       <div class="card-body p-4">
         <div class="d-flex justify-content-between align-items-center gap-3 mb-3">
           <div>

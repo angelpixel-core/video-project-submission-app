@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+  <html data-role-mode="client">
   <head>
     <title><%= content_for(:title) || "Video Project Submission App" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -12,6 +12,18 @@
     <%= yield :head %>
 
     <%= vite_client_tag %>
+
+    <script>
+      try {
+        const storedMode = window.sessionStorage.getItem("workspace-mode")
+        if (storedMode === "client" || storedMode === "pm") {
+          document.documentElement.dataset.roleMode = storedMode
+        }
+      } catch (error) {
+        // Session storage can be blocked; fall back to the default client mode.
+      }
+    </script>
+
     <%= vite_javascript_tag "application" %>
 
     <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
@@ -22,7 +34,37 @@
     <link rel="apple-touch-icon" href="/icon.png">
   </head>
 
-  <body>
+  <body data-controller="role-switch" data-role-mode="client">
+    <header class="border-bottom bg-white sticky-top shadow-sm">
+      <div class="container py-3 d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+        <div>
+          <p class="text-uppercase text-body-secondary small mb-1">Workspace demo</p>
+          <h1 class="h5 mb-0">Video Project Submission App</h1>
+        </div>
+
+        <div class="btn-group" role="group" aria-label="Workspace mode">
+          <button
+            type="button"
+            class="btn btn-primary"
+            data-role-switch-target="button"
+            data-mode="client"
+            data-action="click->role-switch#select"
+          >
+            Client
+          </button>
+          <button
+            type="button"
+            class="btn btn-outline-primary"
+            data-role-switch-target="button"
+            data-mode="pm"
+            data-action="click->role-switch#select"
+          >
+            PM
+          </button>
+        </div>
+      </div>
+    </header>
+
     <% flash.each do |type, message| %>
       <% alert_type = type.to_s == "notice" ? "success" : "danger" %>
       <div class="container mt-3">
