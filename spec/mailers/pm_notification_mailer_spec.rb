@@ -1,10 +1,10 @@
 require "rails_helper"
 
-RSpec.describe PmNotificationMailer do
+RSpec.describe PMNotificationMailer do
   describe "project_created" do
     it "sends a compact text email to the pm" do
       client = Client.create!(name: "Client", email: "client@example.com")
-      pm = Pm.create!(name: "PM", email: "pm@example.com")
+      pm = PM.create!(name: "PM", email: "pm@example.com")
       project = Project.create!(client: client, pm: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :in_progress)
 
       mail = described_class.project_created(project)

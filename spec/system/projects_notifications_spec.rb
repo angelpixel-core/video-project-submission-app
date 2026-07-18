@@ -5,12 +5,12 @@ RSpec.describe "PM notifications", type: :system do
     driven_by :rack_test
 
     Client.create!(name: "Default Client", email: "client@example.com")
-    Pm.create!(name: "Default PM", email: "pm@example.com")
+    PM.create!(name: "Default PM", email: "pm@example.com")
   end
 
   it "shows unread notifications and lets the pm acknowledge them" do
     client = Client.find_by!(email: "client@example.com")
-    pm = Pm.find_by!(email: "pm@example.com")
+    pm = PM.find_by!(email: "pm@example.com")
     project = Project.create!(client: client, pm: pm, name: "Project Alpha", raw_footage_url: "https://example.com/raw.mov", status: :in_progress)
     notification = Notification.create!(project: project, pm: pm, kind: "project_created", body: "Unread PM notification")
 
@@ -28,7 +28,7 @@ RSpec.describe "PM notifications", type: :system do
 
   it "lets the pm accept and complete projects from the workspace" do
     client = Client.find_by!(email: "client@example.com")
-    pm = Pm.find_by!(email: "pm@example.com")
+    pm = PM.find_by!(email: "pm@example.com")
     project = Project.create!(client: client, pm: pm, name: "Project Beta", raw_footage_url: "https://example.com/beta.mov", status: :pending)
 
     visit projects_path

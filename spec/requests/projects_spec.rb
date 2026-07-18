@@ -3,16 +3,16 @@ require "rails_helper"
 RSpec.describe "Projects requests" do
   before do
     Client.create!(name: "Default Client", email: "client@example.com")
-    Pm.create!(name: "Default PM", email: "pm@example.com")
+    PM.create!(name: "Default PM", email: "pm@example.com")
     VideoType.create!(name: "Highlight Reel", description: "Short edit", price_cents: 25_000, output_format: "mp4")
     VideoType.create!(name: "Social Cut", description: "Social edit", price_cents: 15_000, output_format: "mp4")
   end
 
   it "shows the client project index" do
     client = Client.find_by!(email: "client@example.com")
-    pm = Pm.find_by!(email: "pm@example.com")
+    pm = PM.find_by!(email: "pm@example.com")
     project = Project.create!(client: client, pm: pm, name: "Project Alpha", raw_footage_url: "https://example.com/raw.mov", status: :in_progress)
-    Project.create!(client: client, pm: Pm.find_by!(email: "pm@example.com"), status: :draft)
+    Project.create!(client: client, pm: PM.find_by!(email: "pm@example.com"), status: :draft)
     Notification.create!(project: project, pm: pm, kind: "project_created", body: "Unread PM notification")
     Notification.create!(project: project, pm: pm, kind: "project_created", body: "Read PM notification", read_at: Time.current)
 
@@ -39,7 +39,7 @@ RSpec.describe "Projects requests" do
   end
 
   it "redirects submitted projects away from the editor" do
-    project = Project.create!(client: Client.find_by!(email: "client@example.com"), pm: Pm.find_by!(email: "pm@example.com"), name: "Project Pending", raw_footage_url: "https://example.com/pending.mov", status: :pending)
+    project = Project.create!(client: Client.find_by!(email: "client@example.com"), pm: PM.find_by!(email: "pm@example.com"), name: "Project Pending", raw_footage_url: "https://example.com/pending.mov", status: :pending)
 
     get edit_project_path(project)
 
@@ -47,7 +47,7 @@ RSpec.describe "Projects requests" do
   end
 
   it "renders the draft editor" do
-    draft = Project.create!(client: Client.find_by!(email: "client@example.com"), pm: Pm.find_by!(email: "pm@example.com"), status: :draft)
+    draft = Project.create!(client: Client.find_by!(email: "client@example.com"), pm: PM.find_by!(email: "pm@example.com"), status: :draft)
 
     get edit_project_path(draft)
 
@@ -57,7 +57,7 @@ RSpec.describe "Projects requests" do
   end
 
   it "autosaves a draft and keeps it in draft status" do
-    draft = Project.create!(client: Client.find_by!(email: "client@example.com"), pm: Pm.find_by!(email: "pm@example.com"), status: :draft)
+    draft = Project.create!(client: Client.find_by!(email: "client@example.com"), pm: PM.find_by!(email: "pm@example.com"), status: :draft)
 
     patch project_path(draft), params: {
       project: {
@@ -81,7 +81,7 @@ RSpec.describe "Projects requests" do
   end
 
   it "finalizes a draft with selections" do
-    draft = Project.create!(client: Client.find_by!(email: "client@example.com"), pm: Pm.find_by!(email: "pm@example.com"), status: :draft)
+    draft = Project.create!(client: Client.find_by!(email: "client@example.com"), pm: PM.find_by!(email: "pm@example.com"), status: :draft)
 
     expect do
       patch project_path(draft), params: {
@@ -105,7 +105,7 @@ RSpec.describe "Projects requests" do
   end
 
   it "accepts a pending project as the pm" do
-    project = Project.create!(client: Client.find_by!(email: "client@example.com"), pm: Pm.find_by!(email: "pm@example.com"), name: "Project Pending", raw_footage_url: "https://example.com/pending.mov", status: :pending)
+    project = Project.create!(client: Client.find_by!(email: "client@example.com"), pm: PM.find_by!(email: "pm@example.com"), name: "Project Pending", raw_footage_url: "https://example.com/pending.mov", status: :pending)
 
     patch accept_project_path(project)
 
@@ -116,7 +116,7 @@ RSpec.describe "Projects requests" do
   end
 
   it "completes an in-progress project as the pm" do
-    project = Project.create!(client: Client.find_by!(email: "client@example.com"), pm: Pm.find_by!(email: "pm@example.com"), name: "Project Active", raw_footage_url: "https://example.com/active.mov", status: :in_progress)
+    project = Project.create!(client: Client.find_by!(email: "client@example.com"), pm: PM.find_by!(email: "pm@example.com"), name: "Project Active", raw_footage_url: "https://example.com/active.mov", status: :in_progress)
 
     patch complete_project_path(project)
 
@@ -127,7 +127,7 @@ RSpec.describe "Projects requests" do
   end
 
   it "rejects finalization without selections" do
-    draft = Project.create!(client: Client.find_by!(email: "client@example.com"), pm: Pm.find_by!(email: "pm@example.com"), status: :draft)
+    draft = Project.create!(client: Client.find_by!(email: "client@example.com"), pm: PM.find_by!(email: "pm@example.com"), status: :draft)
 
     patch project_path(draft), params: {
       project: {

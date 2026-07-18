@@ -76,8 +76,12 @@ lint/security/brakeman:
 lint/security/bundler-audit:
 	@bin/bundler-audit
 
+.PHONY: lint/zeitwerk
+lint/zeitwerk:
+	@bin/rails zeitwerk:check
+
 .PHONY: lint
-lint: lint/rubocop lint/security/brakeman lint/security/bundler-audit
+lint: lint/rubocop lint/security/brakeman lint/security/bundler-audit lint/zeitwerk
 
 .PHONY: lint/fix/rubocop
 lint/fix/rubocop:

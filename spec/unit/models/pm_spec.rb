@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe Pm do
+RSpec.describe PM do
   it "is an ActiveRecord model" do
     expect(described_class.superclass).to eq(ApplicationRecord)
   end

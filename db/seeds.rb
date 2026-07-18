@@ -8,7 +8,7 @@
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
 
-default_pm = Pm.find_or_create_by!(email: "pm@example.com") do |pm|
+default_pm = PM.find_or_create_by!(email: "pm@example.com") do |pm|
   pm.name = "Default PM"
 end
 

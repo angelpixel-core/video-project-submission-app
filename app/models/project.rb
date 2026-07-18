@@ -2,7 +2,7 @@ class Project < ApplicationRecord
   include AASM
 
   belongs_to :client
-  belongs_to :pm
+  belongs_to :pm, class_name: "PM"
 
   has_many :video_type_selections, dependent: :destroy
   has_many :video_types, through: :video_type_selections

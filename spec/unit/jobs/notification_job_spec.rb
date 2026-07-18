@@ -4,7 +4,7 @@ RSpec.describe NotificationJob do
   it "delegates to the notification service" do
     project = Project.create!(
       client: Client.create!(name: "Client", email: "client@example.com"),
-      pm: Pm.create!(name: "PM", email: "pm@example.com"),
+      pm: PM.create!(name: "PM", email: "pm@example.com"),
       name: "Project",
       raw_footage_url: "https://example.com/raw.mov",
       status: :in_progress

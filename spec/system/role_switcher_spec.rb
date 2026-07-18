@@ -5,25 +5,25 @@ RSpec.describe "Role switcher", type: :system, js: true do
     driven_by :selenium_chrome_headless
 
     Client.create!(name: "Default Client", email: "client@example.com")
-    Pm.create!(name: "Default PM", email: "pm@example.com")
+    PM.create!(name: "Default PM", email: "pm@example.com")
     VideoType.create!(name: "Highlight Reel", description: "Short edit", price_cents: 25_000, output_format: "mp4")
     Project.create!(
       client: Client.find_by!(email: "client@example.com"),
-      pm: Pm.find_by!(email: "pm@example.com"),
+      pm: PM.find_by!(email: "pm@example.com"),
       name: "Project Alpha",
       raw_footage_url: "https://example.com/raw.mov",
       status: :draft
     )
     Project.create!(
       client: Client.find_by!(email: "client@example.com"),
-      pm: Pm.find_by!(email: "pm@example.com"),
+      pm: PM.find_by!(email: "pm@example.com"),
       name: "Project Beta",
       raw_footage_url: "https://example.com/beta.mov",
       status: :pending
     )
     Notification.create!(
       project: Project.find_by!(name: "Project Beta"),
-      pm: Pm.find_by!(email: "pm@example.com"),
+      pm: PM.find_by!(email: "pm@example.com"),
       kind: "project_created",
       body: "Unread PM notification"
     )
