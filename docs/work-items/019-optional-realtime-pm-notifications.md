@@ -19,11 +19,12 @@ title: Optional Realtime PM Notifications
 
 ## Goal
 
-- [ ] Stream PM notifications in real time when the PM has the view open, but keep the feature optional and non-blocking.
+- [ ] Stream PM notifications in real time when the PM has the inbox open, but keep the feature optional and non-blocking.
 
 ## Scope
 
 - Add realtime delivery only if it remains simple in the current stack.
+- Use Action Cable end-to-end with the existing Rails/Vite frontend split.
 - Keep the server-rendered PM inbox and acknowledgment flow as the baseline.
 - Do not block completion of the in-app notification work on this slice.
 
@@ -35,7 +36,7 @@ title: Optional Realtime PM Notifications
 ## Implementation Plan
 
 - [ ] `app/channels/` - add the realtime channel if the stack supports it cleanly.
-- [ ] `app/javascript/` - subscribe to the realtime stream if needed by the chosen transport.
+- [ ] `app/frontend/` - subscribe to the realtime stream with the existing frontend entrypoint.
 - [ ] `app/controllers/` or `app/models/` - broadcast unread notifications on create or acknowledgment changes.
 - [ ] `spec/system/` or `spec/integration/` - verify the PM sees updates without refreshing when realtime is enabled.
 
@@ -46,7 +47,7 @@ title: Optional Realtime PM Notifications
 ## Affected Ops
 
 - `app/channels/`
-- `app/javascript/`
+- `app/frontend/`
 - `app/controllers/`
 - `app/models/`
 - `spec/system/`
@@ -56,12 +57,15 @@ title: Optional Realtime PM Notifications
 
 - [ ] PM notifications can appear without a page refresh when realtime is enabled.
 - [ ] The baseline in-app notification flow still works without realtime.
+- [ ] The implementation stays small enough to keep the optional slice easy to skip.
 
 ## Validation
 
 - [ ] Realtime specs pass only if the implementation is kept simple enough to support them.
+- [ ] The server-rendered PM inbox still works when realtime is disabled or unavailable.
 
 ## Notes
 
 - Keep this item optional and smaller than the core notification work.
+- Prefer the smallest Action Cable channel + frontend subscription that delivers unread updates.
 - If realtime gets too complex, keep the baseline flow and stop here.
