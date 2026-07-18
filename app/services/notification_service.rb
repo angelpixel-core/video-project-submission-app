@@ -18,6 +18,13 @@ class NotificationService
   end
 
   def deliver_notification(project)
-    NotificationDelivery::LoggerChannel.new(project).call
+    delivery_channels(project).each(&:call)
+  end
+
+  def delivery_channels(project)
+    [
+      NotificationDelivery::LoggerChannel.new(project),
+      NotificationDelivery::EmailChannel.new(project)
+    ]
   end
 end
