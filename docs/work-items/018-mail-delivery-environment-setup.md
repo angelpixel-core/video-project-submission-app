@@ -38,7 +38,7 @@ title: Mail Delivery Environment Setup
 
 - [x] `Gemfile` - add `letter_opener` for development previews.
 - [x] `config/environments/development.rb` - enable `letter_opener` for development.
-- [ ] `config/environments/test.rb` - keep the `:test` delivery method intact.
+- [x] `config/environments/test.rb` - keep the `:test` delivery method intact.
 - [ ] `config/environments/qa.rb` - configure QA mail delivery from environment variables.
 - [ ] `config/environments/production.rb` - configure production mail delivery from environment variables.
 - [ ] `env/*/app/*.env` and/or deploy secrets - document the SMTP variables required per environment.
