@@ -67,6 +67,9 @@ group :development, :test do
 end
 
 group :development do
+  # Preview outgoing emails locally in the browser.
+  gem "letter_opener"
+
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console"
 end

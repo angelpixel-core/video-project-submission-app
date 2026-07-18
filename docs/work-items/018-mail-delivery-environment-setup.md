@@ -11,7 +11,7 @@ depends_on:
   - notification-delivery-channels
 order: 18
 phase: work-items
-status: pending
+status: done
 title: Mail Delivery Environment Setup
 ---
 
@@ -19,15 +19,15 @@ title: Mail Delivery Environment Setup
 
 ## Goal
 
-- [ ] Configure mail delivery per environment so the PM notification mailer can be previewed locally and delivered in QA/production.
+- [x] Configure mail delivery per environment so the PM notification mailer can be previewed locally and delivered in QA/production.
 
 ## Scope
 
-- Use a local mail preview tool in development.
+- Use `letter_opener` for local mail previews in development.
 - Keep test delivery isolated with the `:test` mailer adapter.
-- Configure QA with a real or sandbox mail provider.
-- Configure production with real SMTP or transactional mail credentials.
-- Keep provider secrets outside the repository.
+- Configure QA with SMTP settings provided through environment variables.
+- Configure production with SMTP settings provided through environment variables.
+- Keep provider secrets outside the repository and in the existing `ENV`/secret vars convention.
 
 ## Operational Note
 
@@ -36,12 +36,12 @@ title: Mail Delivery Environment Setup
 
 ## Implementation Plan
 
-- [ ] `config/environments/development.rb` - enable local mail preview for development.
-- [ ] `config/environments/test.rb` - keep the `:test` delivery method intact.
-- [ ] `config/environments/qa.rb` - configure QA mail delivery for a real or sandbox provider.
-- [ ] `config/environments/production.rb` - configure production mail delivery for the chosen provider.
-- [ ] `config/credentials` or env vars - store provider secrets outside the repo.
-- [ ] `Gemfile` - add the preview tool gem if needed.
+- [x] `Gemfile` - add `letter_opener` for development previews.
+- [x] `config/environments/development.rb` - enable `letter_opener` for development.
+- [x] `config/environments/test.rb` - keep the `:test` delivery method intact.
+- [x] `config/environments/qa.rb` - configure QA mail delivery from environment variables.
+- [x] `config/environments/production.rb` - configure production mail delivery from environment variables.
+- [x] `env/*/app/*.env` and/or deploy secrets - document the SMTP variables required per environment.
 
 ## Affected Docs
 
@@ -54,23 +54,25 @@ title: Mail Delivery Environment Setup
 - `config/environments/test.rb`
 - `config/environments/qa.rb`
 - `config/environments/production.rb`
-- `config/credentials.yml.enc` or environment variable wiring
-- `Gemfile` if a preview tool is added
+- `env/*/app/*.env` and deploy secret wiring
+- `Gemfile`
 
 ## Checklist
 
-- [ ] Development can preview PM notification emails locally.
-- [ ] Test mail delivery remains isolated and non-networked.
-- [ ] QA can send or capture mail through the configured provider.
-- [ ] Production uses the intended transactional mail settings.
+- [x] Development can preview PM notification emails locally.
+- [x] Test mail delivery remains isolated and non-networked.
+- [x] QA can send or capture mail using SMTP settings from environment variables.
+- [x] Production uses the intended transactional mail settings from environment variables.
+- [x] The repo stays on the `ENV`/secret vars convention for mail secrets.
 
 ## Validation
 
-- [ ] A PM notification email can be previewed or inspected in development.
-- [ ] Test specs remain deterministic.
-- [ ] QA/production mail settings do not leak secrets into source control.
+- [x] A PM notification email can be previewed or inspected in development.
+- [x] Test specs remain deterministic.
+- [x] QA/production mail settings do not leak secrets into source control.
 
 ## Notes
 
-- `letter_opener` is the likely development choice unless a better local preview tool already exists in the stack.
+- `letter_opener` is the chosen development preview tool.
 - Keep this work item separate from the mailer content so provider setup stays isolated.
+- QA/production should keep using the repo's existing environment-variable secret wiring; do not switch this work item to Rails credentials.
