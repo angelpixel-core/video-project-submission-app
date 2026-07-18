@@ -112,7 +112,7 @@ Work items are implementation documents. Each one should map back to the docs it
 
 ## 18
 
-- [ ] [Mail Delivery Environment Setup](./018-mail-delivery-environment-setup.md)
+- [x] [Mail Delivery Environment Setup](./018-mail-delivery-environment-setup.md)
 
 ## 19
 

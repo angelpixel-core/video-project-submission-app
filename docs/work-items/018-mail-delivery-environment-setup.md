@@ -11,7 +11,7 @@ depends_on:
   - notification-delivery-channels
 order: 18
 phase: work-items
-status: pending
+status: done
 title: Mail Delivery Environment Setup
 ---
 
@@ -19,7 +19,7 @@ title: Mail Delivery Environment Setup
 
 ## Goal
 
-- [ ] Configure mail delivery per environment so the PM notification mailer can be previewed locally and delivered in QA/production.
+- [x] Configure mail delivery per environment so the PM notification mailer can be previewed locally and delivered in QA/production.
 
 ## Scope
 
@@ -59,17 +59,17 @@ title: Mail Delivery Environment Setup
 
 ## Checklist
 
-- [ ] Development can preview PM notification emails locally.
-- [ ] Test mail delivery remains isolated and non-networked.
-- [ ] QA can send or capture mail using SMTP settings from environment variables.
+- [x] Development can preview PM notification emails locally.
+- [x] Test mail delivery remains isolated and non-networked.
+- [x] QA can send or capture mail using SMTP settings from environment variables.
 - [x] Production uses the intended transactional mail settings from environment variables.
-- [ ] The repo stays on the `ENV`/secret vars convention for mail secrets.
+- [x] The repo stays on the `ENV`/secret vars convention for mail secrets.
 
 ## Validation
 
-- [ ] A PM notification email can be previewed or inspected in development.
-- [ ] Test specs remain deterministic.
-- [ ] QA/production mail settings do not leak secrets into source control.
+- [x] A PM notification email can be previewed or inspected in development.
+- [x] Test specs remain deterministic.
+- [x] QA/production mail settings do not leak secrets into source control.
 
 ## Notes
 
