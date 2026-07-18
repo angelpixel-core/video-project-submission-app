@@ -108,6 +108,7 @@ class ProjectsController < ApplicationController
 
     @pm_project.accept!
     @pm_project.notifications.unread.update_all(read_at: Time.current)
+    Notification.broadcast_refresh_for(@pm_project.pm)
     redirect_to projects_path, notice: "Project accepted."
   end
 

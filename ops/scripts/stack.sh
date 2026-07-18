@@ -78,6 +78,10 @@ case "${1:-}" in
     shift
     run_compose logs -f "$@"
     ;;
+  exec)
+    shift
+    run_compose exec web sh "$@"
+    ;;
   doctor)
     require_file "$STACK_ENV_FILE"
     run_compose config >/dev/null
@@ -96,7 +100,7 @@ case "${1:-}" in
     sync_file_to_vercel "${ROOT_DIR}/env/${SECRET_ENV}/stack/secrets.local.env" "$VERCEL_ENVIRONMENT"
     ;;
   *)
-    echo "Usage: stack.sh {up|down|config|logs|doctor|secrets/sync/gh|secrets/sync/ci|secrets/sync/vercel}" >&2
+    echo "Usage: stack.sh {up|down|config|logs|exec|doctor|secrets/sync/gh|secrets/sync/ci|secrets/sync/vercel}" >&2
     exit 1
     ;;
 esac

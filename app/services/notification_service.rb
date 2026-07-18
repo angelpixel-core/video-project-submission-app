@@ -6,6 +6,7 @@ class NotificationService
   def call
     project = load_project
 
+    create_notification(project)
     deliver_notification(project)
   end
 
@@ -15,6 +16,15 @@ class NotificationService
 
   def load_project
     Project.includes(:pm).find(project_id)
+  end
+
+  def create_notification(project)
+    Notification.create!(
+      project: project,
+      pm: project.pm,
+      kind: "project_created",
+      body: "Project #{project.name} submitted for review"
+    )
   end
 
   def deliver_notification(project)

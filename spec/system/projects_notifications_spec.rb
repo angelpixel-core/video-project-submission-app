@@ -48,3 +48,47 @@ RSpec.describe "PM notifications", type: :system do
     expect(project.reload.status).to eq("completed")
   end
 end
+
+RSpec.describe "PM notifications realtime", type: :system, js: true do
+  include ActiveJob::TestHelper
+
+  before do
+    driven_by :selenium_chrome_headless
+
+    Client.create!(name: "Default Client", email: "client@example.com")
+    PM.create!(name: "Default PM", email: "pm@example.com")
+    VideoType.create!(name: "Highlight Reel", description: "Short edit", price_cents: 25_000, output_format: "mp4")
+  end
+
+  it "refreshes the inbox when a notification is created" do
+    client = Client.find_by!(email: "client@example.com")
+    pm = PM.find_by!(email: "pm@example.com")
+    project = Project.create!(client: client, pm: pm, status: :draft)
+    notification_body = "Project Gamma submitted for review"
+
+    using_session(:pm) do
+      visit projects_path
+      click_button "PM"
+
+      expect(page).to have_css("#pm-notifications-panel", visible: :visible)
+      expect(page).to have_css('html[data-pm-notifications-connected="true"]')
+      expect(page).to have_content("No unread notifications yet.")
+    end
+
+    Thread.new do
+      ActiveRecord::Base.connection_pool.with_connection do
+        Notification.create!(
+          project: project,
+          pm: pm,
+          kind: "project_created",
+          body: notification_body
+        )
+      end
+    end.join
+
+    using_session(:pm) do
+      expect(page).to have_content(notification_body)
+      expect(page).to have_no_content("No unread notifications yet.")
+    end
+  end
+end

@@ -54,4 +54,7 @@ Rails.application.configure do
 
   # Allow Action Cable to accept the browser test origin.
   config.action_cable.disable_request_forgery_protection = true
+
+  config.hosts << "example.com"
+  config.hosts << "www.example.com"
 end

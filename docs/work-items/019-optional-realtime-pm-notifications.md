@@ -36,7 +36,7 @@ title: Optional Realtime PM Notifications
 ## Implementation Plan
 
 - [x] `app/channels/` - add the realtime channel if the stack supports it cleanly.
-- [ ] `app/frontend/` - subscribe to the realtime stream with the existing frontend entrypoint.
+- [x] `app/frontend/` - subscribe to the realtime stream with the existing frontend entrypoint.
 - [ ] `app/controllers/` or `app/models/` - broadcast unread notifications on create or acknowledgment changes.
 - [ ] `spec/system/` or `spec/integration/` - verify the PM sees updates without refreshing when realtime is enabled.
 

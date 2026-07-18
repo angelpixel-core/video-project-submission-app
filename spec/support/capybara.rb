@@ -2,6 +2,8 @@ require "capybara/rspec"
 require "selenium-webdriver"
 
 Capybara.default_max_wait_time = 5
+Capybara.server_host = "127.0.0.1"
+Capybara.app_host = "http://127.0.0.1"
 
 Capybara.register_driver :selenium_chrome_headless do |app|
   options = Selenium::WebDriver::Chrome::Options.new
