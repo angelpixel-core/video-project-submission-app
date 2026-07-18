@@ -41,7 +41,7 @@ title: Mail Delivery Environment Setup
 - [x] `config/environments/test.rb` - keep the `:test` delivery method intact.
 - [x] `config/environments/qa.rb` - configure QA mail delivery from environment variables.
 - [x] `config/environments/production.rb` - configure production mail delivery from environment variables.
-- [ ] `env/*/app/*.env` and/or deploy secrets - document the SMTP variables required per environment.
+- [x] `env/*/app/*.env` and/or deploy secrets - document the SMTP variables required per environment.
 
 ## Affected Docs
 
