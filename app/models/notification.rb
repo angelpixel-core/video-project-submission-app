@@ -1,6 +1,6 @@
 class Notification < ApplicationRecord
   belongs_to :project
-  belongs_to :pm
+  belongs_to :pm, class_name: "PM"
 
   scope :read, -> { where.not(read_at: nil) }
   scope :unread, -> { where(read_at: nil) }

@@ -1,4 +1,4 @@
-class Pm < ApplicationRecord
+class PM < ApplicationRecord
   has_many :projects, dependent: :restrict_with_error
   has_many :notifications, dependent: :destroy
 

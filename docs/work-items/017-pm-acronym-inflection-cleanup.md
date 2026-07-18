@@ -10,7 +10,7 @@ depends_on:
   - sprint-0-data-model
 order: 17
 phase: work-items
-status: pending
+status: done
 title: PM Acronym Inflection Cleanup
 ---
 
@@ -18,12 +18,13 @@ title: PM Acronym Inflection Cleanup
 
 ## Goal
 
-- [ ] Teach Rails to treat `PM` as an acronym and align the naming across the app.
+- [x] Teach Rails to treat `PM` as an acronym and align the PM boundary naming across the app.
 
 ## Scope
 
 - Register `PM` as an acronym in Rails inflections.
-- Keep model and constant naming consistent with the acronym.
+- Rename the PM model and mailer constants to match the acronym.
+- Fix association class resolution where `belongs_to :pm` infers the wrong constant after the rename.
 - Avoid unnecessary renames outside the affected naming boundary.
 
 ## Operational Note
@@ -33,9 +34,11 @@ title: PM Acronym Inflection Cleanup
 
 ## Implementation Plan
 
-- [ ] Add the acronym inflection.
-- [ ] Verify autoloading and constant resolution still work.
-- [ ] Update any affected references that should use the acronym form.
+- [x] Add the acronym inflection.
+- [x] Rename the PM model and mailer constants to the acronym form.
+- [x] Update associations that infer the PM class name.
+- [x] Verify autoloading and constant resolution still work.
+- [x] Update any affected direct references and specs.
 
 ## Affected Docs
 
@@ -46,17 +49,22 @@ title: PM Acronym Inflection Cleanup
 
 - `config/initializers/inflections.rb`
 - `app/models/`
+- `app/mailers/`
+- `app/services/`
 - `spec/`
 
 ## Checklist
 
-- [ ] Rails recognizes `PM` as an acronym.
-- [ ] Naming remains consistent in the codebase.
+- [x] Rails recognizes `PM` as an acronym.
+- [x] The PM model and mailer constants use the acronym form.
+- [x] Associations that point at PM resolve the renamed class.
+- [x] Naming remains consistent in the codebase.
 
 ## Validation
 
-- [ ] The app boots cleanly after the inflection change.
-- [ ] Specs referencing `PM` continue to pass.
+- [x] The app boots cleanly after the inflection change.
+- [x] `bin/rails zeitwerk:check` passes.
+- [x] Specs referencing `PM` continue to pass.
 
 ## Notes
 

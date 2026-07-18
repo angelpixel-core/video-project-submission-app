@@ -7,7 +7,7 @@ RSpec.describe Project do
 
   it "belongs to a client and pm and starts as draft" do
     client = Client.create!(name: "Client", email: "client@example.com")
-    pm = Pm.create!(name: "PM", email: "pm@example.com")
+    pm = PM.create!(name: "PM", email: "pm@example.com")
     project = described_class.create!(client: client, pm: pm, status: :draft)
 
     expect(project.status).to eq("draft")
@@ -17,7 +17,7 @@ RSpec.describe Project do
 
   it "requires submission fields once submitted" do
     client = Client.create!(name: "Client", email: "client@example.com")
-    pm = Pm.create!(name: "PM", email: "pm@example.com")
+    pm = PM.create!(name: "PM", email: "pm@example.com")
     project = described_class.new(client: client, pm: pm, status: :draft)
 
     expect(project).to be_valid
@@ -31,7 +31,7 @@ RSpec.describe Project do
 
   it "moves through the project lifecycle" do
     client = Client.create!(name: "Client", email: "client@example.com")
-    pm = Pm.create!(name: "PM", email: "pm@example.com")
+    pm = PM.create!(name: "PM", email: "pm@example.com")
     project = described_class.create!(client: client, pm: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :draft)
 
     project.submit!
@@ -46,7 +46,7 @@ RSpec.describe Project do
 
   it "rejects invalid lifecycle jumps" do
     client = Client.create!(name: "Client", email: "client@example.com")
-    pm = Pm.create!(name: "PM", email: "pm@example.com")
+    pm = PM.create!(name: "PM", email: "pm@example.com")
     project = described_class.create!(client: client, pm: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :draft)
 
     expect { project.accept! }.to raise_error(AASM::InvalidTransition)

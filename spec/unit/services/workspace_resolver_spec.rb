@@ -24,7 +24,7 @@ RSpec.describe WorkspaceResolver do
     ENV["DEFAULT_PM_EMAIL"] = "pm@example.com"
 
     client = Client.create!(name: "Client", email: "client@example.com")
-    pm = Pm.create!(name: "PM", email: "pm@example.com")
+    pm = PM.create!(name: "PM", email: "pm@example.com")
 
     expect(described_class.new.client).to eq(client)
     expect(described_class.new.pm).to eq(pm)

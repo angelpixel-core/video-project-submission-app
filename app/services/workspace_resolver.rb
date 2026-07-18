@@ -4,7 +4,7 @@ class WorkspaceResolver
   end
 
   def pm
-    Pm.find_by!(email: fetch_required_email("DEFAULT_PM_EMAIL"))
+    PM.find_by!(email: fetch_required_email("DEFAULT_PM_EMAIL"))
   end
 
   private
