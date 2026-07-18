@@ -11,7 +11,7 @@ depends_on:
   - in-app-pm-notifications
 order: 19
 phase: work-items
-status: pending
+status: completed
 title: Optional Realtime PM Notifications
 ---
 
@@ -19,7 +19,7 @@ title: Optional Realtime PM Notifications
 
 ## Goal
 
-- [ ] Stream PM notifications in real time when the PM has the inbox open, but keep the feature optional and non-blocking.
+- [x] Stream PM notifications in real time when the PM has the inbox open, but keep the feature optional and non-blocking.
 
 ## Scope
 
@@ -55,14 +55,14 @@ title: Optional Realtime PM Notifications
 
 ## Checklist
 
-- [ ] PM notifications can appear without a page refresh when realtime is enabled.
-- [ ] The baseline in-app notification flow still works without realtime.
-- [ ] The implementation stays small enough to keep the optional slice easy to skip.
+- [x] PM notifications can appear without a page refresh when realtime is enabled.
+- [x] The baseline in-app notification flow still works without realtime.
+- [x] The implementation stays small enough to keep the optional slice easy to skip.
 
 ## Validation
 
-- [ ] Realtime specs pass only if the implementation is kept simple enough to support them.
-- [ ] The server-rendered PM inbox still works when realtime is disabled or unavailable.
+- [x] Realtime specs pass only if the implementation is kept simple enough to support them.
+- [x] The server-rendered PM inbox still works when realtime is disabled or unavailable.
 
 ## Notes
 
