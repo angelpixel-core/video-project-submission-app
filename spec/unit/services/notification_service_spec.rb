@@ -6,9 +6,12 @@ RSpec.describe NotificationService do
     pm = PM.create!(name: "PM", email: "pm@example.com")
     project = Project.create!(client: client, pm: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :in_progress)
 
-    channel = instance_double(NotificationDelivery::LoggerChannel)
-    expect(NotificationDelivery::LoggerChannel).to receive(:new).with(project).and_return(channel)
-    expect(channel).to receive(:call)
+    logger_channel = instance_double(NotificationDelivery::LoggerChannel)
+    email_channel = instance_double(NotificationDelivery::EmailChannel)
+    expect(NotificationDelivery::LoggerChannel).to receive(:new).with(project).and_return(logger_channel)
+    expect(NotificationDelivery::EmailChannel).to receive(:new).with(project).and_return(email_channel)
+    expect(logger_channel).to receive(:call)
+    expect(email_channel).to receive(:call)
 
     described_class.new(project.id).call
   end
