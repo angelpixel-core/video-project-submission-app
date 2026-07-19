@@ -13,7 +13,7 @@
   <td><%= number_to_currency(project.total_budget_cents.to_f / 100) %></td>
 
   <td>
-    <span class="badge <%= project.pending? ? "text-bg-secondary" : project.in_progress? ? "text-bg-info" : "text-bg-success" %> text-uppercase">
+    <span class="badge <%= project.pending? ? "text-bg-secondary" : project.in_progress? ? "text-bg-info text-white" : "text-bg-success" %> text-uppercase">
       <%= project.pending? ? "Pendiente" : project.in_progress? ? "En progreso" : "Completado" %>
     </span>
   </td>
