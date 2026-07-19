@@ -15,7 +15,7 @@ Rails.application.routes.draw do
   mount ActionCable.server => "/cable"
   root "projects#index"
 
-  resources :projects, only: %i[index new edit update] do
+  resources :projects, only: %i[index show new edit update] do
     member do
       patch :accept
       patch :complete
