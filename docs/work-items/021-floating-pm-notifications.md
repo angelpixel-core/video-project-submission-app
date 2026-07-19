@@ -11,7 +11,7 @@ depends_on:
   - optional-realtime-pm-notifications
 order: 21
 phase: work-items
-status: pending
+status: done
 title: Floating PM Notifications
 ---
 
@@ -19,7 +19,7 @@ title: Floating PM Notifications
 
 ## Goal
 
-- [ ] Show PM notifications as floating toasts and keep the PM workspace layout stable.
+- [x] Show PM notifications as floating toasts and keep the PM workspace layout stable.
 
 ## Scope
 
@@ -39,16 +39,16 @@ title: Floating PM Notifications
 
 ## Implementation Plan
 
-- [ ] `app/views/projects/index.html.erb` - remove the inline inbox block and add a floating notification host.
-- [ ] `app/views/projects/_notification.html.erb` - split the card UI into a compact toast variant and a read-action variant.
-- [ ] `app/frontend/channels/pm_notification_channel.js` - update the refresh logic to target the floating host instead of the body flow.
-- [ ] `app/frontend/controllers/` or `app/frontend/entrypoints/` - manage toast stacking, overflow count, and auto-dismiss behavior.
-- [ ] `app/views/layouts/application.html.erb` or header partial - add the bell/notification counter entry point.
-- [ ] `app/controllers/notifications_controller.rb` - keep `Mark as read` from navigating to `projects#show`.
-- [ ] `app/controllers/projects_controller.rb` or routes - support clicking a notification to open `projects#show`.
-- [ ] `app/assets/stylesheets/application.css` or component CSS - add fixed positioning, enter/exit transitions, and stack styling.
-- [ ] `spec/system/projects_notifications_spec.rb` - verify toasts float, do not push content, and `Mark as read` stays on the same page.
-- [ ] `spec/system/` or `spec/integration/` - verify click-through to `projects#show` from the notification card.
+- [x] `app/views/projects/index.html.erb` - remove the inline inbox block and add a floating notification host.
+- [x] `app/views/projects/_notification.html.erb` - split the card UI into a compact toast variant and a read-action variant.
+- [x] `app/frontend/channels/pm_notification_channel.js` - update the refresh logic to target the floating host instead of the body flow.
+- [x] `app/frontend/controllers/` or `app/frontend/entrypoints/` - manage toast stacking, overflow count, and auto-dismiss behavior.
+- [x] `app/views/layouts/application.html.erb` or header partial - add the bell/notification counter entry point.
+- [x] `app/controllers/notifications_controller.rb` - keep `Mark as read` from navigating to `projects#show`.
+- [x] `app/controllers/projects_controller.rb` or routes - support clicking a notification to open `projects#show`.
+- [x] `app/assets/stylesheets/application.css` or component CSS - add fixed positioning, enter/exit transitions, and stack styling.
+- [x] `spec/system/projects_notifications_spec.rb` - verify toasts float, do not push content, and `Mark as read` stays on the same page.
+- [x] `spec/system/` or `spec/integration/` - verify click-through to `projects#show` from the notification card.
 
 ## Affected Docs
 
@@ -69,19 +69,19 @@ title: Floating PM Notifications
 
 ## Checklist
 
-- [ ] Notifications appear without changing the page layout flow.
-- [ ] New toasts slide in from the bottom-right and stack upward.
-- [ ] Only a small number of toasts are visible at once.
-- [ ] `Mark as read` only marks read and does not navigate.
-- [ ] Clicking the notification card opens `projects#show`.
-- [ ] The PM can still see unread count/history via the header affordance.
+- [x] Notifications appear without changing the page layout flow.
+- [x] New toasts slide in from the bottom-right and stack upward.
+- [x] Only a small number of toasts are visible at once.
+- [x] `Mark as read` only marks read and does not navigate.
+- [x] Clicking the notification card opens `projects#show`.
+- [x] The PM can still see unread count/history via the header affordance.
 
 ## Validation
 
-- [ ] System spec verifies a toast appears while the page stays scrolled in place.
-- [ ] System spec verifies the notification click opens the project show page.
-- [ ] System spec verifies `Mark as read` updates state without navigation.
-- [ ] Realtime updates still work when multiple notifications arrive in sequence.
+- [x] System spec verifies a toast appears while the page stays scrolled in place.
+- [x] System spec verifies the notification click opens the project show page.
+- [x] System spec verifies `Mark as read` updates state without navigation.
+- [x] Realtime updates still work when multiple notifications arrive in sequence.
 
 ## Notes
 

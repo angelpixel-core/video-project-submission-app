@@ -124,4 +124,4 @@ Work items are implementation documents. Each one should map back to the docs it
 
 ## 21
 
-- [ ] [Floating PM Notifications](./021-floating-pm-notifications.md)
+- [x] [Floating PM Notifications](./021-floating-pm-notifications.md)
