@@ -12,7 +12,7 @@ depends_on:
   - floating-pm-notifications
 order: 22
 phase: work-items
-status: pending
+status: done
 title: PM Projects Table
 ---
 
@@ -20,7 +20,7 @@ title: PM Projects Table
 
 ## Goal
 
-- [ ] Show PM projects as a table with realtime updates, sorted by creation date.
+- [x] Show PM projects as a table with realtime updates, sorted by creation date.
 
 ## Scope
 
@@ -42,14 +42,14 @@ title: PM Projects Table
 
 ## Implementation Plan
 
-- [ ] `app/views/projects/index.html.erb` - replace the PM grid with a table view in PM mode.
-- [ ] `app/controllers/projects_controller.rb` - ensure PM projects are loaded sorted by `created_at DESC` and expose any data needed for the budget column.
-- [ ] `app/models/project.rb` or a presenter/helper - compute total budget from selections.
-- [ ] `app/views/projects/_pm_project_table_row.html.erb` or similar - render a single PM table row.
-- [ ] `app/frontend/channels/pm_notification_channel.js` - update the PM table in realtime when a new project is submitted.
-- [ ] `app/frontend/entrypoints/application.css` - add table styling consistent with the current editorial theme.
-- [ ] `spec/requests/projects_spec.rb` - verify PM table copy and ordering.
-- [ ] `spec/system/projects_notifications_spec.rb` - verify realtime row insertion and PM-mode-only rendering.
+- [x] `app/views/projects/index.html.erb` - replace the PM grid with a table view in PM mode.
+- [x] `app/controllers/projects_controller.rb` - ensure PM projects are loaded sorted by `created_at DESC` and expose any data needed for the budget column.
+- [x] `app/models/project.rb` or a presenter/helper - compute total budget from selections.
+- [x] `app/views/projects/_pm_project_table_row.html.erb` or similar - render a single PM table row.
+- [x] `app/frontend/channels/pm_notification_channel.js` - update the PM table in realtime when a new project is submitted.
+- [x] `app/frontend/entrypoints/application.css` - add table styling consistent with the current editorial theme.
+- [x] `spec/requests/projects_spec.rb` - verify PM table copy and ordering.
+- [x] `spec/system/projects_notifications_spec.rb` - verify realtime row insertion and PM-mode-only rendering.
 
 ## Affected Docs
 
@@ -68,20 +68,20 @@ title: PM Projects Table
 
 ## Checklist
 
-- [ ] PM mode shows a table instead of cards.
-- [ ] The table includes ID, project name, created date, total budget, status, and actions.
-- [ ] The PM table is sorted by newest project first.
-- [ ] Video type details are not shown in the table.
-- [ ] Total budget matches the sum of selected video types and quantities.
-- [ ] New client-created projects appear in the PM table in realtime.
-- [ ] Client mode remains unchanged.
+- [x] PM mode shows a table instead of cards.
+- [x] The table includes ID, project name, created date, total budget, status, and actions.
+- [x] The PM table is sorted by newest project first.
+- [x] Video type details are not shown in the table.
+- [x] Total budget matches the sum of selected video types and quantities.
+- [x] New client-created projects appear in the PM table in realtime.
+- [x] Client mode remains unchanged.
 
 ## Validation
 
-- [ ] Request spec verifies PM table structure and ordering.
-- [ ] System spec verifies PM mode renders the table and client mode does not.
-- [ ] System spec verifies a newly created project appears in the PM table without a full refresh.
-- [ ] Unit/spec coverage verifies budget calculation from project selections.
+- [x] Request spec verifies PM table structure and ordering.
+- [x] System spec verifies PM mode renders the table and client mode does not.
+- [x] System spec verifies a newly created project appears in the PM table without a full refresh.
+- [x] Unit/spec coverage verifies budget calculation from project selections.
 
 ## Notes
 
