@@ -55,6 +55,9 @@ Rails.application.configure do
   # Allow Action Cable to accept the browser test origin.
   config.action_cable.disable_request_forgery_protection = true
 
+  # Allow Capybara's local test server host/port during system specs.
+  config.hosts << /127\.0\.0\.1/
+  config.hosts << /localhost/
   config.hosts << "example.com"
   config.hosts << "www.example.com"
 end
