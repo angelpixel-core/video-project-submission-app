@@ -8,8 +8,10 @@ set -eu
 
 PRIMARY_DATABASE="${MYSQL_DATABASE}"
 QUEUE_DATABASE="${MYSQL_QUEUE_DATABASE:-${MYSQL_DATABASE}_queue}"
+CABLE_DATABASE="${MYSQL_CABLE_DATABASE:-${MYSQL_DATABASE}_cable}"
 TEST_DATABASE="${MYSQL_TEST_DATABASE:-video_project_submission_app_test}"
 TEST_QUEUE_DATABASE="${MYSQL_TEST_QUEUE_DATABASE:-${TEST_DATABASE}_queue}"
+TEST_CABLE_DATABASE="${MYSQL_TEST_CABLE_DATABASE:-${TEST_DATABASE}_cable}"
 
 create_db_and_grant() {
   db_name="$1"
@@ -26,5 +28,7 @@ SQL
 
 create_db_and_grant "$PRIMARY_DATABASE"
 create_db_and_grant "$QUEUE_DATABASE"
+create_db_and_grant "$CABLE_DATABASE"
 create_db_and_grant "$TEST_DATABASE"
 create_db_and_grant "$TEST_QUEUE_DATABASE"
+create_db_and_grant "$TEST_CABLE_DATABASE"

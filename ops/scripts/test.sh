@@ -48,6 +48,7 @@ ensure_database() {
     --network video_project_submission_app_net \
     --network-alias db \
     --env-file "$TEST_DB_BOOTSTRAP_ENV_FILE" \
+    -v "${ROOT_DIR}/ops/containers/db/entrypoint/initdb.d:/docker-entrypoint-initdb.d:ro" \
     mysql:8.4 >/dev/null
 
   cleanup_database() {

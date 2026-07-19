@@ -26,14 +26,23 @@ development:
     <<: *primary_development
     database: <%= ENV.fetch("DB_QUEUE_NAME") { "video_project_submission_app_development_queue" } %>
     migrations_paths: db/queue_migrate
+  cable:
+    <<: *primary_development
+    database: <%= ENV.fetch("DB_CABLE_NAME") { "video_project_submission_app_development_cable" } %>
+    migrations_paths: db/cable_migrate
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
 # Do not set this db to the same as development or production.
 test:
-  <<: *default
-  database: <%= ENV.fetch("DB_NAME") { "video_project_submission_app_test" } %>
-  ssl_mode: disabled
+  primary: &primary_test
+    <<: *default
+    database: <%= ENV.fetch("DB_NAME") { "video_project_submission_app_test" } %>
+    ssl_mode: disabled
+  cable:
+    <<: *primary_test
+    database: <%= ENV.fetch("DB_CABLE_NAME") { "video_project_submission_app_test_cable" } %>
+    migrations_paths: db/cable_migrate
 
 qa:
   primary: &primary_qa

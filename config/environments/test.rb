@@ -51,4 +51,10 @@ Rails.application.configure do
 
   # Raise error when a before_action's only/except options reference missing actions.
   config.action_controller.raise_on_missing_callback_actions = true
+
+  # Allow Action Cable to accept the browser test origin.
+  config.action_cable.disable_request_forgery_protection = true
+
+  config.hosts << "example.com"
+  config.hosts << "www.example.com"
 end

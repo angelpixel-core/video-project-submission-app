@@ -43,21 +43,31 @@
     </div>
   <% end %>
 
-  <% if @unread_notifications.any? %>
-    <div class="card border-0 shadow-sm mt-4" data-role-scope="pm">
-      <div class="card-body p-4">
-        <div class="d-flex justify-content-between align-items-center gap-3 mb-3">
-          <div>
-            <p class="text-uppercase text-body-secondary small mb-1">PM inbox</p>
-            <h2 class="h5 mb-0">Unread notifications</h2>
+  <div id="pm-notifications-panel" data-role-scope="pm" class="mt-4">
+    <% if @unread_notifications.any? %>
+      <div class="card border-0 shadow-sm">
+        <div class="card-body p-4">
+          <div class="d-flex justify-content-between align-items-center gap-3 mb-3">
+            <div>
+              <p class="text-uppercase text-body-secondary small mb-1">PM inbox</p>
+              <h2 class="h5 mb-0">Unread notifications</h2>
+            </div>
+            <span class="badge text-bg-dark"><%= @unread_notifications.size %></span>
           </div>
-          <span class="badge text-bg-dark"><%= @unread_notifications.size %></span>
-        </div>
 
-        <div class="vstack gap-3">
-          <%= render partial: "notification", collection: @unread_notifications, as: :notification %>
+          <div class="vstack gap-3">
+            <%= render partial: "notification", collection: @unread_notifications, as: :notification %>
+          </div>
         </div>
       </div>
-    </div>
-  <% end %>
+    <% else %>
+      <div class="card border-0 shadow-sm">
+        <div class="card-body p-4">
+          <p class="text-uppercase text-body-secondary small mb-1">PM inbox</p>
+          <h2 class="h5 mb-2">Unread notifications</h2>
+          <p class="mb-0 text-body-secondary">No unread notifications yet.</p>
+        </div>
+      </div>
+    <% end %>
+  </div>
 </div>

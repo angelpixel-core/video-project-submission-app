@@ -31,6 +31,10 @@ db/projects/clean:
 web/console:
 	@STACK_ENV="$(ENV)" sh $(DB_SCRIPT) console
 
+.PHONY: web/shell
+web/shell:
+	@STACK_ENV="$(ENV)" sh $(STACK_SCRIPT) exec
+
 .PHONY: test/unit
 test/unit:
 	@TEST_ENV="$(TEST_ENV)" TEST_ARGS="spec/unit" sh $(TEST_SCRIPT) rspec
