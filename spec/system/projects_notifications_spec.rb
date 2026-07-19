@@ -6,6 +6,8 @@ RSpec.describe "PM notifications", type: :system, js: true do
 
     Client.create!(name: "Default Client", email: "client@example.com")
     PM.create!(name: "Default PM", email: "pm@example.com")
+    VideoType.create!(name: "Highlight Reel", description: "Short edit", price_cents: 25_000, output_format: "mp4")
+    VideoType.create!(name: "Social Cut", description: "Social edit", price_cents: 15_000, output_format: "mp4")
   end
 
   it "shows unread notifications and lets the pm acknowledge them" do
@@ -54,6 +56,7 @@ RSpec.describe "PM notifications", type: :system, js: true do
     client = Client.find_by!(email: "client@example.com")
     pm = PM.find_by!(email: "pm@example.com")
     project = Project.create!(client: client, pm: pm, name: "Project Beta", raw_footage_url: "https://example.com/beta.mov", status: :pending)
+    project.video_type_selections.create!(video_type: VideoType.find_by!(name: "Highlight Reel"), quantity: 2)
 
     visit projects_path
 
@@ -62,6 +65,11 @@ RSpec.describe "PM notifications", type: :system, js: true do
     expect(page).to have_content("PM WORKSPACE")
     expect(page).to have_content("Default PM projects")
     expect(page).to have_no_content("CLIENT WORKSPACE")
+    expect(page).to have_content("Created at")
+    expect(page).to have_content("Total budget")
+    expect(page).to have_css("table.pm-projects-table")
+    expect(page).to have_css("tbody#pm-projects-table-body tr", text: "Project Beta")
+    expect(page).to have_content("$500.00")
     expect(page).to have_button("Aceptar proyecto")
     expect(page).not_to have_button("Marcar como completado")
   end
@@ -83,6 +91,7 @@ RSpec.describe "PM notifications realtime", type: :system, js: true do
     pm = PM.find_by!(email: "pm@example.com")
     project = Project.create!(client: client, pm: pm, status: :draft)
     notification_body = "Project Gamma submitted for review"
+    highlight_reel = VideoType.find_by!(name: "Highlight Reel")
 
     using_session(:pm) do
       visit projects_path
@@ -93,21 +102,22 @@ RSpec.describe "PM notifications realtime", type: :system, js: true do
       expect(page).to have_css("#pm-notifications-dropdown .dropdown-menu.show", visible: :visible)
       expect(page).to have_css('html[data-pm-notifications-connected="true"]')
       expect(page).to have_no_css(".pm-notification-item")
+      expect(page).to have_css("table.pm-projects-table")
+      expect(page).to have_css("tbody#pm-projects-table-body tr", text: "No projects yet.")
     end
 
     Thread.new do
       ActiveRecord::Base.connection_pool.with_connection do
-        Notification.create!(
-          project: project,
-          pm: pm,
-          kind: "project_created",
-          body: notification_body
-        )
+        project.update!(name: "Project Gamma", raw_footage_url: "https://example.com/gamma.mov")
+        project.video_type_selections.create!(video_type: highlight_reel, quantity: 2)
+        project.submit!
+        Notification.create!(project: project, pm: pm, kind: "project_created", body: notification_body)
       end
     end.join
 
     using_session(:pm) do
       expect(page).to have_css(".pm-notification-item", text: notification_body)
+      expect(page).to have_css("tbody#pm-projects-table-body tr", text: "Project Gamma")
     end
 
     Thread.new do

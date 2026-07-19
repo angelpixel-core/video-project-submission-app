@@ -30,6 +30,12 @@ class Project < ApplicationRecord
   validates :name, presence: true, if: :submitted?
   validates :raw_footage_url, presence: true, if: :submitted?
 
+  def total_budget_cents
+    video_type_selections.includes(:video_type).sum do |selection|
+      selection.quantity * selection.video_type.price_cents
+    end
+  end
+
   def submitted?
     pending? || in_progress? || completed?
   end

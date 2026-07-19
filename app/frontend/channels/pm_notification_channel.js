@@ -2,6 +2,7 @@ const PANEL_SELECTORS = ["#pm-notifications-panel"]
 const DROPDOWN_SELECTOR = "#pm-notifications-dropdown"
 const BADGE_SELECTOR = ".pm-notifications-badge"
 const MENU_LIST_SELECTOR = "#pm-notifications-menu-list"
+const PM_TABLE_BODY_SELECTOR = "#pm-projects-table-body"
 
 async function refreshPanel() {
   const currentPanels = PANEL_SELECTORS
@@ -9,7 +10,8 @@ async function refreshPanel() {
     .filter(([, panel]) => panel)
 
   const currentDropdown = document.querySelector(DROPDOWN_SELECTOR)
-  if (currentPanels.length === 0 && !currentDropdown) return
+  const currentTableBody = document.querySelector(PM_TABLE_BODY_SELECTOR)
+  if (currentPanels.length === 0 && !currentDropdown && !currentTableBody) return
 
   const response = await fetch(window.location.href, { headers: { Accept: "text/html" } })
   if (!response.ok) return
@@ -20,6 +22,11 @@ async function refreshPanel() {
     const nextPanel = documentFragment.querySelector(selector)
     if (currentPanel && nextPanel) currentPanel.outerHTML = nextPanel.outerHTML
   })
+
+  const nextTableBody = documentFragment.querySelector(PM_TABLE_BODY_SELECTOR)
+  if (currentTableBody && nextTableBody) {
+    currentTableBody.outerHTML = nextTableBody.outerHTML
+  }
 
   const nextDropdown = documentFragment.querySelector(DROPDOWN_SELECTOR)
   if (currentDropdown && nextDropdown) {
