@@ -71,10 +71,31 @@ RSpec.describe "Projects requests" do
     get projects_path
 
     expect(response).to have_http_status(:ok)
-    expect(response.body).to include("Created at ↓")
+    expect(response.body).to include("ID")
+    expect(response.body).to include("Created at")
+    expect(response.body).to include("Total budget")
+    expect(response.body).to include("pm-table-sort-link is-active")
+    expect(response.body).to include("sort=id")
+    expect(response.body).to include("direction=desc")
+    expect(response.body).to include("sort=created_at")
+    expect(response.body).to include("sort=total_budget")
+  end
+
+  it "keeps the page when generating pm table sort links" do
+    client = Client.find_by!(email: "client@example.com")
+    pm = PM.find_by!(email: "pm@example.com")
+
+    11.times do |index|
+      Project.create!(client: client, pm: pm, name: "Project #{index + 1}", raw_footage_url: "https://example.com/#{index + 1}.mov", status: :pending)
+    end
+
+    get projects_path(page: 2)
+
+    expect(response.body).to include("page=2")
     expect(response.body).to include("sort=id")
     expect(response.body).to include("sort=created_at")
     expect(response.body).to include("sort=total_budget")
+    expect(response.body).to include("direction=desc")
   end
 
   it "shows pm pagination links and loads the second page" do

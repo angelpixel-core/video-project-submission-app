@@ -76,6 +76,35 @@ RSpec.describe "PM notifications", type: :system, js: true do
     expect(page).not_to have_button("Marcar como completado")
   end
 
+  it "keeps the current page when sorting the pm table" do
+    client = Client.find_by!(email: "client@example.com")
+    pm = PM.find_by!(email: "pm@example.com")
+
+    11.times do |index|
+      travel_to (10 - index).minutes.ago do
+        Project.create!(client: client, pm: pm, name: "Project #{index + 1}", raw_footage_url: "https://example.com/#{index + 1}.mov", status: :pending)
+      end
+    end
+
+    visit projects_path(page: 2)
+
+    click_button "PM"
+
+    click_link "ID"
+
+    expect(page).to have_current_path(projects_path(page: 2, sort: "id", direction: "desc"), ignore_query: false)
+    expect(page).to have_link("ID ↓")
+
+    click_link "ID ↓"
+
+    expect(page).to have_current_path(projects_path(page: 2, sort: "id", direction: "asc"), ignore_query: false)
+    expect(page).to have_link("ID ↑")
+
+    click_link "ID ↑"
+
+    expect(page).to have_current_path(projects_path(page: 2), ignore_query: false)
+  end
+
   it "lets the pm navigate between project pages" do
     client = Client.find_by!(email: "client@example.com")
     pm = PM.find_by!(email: "pm@example.com")
@@ -95,7 +124,7 @@ RSpec.describe "PM notifications", type: :system, js: true do
 
     click_link "2"
 
-    expect(page).to have_current_path(projects_path(page: 2, sort: "created_at"), ignore_query: false)
+    expect(page).to have_current_path(projects_path(page: 2, sort: "created_at", direction: "desc"), ignore_query: false)
     expect(page).to have_css("tbody#pm-projects-table-body tr", text: "Project 1")
     expect(page).to have_no_css("tbody#pm-projects-table-body tr", text: "Project 11")
   end

@@ -10,9 +10,10 @@ class ProjectsController < ApplicationController
     @projects = current_client.projects.includes(video_type_selections: :video_type).order(status_order, created_at: :desc)
 
     pm_table_params = ::PMProjectsTableParams.new(params)
-    @pm_sort = pm_table_params.sort
+    @pm_sort = pm_table_params.sort.presence || "created_at"
+    @pm_direction = pm_table_params.direction.presence || "desc"
     @pm_page = pm_table_params.page
-    @pm_table_query = ::PMTableQuery.new(sort: @pm_sort, page: @pm_page, per_page: 10)
+    @pm_table_query = ::PMTableQuery.new(sort: @pm_sort, direction: @pm_direction, page: @pm_page, per_page: 10)
     @pm_total_pages = @pm_table_query.total_pages
     @pm_projects = @pm_table_query.call
   end

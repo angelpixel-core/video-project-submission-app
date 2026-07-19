@@ -4,9 +4,12 @@ class PMTableQuery
     "created_at" => "projects.created_at",
     "total_budget" => "total_budget_cents"
   }.freeze
+  DEFAULT_SORT = "created_at"
+  DEFAULT_DIRECTION = "desc"
 
-  def initialize(sort: "created_at", page: 1, per_page: 10)
+  def initialize(sort: nil, direction: nil, page: 1, per_page: 10)
     @sort = sort
+    @direction = direction
     @page = page.to_i
     @per_page = per_page.to_i
   end
@@ -35,10 +38,13 @@ class PMTableQuery
   end
 
   def order_column
-    SORTS.fetch(sort, SORTS["created_at"])
+    SORTS.fetch(sort.presence, SORTS[DEFAULT_SORT])
   end
 
   def order_direction
-    sort == "id" ? "ASC" : "DESC"
+    normalized_direction = direction.presence || DEFAULT_DIRECTION
+    normalized_direction == "asc" ? "ASC" : "DESC"
   end
+
+  attr_reader :direction
 end

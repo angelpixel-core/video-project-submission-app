@@ -30,6 +30,25 @@ RSpec.describe PMTableQuery do
     travel_back
   end
 
+  it "orders created_at ascending when requested" do
+    client = Client.find_by!(email: "client@example.com")
+    pm = PM.find_by!(email: "pm@example.com")
+
+    travel_to 2.days.ago do
+      Project.create!(client: client, pm: pm, name: "Older Project", raw_footage_url: "https://example.com/older.mov", status: :pending)
+    end
+
+    travel_to 1.day.ago do
+      Project.create!(client: client, pm: pm, name: "Newer Project", raw_footage_url: "https://example.com/newer.mov", status: :in_progress)
+    end
+
+    names = described_class.new(sort: "created_at", direction: "asc").call.map(&:name)
+
+    expect(names).to eq(["Older Project", "Newer Project"])
+  ensure
+    travel_back
+  end
+
   it "orders by total budget when requested" do
     client = Client.find_by!(email: "client@example.com")
     pm = PM.find_by!(email: "pm@example.com")
