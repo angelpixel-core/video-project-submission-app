@@ -1,7 +1,7 @@
 <% content_for :title, "Projects" %>
 
 <div class="container py-4">
-  <div data-role-scope="client" class="mb-4">
+  <div data-role-scope="client" class="vstack gap-4 mb-4">
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
       <div>
         <p class="text-uppercase text-body-secondary mb-1">Client workspace</p>
@@ -10,24 +10,26 @@
       <%= link_to "New Order", new_project_path, class: "btn btn-primary" %>
     </div>
 
-    <% if @projects.any? %>
-      <div class="row g-3">
-        <%= render partial: "project", collection: @projects, as: :project %>
-      </div>
-    <% else %>
-      <div class="card border-0 shadow-sm">
-        <div class="card-body p-4">
-          <h2 class="h5">No projects yet</h2>
-          <p class="mb-3 text-body-secondary">Start a new order to create the first project for <%= current_client.name %>.</p>
-          <%= link_to "Create order", new_project_path, class: "btn btn-primary", data: { role_scope: "client" } %>
+    <div>
+      <% if @projects.any? %>
+        <div class="row g-3">
+          <%= render partial: "project", collection: @projects, as: :project %>
         </div>
-      </div>
-    <% end %>
+      <% else %>
+        <div class="card border-0 shadow-sm">
+          <div class="card-body p-4">
+            <h2 class="h5">No projects yet</h2>
+            <p class="mb-3 text-body-secondary">Start a new order to create the first project for <%= current_client.name %>.</p>
+            <%= link_to "Create order", new_project_path, class: "btn btn-primary" %>
+          </div>
+        </div>
+      <% end %>
+    </div>
   </div>
 
   <% if @pm_projects.any? %>
-    <div data-role-scope="pm">
-      <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+    <div data-role-scope="pm" class="vstack gap-4">
+      <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
         <div>
           <p class="text-uppercase text-body-secondary mb-1">PM workspace</p>
           <h1 class="h3 mb-0"><%= default_pm.name %> projects</h1>
@@ -35,19 +37,19 @@
       </div>
 
       <div class="card border-0 shadow-sm">
-      <div class="card-body p-4">
-        <div class="d-flex justify-content-between align-items-center gap-3 mb-3">
-          <div>
-            <p class="text-uppercase text-body-secondary small mb-1">PM workspace</p>
-            <h2 class="h5 mb-0">Assigned projects</h2>
+        <div class="card-body p-4">
+          <div class="d-flex justify-content-between align-items-center gap-3 mb-3">
+            <div>
+              <p class="text-uppercase text-body-secondary small mb-1">PM workspace</p>
+              <h2 class="h5 mb-0">Assigned projects</h2>
+            </div>
+            <span class="badge text-bg-dark"><%= @pm_projects.size %></span>
           </div>
-          <span class="badge text-bg-dark"><%= @pm_projects.size %></span>
-        </div>
 
-        <div class="row g-3">
-          <%= render partial: "pm_project", collection: @pm_projects, as: :project %>
+          <div class="row g-3">
+            <%= render partial: "pm_project", collection: @pm_projects, as: :project %>
+          </div>
         </div>
-      </div>
       </div>
     </div>
   <% end %>

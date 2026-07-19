@@ -100,10 +100,17 @@
       </div>
     </header>
 
-    <% flash.each do |type, message| %>
-      <% alert_type = type.to_s == "notice" ? "success" : "danger" %>
-      <div class="container mt-3">
-        <div class="alert alert-<%= alert_type %>" role="alert"><%= message %></div>
+    <% if flash.any? %>
+      <div class="flash-snackbar position-fixed bottom-0 start-50 translate-middle-x p-3" aria-live="polite" aria-atomic="true">
+        <div class="vstack gap-2 align-items-center">
+          <% flash.each do |type, message| %>
+            <% alert_type = type.to_s == "notice" ? "success" : "danger" %>
+            <div class="alert alert-<%= alert_type %> alert-dismissible fade show flash-snackbar-item shadow-sm mb-0 text-center" role="alert">
+              <span class="d-block w-100 pe-4"><%= message %></span>
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          <% end %>
+        </div>
       </div>
     <% end %>
 
