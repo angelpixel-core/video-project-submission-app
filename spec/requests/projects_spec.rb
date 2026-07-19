@@ -62,6 +62,47 @@ RSpec.describe "Projects requests" do
     travel_back
   end
 
+  it "shows pm table sort links" do
+    client = Client.find_by!(email: "client@example.com")
+    pm = PM.find_by!(email: "pm@example.com")
+
+    Project.create!(client: client, pm: pm, name: "Project Alpha", raw_footage_url: "https://example.com/alpha.mov", status: :pending)
+
+    get projects_path
+
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include("Created at ↓")
+    expect(response.body).to include("sort=id")
+    expect(response.body).to include("sort=created_at")
+    expect(response.body).to include("sort=total_budget")
+  end
+
+  it "shows pm pagination links and loads the second page" do
+    client = Client.find_by!(email: "client@example.com")
+    pm = PM.find_by!(email: "pm@example.com")
+
+    11.times do |index|
+      travel_to (10 - index).minutes.ago do
+        Project.create!(client: client, pm: pm, name: "Project #{index + 1}", raw_footage_url: "https://example.com/#{index + 1}.mov", status: :pending)
+      end
+    end
+
+    get projects_path(page: 2)
+
+    pm_table_body = response.body[/<tbody id="pm-projects-table-body">.*?<\/tbody>/m]
+
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include("PM projects pagination")
+    expect(response.body).to include("Prev")
+    expect(response.body).to include("1")
+    expect(response.body).to include("2")
+    expect(response.body).to include("Next")
+    expect(pm_table_body).to include("Project 1")
+    expect(pm_table_body).not_to include("Project 11")
+  ensure
+    travel_back
+  end
+
   it "shows a pm project detail page" do
     client = Client.find_by!(email: "client@example.com")
     pm = PM.find_by!(email: "pm@example.com")

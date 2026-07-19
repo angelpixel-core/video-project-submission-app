@@ -8,7 +8,13 @@ class ProjectsController < ApplicationController
     status_order = Arel.sql("CASE status WHEN 'draft' THEN 0 WHEN 'pending' THEN 1 WHEN 'in_progress' THEN 2 WHEN 'completed' THEN 3 ELSE 4 END")
 
     @projects = current_client.projects.includes(video_type_selections: :video_type).order(status_order, created_at: :desc)
-    @pm_projects = default_pm.projects.where.not(status: :draft).includes(:client, video_type_selections: :video_type).order(created_at: :desc)
+
+    pm_table_params = ::PMProjectsTableParams.new(params)
+    @pm_sort = pm_table_params.sort
+    @pm_page = pm_table_params.page
+    @pm_table_query = ::PMTableQuery.new(sort: @pm_sort, page: @pm_page, per_page: 10)
+    @pm_total_pages = @pm_table_query.total_pages
+    @pm_projects = @pm_table_query.call
   end
 
   def show

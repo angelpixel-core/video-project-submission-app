@@ -1,6 +1,8 @@
 require "rails_helper"
 
 RSpec.describe "PM notifications", type: :system, js: true do
+  include ActiveSupport::Testing::TimeHelpers
+
   before do
     driven_by :selenium_chrome_headless
 
@@ -73,6 +75,31 @@ RSpec.describe "PM notifications", type: :system, js: true do
     expect(page).to have_button("Aceptar proyecto")
     expect(page).not_to have_button("Marcar como completado")
   end
+
+  it "lets the pm navigate between project pages" do
+    client = Client.find_by!(email: "client@example.com")
+    pm = PM.find_by!(email: "pm@example.com")
+
+    11.times do |index|
+      travel_to (10 - index).minutes.ago do
+        Project.create!(client: client, pm: pm, name: "Project #{index + 1}", raw_footage_url: "https://example.com/#{index + 1}.mov", status: :pending)
+      end
+    end
+
+    visit projects_path
+
+    click_button "PM"
+
+    expect(page).to have_css("nav[aria-label='PM projects pagination']")
+    expect(page).to have_link("2")
+
+    click_link "2"
+
+    expect(page).to have_current_path(projects_path(page: 2, sort: "created_at"), ignore_query: false)
+    expect(page).to have_css("tbody#pm-projects-table-body tr", text: "Project 1")
+    expect(page).to have_no_css("tbody#pm-projects-table-body tr", text: "Project 11")
+  end
+
 end
 
 RSpec.describe "PM notifications realtime", type: :system, js: true do

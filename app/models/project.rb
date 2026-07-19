@@ -8,6 +8,15 @@ class Project < ApplicationRecord
   has_many :video_types, through: :video_type_selections
   has_many :notifications, dependent: :destroy
 
+  scope :for_pm_table, lambda {
+    left_outer_joins(video_type_selections: :video_type)
+      .select(<<~SQL.squish)
+        projects.*,
+        COALESCE(SUM(video_type_selections.quantity * video_types.price_cents), 0) AS total_budget_cents
+      SQL
+      .group("projects.id")
+  }
+
   aasm column: :status do
     state :draft, initial: true
     state :pending
@@ -31,6 +40,8 @@ class Project < ApplicationRecord
   validates :raw_footage_url, presence: true, if: :submitted?
 
   def total_budget_cents
+    return self[:total_budget_cents] if has_attribute?(:total_budget_cents) && self[:total_budget_cents].present?
+
     video_type_selections.includes(:video_type).sum do |selection|
       selection.quantity * selection.video_type.price_cents
     end

@@ -42,17 +42,17 @@
             <p class="text-uppercase text-body-secondary small mb-1">PM workspace</p>
             <h2 class="h5 mb-0">Assigned projects</h2>
           </div>
-          <span class="badge text-bg-dark"><%= @pm_projects.size %></span>
+          <span class="badge text-bg-dark"><%= @pm_projects.to_a.size %></span>
         </div>
 
         <div class="table-responsive">
           <table class="table table-hover align-middle mb-0 pm-projects-table">
             <thead>
               <tr>
-                <th scope="col">ID</th>
+                <th scope="col"><%= pm_table_sort_link("ID", "id", @pm_sort) %></th>
                 <th scope="col">Project</th>
-                <th scope="col">Created at</th>
-                <th scope="col">Total budget</th>
+                <th scope="col"><%= pm_table_sort_link("Created at", "created_at", @pm_sort) %></th>
+                <th scope="col"><%= pm_table_sort_link("Total budget", "total_budget", @pm_sort) %></th>
                 <th scope="col">Status</th>
                 <th scope="col" class="text-end">Actions</th>
               </tr>
@@ -68,6 +68,41 @@
             </tbody>
           </table>
         </div>
+
+        <% if @pm_total_pages.to_i > 1 %>
+          <nav aria-label="PM projects pagination" class="mt-4">
+            <ul class="pagination justify-content-center flex-wrap gap-2 mb-0 pm-projects-pagination">
+              <li class="page-item <%= @pm_page.to_i <= 1 ? 'disabled' : '' %>">
+                <% if @pm_page.to_i <= 1 %>
+                  <span class="page-link">Prev</span>
+                <% else %>
+                  <%= link_to "Prev", projects_path(page: @pm_page.to_i - 1, sort: @pm_sort), class: "page-link" %>
+                <% end %>
+              </li>
+
+              <% pagination_pages = [1, 2, @pm_page.to_i - 1, @pm_page.to_i, @pm_page.to_i + 1, @pm_total_pages.to_i].select { |page| page.between?(1, @pm_total_pages.to_i) }.uniq.sort %>
+              <% pagination_pages.each_with_index do |page_number, index| %>
+                <% previous_page = index.positive? ? pagination_pages[index - 1] : nil %>
+                <% if previous_page && page_number > previous_page + 1 %>
+                  <li class="page-item disabled"><span class="page-link">...</span></li>
+                <% end %>
+
+                <li class="page-item <%= 'active' if page_number == @pm_page.to_i %>">
+                  <%= link_to page_number, projects_path(page: page_number, sort: @pm_sort), class: "page-link" %>
+                </li>
+              <% end %>
+
+              <li class="page-item <%= @pm_page.to_i >= @pm_total_pages.to_i ? 'disabled' : '' %>">
+                <% if @pm_page.to_i >= @pm_total_pages.to_i %>
+                  <span class="page-link">Next</span>
+                <% else %>
+                  <%= link_to "Next", projects_path(page: @pm_page.to_i + 1, sort: @pm_sort), class: "page-link" %>
+                <% end %>
+              </li>
+            </ul>
+          </nav>
+        <% end %>
+
       </div>
     </div>
   </div>
