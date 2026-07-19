@@ -25,7 +25,7 @@ RSpec.describe PMTableQuery do
 
     names = described_class.new.call.map(&:name)
 
-    expect(names).to eq(["Newer Project", "Older Project"])
+    expect(names).to eq([ "Newer Project", "Older Project" ])
   ensure
     travel_back
   end
@@ -44,7 +44,7 @@ RSpec.describe PMTableQuery do
 
     names = described_class.new(sort: "created_at", direction: "asc").call.map(&:name)
 
-    expect(names).to eq(["Older Project", "Newer Project"])
+    expect(names).to eq([ "Older Project", "Newer Project" ])
   ensure
     travel_back
   end
@@ -63,7 +63,7 @@ RSpec.describe PMTableQuery do
 
     names = described_class.new(sort: "total_budget").call.map(&:name)
 
-    expect(names).to eq(["High Budget", "Low Budget"])
+    expect(names).to eq([ "High Budget", "Low Budget" ])
   end
 
   it "paginates ten records per page by default" do
