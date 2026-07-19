@@ -6,6 +6,7 @@ import consumer from "../channels/consumer"
 import { subscribeToPMNotifications } from "../channels/pm_notification_channel"
 import "./application.css"
 import RoleSwitchController from "../controllers/role_switch_controller"
+import NotificationActionController from "../controllers/notification_action_controller"
 import OrderFormController from "../controllers/order_form_controller"
 
 globalThis.$ = $
@@ -14,6 +15,7 @@ globalThis.jQuery = $
 const application = Application.start()
 application.register("order-form", OrderFormController)
 application.register("role-switch", RoleSwitchController)
+application.register("notification-action", NotificationActionController)
 
 subscribeToPMNotifications(consumer)
 

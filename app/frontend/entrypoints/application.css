@@ -2,3 +2,212 @@ html[data-role-mode="client"] [data-role-scope="pm"],
 html[data-role-mode="pm"] [data-role-scope="client"] {
   display: none !important;
 }
+
+:root {
+  --bs-body-bg: #f7f3ee;
+  --bs-body-color: #1f1b16;
+  --bs-body-color-rgb: 31, 27, 22;
+  --bs-emphasis-color: #1f1b16;
+  --bs-secondary-color: #6f675f;
+  --bs-border-color: #e7ded3;
+  --bs-border-color-translucent: rgba(231, 222, 211, 0.9);
+  --bs-primary: #5b4b8a;
+  --bs-primary-rgb: 91, 75, 138;
+  --bs-secondary: #6f675f;
+  --bs-secondary-rgb: 111, 103, 95;
+  --bs-success: #4f7a5a;
+  --bs-success-rgb: 79, 122, 90;
+  --bs-info: #3f6f8f;
+  --bs-info-rgb: 63, 111, 143;
+  --bs-warning: #c58a2b;
+  --bs-warning-rgb: 197, 138, 43;
+  --bs-danger: #b85c5c;
+  --bs-danger-rgb: 184, 92, 92;
+  --bs-link-color: #5b4b8a;
+  --bs-link-color-rgb: 91, 75, 138;
+  --bs-link-hover-color: #7a68b8;
+  --bs-focus-ring-color: rgba(91, 75, 138, 0.25);
+  --bs-card-bg: #fffcf8;
+  --bs-card-border-color: #e7ded3;
+  --bs-dropdown-bg: #fffcf8;
+  --bs-dropdown-border-color: #ddd3c7;
+  --bs-dropdown-link-hover-bg: #f4ecff;
+  --bs-list-group-bg: #fffcf8;
+  --bs-list-group-border-color: #e7ded3;
+}
+
+body {
+  background: var(--bs-body-bg);
+  color: var(--bs-body-color);
+}
+
+a {
+  color: var(--bs-link-color);
+}
+
+a:hover {
+  color: var(--bs-link-hover-color);
+}
+
+.app-navbar {
+  background: #111827;
+  color: #f9fafb;
+  border-color: #374151;
+}
+
+.app-navbar .container {
+  position: relative;
+}
+
+.app-navbar a,
+.app-navbar h1,
+.app-navbar p,
+.app-navbar span {
+  color: inherit;
+}
+
+.app-navbar-eyebrow {
+  color: #9ca3af;
+}
+
+.app-navbar-brand > a:hover .app-navbar-eyebrow,
+.app-navbar-brand > a:hover h1 {
+  color: #f9fafb;
+}
+
+.workspace-toggle.btn-outline-light {
+  color: #f9fafb;
+  border-color: #4b5563;
+}
+
+.workspace-toggle.btn-outline-light:hover,
+.workspace-toggle.btn-outline-light:focus {
+  color: #f9fafb;
+  background: rgba(255, 255, 255, 0.08);
+  border-color: #cbb6ff;
+}
+
+.workspace-toggle.btn-primary {
+  background: #5b4b8a;
+  border-color: #5b4b8a;
+}
+
+.workspace-toggle.btn-primary:hover,
+.workspace-toggle.btn-primary:focus {
+  background: #7a68b8;
+  border-color: #7a68b8;
+}
+
+.pm-notifications-trigger.btn-outline-light {
+  background-color: #111827;
+  color: #f9fafb;
+  border-color: #4b5563;
+}
+
+.pm-notifications-trigger.btn-outline-light:hover,
+.pm-notifications-trigger.btn-outline-light:focus {
+  background-color: #111827;
+  color: #f9fafb;
+  border-color: #cbb6ff;
+}
+
+.pm-notifications-trigger.btn-outline-light:active,
+.pm-notifications-trigger.btn-outline-light.show,
+.pm-notifications-trigger.btn-outline-light.dropdown-toggle.show,
+.pm-notifications-trigger.btn-outline-light:focus-visible {
+  background-color: #111827;
+  color: #f9fafb;
+  border-color: #cbb6ff;
+  box-shadow: 0 0 0 0.2rem rgba(122, 104, 184, 0.35);
+}
+
+.pm-notifications-badge {
+  background: #c58a2b;
+  color: #fffcf8;
+}
+
+.pm-notifications-toast-host {
+  z-index: 1080;
+  width: min(24rem, calc(100vw - 1rem));
+  pointer-events: none;
+}
+
+.pm-notifications-toast-host .pm-notification-item {
+  pointer-events: auto;
+  width: 100%;
+}
+
+.pm-notifications-dropdown .dropdown-menu {
+  width: min(28rem, calc(100vw - 1rem));
+}
+
+.pm-notifications-menu {
+  max-height: min(32rem, calc(100vh - 7rem));
+  overflow: auto;
+}
+
+.pm-notification-toast {
+  background: #fff6d8;
+  border-color: #e8d08a;
+  box-shadow: 0 0.5rem 1.5rem rgba(31, 27, 22, 0.12);
+  animation: pm-toast-in 180ms ease-out;
+}
+
+.pm-notification-toast.is-dismissing {
+  opacity: 0;
+  transform: translateY(0.75rem);
+  transition: opacity 180ms ease, transform 180ms ease;
+}
+
+.pm-notification-row.is-dismissing {
+  opacity: 0;
+  transform: translateX(-0.75rem);
+  transition: opacity 180ms ease, transform 180ms ease;
+}
+
+.pm-notification-row {
+  min-width: 0;
+}
+
+.pm-notification-card-link {
+  min-width: 0;
+}
+
+.pm-notification-card-link:hover .pm-notification-project-name {
+  text-decoration: underline;
+}
+
+.flash-snackbar {
+  z-index: 1090;
+  width: min(63rem, calc(100vw - 1.5rem));
+  pointer-events: none;
+}
+
+.flash-snackbar-item {
+  pointer-events: auto;
+  animation: flash-snackbar-in 180ms ease-out;
+}
+
+@keyframes flash-snackbar-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.75rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pm-toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(1rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

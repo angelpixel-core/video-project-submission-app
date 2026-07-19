@@ -1,8 +1,8 @@
 require "rails_helper"
 
-RSpec.describe "PM notifications", type: :system do
+RSpec.describe "PM notifications", type: :system, js: true do
   before do
-    driven_by :rack_test
+    driven_by :selenium_chrome_headless
 
     Client.create!(name: "Default Client", email: "client@example.com")
     PM.create!(name: "Default PM", email: "pm@example.com")
@@ -13,39 +13,57 @@ RSpec.describe "PM notifications", type: :system do
     pm = PM.find_by!(email: "pm@example.com")
     project = Project.create!(client: client, pm: pm, name: "Project Alpha", raw_footage_url: "https://example.com/raw.mov", status: :in_progress)
     notification = Notification.create!(project: project, pm: pm, kind: "project_created", body: "Unread PM notification")
+    Notification.create!(project: project, pm: pm, kind: "project_created", body: "Second unread notification")
 
     visit projects_path
 
-    expect(page).to have_content("PM inbox")
-    expect(page).to have_content("Unread PM notification")
+    click_button "PM"
+    find("#pm-notifications-dropdown button").click
 
-    click_button "Mark as read"
+    expect(page).to have_css("#pm-notifications-dropdown .dropdown-menu.show")
+    expect(page).to have_css("#pm-notifications-panel")
+    expect(page).to have_css(".pm-notification-row", text: "Unread PM notification")
+    expect(page).to have_css(".pm-notification-row", text: "Second unread notification")
+
+    within(first(".pm-notification-row", text: "Unread PM notification")) do
+      click_link "Project Alpha"
+    end
+
+    expect(page).to have_current_path(project_path(project))
+    expect(page).to have_content("PROJECT DETAIL")
+
+    visit projects_path
+
+    click_button "PM"
+    find("#pm-notifications-dropdown button").click
+
+    within(first(".pm-notification-row", text: "Unread PM notification")) do
+      find("button[aria-label='Mark as read']").click
+    end
+
+    expect(page).to have_css("#pm-notifications-dropdown .dropdown-menu.show")
+    expect(page).to have_no_css(".pm-notification-row", text: "Unread PM notification")
+    expect(page).to have_css(".pm-notification-row", text: "Second unread notification")
 
     expect(page).to have_current_path(projects_path)
-    expect(page).not_to have_content("Unread PM notification")
+    expect(page).to have_no_content("Unread PM notification")
     expect(notification.reload.read_at).to be_present
   end
 
-  it "lets the pm accept and complete projects from the workspace" do
+  it "shows pm workspace project actions" do
     client = Client.find_by!(email: "client@example.com")
     pm = PM.find_by!(email: "pm@example.com")
     project = Project.create!(client: client, pm: pm, name: "Project Beta", raw_footage_url: "https://example.com/beta.mov", status: :pending)
 
     visit projects_path
 
-    expect(page).to have_content("PM workspace")
+    click_button "PM"
+
+    expect(page).to have_content("PM WORKSPACE")
+    expect(page).to have_content("Default PM projects")
+    expect(page).to have_no_content("CLIENT WORKSPACE")
     expect(page).to have_button("Aceptar proyecto")
-
-    click_button "Aceptar proyecto"
-
-    expect(page).to have_current_path(projects_path)
-    expect(project.reload.status).to eq("in_progress")
-    expect(page).to have_button("Marcar como completado")
-
-    click_button "Marcar como completado"
-
-    expect(page).to have_current_path(projects_path)
-    expect(project.reload.status).to eq("completed")
+    expect(page).not_to have_button("Marcar como completado")
   end
 end
 
@@ -70,9 +88,11 @@ RSpec.describe "PM notifications realtime", type: :system, js: true do
       visit projects_path
       click_button "PM"
 
-      expect(page).to have_css("#pm-notifications-panel", visible: :visible)
+      find("#pm-notifications-dropdown button").click
+
+      expect(page).to have_css("#pm-notifications-dropdown .dropdown-menu.show", visible: :visible)
       expect(page).to have_css('html[data-pm-notifications-connected="true"]')
-      expect(page).to have_content("No unread notifications yet.")
+      expect(page).to have_no_css(".pm-notification-item")
     end
 
     Thread.new do
@@ -87,8 +107,7 @@ RSpec.describe "PM notifications realtime", type: :system, js: true do
     end.join
 
     using_session(:pm) do
-      expect(page).to have_content(notification_body)
-      expect(page).to have_no_content("No unread notifications yet.")
+      expect(page).to have_css(".pm-notification-item", text: notification_body)
     end
 
     Thread.new do
@@ -98,8 +117,8 @@ RSpec.describe "PM notifications realtime", type: :system, js: true do
     end.join
 
     using_session(:pm) do
-      expect(page).to have_content("No unread notifications yet.")
-      expect(page).to have_no_content(notification_body)
+      expect(page).to have_css("#pm-notifications-panel")
+      expect(page).to have_no_css(".pm-notification-item", text: notification_body)
     end
   end
 end

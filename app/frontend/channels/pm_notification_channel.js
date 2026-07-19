@@ -1,18 +1,36 @@
-const PANEL_SELECTOR = "#pm-notifications-panel"
+const PANEL_SELECTORS = ["#pm-notifications-panel"]
+const DROPDOWN_SELECTOR = "#pm-notifications-dropdown"
+const BADGE_SELECTOR = ".pm-notifications-badge"
+const MENU_LIST_SELECTOR = "#pm-notifications-menu-list"
 
 async function refreshPanel() {
-  const currentPanel = document.querySelector(PANEL_SELECTOR)
-  if (!currentPanel) return
+  const currentPanels = PANEL_SELECTORS
+    .map((selector) => [selector, document.querySelector(selector)])
+    .filter(([, panel]) => panel)
+
+  const currentDropdown = document.querySelector(DROPDOWN_SELECTOR)
+  if (currentPanels.length === 0 && !currentDropdown) return
 
   const response = await fetch(window.location.href, { headers: { Accept: "text/html" } })
   if (!response.ok) return
 
   const html = await response.text()
   const documentFragment = new DOMParser().parseFromString(html, "text/html")
-  const nextPanel = documentFragment.querySelector(PANEL_SELECTOR)
-  if (!nextPanel) return
+  currentPanels.forEach(([selector, currentPanel]) => {
+    const nextPanel = documentFragment.querySelector(selector)
+    if (currentPanel && nextPanel) currentPanel.outerHTML = nextPanel.outerHTML
+  })
 
-  currentPanel.outerHTML = nextPanel.outerHTML
+  const nextDropdown = documentFragment.querySelector(DROPDOWN_SELECTOR)
+  if (currentDropdown && nextDropdown) {
+    const currentBadge = currentDropdown.querySelector(BADGE_SELECTOR)
+    const nextBadge = nextDropdown.querySelector(BADGE_SELECTOR)
+    if (currentBadge && nextBadge) currentBadge.textContent = nextBadge.textContent
+
+    const currentMenuList = currentDropdown.querySelector(MENU_LIST_SELECTOR)
+    const nextMenuList = nextDropdown.querySelector(MENU_LIST_SELECTOR)
+    if (currentMenuList && nextMenuList) currentMenuList.innerHTML = nextMenuList.innerHTML
+  }
 }
 
 export function subscribeToPMNotifications(consumer) {

@@ -24,9 +24,22 @@ RSpec.describe "Projects requests" do
     expect(response.body).to include("Borrador")
     expect(response.body).to include("Reanudar")
     expect(response.body).to include("PM workspace")
-    expect(response.body).to include("PM inbox")
+    expect(response.body).to include("Unread notifications")
     expect(response.body).to include("Unread PM notification")
     expect(response.body).not_to include("Read PM notification")
+  end
+
+  it "shows a pm project detail page" do
+    client = Client.find_by!(email: "client@example.com")
+    pm = PM.find_by!(email: "pm@example.com")
+    project = Project.create!(client: client, pm: pm, name: "Project Alpha", raw_footage_url: "https://example.com/raw.mov", status: :pending)
+
+    get project_path(project)
+
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include("Project detail")
+    expect(response.body).to include("Project Alpha")
+    expect(response.body).to include("Aceptar proyecto")
   end
 
   it "creates a draft and redirects to edit" do

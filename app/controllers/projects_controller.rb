@@ -9,7 +9,10 @@ class ProjectsController < ApplicationController
 
     @projects = current_client.projects.includes(video_type_selections: :video_type).order(status_order, created_at: :desc)
     @pm_projects = default_pm.projects.where.not(status: :draft).includes(:client, video_type_selections: :video_type).order(status_order, created_at: :desc)
-    @unread_notifications = default_pm.notifications.unread.includes(project: :client).order(created_at: :desc)
+  end
+
+  def show
+    @project = default_pm.projects.includes(:client, video_type_selections: :video_type).find(params[:id])
   end
 
   def new

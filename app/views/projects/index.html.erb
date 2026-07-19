@@ -1,71 +1,72 @@
 <% content_for :title, "Projects" %>
 
 <div class="container py-4">
-  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
-    <div>
-      <p class="text-uppercase text-body-secondary mb-1">Client workspace</p>
-      <h1 class="h3 mb-0"><%= current_client.name %> projects</h1>
+  <div data-role-scope="client" class="vstack gap-4 mb-4">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+      <div>
+        <p class="text-uppercase text-body-secondary mb-1">Client workspace</p>
+        <h1 class="h3 mb-0"><%= current_client.name %> projects</h1>
+      </div>
+      <%= link_to "New Order", new_project_path, class: "btn btn-primary" %>
     </div>
-    <%= link_to "New Order", new_project_path, class: "btn btn-primary", data: { role_scope: "client" } %>
-  </div>
 
-  <div data-role-scope="client">
-    <% if @projects.any? %>
-      <div class="row g-3">
-        <%= render partial: "project", collection: @projects, as: :project %>
-      </div>
-    <% else %>
-      <div class="card border-0 shadow-sm">
-        <div class="card-body p-4">
-          <h2 class="h5">No projects yet</h2>
-          <p class="mb-3 text-body-secondary">Start a new order to create the first project for <%= current_client.name %>.</p>
-          <%= link_to "Create order", new_project_path, class: "btn btn-primary", data: { role_scope: "client" } %>
+    <div>
+      <% if @projects.any? %>
+        <div class="row g-3">
+          <%= render partial: "project", collection: @projects, as: :project %>
         </div>
-      </div>
-    <% end %>
+      <% else %>
+        <div class="card border-0 shadow-sm">
+          <div class="card-body p-4">
+            <h2 class="h5">No projects yet</h2>
+            <p class="mb-3 text-body-secondary">Start a new order to create the first project for <%= current_client.name %>.</p>
+            <%= link_to "Create order", new_project_path, class: "btn btn-primary" %>
+          </div>
+        </div>
+      <% end %>
+    </div>
   </div>
 
   <% if @pm_projects.any? %>
-    <div class="card border-0 shadow-sm mt-4" data-role-scope="pm">
-      <div class="card-body p-4">
-        <div class="d-flex justify-content-between align-items-center gap-3 mb-3">
-          <div>
-            <p class="text-uppercase text-body-secondary small mb-1">PM workspace</p>
-            <h2 class="h5 mb-0">Assigned projects</h2>
-          </div>
-          <span class="badge text-bg-dark"><%= @pm_projects.size %></span>
+    <div data-role-scope="pm" class="vstack gap-4">
+      <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+        <div>
+          <p class="text-uppercase text-body-secondary mb-1">PM workspace</p>
+          <h1 class="h3 mb-0"><%= default_pm.name %> projects</h1>
         </div>
+      </div>
 
-        <div class="row g-3">
-          <%= render partial: "pm_project", collection: @pm_projects, as: :project %>
+      <div class="card border-0 shadow-sm">
+        <div class="card-body p-4">
+          <div class="d-flex justify-content-between align-items-center gap-3 mb-3">
+            <div>
+              <p class="text-uppercase text-body-secondary small mb-1">PM workspace</p>
+              <h2 class="h5 mb-0">Assigned projects</h2>
+            </div>
+            <span class="badge text-bg-dark"><%= @pm_projects.size %></span>
+          </div>
+
+          <div class="row g-3">
+            <%= render partial: "pm_project", collection: @pm_projects, as: :project %>
+          </div>
         </div>
       </div>
     </div>
   <% end %>
 
-  <div id="pm-notifications-panel" data-role-scope="pm" class="mt-4">
-    <% if @unread_notifications.any? %>
-      <div class="card border-0 shadow-sm">
-        <div class="card-body p-4">
-          <div class="d-flex justify-content-between align-items-center gap-3 mb-3">
-            <div>
-              <p class="text-uppercase text-body-secondary small mb-1">PM inbox</p>
-              <h2 class="h5 mb-0">Unread notifications</h2>
-            </div>
-            <span class="badge text-bg-dark"><%= @unread_notifications.size %></span>
-          </div>
-
-          <div class="vstack gap-3">
-            <%= render partial: "notification", collection: @unread_notifications, as: :notification %>
-          </div>
-        </div>
+  <div id="pm-notifications-panel" data-role-scope="pm" class="pm-notifications-toast-host position-fixed bottom-0 end-0 p-3 d-flex flex-column gap-3 align-items-end">
+    <% if unread_notifications.any? %>
+      <div class="visually-hidden" aria-live="polite">
+        <%= unread_notifications.size %> unread PM notifications
       </div>
-    <% else %>
-      <div class="card border-0 shadow-sm">
-        <div class="card-body p-4">
-          <p class="text-uppercase text-body-secondary small mb-1">PM inbox</p>
-          <h2 class="h5 mb-2">Unread notifications</h2>
-          <p class="mb-0 text-body-secondary">No unread notifications yet.</p>
+
+      <div class="pm-notifications-stack d-flex flex-column gap-3 align-items-end w-100">
+        <div class="d-none d-lg-flex align-self-end badge text-bg-dark px-3 py-2 shadow-sm">
+          <%= unread_notifications.size %>
+        </div>
+
+        <div class="vstack gap-3 w-100 align-items-end">
+          <%= render partial: "notification", collection: unread_notifications, as: :notification %>
         </div>
       </div>
     <% end %>
