@@ -8,7 +8,7 @@ class ProjectsController < ApplicationController
     status_order = Arel.sql("CASE status WHEN 'draft' THEN 0 WHEN 'pending' THEN 1 WHEN 'in_progress' THEN 2 WHEN 'completed' THEN 3 ELSE 4 END")
 
     @projects = current_client.projects.includes(video_type_selections: :video_type).order(status_order, created_at: :desc)
-    @pm_projects = default_pm.projects.where.not(status: :draft).includes(:client, video_type_selections: :video_type).order(status_order, created_at: :desc)
+    @pm_projects = default_pm.projects.where.not(status: :draft).includes(:client, video_type_selections: :video_type).order(created_at: :desc)
   end
 
   def show

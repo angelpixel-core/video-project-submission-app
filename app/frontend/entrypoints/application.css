@@ -177,6 +177,32 @@ a:hover {
   text-decoration: underline;
 }
 
+.pm-project-name-link {
+  color: inherit;
+}
+
+.pm-project-name-link-text {
+  position: relative;
+  display: inline-block;
+  padding-bottom: 0.1rem;
+}
+
+.pm-project-name-link-text::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 0;
+  border-bottom: 2px solid currentColor;
+  transform: translateX(-50%);
+  transition: width 180ms ease;
+}
+
+.pm-project-name-link:hover .pm-project-name-link-text::after,
+.pm-project-name-link:focus-visible .pm-project-name-link-text::after {
+  width: 100%;
+}
+
 .flash-snackbar {
   z-index: 1090;
   width: min(63rem, calc(100vw - 1.5rem));

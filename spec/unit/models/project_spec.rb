@@ -44,6 +44,19 @@ RSpec.describe Project do
     expect(project.status).to eq("completed")
   end
 
+  it "sums the project budget from selections" do
+    client = Client.create!(name: "Client", email: "client@example.com")
+    pm = PM.create!(name: "PM", email: "pm@example.com")
+    project = described_class.create!(client: client, pm: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :pending)
+    highlight_reel = VideoType.create!(name: "Highlight Reel", description: "Short edit", price_cents: 25_000, output_format: "mp4")
+    social_cut = VideoType.create!(name: "Social Cut", description: "Social edit", price_cents: 15_000, output_format: "mp4")
+
+    project.video_type_selections.create!(video_type: highlight_reel, quantity: 2)
+    project.video_type_selections.create!(video_type: social_cut, quantity: 1)
+
+    expect(project.total_budget_cents).to eq(65_000)
+  end
+
   it "rejects invalid lifecycle jumps" do
     client = Client.create!(name: "Client", email: "client@example.com")
     pm = PM.create!(name: "PM", email: "pm@example.com")

@@ -27,32 +27,50 @@
     </div>
   </div>
 
-  <% if @pm_projects.any? %>
-    <div data-role-scope="pm" class="vstack gap-4">
-      <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
-        <div>
-          <p class="text-uppercase text-body-secondary mb-1">PM workspace</p>
-          <h1 class="h3 mb-0"><%= default_pm.name %> projects</h1>
-        </div>
+  <div data-role-scope="pm" class="vstack gap-4">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+      <div>
+        <p class="text-uppercase text-body-secondary mb-1">PM workspace</p>
+        <h1 class="h3 mb-0"><%= default_pm.name %> projects</h1>
       </div>
+    </div>
 
-      <div class="card border-0 shadow-sm">
-        <div class="card-body p-4">
-          <div class="d-flex justify-content-between align-items-center gap-3 mb-3">
-            <div>
-              <p class="text-uppercase text-body-secondary small mb-1">PM workspace</p>
-              <h2 class="h5 mb-0">Assigned projects</h2>
-            </div>
-            <span class="badge text-bg-dark"><%= @pm_projects.size %></span>
+    <div class="card border-0 shadow-sm">
+      <div class="card-body p-4">
+        <div class="d-flex justify-content-between align-items-center gap-3 mb-3">
+          <div>
+            <p class="text-uppercase text-body-secondary small mb-1">PM workspace</p>
+            <h2 class="h5 mb-0">Assigned projects</h2>
           </div>
+          <span class="badge text-bg-dark"><%= @pm_projects.size %></span>
+        </div>
 
-          <div class="row g-3">
-            <%= render partial: "pm_project", collection: @pm_projects, as: :project %>
-          </div>
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0 pm-projects-table">
+            <thead>
+              <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Project</th>
+                <th scope="col">Created at</th>
+                <th scope="col">Total budget</th>
+                <th scope="col">Status</th>
+                <th scope="col" class="text-end">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="pm-projects-table-body">
+              <% if @pm_projects.any? %>
+                <%= render partial: "pm_project_table_row", collection: @pm_projects, as: :project %>
+              <% else %>
+                <tr>
+                  <td colspan="6" class="text-body-secondary py-4">No projects yet.</td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
-  <% end %>
+  </div>
 
   <div id="pm-notifications-panel" data-role-scope="pm" class="pm-notifications-toast-host position-fixed bottom-0 end-0 p-3 d-flex flex-column gap-3 align-items-end">
     <% if unread_notifications.any? %>

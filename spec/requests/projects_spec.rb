@@ -1,6 +1,8 @@
 require "rails_helper"
 
 RSpec.describe "Projects requests" do
+  include ActiveSupport::Testing::TimeHelpers
+
   before do
     Client.create!(name: "Default Client", email: "client@example.com")
     PM.create!(name: "Default PM", email: "pm@example.com")
@@ -27,6 +29,37 @@ RSpec.describe "Projects requests" do
     expect(response.body).to include("Unread notifications")
     expect(response.body).to include("Unread PM notification")
     expect(response.body).not_to include("Read PM notification")
+  end
+
+  it "shows the pm project table sorted by creation date" do
+    client = Client.find_by!(email: "client@example.com")
+    pm = PM.find_by!(email: "pm@example.com")
+    highlight_reel = VideoType.find_by!(name: "Highlight Reel")
+    social_cut = VideoType.find_by!(name: "Social Cut")
+
+    travel_to 2.days.ago do
+      older_project = Project.create!(client: client, pm: pm, name: "Older Project", raw_footage_url: "https://example.com/older.mov", status: :pending)
+      older_project.video_type_selections.create!(video_type: highlight_reel, quantity: 1)
+    end
+
+    travel_to 1.day.ago do
+      newer_project = Project.create!(client: client, pm: pm, name: "Newer Project", raw_footage_url: "https://example.com/newer.mov", status: :in_progress)
+      newer_project.video_type_selections.create!(video_type: social_cut, quantity: 2)
+    end
+
+    get projects_path
+
+    pm_table_body = response.body[/<tbody id="pm-projects-table-body">.*?<\/tbody>/m]
+
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include("ID")
+    expect(response.body).to include("Created at")
+    expect(response.body).to include("Total budget")
+    expect(response.body).to include("$250.00")
+    expect(response.body).to include("$300.00")
+    expect(pm_table_body.index("Newer Project")).to be < pm_table_body.index("Older Project")
+  ensure
+    travel_back
   end
 
   it "shows a pm project detail page" do
