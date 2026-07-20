@@ -128,7 +128,7 @@ Work items are implementation documents. Each one should map back to the docs it
 
 ## 22
 
-- [ ] [PM Projects Table](./022-pm-projects-table.md)
+- [x] [PM Projects Table](./022-pm-projects-table.md)
 
 ## 23
 
