@@ -34,6 +34,22 @@ RSpec.describe "Client notifications", type: :system, js: true do
     expect(page).to have_no_css('#client-notifications-panel .client-notification-toast', text: "Project Alpha")
   end
 
+  it "marks a client toast as read when the project link is clicked" do
+    client = Client.find_by!(email: "client@example.com")
+    pm = PM.find_by!(email: "pm@example.com")
+    project = Project.create!(client: client, pm: pm, name: "Project Gamma", raw_footage_url: "https://example.com/gamma.mov", status: :pending)
+    notification = Notification.create!(project: project, client: client, kind: "project_accepted", body: "Your project Project Gamma was accepted and is now in progress.")
+
+    visit projects_path
+
+    within(first("#client-notifications-panel .client-notification-toast")) do
+      click_link "Project Gamma"
+    end
+
+    expect(page).to have_current_path(project_path(project))
+    expect(notification.reload.read_at).to be_present
+  end
+
   it "receives client notifications in realtime after a pm action" do
     client = Client.find_by!(email: "client@example.com")
     pm = PM.find_by!(email: "pm@example.com")
