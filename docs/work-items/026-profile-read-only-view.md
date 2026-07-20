@@ -11,7 +11,7 @@ depends_on:
   - avatar-navbar-account-menu
 order: 26
 phase: work-items
-status: pending
+status: done
 title: Profile Read-Only View
 ---
 
@@ -19,7 +19,7 @@ title: Profile Read-Only View
 
 ## Goal
 
-- [ ] Create a read-only `/profile` page that shows the current user's identity and demo credentials.
+- [x] Create a read-only `/profile` page that shows the current user's identity and demo credentials.
 
 ## Scope
 
@@ -42,10 +42,10 @@ title: Profile Read-Only View
 
 ## Implementation Plan
 
-- [ ] `app/views/profile/show.html.erb` or equivalent - render the profile card and identity details.
-- [ ] `app/controllers/profile_controller.rb` or equivalent - load the current profile context.
-- [ ] `app/frontend/entrypoints/application.css` - style the profile layout and token controls.
-- [ ] `spec/system/` - verify the profile page renders and the reveal/copy controls work.
+- [x] `app/views/profile/show.html.erb` or equivalent - render the profile card and identity details.
+- [x] `app/controllers/profile_controller.rb` or equivalent - load the current profile context.
+- [x] `app/frontend/entrypoints/application.css` - style the profile layout and token controls.
+- [x] `spec/system/` - verify the profile page renders and the reveal/copy controls work.
 
 ## Affected Docs
 
@@ -62,17 +62,17 @@ title: Profile Read-Only View
 
 ## Checklist
 
-- [ ] `/profile` renders successfully.
-- [ ] The page shows name, email, and role.
-- [ ] The avatar placeholder is always visible.
-- [ ] The token can be revealed and copied.
-- [ ] The layout matches the rest of the app.
+- [x] `/profile` renders successfully.
+- [x] The page shows name, email, and role.
+- [x] The avatar placeholder is always visible.
+- [x] The token can be revealed and copied.
+- [x] The layout matches the rest of the app.
 
 ## Validation
 
-- [ ] System spec verifies the profile page renders.
-- [ ] System spec verifies the token reveal/copy controls.
-- [ ] System spec verifies the avatar placeholder appears.
+- [x] System spec verifies the profile page renders.
+- [x] System spec verifies the token reveal/copy controls.
+- [x] System spec verifies the avatar placeholder appears.
 
 ## Notes
 

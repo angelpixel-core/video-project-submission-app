@@ -136,7 +136,7 @@ Work items are implementation documents. Each one should map back to the docs it
 
 ## 24
 
-- [ ] [Avatar Navbar Account Menu](./024-avatar-navbar-account-menu.md)
+- [x] [Avatar Navbar Account Menu](./024-avatar-navbar-account-menu.md)
 
 ## 25
 
@@ -144,7 +144,7 @@ Work items are implementation documents. Each one should map back to the docs it
 
 ## 26
 
-- [ ] [Profile Read-Only View](./026-profile-read-only-view.md)
+- [x] [Profile Read-Only View](./026-profile-read-only-view.md)
 
 ## 27
 

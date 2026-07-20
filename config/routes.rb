@@ -14,6 +14,7 @@ Rails.application.routes.draw do
   # root "posts#index"
   mount ActionCable.server => "/cable"
   root "projects#index"
+  resource :profile, only: %i[show], controller: "profile"
 
   resources :projects, only: %i[index show new edit update] do
     member do
