@@ -98,12 +98,46 @@ a:hover {
   box-shadow: 0 0 0 0.2rem rgba(122, 104, 184, 0.35);
 }
 
+.client-notifications-trigger.btn-outline-light {
+  background-color: #111827;
+  color: #f9fafb;
+  border-color: #4b5563;
+}
+
+.client-notifications-trigger.btn-outline-light:hover,
+.client-notifications-trigger.btn-outline-light:focus {
+  background-color: #111827;
+  color: #f9fafb;
+  border-color: #8ed0f6;
+}
+
+.client-notifications-trigger.btn-outline-light:active,
+.client-notifications-trigger.btn-outline-light.show,
+.client-notifications-trigger.btn-outline-light.dropdown-toggle.show,
+.client-notifications-trigger.btn-outline-light:focus-visible {
+  background-color: #111827;
+  color: #f9fafb;
+  border-color: #8ed0f6;
+  box-shadow: 0 0 0 0.2rem rgba(86, 165, 206, 0.35);
+}
+
 .pm-notifications-badge {
   background: #c58a2b;
   color: #fffcf8;
 }
 
+.client-notifications-badge {
+  background: #2f7fb8;
+  color: #fffcf8;
+}
+
 .pm-notifications-toast-host {
+  z-index: 1080;
+  width: min(24rem, calc(100vw - 1rem));
+  pointer-events: none;
+}
+
+.client-notifications-toast-host {
   z-index: 1080;
   width: min(24rem, calc(100vw - 1rem));
   pointer-events: none;
@@ -114,11 +148,25 @@ a:hover {
   width: 100%;
 }
 
+.client-notifications-toast-host .client-notification-item {
+  pointer-events: auto;
+  width: 100%;
+}
+
 .pm-notifications-dropdown .dropdown-menu {
   width: min(28rem, calc(100vw - 1rem));
 }
 
+.client-notifications-dropdown .dropdown-menu {
+  width: min(28rem, calc(100vw - 1rem));
+}
+
 .pm-notifications-menu {
+  max-height: min(32rem, calc(100vh - 7rem));
+  overflow: auto;
+}
+
+.client-notifications-menu {
   max-height: min(32rem, calc(100vh - 7rem));
   overflow: auto;
 }
@@ -172,6 +220,64 @@ a:hover {
   background: #f4ecff;
 }
 
+.profile-page {
+  max-width: 56rem;
+}
+
+.profile-card {
+  overflow: hidden;
+}
+
+.profile-avatar-shell {
+  width: 5rem;
+  display: flex;
+  justify-content: center;
+}
+
+.profile-avatar {
+  width: 5rem;
+  height: 5rem;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #f9fafb;
+  background: linear-gradient(135deg, #5b4b8a, #7a68b8);
+  box-shadow: 0 0.5rem 1.25rem rgba(31, 27, 22, 0.12);
+}
+
+.profile-avatar-image {
+  object-fit: cover;
+  padding: 0;
+}
+
+.profile-avatar--pm {
+  background: linear-gradient(135deg, #3f6f8f, #5b4b8a);
+}
+
+.profile-metadata dd {
+  font-size: 1rem;
+  word-break: break-word;
+}
+
+.profile-token {
+  background: #f7f3ee;
+  border: 1px solid var(--bs-border-color);
+}
+
+.profile-token-value {
+  min-height: 3rem;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  background: #fff;
+  border: 1px solid var(--bs-border-color);
+  color: #1f1b16;
+}
+
 .pm-notification-toast {
   background: #fff6d8;
   border-color: #e8d08a;
@@ -179,7 +285,20 @@ a:hover {
   animation: pm-toast-in 180ms ease-out;
 }
 
+.client-notification-toast {
+  background: #eaf6ff;
+  border-color: #b5d9ee;
+  box-shadow: 0 0.5rem 1.5rem rgba(31, 27, 22, 0.12);
+  animation: pm-toast-in 180ms ease-out;
+}
+
 .pm-notification-toast.is-dismissing {
+  opacity: 0;
+  transform: translateY(0.75rem);
+  transition: opacity 180ms ease, transform 180ms ease;
+}
+
+.client-notification-toast.is-dismissing {
   opacity: 0;
   transform: translateY(0.75rem);
   transition: opacity 180ms ease, transform 180ms ease;
@@ -191,7 +310,17 @@ a:hover {
   transition: opacity 180ms ease, transform 180ms ease;
 }
 
+.client-notification-row.is-dismissing {
+  opacity: 0;
+  transform: translateX(-0.75rem);
+  transition: opacity 180ms ease, transform 180ms ease;
+}
+
 .pm-notification-row {
+  min-width: 0;
+}
+
+.client-notification-row {
   min-width: 0;
 }
 
@@ -199,7 +328,15 @@ a:hover {
   min-width: 0;
 }
 
+.client-notification-card-link {
+  min-width: 0;
+}
+
 .pm-notification-card-link:hover .pm-notification-project-name {
+  text-decoration: underline;
+}
+
+.client-notification-card-link:hover .client-notification-project-name {
   text-decoration: underline;
 }
 

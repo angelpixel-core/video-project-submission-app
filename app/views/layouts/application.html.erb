@@ -45,6 +45,37 @@
         </div>
 
         <div class="ms-lg-auto d-flex align-items-center gap-2">
+          <div id="client-notifications-dropdown" class="dropdown client-notifications-dropdown" data-role-scope="client">
+            <button
+              class="btn btn-outline-light position-relative client-notifications-trigger"
+              type="button"
+              data-bs-toggle="dropdown"
+              data-bs-auto-close="outside"
+              aria-expanded="false"
+              aria-label="Unread client notifications"
+            >
+              <svg aria-hidden="true" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" role="img">
+                <path d="M8 16a1.5 1.5 0 0 0 1.415-1H6.585A1.5 1.5 0 0 0 8 16ZM8 1a4 4 0 0 0-4 4v1.09c0 .69-.19 1.36-.55 1.94L2.2 9.9A1.5 1.5 0 0 0 3.5 12h9a1.5 1.5 0 0 0 1.3-2.1l-1.25-1.87A3.9 3.9 0 0 1 12 6.09V5a4 4 0 0 0-4-4Zm0 1a3 3 0 0 1 3 3v1.09c0 .88.25 1.75.72 2.5L12.97 11H3.03l1.25-1.91c.47-.75.72-1.62.72-2.5V5a3 3 0 0 1 3-3Z"/>
+              </svg>
+              <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill text-bg-dark client-notifications-badge"><%= unread_client_notifications.size %></span>
+            </button>
+
+            <div class="dropdown-menu dropdown-menu-end p-0 shadow client-notifications-menu">
+              <div class="px-3 py-2 border-bottom bg-body-tertiary">
+                <p class="text-uppercase text-body-secondary small mb-1">Inbox</p>
+                <h2 class="h6 mb-0">Unread notifications</h2>
+              </div>
+
+              <div id="client-notifications-menu-list" class="client-notifications-menu-list">
+                <% if unread_client_notifications.any? %>
+                  <%= render partial: "projects/client_notification_row", collection: unread_client_notifications, as: :notification %>
+                <% else %>
+                  <div class="px-3 py-3 text-body-secondary">No unread client notifications.</div>
+                <% end %>
+              </div>
+            </div>
+          </div>
+
           <div id="pm-notifications-dropdown" class="dropdown pm-notifications-dropdown" data-role-scope="pm">
             <button
               class="btn btn-outline-light position-relative pm-notifications-trigger"
@@ -98,7 +129,7 @@
 
               <button class="dropdown-item" type="button" data-role-switch-target="switchAction" data-mode="pm" data-action="click->role-switch#select">Switch to PM</button>
               <div class="dropdown-divider"></div>
-              <span class="dropdown-item-text text-body-secondary">Profile</span>
+              <%= link_to "Profile", profile_path, class: "dropdown-item" %>
               <span class="dropdown-item-text text-body-secondary">Settings</span>
             </div>
           </div>
@@ -119,6 +150,42 @@
         </div>
       </div>
     <% end %>
+
+    <div id="client-notifications-panel" data-role-scope="client" class="client-notifications-toast-host position-fixed bottom-0 end-0 p-3 d-flex flex-column gap-3 align-items-end">
+      <% if unread_client_notifications.any? %>
+        <div class="visually-hidden" aria-live="polite">
+          <%= unread_client_notifications.size %> unread client notifications
+        </div>
+
+        <div class="client-notifications-stack d-flex flex-column gap-3 align-items-end w-100">
+          <div class="d-none d-lg-flex align-self-end badge text-bg-dark px-3 py-2 shadow-sm">
+            <%= unread_client_notifications.size %>
+          </div>
+
+          <div class="vstack gap-3 w-100 align-items-end">
+            <%= render partial: "projects/client_notification", collection: unread_client_notifications, as: :notification %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <div id="pm-notifications-panel" data-role-scope="pm" class="pm-notifications-toast-host position-fixed bottom-0 end-0 p-3 d-flex flex-column gap-3 align-items-end">
+      <% if unread_notifications.any? %>
+        <div class="visually-hidden" aria-live="polite">
+          <%= unread_notifications.size %> unread PM notifications
+        </div>
+
+        <div class="pm-notifications-stack d-flex flex-column gap-3 align-items-end w-100">
+          <div class="d-none d-lg-flex align-self-end badge text-bg-dark px-3 py-2 shadow-sm">
+            <%= unread_notifications.size %>
+          </div>
+
+          <div class="vstack gap-3 w-100 align-items-end">
+            <%= render partial: "projects/notification", collection: unread_notifications, as: :notification %>
+          </div>
+        </div>
+      <% end %>
+    </div>
 
     <%= yield %>
   </body>

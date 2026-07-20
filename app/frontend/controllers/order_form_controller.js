@@ -6,6 +6,7 @@ export default class extends Controller {
     "form",
     "name",
     "rawFootageUrl",
+    "youtubeUrl",
     "rawFootageUrlFeedback",
     "selectionsJson",
     "cartItems",
@@ -93,6 +94,7 @@ export default class extends Controller {
   syncFields() {
     this.cart.name = this.nameTarget.value;
     this.cart.rawFootageUrl = this.rawFootageUrlTarget.value;
+    if (this.hasYoutubeUrlTarget) this.cart.youtubeUrl = this.youtubeUrlTarget.value;
     if (this.hasPaymentNameTarget)
       this.cart.paymentName = this.paymentNameTarget.value;
     if (this.hasPaymentEmailTarget)
@@ -159,6 +161,9 @@ export default class extends Controller {
     this.nameTarget.value = this.cart.name || this.nameTarget.value;
     this.rawFootageUrlTarget.value =
       this.cart.rawFootageUrl || this.rawFootageUrlTarget.value;
+    if (this.hasYoutubeUrlTarget) {
+      this.youtubeUrlTarget.value = this.cart.youtubeUrl || this.youtubeUrlTarget.value;
+    }
     this.paymentNameTarget.value =
       this.cart.paymentName || this.paymentNameTarget.value;
     this.paymentEmailTarget.value =
@@ -172,6 +177,7 @@ export default class extends Controller {
     const fallback = {
       name: "",
       rawFootageUrl: "",
+      youtubeUrl: "",
       paymentName: "",
       paymentEmail: "",
       items: [],
@@ -183,6 +189,7 @@ export default class extends Controller {
         ...fallback,
         name: this.nameTarget?.value || "",
         rawFootageUrl: this.rawFootageUrlTarget?.value || "",
+        youtubeUrl: this.hasYoutubeUrlTarget ? this.youtubeUrlTarget?.value || "" : "",
         paymentName: this.paymentNameTarget?.value || "",
         paymentEmail: this.paymentEmailTarget?.value || "",
         items: rawSelections

@@ -7,6 +7,7 @@ class Project < ApplicationRecord
   has_many :video_type_selections, dependent: :destroy
   has_many :video_types, through: :video_type_selections
   has_many :notifications, dependent: :destroy
+  has_many :comments, dependent: :destroy
 
   scope :for_pm_table, lambda {
     left_outer_joins(video_type_selections: :video_type)
@@ -38,6 +39,7 @@ class Project < ApplicationRecord
 
   validates :name, presence: true, if: :submitted?
   validates :raw_footage_url, presence: true, if: :submitted?
+  validate :youtube_url_must_be_valid, if: -> { youtube_url.present? }
 
   def total_budget_cents
     return self[:total_budget_cents] if has_attribute?(:total_budget_cents) && self[:total_budget_cents].present?
@@ -49,5 +51,11 @@ class Project < ApplicationRecord
 
   def submitted?
     pending? || in_progress? || completed?
+  end
+
+  private
+
+  def youtube_url_must_be_valid
+    errors.add(:youtube_url, "must be a valid YouTube URL") unless YoutubeUrlParser.valid?(youtube_url)
   end
 end

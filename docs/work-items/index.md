@@ -116,7 +116,7 @@ Work items are implementation documents. Each one should map back to the docs it
 
 ## 19
 
-- [ ] [Optional Realtime PM Notifications](./019-optional-realtime-pm-notifications.md)
+- [x] [Optional Realtime PM Notifications](./019-optional-realtime-pm-notifications.md)
 
 ## 20
 
@@ -128,16 +128,28 @@ Work items are implementation documents. Each one should map back to the docs it
 
 ## 22
 
-- [ ] [PM Projects Table](./022-pm-projects-table.md)
+- [x] [PM Projects Table](./022-pm-projects-table.md)
 
 ## 23
 
-- [ ] [PM Projects Table Interactions](./023-pm-projects-table-interactions.md)
+- [x] [PM Projects Table Interactions](./023-pm-projects-table-interactions.md)
 
 ## 24
 
-- [ ] [Avatar Navbar Account Menu](./024-avatar-navbar-account-menu.md)
+- [x] [Avatar Navbar Account Menu](./024-avatar-navbar-account-menu.md)
 
 ## 25
 
-- [ ] [Profile and Avatar Uploads](./025-profile-avatar-uploads.md)
+- [x] [Profile and Avatar Uploads](./025-profile-avatar-uploads.md)
+
+## 26
+
+- [x] [Profile Read-Only View](./026-profile-read-only-view.md)
+
+## 27
+
+- [x] [Profile Avatar Storage](./027-profile-avatar-storage.md)
+
+## 28
+
+- [x] [Client Notifications and Toasts](./028-client-notifications-persistent-toasts.md)

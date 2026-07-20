@@ -1,6 +1,6 @@
-<div class="dropdown-item-text px-3 py-2 border-bottom pm-notification-item pm-notification-row bg-primary-subtle" data-role-scope="pm">
+<div class="dropdown-item-text px-3 py-2 border-bottom pm-notification-item pm-notification-row bg-primary-subtle" data-controller="notification-action" data-role-scope="pm" data-notification-item>
   <div class="d-flex align-items-start gap-3">
-    <%= link_to project_path(notification.project), class: "flex-grow-1 text-reset text-decoration-none d-block min-w-0" do %>
+    <%= link_to project_path(notification.project), class: "flex-grow-1 text-reset text-decoration-none d-block min-w-0", data: { action: "click->notification-action#open", notification_read_url: notification_path(notification) } do %>
       <p class="text-uppercase text-body-secondary small mb-1">Project update</p>
       <h3 class="h6 mb-1 pm-notification-project-name text-truncate"><%= notification.project.name %></h3>
       <p class="mb-0 text-body-secondary text-truncate"><%= notification.body %></p>

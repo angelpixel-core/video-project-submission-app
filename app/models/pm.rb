@@ -1,6 +1,8 @@
 class PM < ApplicationRecord
+  has_one_attached :avatar
+
   has_many :projects, dependent: :restrict_with_error
-  has_many :notifications, dependent: :destroy
+  has_many :notifications, -> { where(client_id: nil) }, foreign_key: :pm_id, dependent: :destroy
 
   before_validation :normalize_email
 

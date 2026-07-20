@@ -1,5 +1,8 @@
 class Client < ApplicationRecord
+  has_one_attached :avatar
+
   has_many :projects, dependent: :destroy
+  has_many :notifications, -> { where(pm_id: nil) }, foreign_key: :client_id, dependent: :destroy
 
   before_validation :normalize_email
 

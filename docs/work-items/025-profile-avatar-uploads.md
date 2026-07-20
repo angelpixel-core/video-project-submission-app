@@ -13,7 +13,7 @@ depends_on:
   - role-switcher-prototype
 order: 25
 phase: work-items
-status: pending
+status: done
 title: Profile and Avatar Uploads
 ---
 
@@ -21,7 +21,7 @@ title: Profile and Avatar Uploads
 
 ## Goal
 
-- [ ] Add a profile page with user details, avatar support, and demo credential visibility.
+- [x] Add a profile page with user details, avatar support, and demo credential visibility.
 
 ## Scope
 
@@ -43,13 +43,13 @@ title: Profile and Avatar Uploads
 
 ## Implementation Plan
 
-- [ ] `app/views/profile/show.html.erb` or equivalent - render the profile details and avatar area.
-- [ ] `app/controllers/profile_controller.rb` or equivalent - load the current user profile.
-- [ ] `app/models/` - add or extend the user/profile model as needed for avatar support.
-- [ ] `ActiveStorage` - attach and serve the avatar image optionally.
-- [ ] `db/migrate/` or `lib/tasks` / data migration - seed the demo user/profile data.
-- [ ] `app/frontend/entrypoints/application.css` - style the avatar, token reveal, and copy actions.
-- [ ] `spec/system/` - verify profile rendering, avatar fallback, and token controls.
+- [x] `app/views/profile/show.html.erb` or equivalent - render the profile details and avatar area.
+- [x] `app/controllers/profile_controller.rb` or equivalent - load the current user profile.
+- [x] `app/models/` - add or extend the user/profile model as needed for avatar support.
+- [x] `ActiveStorage` - attach and serve the avatar image optionally.
+- [x] `db/migrate/` or `lib/tasks` / data migration - seed the demo user/profile data.
+- [x] `app/frontend/entrypoints/application.css` - style the avatar, token reveal, and copy actions.
+- [x] `spec/system/` - verify profile rendering, avatar fallback, and token controls.
 
 ## Affected Docs
 
@@ -67,17 +67,17 @@ title: Profile and Avatar Uploads
 
 ## Checklist
 
-- [ ] `/profile` shows name, email, and role.
-- [ ] The avatar placeholder renders when no image is present.
-- [ ] An uploaded avatar can be attached via `ActiveStorage`.
-- [ ] A demo token can be revealed and copied.
-- [ ] The profile page matches the existing visual system.
+- [x] `/profile` shows name, email, and role.
+- [x] The avatar placeholder renders when no image is present.
+- [x] An uploaded avatar can be attached via `ActiveStorage`.
+- [x] A demo token can be revealed and copied.
+- [x] The profile page matches the existing visual system.
 
 ## Validation
 
-- [ ] System spec verifies profile details render.
-- [ ] System spec verifies avatar fallback and attachment behavior.
-- [ ] System spec verifies token reveal/copy controls.
+- [x] System spec verifies profile details render.
+- [x] System spec verifies avatar fallback and attachment behavior.
+- [x] System spec verifies token reveal/copy controls.
 
 ## Notes
 

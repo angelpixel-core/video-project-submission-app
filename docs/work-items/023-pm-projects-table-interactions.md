@@ -15,7 +15,7 @@ depends_on:
   - pm-projects-table
 order: 23
 phase: work-items
-status: pending
+status: done
 title: PM Projects Table Interactions
 ---
 
@@ -23,7 +23,11 @@ title: PM Projects Table Interactions
 
 ## Goal
 
-- [ ] Add pagination, column sorting, and non-reloading row actions to the PM projects table.
+- [x] Add pagination, column sorting, and non-reloading row actions to the PM projects table.
+
+## Decision Link
+
+- See `docs/decisions/08-pm-row-actions-async-refresh.md` for the chosen async refresh strategy and concurrency approach.
 
 ## Scope
 
@@ -45,19 +49,20 @@ title: PM Projects Table Interactions
 
 ## Implementation Plan
 
-- [ ] `app/controllers/projects_controller.rb` - accept pagination and sort params for the PM table.
-- [ ] `app/views/projects/index.html.erb` - render PM table controls, sortable headers, and pagination.
-- [ ] `app/views/projects/_pm_project_table_row.html.erb` or equivalent - keep row markup reusable for Turbo/realtime updates.
-- [ ] `app/frontend/channels/pm_notification_channel.js` - update the visible PM table when new rows arrive, respecting page/sort state.
-- [ ] `app/controllers/projects_controller.rb` or a dedicated responder - return Turbo Stream / partial responses for PM row actions.
-- [ ] `app/frontend/entrypoints/application.css` - style sortable headers, pagination, and row transitions if needed.
-- [ ] `spec/requests/projects_spec.rb` - verify pagination and sorting behavior.
-- [ ] `spec/system/projects_notifications_spec.rb` - verify row actions do not reload and realtime insertions stay ordered.
+- [x] `app/controllers/projects_controller.rb` - accept pagination and sort params for the PM table.
+- [x] `app/views/projects/index.html.erb` - render PM table controls, sortable headers, and pagination.
+- [x] `app/views/projects/_pm_project_table_row.html.erb` or equivalent - keep row markup reusable for async updates.
+- [x] `app/frontend/channels/pm_notification_channel.js` - update the visible PM table when new rows arrive, respecting page/sort state.
+- [x] `app/controllers/projects_controller.rb` or a dedicated responder - return async responses for PM row actions.
+- [x] `app/frontend/entrypoints/application.css` - style sortable headers, pagination, and row transitions if needed.
+- [x] `spec/requests/projects_spec.rb` - verify pagination, sorting, and async row action behavior.
+- [x] `spec/system/projects_notifications_spec.rb` - verify row actions do not reload and realtime insertions stay ordered.
 
 ## Affected Docs
 
 - `docs/work-items/index.md`
 - `docs/work-items/022-pm-projects-table.md`
+- `docs/decisions/08-pm-row-actions-async-refresh.md`
 
 ## Affected Ops
 
@@ -71,22 +76,22 @@ title: PM Projects Table Interactions
 
 ## Checklist
 
-- [ ] PM table shows 10 rows per page.
-- [ ] PM users can sort by ID, Created at, and Total budget.
-- [ ] Row actions do not trigger a full page reload.
-- [ ] Realtime inserts respect the current page and sort order.
-- [ ] New projects can push rows across page boundaries in a stable chain.
-- [ ] Client mode remains unchanged.
+- [x] PM table shows 10 rows per page.
+- [x] PM users can sort by ID, Created at, and Total budget.
+- [x] Row actions do not trigger a full page reload.
+- [x] Realtime inserts respect the current page and sort order.
+- [x] New projects can push rows across page boundaries in a stable chain.
+- [x] Client mode remains unchanged.
 
 ## Validation
 
-- [ ] Request spec verifies page size and sorting.
-- [ ] System spec verifies actions work without reload.
-- [ ] System spec verifies a realtime project insertion lands in the correct sorted location.
-- [ ] System spec verifies page overflow/cascade behavior when inserting at the bottom of a page.
+- [x] Request spec verifies page size, sorting, and async row-action behavior.
+- [x] System spec verifies actions work without reload.
+- [x] System spec verifies a realtime project insertion lands in the correct sorted location.
+- [x] System spec verifies page overflow/cascade behavior when inserting at the bottom of a page.
 
 ## Notes
 
 - Prefer server-side pagination/sorting over client-only sorting.
 - Keep the PM table as the source of truth for realtime updates.
-- If Hotwire is used, prefer Turbo Streams for row replacement/insertion.
+- Use the documented async refresh strategy instead of introducing Turbo Streams for this work item.

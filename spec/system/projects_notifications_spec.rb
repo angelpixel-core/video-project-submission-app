@@ -23,6 +23,7 @@ RSpec.describe "PM notifications", type: :system, js: true do
     project = Project.create!(client: client, pm: pm, name: "Project Alpha", raw_footage_url: "https://example.com/raw.mov", status: :in_progress)
     notification = Notification.create!(project: project, pm: pm, kind: "project_created", body: "Unread PM notification")
     Notification.create!(project: project, pm: pm, kind: "project_created", body: "Second unread notification")
+    Notification.create!(project: project, pm: pm, kind: "project_created", body: "Third unread notification")
 
     visit projects_path
 
@@ -40,25 +41,45 @@ RSpec.describe "PM notifications", type: :system, js: true do
 
     expect(page).to have_current_path(project_path(project))
     expect(page).to have_content("PROJECT DETAIL")
+    expect(notification.reload.read_at).to be_present
 
     visit projects_path
 
     find("#pm-notifications-dropdown button").click
 
-    within(first(".pm-notification-row", text: "Unread PM notification")) do
+    within(first(".pm-notification-row", text: "Second unread notification")) do
       find("button[aria-label='Mark as read']").click
     end
 
     expect(page).to have_css("#pm-notifications-dropdown .dropdown-menu.show")
     expect(page).to have_no_css(".pm-notification-row", text: "Unread PM notification")
-    expect(page).to have_css(".pm-notification-row", text: "Second unread notification")
+    expect(page).to have_no_css(".pm-notification-row", text: "Second unread notification")
+    expect(page).to have_css(".pm-notification-row", text: "Third unread notification")
 
     expect(page).to have_current_path(projects_path)
     expect(page).to have_no_content("Unread PM notification")
     expect(notification.reload.read_at).to be_present
   end
 
-  it "shows pm workspace project actions" do
+  it "marks a pm toast as read when the project link is clicked" do
+    client = Client.find_by!(email: "client@example.com")
+    pm = PM.find_by!(email: "pm@example.com")
+    project = Project.create!(client: client, pm: pm, name: "Project Toast", raw_footage_url: "https://example.com/toast.mov", status: :in_progress)
+    notification = Notification.create!(project: project, pm: pm, kind: "project_created", body: "Unread PM notification")
+
+    visit projects_path
+
+    switch_workspace_to("PM")
+
+    within(first("#pm-notifications-panel .pm-notification-toast")) do
+      click_link "Project Toast"
+    end
+
+    expect(page).to have_current_path(project_path(project))
+    expect(notification.reload.read_at).to be_present
+  end
+
+  it "updates pm workspace project actions without a full reload" do
     client = Client.find_by!(email: "client@example.com")
     pm = PM.find_by!(email: "pm@example.com")
     project = Project.create!(client: client, pm: pm, name: "Project Beta", raw_footage_url: "https://example.com/beta.mov", status: :pending)
@@ -67,6 +88,8 @@ RSpec.describe "PM notifications", type: :system, js: true do
     visit projects_path
 
     switch_workspace_to("PM")
+
+    page.execute_script("window.__pmActionSentinel = 1")
 
     expect(page).to have_content("PM WORKSPACE")
     expect(page).to have_content("Default PM projects")
@@ -77,6 +100,23 @@ RSpec.describe "PM notifications", type: :system, js: true do
     expect(page).to have_css("tbody#pm-projects-table-body tr", text: "Project Beta")
     expect(page).to have_content("$500.00")
     expect(page).to have_button("Aceptar proyecto")
+    expect(page).not_to have_button("Marcar como completado")
+
+    click_button "Aceptar proyecto"
+
+    expect(page.evaluate_script("window.__pmActionSentinel")).to eq(1)
+    expect(page).to have_current_path(projects_path, ignore_query: false)
+    expect(page).to have_css("tbody#pm-projects-table-body tr", text: "Project Beta")
+    expect(page).to have_content("EN PROGRESO")
+    expect(page).to have_button("Marcar como completado")
+
+    click_button "Marcar como completado"
+
+    expect(page.evaluate_script("window.__pmActionSentinel")).to eq(1)
+    expect(page).to have_current_path(projects_path, ignore_query: false)
+    expect(page).to have_css("tbody#pm-projects-table-body tr", text: "Project Beta")
+    expect(page).to have_content("COMPLETADO")
+    expect(page).not_to have_button("Aceptar proyecto")
     expect(page).not_to have_button("Marcar como completado")
   end
 

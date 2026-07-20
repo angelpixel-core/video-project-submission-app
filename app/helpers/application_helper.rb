@@ -53,4 +53,21 @@ module ApplicationHelper
     classes << "is-active" if current_sort == sort_key && current_direction == direction
     classes.join(" ")
   end
+
+  def youtube_video_id(url)
+    YoutubeUrlParser.video_id(url)
+  end
+
+  def youtube_embed_url(url)
+    YoutubeUrlParser.embed_url(url)
+  end
+
+  def youtube_thumbnail_url(url)
+    YoutubeUrlParser.thumbnail_url(url)
+  end
+
+  def youtube_watch_url(url)
+    video_id = youtube_video_id(url)
+    video_id.present? ? "https://www.youtube.com/watch?v=#{video_id}" : url
+  end
 end

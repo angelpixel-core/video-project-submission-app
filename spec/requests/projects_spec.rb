@@ -223,12 +223,78 @@ RSpec.describe "Projects requests" do
     expect(project.status).to eq("in_progress")
   end
 
+  it "accepts a pending project asynchronously" do
+    project = Project.create!(client: Client.find_by!(email: "client@example.com"), pm: PM.find_by!(email: "pm@example.com"), name: "Project Async", raw_footage_url: "https://example.com/async.mov", status: :pending)
+
+    patch accept_project_path(project), headers: { "X-PM-Async-Action" => "1" }
+
+    expect(response).to have_http_status(:no_content)
+
+    project.reload
+    expect(project.status).to eq("in_progress")
+  end
+
+  it "rejects stale asynchronous pm row actions" do
+    project = Project.create!(client: Client.find_by!(email: "client@example.com"), pm: PM.find_by!(email: "pm@example.com"), name: "Project Async Stale", raw_footage_url: "https://example.com/stale.mov", status: :pending)
+
+    patch accept_project_path(project), headers: { "X-PM-Async-Action" => "1" }
+    patch accept_project_path(project), headers: { "X-PM-Async-Action" => "1" }
+
+    expect(response).to have_http_status(:conflict)
+    expect(project.reload.status).to eq("in_progress")
+  end
+
   it "completes an in-progress project as the pm" do
     project = Project.create!(client: Client.find_by!(email: "client@example.com"), pm: PM.find_by!(email: "pm@example.com"), name: "Project Active", raw_footage_url: "https://example.com/active.mov", status: :in_progress)
 
     patch complete_project_path(project)
 
     expect(response).to redirect_to(projects_path)
+
+    project.reload
+    expect(project.status).to eq("completed")
+  end
+
+  it "creates a client notification when a pending project is accepted" do
+    client = Client.find_by!(email: "client@example.com")
+    pm = PM.find_by!(email: "pm@example.com")
+    project = Project.create!(client: client, pm: pm, name: "Project Client Update", raw_footage_url: "https://example.com/client-update.mov", status: :pending)
+
+    expect do
+      patch accept_project_path(project)
+    end.to change(Notification, :count).by(1)
+
+    notification = Notification.order(:created_at).last
+
+    expect(notification.client).to eq(client)
+    expect(notification.pm).to be_nil
+    expect(notification.kind).to eq("project_accepted")
+    expect(notification.body).to include("accepted and is now in progress")
+  end
+
+  it "creates a client notification when an in-progress project is completed" do
+    client = Client.find_by!(email: "client@example.com")
+    pm = PM.find_by!(email: "pm@example.com")
+    project = Project.create!(client: client, pm: pm, name: "Project Client Complete", raw_footage_url: "https://example.com/client-complete.mov", status: :in_progress)
+
+    expect do
+      patch complete_project_path(project)
+    end.to change(Notification, :count).by(1)
+
+    notification = Notification.order(:created_at).last
+
+    expect(notification.client).to eq(client)
+    expect(notification.pm).to be_nil
+    expect(notification.kind).to eq("project_completed")
+    expect(notification.body).to include("has been completed")
+  end
+
+  it "completes an in-progress project asynchronously" do
+    project = Project.create!(client: Client.find_by!(email: "client@example.com"), pm: PM.find_by!(email: "pm@example.com"), name: "Project Async Complete", raw_footage_url: "https://example.com/complete.mov", status: :in_progress)
+
+    patch complete_project_path(project), headers: { "X-PM-Async-Action" => "1" }
+
+    expect(response).to have_http_status(:no_content)
 
     project.reload
     expect(project.status).to eq("completed")
