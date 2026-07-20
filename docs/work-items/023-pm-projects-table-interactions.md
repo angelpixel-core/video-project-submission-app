@@ -25,6 +25,10 @@ title: PM Projects Table Interactions
 
 - [ ] Add pagination, column sorting, and non-reloading row actions to the PM projects table.
 
+## Decision Link
+
+- See `docs/decisions/08-pm-row-actions-async-refresh.md` for the chosen async refresh strategy and concurrency approach.
+
 ## Scope
 
 - Paginate the PM projects table with 10 records per page.
@@ -58,6 +62,7 @@ title: PM Projects Table Interactions
 
 - `docs/work-items/index.md`
 - `docs/work-items/022-pm-projects-table.md`
+- `docs/decisions/08-pm-row-actions-async-refresh.md`
 
 ## Affected Ops
 
@@ -89,4 +94,4 @@ title: PM Projects Table Interactions
 
 - Prefer server-side pagination/sorting over client-only sorting.
 - Keep the PM table as the source of truth for realtime updates.
-- If Hotwire is used, prefer Turbo Streams for row replacement/insertion.
+- Use the documented async refresh strategy instead of introducing Turbo Streams for this work item.

@@ -20,3 +20,4 @@ Use this folder for architecture and implementation decisions that support Sprin
 - [x] [Render Infrastructure Target](./05-render-infrastructure-target.md)
 - [x] [Database Engine Matrix](./06-database-engine-matrix.md)
 - [x] [Infrastructure as Code Strategy](./07-infrastructure-as-code-strategy.md)
+- [x] [PM Row Actions Async Refresh](./08-pm-row-actions-async-refresh.md)
