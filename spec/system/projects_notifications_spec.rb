@@ -58,7 +58,7 @@ RSpec.describe "PM notifications", type: :system, js: true do
     expect(notification.reload.read_at).to be_present
   end
 
-  it "shows pm workspace project actions" do
+  it "updates pm workspace project actions without a full reload" do
     client = Client.find_by!(email: "client@example.com")
     pm = PM.find_by!(email: "pm@example.com")
     project = Project.create!(client: client, pm: pm, name: "Project Beta", raw_footage_url: "https://example.com/beta.mov", status: :pending)
@@ -67,6 +67,8 @@ RSpec.describe "PM notifications", type: :system, js: true do
     visit projects_path
 
     switch_workspace_to("PM")
+
+    page.execute_script("window.__pmActionSentinel = 1")
 
     expect(page).to have_content("PM WORKSPACE")
     expect(page).to have_content("Default PM projects")
@@ -77,6 +79,23 @@ RSpec.describe "PM notifications", type: :system, js: true do
     expect(page).to have_css("tbody#pm-projects-table-body tr", text: "Project Beta")
     expect(page).to have_content("$500.00")
     expect(page).to have_button("Aceptar proyecto")
+    expect(page).not_to have_button("Marcar como completado")
+
+    click_button "Aceptar proyecto"
+
+    expect(page.evaluate_script("window.__pmActionSentinel")).to eq(1)
+    expect(page).to have_current_path(projects_path, ignore_query: false)
+    expect(page).to have_css("tbody#pm-projects-table-body tr", text: "Project Beta")
+    expect(page).to have_content("EN PROGRESO")
+    expect(page).to have_button("Marcar como completado")
+
+    click_button "Marcar como completado"
+
+    expect(page.evaluate_script("window.__pmActionSentinel")).to eq(1)
+    expect(page).to have_current_path(projects_path, ignore_query: false)
+    expect(page).to have_css("tbody#pm-projects-table-body tr", text: "Project Beta")
+    expect(page).to have_content("COMPLETADO")
+    expect(page).not_to have_button("Aceptar proyecto")
     expect(page).not_to have_button("Marcar como completado")
   end
 

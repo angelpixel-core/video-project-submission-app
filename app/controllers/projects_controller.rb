@@ -114,22 +114,71 @@ class ProjectsController < ApplicationController
   public
 
   def accept
-    return redirect_to(projects_path, alert: "Only pending projects can be accepted.") unless @pm_project.may_accept?
+    success = perform_pm_row_action(
+      event: :accept,
+      success_notice: "Project accepted.",
+      stale_alert: "Only pending projects can be accepted."
+    ) do
+      @pm_project.accept!
+      @pm_project.notifications.unread.update_all(read_at: Time.current)
+    end
 
-    @pm_project.accept!
-    @pm_project.notifications.unread.update_all(read_at: Time.current)
-    Notification.broadcast_refresh_for(@pm_project.pm)
-    redirect_to projects_path, notice: "Project accepted."
+    Notification.broadcast_refresh_for(@pm_project.pm) if success
   end
 
   def complete
-    return redirect_to(projects_path, alert: "Only in-progress projects can be completed.") unless @pm_project.may_complete?
-
-    @pm_project.complete!
-    redirect_to projects_path, notice: "Project completed."
+    perform_pm_row_action(
+      event: :complete,
+      success_notice: "Project completed.",
+      stale_alert: "Only in-progress projects can be completed."
+    ) do
+      @pm_project.complete!
+    end
   end
 
   private
+
+  def perform_pm_row_action(event:, success_notice:, stale_alert:)
+    success = false
+
+    @pm_project.with_lock do
+      unless @pm_project.public_send("may_#{event}?")
+        respond_pm_row_action_stale(stale_alert)
+        next
+      end
+
+      yield
+      success = true
+    end
+
+    return false unless success
+
+    respond_pm_row_action_success(success_notice)
+    true
+  rescue AASM::InvalidTransition, ActiveRecord::RecordInvalid
+    respond_pm_row_action_stale(stale_alert)
+    false
+  end
+
+  def respond_pm_row_action_success(success_notice)
+    if pm_async_action_request?
+      head :no_content
+    else
+      redirect_to projects_path, notice: success_notice
+    end
+  end
+
+  def respond_pm_row_action_stale(stale_alert)
+    if pm_async_action_request?
+      head :conflict
+    else
+      redirect_to projects_path, alert: stale_alert
+    end
+  end
+
+  def pm_async_action_request?
+    request.headers["X-PM-Async-Action"] == "1"
+  end
 
   def sync_project_selections(project, selections)
     project.video_type_selections.delete_all
