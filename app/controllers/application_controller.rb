@@ -2,7 +2,7 @@ class ApplicationController < ActionController::Base
   # Only allow modern browsers supporting webp images, web push, badges, CSS nesting, and CSS :has.
   allow_browser versions: :modern
 
-  helper_method :current_client, :default_pm, :unread_notifications
+  helper_method :current_client, :default_pm, :unread_notifications, :unread_client_notifications
 
   private
 
@@ -20,5 +20,9 @@ class ApplicationController < ActionController::Base
 
   def unread_notifications
     @unread_notifications ||= default_pm.notifications.unread.includes(project: :client).order(created_at: :desc)
+  end
+
+  def unread_client_notifications
+    @unread_client_notifications ||= current_client.notifications.unread.includes(project: :pm).order(created_at: :desc)
   end
 end

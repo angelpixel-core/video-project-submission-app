@@ -5,7 +5,7 @@ export default class extends Controller {
     event.preventDefault()
 
     const form = event.currentTarget
-    const item = form.closest(".pm-notification-item")
+    const item = form.closest("[data-notification-item]")
     const token = document.querySelector('meta[name="csrf-token"]')?.content
 
     try {

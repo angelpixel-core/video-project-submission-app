@@ -16,11 +16,13 @@ Rails.application.routes.draw do
   root "projects#index"
   resource :profile, only: %i[show], controller: "profile"
 
+  resources :client_notifications, only: %i[update]
+  resources :notifications, only: %i[update]
+
   resources :projects, only: %i[index show new edit update] do
     member do
       patch :accept
       patch :complete
     end
   end
-  resources :notifications, only: %i[update]
 end

@@ -14,7 +14,7 @@ depends_on:
   - in-app-pm-notifications
 order: 28
 phase: work-items
-status: pending
+status: done
 title: Client Notifications and Toasts
 ---
 
@@ -22,7 +22,7 @@ title: Client Notifications and Toasts
 
 ## Goal
 
-- [ ] Add persistent client notifications with floating toast cards and an inbox dropdown.
+- [x] Add persistent client notifications with floating toast cards and an inbox dropdown.
 
 ## Scope
 
@@ -42,16 +42,16 @@ title: Client Notifications and Toasts
 
 ## Implementation Plan
 
-- [ ] `app/models/notification.rb` - generalize the recipient and broadcast behavior.
-- [ ] `app/models/client.rb` - expose client notifications.
-- [ ] `app/controllers/client_notifications_controller.rb` or equivalent - mark client notifications as read.
-- [ ] `app/channels/client_notification_channel.rb` - stream client notification refreshes.
-- [ ] `app/frontend/channels/client_notification_channel.js` - subscribe and refresh the client inbox/toasts.
-- [ ] `app/frontend/lib/` or equivalent - share the refresh helper between PM and client inboxes.
-- [ ] `app/views/layouts/application.html.erb` - add the client campana in the navbar.
-- [ ] `app/views/projects/` or equivalent - render client toast/inbox partials.
-- [ ] `spec/requests/` - verify persistence, acknowledgment, and recipient scoping.
-- [ ] `spec/system/` - verify dropdown, badge, toast rendering, and read-state updates.
+- [x] `app/models/notification.rb` - generalize the recipient and broadcast behavior.
+- [x] `app/models/client.rb` - expose client notifications.
+- [x] `app/controllers/client_notifications_controller.rb` or equivalent - mark client notifications as read.
+- [x] `app/channels/client_notification_channel.rb` - stream client notification refreshes.
+- [x] `app/frontend/channels/client_notification_channel.js` - subscribe and refresh the client inbox/toasts.
+- [x] `app/frontend/lib/` or equivalent - share the refresh helper between PM and client inboxes.
+- [x] `app/views/layouts/application.html.erb` - add the client campana in the navbar.
+- [x] `app/views/projects/` or equivalent - render client toast/inbox partials.
+- [x] `spec/requests/` - verify persistence, acknowledgment, and recipient scoping.
+- [x] `spec/system/` - verify dropdown, badge, toast rendering, and read-state updates.
 
 ## Affected Docs
 
@@ -74,17 +74,17 @@ title: Client Notifications and Toasts
 
 ## Checklist
 
-- [ ] Client notifications are persisted and unread by default.
-- [ ] The client sees floating toast cards for new notifications.
-- [ ] The client sees an inbox dropdown with unread count.
-- [ ] The client can mark notifications as read.
-- [ ] PM notifications continue to work.
+- [x] Client notifications are persisted and unread by default.
+- [x] The client sees floating toast cards for new notifications.
+- [x] The client sees an inbox dropdown with unread count.
+- [x] The client can mark notifications as read.
+- [x] PM notifications continue to work.
 
 ## Validation
 
-- [ ] Request specs verify client notification persistence and read state.
-- [ ] System specs verify the client dropdown and toasts render.
-- [ ] System specs verify acknowledgement does not navigate away.
+- [x] Request specs verify client notification persistence and read state.
+- [x] System specs verify the client dropdown and toasts render.
+- [x] System specs verify acknowledgement does not navigate away.
 
 ## Notes
 

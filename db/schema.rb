@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_15_190000) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_20_120000) do
   create_table "clients", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "email", null: false
@@ -21,16 +21,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_15_190000) do
 
   create_table "notifications", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.text "body", null: false
+    t.bigint "client_id"
     t.datetime "created_at", null: false
     t.datetime "delivered_at"
     t.string "kind", null: false
-    t.bigint "pm_id", null: false
+    t.bigint "pm_id"
     t.bigint "project_id", null: false
     t.datetime "read_at"
     t.datetime "updated_at", null: false
+    t.index ["client_id"], name: "index_notifications_on_client_id"
     t.index ["kind"], name: "index_notifications_on_kind"
     t.index ["pm_id"], name: "index_notifications_on_pm_id"
     t.index ["project_id"], name: "index_notifications_on_project_id"
+    t.check_constraint "((`pm_id` is not null) and (`client_id` is null)) or ((`pm_id` is null) and (`client_id` is not null))", name: "notifications_single_recipient"
   end
 
   create_table "pms", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
@@ -75,6 +78,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_15_190000) do
     t.index ["name"], name: "index_video_types_on_name", unique: true
   end
 
+  add_foreign_key "notifications", "clients"
   add_foreign_key "notifications", "pms"
   add_foreign_key "notifications", "projects"
   add_foreign_key "projects", "clients"

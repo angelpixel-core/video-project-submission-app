@@ -152,4 +152,4 @@ Work items are implementation documents. Each one should map back to the docs it
 
 ## 28
 
-- [ ] [Client Notifications and Toasts](./028-client-notifications-persistent-toasts.md)
+- [x] [Client Notifications and Toasts](./028-client-notifications-persistent-toasts.md)

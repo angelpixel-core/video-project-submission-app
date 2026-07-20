@@ -121,6 +121,10 @@ class ProjectsController < ApplicationController
     ) do
       @pm_project.accept!
       @pm_project.notifications.unread.update_all(read_at: Time.current)
+      create_client_status_notification!(
+        kind: "project_accepted",
+        body: "Your project #{@pm_project.name.presence || 'Untitled project'} was accepted and is now in progress."
+      )
     end
 
     Notification.broadcast_refresh_for(@pm_project.pm) if success
@@ -133,6 +137,10 @@ class ProjectsController < ApplicationController
       stale_alert: "Only in-progress projects can be completed."
     ) do
       @pm_project.complete!
+      create_client_status_notification!(
+        kind: "project_completed",
+        body: "Your project #{@pm_project.name.presence || 'Untitled project'} has been completed."
+      )
     end
   end
 
@@ -178,6 +186,15 @@ class ProjectsController < ApplicationController
 
   def pm_async_action_request?
     request.headers["X-PM-Async-Action"] == "1"
+  end
+
+  def create_client_status_notification!(kind:, body:)
+    Notification.create!(
+      project: @pm_project,
+      client: @pm_project.client,
+      kind: kind,
+      body: body
+    )
   end
 
   def sync_project_selections(project, selections)

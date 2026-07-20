@@ -255,6 +255,40 @@ RSpec.describe "Projects requests" do
     expect(project.status).to eq("completed")
   end
 
+  it "creates a client notification when a pending project is accepted" do
+    client = Client.find_by!(email: "client@example.com")
+    pm = PM.find_by!(email: "pm@example.com")
+    project = Project.create!(client: client, pm: pm, name: "Project Client Update", raw_footage_url: "https://example.com/client-update.mov", status: :pending)
+
+    expect do
+      patch accept_project_path(project)
+    end.to change(Notification, :count).by(1)
+
+    notification = Notification.order(:created_at).last
+
+    expect(notification.client).to eq(client)
+    expect(notification.pm).to be_nil
+    expect(notification.kind).to eq("project_accepted")
+    expect(notification.body).to include("accepted and is now in progress")
+  end
+
+  it "creates a client notification when an in-progress project is completed" do
+    client = Client.find_by!(email: "client@example.com")
+    pm = PM.find_by!(email: "pm@example.com")
+    project = Project.create!(client: client, pm: pm, name: "Project Client Complete", raw_footage_url: "https://example.com/client-complete.mov", status: :in_progress)
+
+    expect do
+      patch complete_project_path(project)
+    end.to change(Notification, :count).by(1)
+
+    notification = Notification.order(:created_at).last
+
+    expect(notification.client).to eq(client)
+    expect(notification.pm).to be_nil
+    expect(notification.kind).to eq("project_completed")
+    expect(notification.body).to include("has been completed")
+  end
+
   it "completes an in-progress project asynchronously" do
     project = Project.create!(client: Client.find_by!(email: "client@example.com"), pm: PM.find_by!(email: "pm@example.com"), name: "Project Async Complete", raw_footage_url: "https://example.com/complete.mov", status: :in_progress)
 

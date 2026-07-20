@@ -34,7 +34,7 @@ RSpec.describe "Role switcher", type: :system, js: true do
 
     expect(page).to have_css('.account-menu-trigger')
     nav_controls = page.all(".ms-lg-auto > .dropdown", visible: :all)
-    expect(nav_controls.first["id"]).to eq("pm-notifications-dropdown")
+    expect(nav_controls.map { |node| node["id"] }).to include("pm-notifications-dropdown", "client-notifications-dropdown")
     expect(nav_controls.last["class"]).to include("account-dropdown")
     expect(page).to have_content("New Order")
     expect(page).to have_content("Project Alpha")

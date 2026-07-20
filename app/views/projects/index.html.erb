@@ -113,22 +113,4 @@
       </div>
     </div>
   </div>
-
-  <div id="pm-notifications-panel" data-role-scope="pm" class="pm-notifications-toast-host position-fixed bottom-0 end-0 p-3 d-flex flex-column gap-3 align-items-end">
-    <% if unread_notifications.any? %>
-      <div class="visually-hidden" aria-live="polite">
-        <%= unread_notifications.size %> unread PM notifications
-      </div>
-
-      <div class="pm-notifications-stack d-flex flex-column gap-3 align-items-end w-100">
-        <div class="d-none d-lg-flex align-self-end badge text-bg-dark px-3 py-2 shadow-sm">
-          <%= unread_notifications.size %>
-        </div>
-
-        <div class="vstack gap-3 w-100 align-items-end">
-          <%= render partial: "notification", collection: unread_notifications, as: :notification %>
-        </div>
-      </div>
-    <% end %>
-  </div>
 </div>

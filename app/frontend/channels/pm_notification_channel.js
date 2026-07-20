@@ -9,7 +9,7 @@ export function subscribeToPMNotifications(consumer) {
     async received(data) {
       document.documentElement.dataset.pmNotificationsReceived = data?.type || "unknown"
 
-      if (data?.type === "pm_notifications_updated") {
+      if (data?.type === "notifications_updated") {
         await refreshPmWorkspace()
       }
     }

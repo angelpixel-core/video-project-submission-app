@@ -3,6 +3,7 @@ import "bootstrap/dist/js/bootstrap.bundle.min.js"
 import $ from "jquery"
 import { Application } from "@hotwired/stimulus"
 import consumer from "../channels/consumer"
+import { subscribeToClientNotifications } from "../channels/client_notification_channel"
 import { subscribeToPMNotifications } from "../channels/pm_notification_channel"
 import "./application.css"
 import PMProjectActionController from "../controllers/pm_project_action_controller"
@@ -22,5 +23,6 @@ application.register("pm-project-action", PMProjectActionController)
 application.register("secret-reveal", SecretRevealController)
 
 subscribeToPMNotifications(consumer)
+subscribeToClientNotifications(consumer)
 
 console.log("Vite Rails is ready")
