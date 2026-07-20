@@ -78,6 +78,7 @@ RSpec.describe "Project show comments", type: :system, js: true do
     using_session(:pm) do
       expect(page).to have_css("#project-comments", text: "Client realtime note")
       expect(page).to have_css('#pm-notifications-dropdown .pm-notifications-badge', text: "1")
+      expect(page).to have_no_css('#pm-notifications-panel .pm-notification-toast', text: "Client realtime note")
     end
   end
 

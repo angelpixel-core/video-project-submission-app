@@ -53,7 +53,10 @@ RSpec.describe Notification do
     pm = PM.create!(name: "PM", email: "pm@example.com")
     project = Project.create!(client: client, pm: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :in_progress)
 
-    expect(ActionCable.server).to receive(:broadcast).with("client_notifications", { type: "notifications_updated" })
+    expect(ActionCable.server).to receive(:broadcast).with(
+      "client_notifications",
+      hash_including(type: "notifications_updated", project_id: project.id, kind: "project_status_changed")
+    )
     described_class.create!(project: project, client: client, kind: "project_status_changed", body: "Project updated")
   end
 end

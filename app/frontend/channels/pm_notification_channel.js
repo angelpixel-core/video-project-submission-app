@@ -1,4 +1,5 @@
 import { refreshPmWorkspace } from "../lib/pm_workspace_refresh"
+import { shouldSuppressNotificationToast } from "../lib/workspace_notification_refresh"
 
 export function subscribeToPMNotifications(consumer) {
   return consumer.subscriptions.create({ channel: "PMNotificationChannel" }, {
@@ -10,7 +11,7 @@ export function subscribeToPMNotifications(consumer) {
       document.documentElement.dataset.pmNotificationsReceived = data?.type || "unknown"
 
       if (data?.type === "notifications_updated") {
-        await refreshPmWorkspace()
+        await refreshPmWorkspace({ suppressToast: shouldSuppressNotificationToast(data) })
       }
     }
   })

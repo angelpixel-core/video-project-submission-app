@@ -1,8 +1,8 @@
 import { refreshWorkspaceNotifications } from "./workspace_notification_refresh"
 
-export function refreshPmWorkspace() {
+export function refreshPmWorkspace({ suppressToast = false } = {}) {
   return refreshWorkspaceNotifications({
-    panelSelector: "#pm-notifications-panel",
+    panelSelector: suppressToast ? null : "#pm-notifications-panel",
     dropdownSelector: "#pm-notifications-dropdown",
     badgeSelector: ".pm-notifications-badge",
     menuListSelector: "#pm-notifications-menu-list",
@@ -10,9 +10,9 @@ export function refreshPmWorkspace() {
   })
 }
 
-export function forceRefreshPmWorkspace() {
+export function forceRefreshPmWorkspace({ suppressToast = false } = {}) {
   return refreshWorkspaceNotifications({
-    panelSelector: "#pm-notifications-panel",
+    panelSelector: suppressToast ? null : "#pm-notifications-panel",
     dropdownSelector: "#pm-notifications-dropdown",
     badgeSelector: ".pm-notifications-badge",
     menuListSelector: "#pm-notifications-menu-list",

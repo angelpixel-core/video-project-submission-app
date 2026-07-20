@@ -18,13 +18,20 @@ class Notification < ApplicationRecord
     update!(read_at: Time.current)
   end
 
-  def self.broadcast_refresh_for(recipient)
+  def self.broadcast_refresh_for(recipient, notification: nil)
     return unless recipient.present?
 
     stream_name = notification_stream_name(recipient)
     return unless stream_name.present?
 
-    ActionCable.server.broadcast(stream_name, { type: "notifications_updated" })
+    ActionCable.server.broadcast(
+      stream_name,
+      {
+        type: "notifications_updated",
+        project_id: notification&.project_id,
+        kind: notification&.kind
+      }
+    )
   end
 
   private
@@ -47,7 +54,7 @@ class Notification < ApplicationRecord
   end
 
   def broadcast_refresh
-    self.class.broadcast_refresh_for(recipient)
+    self.class.broadcast_refresh_for(recipient, notification: self)
   end
 
   def recipient_presence
