@@ -149,3 +149,7 @@ Work items are implementation documents. Each one should map back to the docs it
 ## 27
 
 - [ ] [Profile Avatar Storage](./027-profile-avatar-storage.md)
+
+## 28
+
+- [ ] [Client Notifications and Toasts](./028-client-notifications-persistent-toasts.md)
