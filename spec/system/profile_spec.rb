@@ -32,6 +32,26 @@ RSpec.describe "Profile page", type: :system, js: true do
     expect(page).to have_button("Copied")
   end
 
+  it "uploads an avatar image for the current client profile" do
+    visit profile_path
+
+    within("section.profile-card[data-role-scope='client']") do
+      attach_file "profile_avatar_client", Rails.root.join("spec/fixtures/files/avatar.svg")
+      click_button "Save avatar"
+    end
+
+    expect(page).to have_content("Profile updated.")
+    expect(page).to have_css("img.profile-avatar-image[alt='Client avatar']")
+
+    within("section.profile-card[data-role-scope='client']") do
+      check "Remove current avatar"
+      click_button "Save avatar"
+    end
+
+    expect(page).to have_no_css("img.profile-avatar-image[alt='Client avatar']")
+    expect(page).to have_css(".profile-avatar", text: "C")
+  end
+
   it "renders the pm profile when workspace mode is pm" do
     visit projects_path
 

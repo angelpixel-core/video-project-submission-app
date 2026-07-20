@@ -12,7 +12,7 @@ depends_on:
   - profile-read-only-view
 order: 27
 phase: work-items
-status: pending
+status: done
 title: Profile Avatar Storage
 ---
 
@@ -20,7 +20,7 @@ title: Profile Avatar Storage
 
 ## Goal
 
-- [ ] Add optional avatar persistence to the `/profile` page using `ActiveStorage`.
+- [x] Add optional avatar persistence to the `/profile` page using `ActiveStorage`.
 
 ## Scope
 
@@ -39,11 +39,11 @@ title: Profile Avatar Storage
 
 ## Implementation Plan
 
-- [ ] `ActiveStorage` setup for local development.
-- [ ] `app/models/` - attach avatar to the profile/user model.
-- [ ] `app/views/profile/show.html.erb` or equivalent - show current avatar and upload control.
-- [ ] `app/frontend/entrypoints/application.css` - style upload state and preview.
-- [ ] `spec/system/` - verify upload, replace, and fallback behavior.
+- [x] `ActiveStorage` setup for local development.
+- [x] `app/models/` - attach avatar to the profile/user model.
+- [x] `app/views/profile/show.html.erb` or equivalent - show current avatar and upload control.
+- [x] `app/frontend/entrypoints/application.css` - style upload state and preview.
+- [x] `spec/system/` - verify upload, replace, and fallback behavior.
 
 ## Affected Docs
 
@@ -60,16 +60,16 @@ title: Profile Avatar Storage
 
 ## Checklist
 
-- [ ] Avatar can be uploaded.
-- [ ] Avatar preview renders when present.
-- [ ] Placeholder renders when missing.
-- [ ] Profile page still matches the app shell.
+- [x] Avatar can be uploaded.
+- [x] Avatar preview renders when present.
+- [x] Placeholder renders when missing.
+- [x] Profile page still matches the app shell.
 
 ## Validation
 
-- [ ] System spec verifies upload and preview.
-- [ ] System spec verifies fallback placeholder.
-- [ ] System spec verifies replace/remove behavior.
+- [x] System spec verifies upload and preview.
+- [x] System spec verifies fallback placeholder.
+- [x] System spec verifies replace/remove behavior.
 
 ## Notes
 

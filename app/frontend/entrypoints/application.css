@@ -247,6 +247,11 @@ a:hover {
   box-shadow: 0 0.5rem 1.25rem rgba(31, 27, 22, 0.12);
 }
 
+.profile-avatar-image {
+  object-fit: cover;
+  padding: 0;
+}
+
 .profile-avatar--pm {
   background: linear-gradient(135deg, #3f6f8f, #5b4b8a);
 }
