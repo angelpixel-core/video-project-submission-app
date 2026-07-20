@@ -75,29 +75,6 @@ a:hover {
   color: #f9fafb;
 }
 
-.workspace-toggle.btn-outline-light {
-  color: #f9fafb;
-  border-color: #4b5563;
-}
-
-.workspace-toggle.btn-outline-light:hover,
-.workspace-toggle.btn-outline-light:focus {
-  color: #f9fafb;
-  background: rgba(255, 255, 255, 0.08);
-  border-color: #cbb6ff;
-}
-
-.workspace-toggle.btn-primary {
-  background: #5b4b8a;
-  border-color: #5b4b8a;
-}
-
-.workspace-toggle.btn-primary:hover,
-.workspace-toggle.btn-primary:focus {
-  background: #7a68b8;
-  border-color: #7a68b8;
-}
-
 .pm-notifications-trigger.btn-outline-light {
   background-color: #111827;
   color: #f9fafb;
@@ -144,6 +121,55 @@ a:hover {
 .pm-notifications-menu {
   max-height: min(32rem, calc(100vh - 7rem));
   overflow: auto;
+}
+
+.account-dropdown .dropdown-menu {
+  width: 18rem;
+}
+
+.account-menu-trigger.btn-outline-light {
+  width: 2.75rem;
+  height: 2.75rem;
+  padding: 0;
+  border-color: #4b5563;
+  background-color: #111827;
+  color: #f9fafb;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.account-menu-trigger.btn-outline-light:hover,
+.account-menu-trigger.btn-outline-light:focus,
+.account-menu-trigger.btn-outline-light:active,
+.account-menu-trigger.btn-outline-light.show,
+.account-menu-trigger.btn-outline-light:focus-visible {
+  color: #f9fafb;
+  background-color: #111827;
+  border-color: #cbb6ff;
+  box-shadow: 0 0 0 0.2rem rgba(122, 104, 184, 0.35);
+}
+
+.account-avatar-icon {
+  display: block;
+}
+
+.account-menu .dropdown-item,
+.account-menu .dropdown-item-text {
+  padding-top: 0.7rem;
+  padding-bottom: 0.7rem;
+}
+
+.account-menu .dropdown-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.account-menu .dropdown-item:hover,
+.account-menu .dropdown-item:focus {
+  background: #f4ecff;
 }
 
 .pm-notification-toast {

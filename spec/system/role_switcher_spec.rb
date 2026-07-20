@@ -32,24 +32,25 @@ RSpec.describe "Role switcher", type: :system, js: true do
   it "persists the selected workspace mode in session storage and swaps the visible UI" do
     visit projects_path
 
-    expect(page).to have_css('button.btn-primary', text: "Client")
+    expect(page).to have_css('.account-menu-trigger')
     expect(page).to have_content("New Order")
     expect(page).to have_content("Project Alpha")
 
-    click_button "PM"
+    find(".account-menu-trigger").click
+    click_button "Switch to PM"
 
     expect(page.evaluate_script("sessionStorage.getItem('workspace-mode')")).to eq("pm")
-    expect(page).to have_css('button.btn-primary', text: "PM")
     expect(page).to have_css('[data-role-scope="pm"]', visible: :visible)
     expect(page).to have_no_content("New Order")
     expect(page).to have_no_content("Project Alpha")
 
     visit new_project_path
 
-    expect(page).to have_css('button.btn-primary', text: "PM")
+    expect(page).to have_css('.account-menu-trigger')
     expect(page).to have_no_css('[data-role-scope="client"]', visible: :visible)
 
-    click_button "Client"
+    find(".account-menu-trigger").click
+    click_button "Switch to Client"
 
     expect(page.evaluate_script("sessionStorage.getItem('workspace-mode')")).to eq("client")
     expect(page).to have_css('[data-role-scope="client"]', visible: :visible)

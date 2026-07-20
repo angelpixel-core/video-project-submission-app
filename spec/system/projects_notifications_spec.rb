@@ -1,5 +1,10 @@
 require "rails_helper"
 
+def switch_workspace_to(mode)
+  find(".account-menu-trigger").click
+  click_button "Switch to #{mode}"
+end
+
 RSpec.describe "PM notifications", type: :system, js: true do
   include ActiveSupport::Testing::TimeHelpers
 
@@ -21,7 +26,7 @@ RSpec.describe "PM notifications", type: :system, js: true do
 
     visit projects_path
 
-    click_button "PM"
+    switch_workspace_to("PM")
     find("#pm-notifications-dropdown button").click
 
     expect(page).to have_css("#pm-notifications-dropdown .dropdown-menu.show")
@@ -38,7 +43,6 @@ RSpec.describe "PM notifications", type: :system, js: true do
 
     visit projects_path
 
-    click_button "PM"
     find("#pm-notifications-dropdown button").click
 
     within(first(".pm-notification-row", text: "Unread PM notification")) do
@@ -62,7 +66,7 @@ RSpec.describe "PM notifications", type: :system, js: true do
 
     visit projects_path
 
-    click_button "PM"
+    switch_workspace_to("PM")
 
     expect(page).to have_content("PM WORKSPACE")
     expect(page).to have_content("Default PM projects")
@@ -88,7 +92,7 @@ RSpec.describe "PM notifications", type: :system, js: true do
 
     visit projects_path(page: 2)
 
-    click_button "PM"
+    switch_workspace_to("PM")
 
     click_link "ID"
 
@@ -119,7 +123,7 @@ RSpec.describe "PM notifications", type: :system, js: true do
 
     visit projects_path
 
-    click_button "PM"
+    switch_workspace_to("PM")
 
     expect(page).to have_css("nav[aria-label='PM projects pagination']")
     expect(page).to have_link("2")
@@ -152,7 +156,7 @@ RSpec.describe "PM notifications realtime", type: :system, js: true do
 
     using_session(:pm) do
       visit projects_path
-      click_button "PM"
+      switch_workspace_to("PM")
 
       find("#pm-notifications-dropdown button").click
 
