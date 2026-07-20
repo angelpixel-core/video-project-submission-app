@@ -15,7 +15,14 @@ RSpec.describe Comment do
     pm = PM.create!(name: "PM", email: "pm@example.com")
     project = Project.create!(client: client, pm: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :in_progress)
 
-    expect(ActionCable.server).to receive(:broadcast).with("project_comments_#{project.id}", { type: "comments_updated" })
+    expect(ActionCable.server).to receive(:broadcast).with(
+      "project_comments_#{project.id}",
+      hash_including(
+        type: "comments_updated",
+        comment_count: 1,
+        comment_html: a_string_including("Hello")
+      )
+    )
     described_class.create!(project: project, author: client, body: "Hello")
   end
 end

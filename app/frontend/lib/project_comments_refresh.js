@@ -1,24 +1,15 @@
-let refreshPromise = null
+export function insertProjectComment(data) {
+  const commentsList = document.querySelector("#project-comments-list")
+  const commentsEmptyState = document.querySelector("#project-comments-empty")
+  const commentsCount = document.querySelector("#project-comments-count")
 
-export async function refreshProjectComments() {
-  if (refreshPromise) return refreshPromise
+  if (!commentsList || !data?.comment_html) return
 
-  refreshPromise = (async () => {
-    const currentComments = document.querySelector("#project-comments")
-    if (!currentComments) return
+  if (commentsEmptyState) commentsEmptyState.remove()
 
-    const response = await fetch(window.location.href, { headers: { Accept: "text/html" } })
-    if (!response.ok) return
+  commentsList.insertAdjacentHTML("beforeend", data.comment_html)
 
-    const html = await response.text()
-    const documentFragment = new DOMParser().parseFromString(html, "text/html")
-    const nextComments = documentFragment.querySelector("#project-comments")
-    if (nextComments) currentComments.outerHTML = nextComments.outerHTML
-  })()
-
-  try {
-    await refreshPromise
-  } finally {
-    refreshPromise = null
+  if (commentsCount && typeof data.comment_count === "number") {
+    commentsCount.textContent = String(data.comment_count)
   }
 }

@@ -68,16 +68,16 @@
           <p class="text-uppercase text-body-secondary small mb-1">Conversation</p>
           <h2 class="h5 mb-0">Comments</h2>
         </div>
-        <span class="badge text-bg-dark"><%= @comments.size %></span>
+        <span id="project-comments-count" class="badge text-bg-dark"><%= @comments.size %></span>
       </div>
 
-      <% if @comments.any? %>
-        <div class="vstack gap-3 mb-4">
+      <div id="project-comments-list" class="vstack gap-3 mb-4">
+        <% if @comments.any? %>
           <%= render partial: "comment", collection: @comments, as: :comment %>
-        </div>
-      <% else %>
-        <p class="text-body-secondary mb-4">No comments yet.</p>
-      <% end %>
+        <% else %>
+          <p id="project-comments-empty" class="text-body-secondary mb-4">No comments yet.</p>
+        <% end %>
+      </div>
 
       <%= render "comment_form", project: @project, comment: @comment %>
     </div>

@@ -1,4 +1,4 @@
-import { refreshProjectComments } from "../lib/project_comments_refresh"
+import { insertProjectComment } from "../lib/project_comments_refresh"
 
 export function subscribeToProjectComments(consumer) {
   const projectCommentsHost = document.querySelector("#project-comments")
@@ -17,7 +17,7 @@ export function subscribeToProjectComments(consumer) {
         document.documentElement.dataset.projectCommentsReceived = data?.type || "unknown"
 
         if (data?.type === "comments_updated") {
-          await refreshProjectComments()
+          insertProjectComment(data)
         }
       }
     }

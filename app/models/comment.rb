@@ -12,7 +12,17 @@ class Comment < ApplicationRecord
   def self.broadcast_refresh_for(project)
     return unless project.present?
 
-    ActionCable.server.broadcast("project_comments_#{project.id}", { type: "comments_updated" })
+    comment = project.comments.includes(:author).order(created_at: :desc).first
+    return unless comment.present?
+
+    ActionCable.server.broadcast(
+      "project_comments_#{project.id}",
+      {
+        type: "comments_updated",
+        comment_html: ApplicationController.render(partial: "projects/comment", locals: { comment: comment }),
+        comment_count: project.comments.count
+      }
+    )
   end
 
   private
