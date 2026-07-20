@@ -116,7 +116,7 @@ Work items are implementation documents. Each one should map back to the docs it
 
 ## 19
 
-- [ ] [Optional Realtime PM Notifications](./019-optional-realtime-pm-notifications.md)
+- [x] [Optional Realtime PM Notifications](./019-optional-realtime-pm-notifications.md)
 
 ## 20
 
