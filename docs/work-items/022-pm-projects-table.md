@@ -75,6 +75,7 @@ title: PM Projects Table
 - [x] Total budget matches the sum of selected video types and quantities.
 - [x] New client-created projects appear in the PM table in realtime.
 - [x] Client mode remains unchanged.
+- [x] The PM table card header keeps only the `Assigned projects` title.
 
 ## Validation
 
@@ -88,3 +89,4 @@ title: PM Projects Table
 - Prefer a table partial for each row rather than embedding complex row logic in the main index view.
 - Keep the realtime update aligned with the notification broadcast path to avoid duplicate refresh logic.
 - If the table grows too wide, keep it horizontally readable rather than collapsing into cards.
+- The PM header should avoid repeating the workspace eyebrow inside the card header.
