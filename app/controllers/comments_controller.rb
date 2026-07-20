@@ -6,6 +6,7 @@ class CommentsController < ApplicationController
     @comment.author = comment_author
 
     if @comment.save
+      create_comment_notification!(@comment)
       redirect_to project_path(@project, anchor: "project-comments"), notice: "Comment posted."
     else
       @comments = @project.comments.chronological.includes(:author)
@@ -25,5 +26,13 @@ class CommentsController < ApplicationController
 
   def comment_author
     comment_params[:author_role] == "pm" ? default_pm : current_client
+  end
+
+  def create_comment_notification!(comment)
+    if comment.author.is_a?(PM)
+      Notification.create!(project: @project, client: @project.client, kind: "comment_created", body: "New comment from PM on #{@project.name.presence || 'Untitled project'}.")
+    else
+      Notification.create!(project: @project, pm: @project.pm, kind: "comment_created", body: "New comment from client on #{@project.name.presence || 'Untitled project'}.")
+    end
   end
 end

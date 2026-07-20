@@ -26,6 +26,11 @@ RSpec.describe "Comments requests" do
     expect(comment.project).to eq(project)
     expect(comment.author).to eq(client)
     expect(comment.body).to eq("Client note")
+
+    notification = Notification.order(:created_at).last
+    expect(notification.client).to be_nil
+    expect(notification.pm).to eq(pm)
+    expect(notification.kind).to eq("comment_created")
   end
 
   it "creates a comment as the pm workspace" do
@@ -48,5 +53,10 @@ RSpec.describe "Comments requests" do
     expect(comment.project).to eq(project)
     expect(comment.author).to eq(pm)
     expect(comment.body).to eq("PM note")
+
+    notification = Notification.order(:created_at).last
+    expect(notification.pm).to be_nil
+    expect(notification.client).to eq(client)
+    expect(notification.kind).to eq("comment_created")
   end
 end

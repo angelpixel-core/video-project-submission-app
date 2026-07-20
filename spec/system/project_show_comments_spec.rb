@@ -48,6 +48,39 @@ RSpec.describe "Project show comments", type: :system, js: true do
     expect(page).to have_css("#project-comments .badge", text: "PM")
   end
 
+  it "refreshes comments and notifications across workspaces in realtime" do
+    client = Client.find_by!(email: "client@example.com")
+    pm = PM.find_by!(email: "pm@example.com")
+    project = Project.create!(
+      client: client,
+      pm: pm,
+      name: "Project Gamma",
+      raw_footage_url: "https://example.com/gamma.mov",
+      youtube_url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+      status: :in_progress
+    )
+
+    using_session(:pm) do
+      visit project_path(project)
+      switch_workspace_to("PM")
+
+      expect(page).to have_content("No comments yet.")
+      expect(page).to have_css('#pm-notifications-dropdown .pm-notifications-badge', text: "0")
+    end
+
+    using_session(:client) do
+      visit project_path(project)
+      fill_in "Message", with: "Client realtime note"
+      click_button "Post comment"
+      expect(page).to have_content("Comment posted.")
+    end
+
+    using_session(:pm) do
+      expect(page).to have_css("#project-comments", text: "Client realtime note")
+      expect(page).to have_css('#pm-notifications-dropdown .pm-notifications-badge', text: "1")
+    end
+  end
+
   it "shows a youtube preview on the client project card" do
     client = Client.find_by!(email: "client@example.com")
     pm = PM.find_by!(email: "pm@example.com")
