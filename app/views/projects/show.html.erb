@@ -52,7 +52,7 @@
         <dt class="col-sm-3 text-body-secondary">YouTube</dt>
         <dd class="col-sm-9">
           <% if @project.youtube_url.present? %>
-            <%= link_to @project.youtube_url, @project.youtube_url, target: "_blank", rel: "noopener" %>
+            <%= link_to youtube_watch_url(@project.youtube_url), youtube_watch_url(@project.youtube_url), target: "_blank", rel: "noopener" %>
           <% else %>
             <span class="text-body-secondary">No YouTube preview linked yet.</span>
           <% end %>

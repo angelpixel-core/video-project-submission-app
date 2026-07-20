@@ -65,4 +65,9 @@ module ApplicationHelper
   def youtube_thumbnail_url(url)
     YoutubeUrlParser.thumbnail_url(url)
   end
+
+  def youtube_watch_url(url)
+    video_id = youtube_video_id(url)
+    video_id.present? ? "https://www.youtube.com/watch?v=#{video_id}" : url
+  end
 end
