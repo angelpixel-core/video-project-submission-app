@@ -10,13 +10,24 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_20_120000) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_20_143000) do
   create_table "clients", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "email", null: false
     t.string "name", null: false
     t.datetime "updated_at", null: false
     t.index ["email"], name: "index_clients_on_email", unique: true
+  end
+
+  create_table "comments", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.bigint "author_id", null: false
+    t.string "author_type", null: false
+    t.text "body", null: false
+    t.datetime "created_at", null: false
+    t.bigint "project_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["author_type", "author_id"], name: "index_comments_on_author_type_and_author_id"
+    t.index ["project_id"], name: "index_comments_on_project_id"
   end
 
   create_table "notifications", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
@@ -52,6 +63,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_20_120000) do
     t.string "raw_footage_url"
     t.string "status", default: "draft", null: false
     t.datetime "updated_at", null: false
+    t.string "youtube_url"
     t.index ["client_id"], name: "index_projects_on_client_id"
     t.index ["pm_id"], name: "index_projects_on_pm_id"
     t.index ["status"], name: "index_projects_on_status"
@@ -78,6 +90,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_20_120000) do
     t.index ["name"], name: "index_video_types_on_name", unique: true
   end
 
+  add_foreign_key "comments", "projects"
   add_foreign_key "notifications", "clients"
   add_foreign_key "notifications", "pms"
   add_foreign_key "notifications", "projects"

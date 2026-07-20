@@ -24,5 +24,7 @@ Rails.application.routes.draw do
       patch :accept
       patch :complete
     end
+
+    resources :comments, only: %i[create]
   end
 end

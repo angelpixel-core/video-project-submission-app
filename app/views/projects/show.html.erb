@@ -1,6 +1,6 @@
 <% content_for :title, @project.name.presence || "Project details" %>
 
-<div class="container py-4" data-role-scope="pm">
+<div class="container py-4">
   <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
     <div>
       <p class="text-uppercase text-body-secondary mb-1">Project detail</p>
@@ -9,8 +9,19 @@
     <%= link_to "Back to projects", projects_path, class: "btn btn-outline-secondary" %>
   </div>
 
-  <div class="card shadow-sm border-0">
+  <div class="card shadow-sm border-0 mb-4">
     <div class="card-body p-4">
+      <% if youtube_embed_url(@project.youtube_url).present? %>
+        <div class="ratio ratio-16x9 rounded overflow-hidden bg-dark mb-4">
+          <iframe
+            src="<%= youtube_embed_url(@project.youtube_url) %>"
+            title="<%= @project.name.presence || "Project video" %>"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen
+          ></iframe>
+        </div>
+      <% end %>
+
       <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-start gap-3 mb-4">
         <div>
           <p class="text-uppercase text-body-secondary small mb-1">Status</p>
@@ -19,7 +30,7 @@
           </span>
         </div>
 
-        <div class="d-flex flex-wrap gap-2">
+        <div class="d-flex flex-wrap gap-2" data-role-scope="pm">
           <% if @project.pending? %>
             <%= button_to "Aceptar proyecto", accept_project_path(@project), method: :patch, class: "btn btn-outline-primary" %>
           <% elsif @project.in_progress? %>
@@ -37,23 +48,38 @@
 
         <dt class="col-sm-3 text-body-secondary">Raw footage</dt>
         <dd class="col-sm-9"><%= @project.raw_footage_url.presence || "No footage URL yet" %></dd>
-      </dl>
 
-      <div class="mt-4">
-        <p class="text-uppercase text-body-secondary small mb-2">Video types</p>
-        <% if @project.video_types.any? %>
-          <ul class="list-unstyled mb-0">
-            <% @project.video_type_selections.includes(:video_type).each do |selection| %>
-              <li class="d-flex justify-content-between gap-3 py-1">
-                <span><%= selection.video_type.name %></span>
-                <span class="text-body-secondary">Qty <%= selection.quantity %></span>
-              </li>
-            <% end %>
-          </ul>
-        <% else %>
-          <p class="mb-0 text-body-secondary">No selections recorded yet.</p>
-        <% end %>
+        <dt class="col-sm-3 text-body-secondary">YouTube</dt>
+        <dd class="col-sm-9">
+          <% if @project.youtube_url.present? %>
+            <%= link_to @project.youtube_url, @project.youtube_url, target: "_blank", rel: "noopener" %>
+          <% else %>
+            <span class="text-body-secondary">No YouTube preview linked yet.</span>
+          <% end %>
+        </dd>
+      </dl>
+    </div>
+  </div>
+
+  <div id="project-comments" class="card shadow-sm border-0">
+    <div class="card-body p-4">
+      <div class="d-flex justify-content-between align-items-center gap-3 mb-3">
+        <div>
+          <p class="text-uppercase text-body-secondary small mb-1">Conversation</p>
+          <h2 class="h5 mb-0">Comments</h2>
+        </div>
+        <span class="badge text-bg-dark"><%= @comments.size %></span>
       </div>
+
+      <% if @comments.any? %>
+        <div class="vstack gap-3 mb-4">
+          <%= render partial: "comment", collection: @comments, as: :comment %>
+        </div>
+      <% else %>
+        <p class="text-body-secondary mb-4">No comments yet.</p>
+      <% end %>
+
+      <%= render "comment_form", project: @project, comment: @comment %>
     </div>
   </div>
 </div>

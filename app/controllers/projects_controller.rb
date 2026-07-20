@@ -19,7 +19,9 @@ class ProjectsController < ApplicationController
   end
 
   def show
-    @project = default_pm.projects.includes(:client, video_type_selections: :video_type).find(params[:id])
+    @project = Project.includes(:client, :pm, comments: :author, video_type_selections: :video_type).find(params[:id])
+    @comments = @project.comments.chronological.includes(:author)
+    @comment = Comment.new
   end
 
   def new
@@ -55,7 +57,7 @@ class ProjectsController < ApplicationController
   end
 
   def project_attributes
-    params.require(:project).permit(:name, :raw_footage_url)
+    params.require(:project).permit(:name, :raw_footage_url, :youtube_url)
   end
 
   def parsed_selections

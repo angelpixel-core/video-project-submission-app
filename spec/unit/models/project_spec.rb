@@ -29,6 +29,15 @@ RSpec.describe Project do
     expect(project.errors[:raw_footage_url]).to be_present
   end
 
+  it "rejects invalid youtube preview urls" do
+    client = Client.create!(name: "Client", email: "client@example.com")
+    pm = PM.create!(name: "PM", email: "pm@example.com")
+    project = described_class.new(client: client, pm: pm, status: :draft, youtube_url: "https://example.com/video")
+
+    expect(project).not_to be_valid
+    expect(project.errors[:youtube_url]).to include("must be a valid YouTube URL")
+  end
+
   it "moves through the project lifecycle" do
     client = Client.create!(name: "Client", email: "client@example.com")
     pm = PM.create!(name: "PM", email: "pm@example.com")

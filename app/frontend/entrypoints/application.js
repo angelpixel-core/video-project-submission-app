@@ -9,6 +9,7 @@ import "./application.css"
 import PMProjectActionController from "../controllers/pm_project_action_controller"
 import RoleSwitchController from "../controllers/role_switch_controller"
 import NotificationActionController from "../controllers/notification_action_controller"
+import CommentFormController from "../controllers/comment_form_controller"
 import OrderFormController from "../controllers/order_form_controller"
 import SecretRevealController from "../controllers/secret_reveal_controller"
 
@@ -19,6 +20,7 @@ const application = Application.start()
 application.register("order-form", OrderFormController)
 application.register("role-switch", RoleSwitchController)
 application.register("notification-action", NotificationActionController)
+application.register("comment-form", CommentFormController)
 application.register("pm-project-action", PMProjectActionController)
 application.register("secret-reveal", SecretRevealController)
 
