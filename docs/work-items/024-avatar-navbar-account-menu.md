@@ -13,7 +13,7 @@ depends_on:
   - floating-pm-notifications
 order: 24
 phase: work-items
-status: pending
+status: done
 title: Avatar Navbar Account Menu
 ---
 
@@ -21,7 +21,7 @@ title: Avatar Navbar Account Menu
 
 ## Goal
 
-- [ ] Replace the textual `Client / PM` toggle with an avatar-based account menu in the top-right navbar.
+- [x] Replace the textual `Client / PM` toggle with an avatar-based account menu in the top-right navbar.
 
 ## Scope
 
@@ -43,10 +43,10 @@ title: Avatar Navbar Account Menu
 
 ## Implementation Plan
 
-- [ ] `app/views/layouts/application.html.erb` - replace the current role toggle with an avatar button and dropdown.
-- [ ] `app/frontend/entrypoints/application.css` - style the avatar, dropdown, and compact actions to match the navbar.
-- [ ] `app/frontend/controllers/` or equivalent - keep the menu interaction lightweight if needed.
-- [ ] `spec/system/` - verify the avatar button and dropdown render correctly in both modes.
+- [x] `app/views/layouts/application.html.erb` - replace the current role toggle with an avatar button and dropdown.
+- [x] `app/frontend/entrypoints/application.css` - style the avatar, dropdown, and compact actions to match the navbar.
+- [x] `app/frontend/controllers/` or equivalent - keep the menu interaction lightweight if needed.
+- [x] `spec/system/` - verify the avatar button and dropdown render correctly in both modes.
 
 ## Affected Docs
 
@@ -63,16 +63,16 @@ title: Avatar Navbar Account Menu
 
 ## Checklist
 
-- [ ] The header shows an avatar button instead of the text toggle.
-- [ ] The bell remains to the left of the avatar.
-- [ ] The avatar falls back to an initial when no image exists.
-- [ ] The dropdown exposes switch/profile/settings actions.
-- [ ] The header still matches the rest of the visual system.
+- [x] The header shows an avatar button instead of the text toggle.
+- [x] The bell remains to the left of the avatar.
+- [x] The avatar falls back to an initial when no image exists.
+- [x] The dropdown exposes switch/profile/settings actions.
+- [x] The header still matches the rest of the visual system.
 
 ## Validation
 
-- [ ] System spec verifies the avatar menu renders and opens.
-- [ ] System spec verifies the bell and avatar order in the navbar.
+- [x] System spec verifies the avatar menu renders and opens.
+- [x] System spec verifies the bell and avatar order in the navbar.
 
 ## Notes
 
