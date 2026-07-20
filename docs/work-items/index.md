@@ -141,3 +141,11 @@ Work items are implementation documents. Each one should map back to the docs it
 ## 25
 
 - [ ] [Profile and Avatar Uploads](./025-profile-avatar-uploads.md)
+
+## 26
+
+- [ ] [Profile Read-Only View](./026-profile-read-only-view.md)
+
+## 27
+
+- [ ] [Profile Avatar Storage](./027-profile-avatar-storage.md)
