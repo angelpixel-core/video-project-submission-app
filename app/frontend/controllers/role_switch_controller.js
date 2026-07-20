@@ -4,7 +4,7 @@ const STORAGE_KEY = "workspace-mode"
 const VALID_MODES = new Set(["client", "pm"])
 
 export default class extends Controller {
-  static targets = ["button"]
+  static targets = ["switchAction", "modeLabel"]
 
   connect() {
     this.mode = this.loadMode()
@@ -36,11 +36,14 @@ export default class extends Controller {
       // Session storage can be blocked in some browsers; the UI still works.
     }
 
-    this.buttonTargets.forEach((button) => {
-      const isActive = button.dataset.mode === nextMode
-      button.classList.toggle("btn-primary", isActive)
-      button.classList.toggle("btn-outline-primary", !isActive)
-      button.setAttribute("aria-pressed", String(isActive))
-    })
+    if (this.hasSwitchActionTarget) {
+      const nextTargetMode = nextMode === "client" ? "pm" : "client"
+      this.switchActionTarget.dataset.mode = nextTargetMode
+      this.switchActionTarget.textContent = `Switch to ${nextTargetMode === "pm" ? "PM" : "Client"}`
+    }
+
+    if (this.hasModeLabelTarget) {
+      this.modeLabelTarget.textContent = nextMode === "client" ? "Client workspace" : "PM workspace"
+    }
   }
 }

@@ -133,3 +133,11 @@ Work items are implementation documents. Each one should map back to the docs it
 ## 23
 
 - [ ] [PM Projects Table Interactions](./023-pm-projects-table-interactions.md)
+
+## 24
+
+- [ ] [Avatar Navbar Account Menu](./024-avatar-navbar-account-menu.md)
+
+## 25
+
+- [ ] [Profile and Avatar Uploads](./025-profile-avatar-uploads.md)
