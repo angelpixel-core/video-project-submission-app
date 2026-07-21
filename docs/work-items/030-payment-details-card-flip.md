@@ -1,0 +1,77 @@
+---
+id: payment-details-card-flip
+aliases: []
+tags:
+  - work-items
+  - client
+  - payment
+  - ui
+  - animation
+  - validation
+depends_on:
+  - sprint-0-client-views
+order: 30
+phase: work-items
+status: pending
+title: Payment Details Card Flip
+---
+
+# Payment Details Card Flip
+
+## Goal
+
+- [ ] Upgrade the payment modal with a card-flip interaction and field validations for simulated checkout.
+
+## Scope
+
+- Keep `billing email` as contact information, not as card data.
+- Animate a credit card front/back in the modal.
+- Flip the card when the CVC field receives focus.
+- Validate `name on card`, `card number`, `expiry`, and `CVC`.
+- Format the visible card input state as the user types.
+- Keep the implementation lightweight and avoid introducing a 3D/animation library unless absolutely necessary.
+
+## Operational Note
+
+- This is a UX-only payment step for the existing simulated checkout flow.
+- Prefer CSS 3D transforms plus Stimulus behavior over a heavy rendering library.
+- The flip should be driven by focus state, not by clicking the card.
+
+## Implementation Plan
+
+- [ ] Add a card visual inside the payment modal with front/back faces.
+- [ ] Flip the card on `focus` of the CVC field and restore it on blur.
+- [ ] Add field-level validation and formatting for card number, expiry, and CVC.
+- [ ] Keep the existing billing email field as a separate contact input.
+- [ ] Update the modal copy so users understand the payment details are simulated.
+- [ ] Add focused request/system coverage for the payment modal behavior.
+
+## Affected Docs
+
+- `docs/work-items/index.md`
+- `docs/sprints/00-foundation/04-client-views.md`
+
+## Affected Ops
+
+- `app/views/projects/_payment_modal.html.erb`
+- `app/frontend/controllers/order_form_controller.js`
+- `app/frontend/entrypoints/application.css`
+- `spec/system/` or `spec/requests/` for modal behavior coverage
+
+## Checklist
+
+- [ ] The payment modal includes a visual card front/back.
+- [ ] Focusing CVC flips the card to the back.
+- [ ] Blurring CVC returns the card to the front.
+- [ ] Card fields are validated and formatted.
+- [ ] Billing email remains a contact field.
+
+## Validation
+
+- [ ] The modal renders without layout regressions.
+- [ ] The flip animation works in the browser.
+- [ ] Validation errors surface clearly for invalid card data.
+
+## Notes
+
+- If the CSS-only approach becomes too brittle, consider a small animation helper before reaching for a full 3D library.

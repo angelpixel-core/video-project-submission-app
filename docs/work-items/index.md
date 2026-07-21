@@ -157,3 +157,7 @@ Work items are implementation documents. Each one should map back to the docs it
 ## 29
 
 - [x] [Raw Footage Provider Metadata](./029-raw-footage-provider-metadata.md)
+
+## 30
+
+- [ ] [Payment Details Card Flip](./030-payment-details-card-flip.md)
