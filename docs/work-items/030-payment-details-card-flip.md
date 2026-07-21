@@ -12,7 +12,7 @@ depends_on:
   - sprint-0-client-views
 order: 30
 phase: work-items
-status: pending
+status: in_progress
 title: Payment Details Card Flip
 ---
 
@@ -39,7 +39,7 @@ title: Payment Details Card Flip
 
 ## Implementation Plan
 
-- [ ] Add a card visual inside the payment modal with front/back faces.
+- [x] Add a card visual inside the payment modal with front/back faces.
 - [ ] Flip the card on `focus` of the CVC field and restore it on blur.
 - [ ] Add field-level validation and formatting for card number, expiry, and CVC.
 - [ ] Keep the existing billing email field as a separate contact input.
@@ -60,7 +60,7 @@ title: Payment Details Card Flip
 
 ## Checklist
 
-- [ ] The payment modal includes a visual card front/back.
+- [x] The payment modal includes a visual card front/back.
 - [ ] Focusing CVC flips the card to the back.
 - [ ] Blurring CVC returns the card to the front.
 - [ ] Card fields are validated and formatted.
@@ -74,4 +74,4 @@ title: Payment Details Card Flip
 
 ## Notes
 
-- If the CSS-only approach becomes too brittle, consider a small animation helper before reaching for a full 3D library.
+- The front/back card shell is already in place; the remaining slice is flip behavior plus field validation/formatting.
