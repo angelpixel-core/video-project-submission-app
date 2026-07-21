@@ -6,6 +6,7 @@ class Project < ApplicationRecord
 
   has_many :video_type_selections, dependent: :destroy
   has_many :video_types, through: :video_type_selections
+  has_many :payments, dependent: :destroy
   has_many :notifications, dependent: :destroy
   has_many :comments, dependent: :destroy
 
@@ -52,6 +53,10 @@ class Project < ApplicationRecord
 
   def submitted?
     pending? || in_progress? || completed?
+  end
+
+  def active_payment
+    payments.active.order(created_at: :desc).first
   end
 
   def raw_footage_metadata_hash

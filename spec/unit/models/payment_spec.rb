@@ -1,0 +1,74 @@
+require "rails_helper"
+
+RSpec.describe Payment do
+  it "is an ActiveRecord model" do
+    expect(described_class.superclass).to eq(ApplicationRecord)
+  end
+
+  it "belongs to a project and keeps historical payments while only one is active" do
+    client = Client.create!(name: "Client", email: "client@example.com")
+    pm = PM.create!(name: "PM", email: "pm@example.com")
+    project = Project.create!(client: client, pm: pm, status: :draft)
+
+    historical = described_class.create!(
+      project: project,
+      status: :succeeded,
+      provider: "fake",
+      idempotency_key: "payment-history-1",
+      amount_cents: 10_000,
+      currency: "usd"
+    )
+
+    active = described_class.create!(
+      project: project,
+      status: :pending,
+      provider: "fake",
+      idempotency_key: "payment-active-1",
+      amount_cents: 15_000,
+      currency: "usd"
+    )
+
+    expect(historical.project).to eq(project)
+    expect(active).to be_active
+    expect(project.active_payment).to eq(active)
+
+    duplicate_active = described_class.new(
+      project: project,
+      status: :processing,
+      provider: "fake",
+      idempotency_key: "payment-active-2",
+      amount_cents: 15_000,
+      currency: "usd"
+    )
+
+    expect(duplicate_active).not_to be_valid
+    expect(duplicate_active.errors[:base]).to include("Project already has an active payment")
+  end
+
+  it "rejects duplicate idempotency keys" do
+    client = Client.create!(name: "Client", email: "client@example.com")
+    pm = PM.create!(name: "PM", email: "pm@example.com")
+    project = Project.create!(client: client, pm: pm, status: :draft)
+
+    described_class.create!(
+      project: project,
+      status: :pending,
+      provider: "fake",
+      idempotency_key: "same-key",
+      amount_cents: 20_000,
+      currency: "usd"
+    )
+
+    duplicate = described_class.new(
+      project: project,
+      status: :succeeded,
+      provider: "fake",
+      idempotency_key: "same-key",
+      amount_cents: 20_000,
+      currency: "usd"
+    )
+
+    expect(duplicate).not_to be_valid
+    expect(duplicate.errors[:idempotency_key]).to be_present
+  end
+end
