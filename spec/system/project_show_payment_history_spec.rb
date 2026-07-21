@@ -80,6 +80,59 @@ RSpec.describe "Project show payment history", type: :system, js: true do
     expect(page).to have_css("#payment-history", text: "Webhook events and attempts")
     expect(page).to have_css("#payment-history", text: "payment.succeeded")
     expect(page).to have_css("#payment-history", text: "submitted")
-    expect(page).to have_css("#payment-history", text: "processed")
+    expect(page).to have_css("#payment-history", text: "PROCESSED")
+  end
+
+  it "shows confirmed when the payment has been successfully processed" do
+    client = Client.find_by!(email: "client@example.com")
+    pm = PM.find_by!(email: "pm@example.com")
+    project = Project.create!(client: client, pm: pm, name: "Project Beta", raw_footage_url: "https://example.com/raw.mov", status: :pending)
+    payment = Payment.create!(
+      project: project,
+      status: :processing,
+      provider: "fake",
+      idempotency_key: SecureRandom.uuid,
+      amount_cents: 50_000,
+      currency: "USD",
+      provider_reference: "fake-xyz789"
+    )
+
+    PaymentAttempt.create!(
+      payment: payment,
+      status: :submitted,
+      provider: payment.provider,
+      idempotency_key: payment.idempotency_key,
+      provider_reference: payment.provider_reference,
+      request_payload: { "payment_id" => payment.id },
+      response_payload: { "status" => "accepted" }
+    )
+
+    event = PaymentWebhookEvent.create!(
+      provider: "fake",
+      provider_event_id: "evt_456",
+      event_type: "payment.succeeded",
+      payload: {
+        "id" => "evt_456",
+        "type" => "payment.succeeded",
+        "data" => {
+          "payment_id" => payment.id,
+          "provider_reference" => payment.provider_reference,
+          "amount_cents" => payment.amount_cents
+        }
+      },
+      signature: "signature",
+      status: :received,
+      received_at: Time.current
+    )
+
+    Payments::ProcessWebhookEventJob.perform_now(event.id)
+
+    visit project_path(project)
+
+    switch_workspace_to("PM")
+
+    expect(page).to have_css("#payment-history", text: "succeeded")
+    expect(page).to have_css("#payment-history", text: "Confirmed")
+    expect(page).to have_css("#payment-history", text: payment.reload.confirmed_at.to_fs(:short))
   end
 end

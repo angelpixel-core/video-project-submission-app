@@ -21,12 +21,19 @@
               </div>
 
               <div class="text-md-end">
-                <span class="badge <%= payment.active? ? "text-bg-info" : payment.status == "succeeded" ? "text-bg-success" : payment.status == "failed" ? "text-bg-danger" : "text-bg-secondary" %> text-uppercase">
+                <span class="badge <%= payment.active? ? "text-bg-info" : payment.status == "succeeded" ? "text-bg-success" : payment.status == "failed" ? "text-bg-danger" : "text-bg-secondary" %> text-white text-uppercase">
                   <%= payment.status %>
                 </span>
                 <div class="small text-body-secondary mt-1">
                   <%= l(payment.created_at, format: :short) %>
                 </div>
+                <% if payment.confirmed_at.present? %>
+                  <div class="small text-success mt-1">Confirmed <%= l(payment.confirmed_at, format: :short) %></div>
+                <% elsif payment.failed_at.present? %>
+                  <div class="small text-danger mt-1">Failed <%= l(payment.failed_at, format: :short) %></div>
+                <% else %>
+                  <div class="small text-body-secondary mt-1">Awaiting confirmation</div>
+                <% end %>
               </div>
             </div>
 
@@ -43,7 +50,8 @@
                           <small class="text-body-secondary"><%= l(event.received_at, format: :short) %></small>
                         </div>
                         <div class="small text-body-secondary">
-                          Status: <%= event.status %> · Applied: <%= event.applied? ? "yes" : "no" %>
+                          <span class="badge <%= event.applied? ? "text-bg-success" : event.status == "failed" ? "text-bg-danger" : "text-bg-secondary" %> text-white text-uppercase me-2"><%= event.status %></span>
+                          Applied: <%= event.applied? ? "yes" : "no" %>
                         </div>
                         <% if event.error_message.present? %>
                           <div class="small text-danger mt-1"><%= event.error_message %></div>
@@ -68,6 +76,7 @@
                           <small class="text-body-secondary"><%= l(attempt.created_at, format: :short) %></small>
                         </div>
                         <div class="small text-body-secondary">
+                          <span class="badge <%= attempt.status == "succeeded" ? "text-bg-success" : attempt.status == "failed" ? "text-bg-danger" : "text-bg-secondary" %> text-white text-uppercase me-2"><%= attempt.status %></span>
                           Idempotency: <%= attempt.idempotency_key %>
                         </div>
                         <% if attempt.provider_reference.present? %>
