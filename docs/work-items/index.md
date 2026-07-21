@@ -176,7 +176,7 @@ Work items are implementation documents. Each one should map back to the docs it
 
 ## 34
 
-- [ ] [Payment Event Handler Pipeline](./034-payment-event-handler-pipeline.md)
+- [x] [Payment Event Handler Pipeline](./034-payment-event-handler-pipeline.md)
 
 ## 35
 
