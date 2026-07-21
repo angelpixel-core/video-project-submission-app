@@ -168,7 +168,7 @@ Work items are implementation documents. Each one should map back to the docs it
 
 ## 32
 
-- [ ] [Fake Payment Provider Adapter](./032-payment-provider-fake.md)
+- [x] [Fake Payment Provider Adapter](./032-payment-provider-fake.md)
 
 ## 33
 
