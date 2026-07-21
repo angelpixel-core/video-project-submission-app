@@ -103,4 +103,22 @@ RSpec.describe "Project show comments", type: :system, js: true do
     expect(page).to have_content("PROJECT DETAIL")
     expect(page).to have_content("Comments")
   end
+
+  it "shows a twitch preview on the project detail page" do
+    client = Client.find_by!(email: "client@example.com")
+    pm = PM.find_by!(email: "pm@example.com")
+    project = Project.create!(
+      client: client,
+      pm: pm,
+      name: "Project Twitch",
+      raw_footage_url: "https://www.twitch.tv/videos/2820449804",
+      status: :in_progress
+    )
+
+    visit project_path(project)
+
+    expect(page).to have_css("iframe[src*='player.twitch.tv']")
+    expect(page).to have_css("iframe[src*='video=v2820449804']")
+    expect(page).to have_content("Raw footage")
+  end
 end

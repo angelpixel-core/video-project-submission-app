@@ -1,10 +1,11 @@
 require "uri"
 
 class RawFootageUrlParser
+  TWITCH_HOSTS = %w[twitch.tv www.twitch.tv player.twitch.tv].freeze
   VIMEO_HOSTS = %w[vimeo.com www.vimeo.com player.vimeo.com].freeze
 
   def self.metadata(url)
-    youtube_metadata(url) || vimeo_metadata(url)
+    youtube_metadata(url) || twitch_metadata(url) || vimeo_metadata(url)
   end
 
   def self.youtube_metadata(url)
@@ -34,6 +35,19 @@ class RawFootageUrlParser
     }
   end
 
+  def self.twitch_metadata(url)
+    video_id = twitch_video_id(url)
+    return unless video_id
+
+    {
+      "provider" => "twitch",
+      "video_id" => video_id,
+      "aspect_ratio" => "16 / 9",
+      "embed_url" => "https://player.twitch.tv/?video=v#{video_id}&parent={parent}",
+      "watch_url" => "https://www.twitch.tv/videos/#{video_id}"
+    }
+  end
+
   def self.vimeo_video_id(url)
     uri = parse(url)
     return unless uri&.host.present? && VIMEO_HOSTS.include?(uri.host.downcase)
@@ -47,6 +61,18 @@ class RawFootageUrlParser
     segments.reverse.find { |segment| segment.match?(/\A\d+\z/) }
   end
   private_class_method :vimeo_video_id
+
+  def self.twitch_video_id(url)
+    uri = parse(url)
+    return unless uri&.host.present? && TWITCH_HOSTS.include?(uri.host.downcase)
+
+    segments = path_segments(uri.path)
+    return segments.second if segments.first == "videos" && segments.second&.match?(/\A\d+\z/)
+    return segments.second if segments.first == "video" && segments.second&.match?(/\A\d+\z/)
+
+    segments.find { |segment| segment.match?(/\A\d+\z/) }
+  end
+  private_class_method :twitch_video_id
 
   def self.parse(url)
     normalized_url = normalize(url)

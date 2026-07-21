@@ -23,6 +23,18 @@ RSpec.describe RawFootageUrlParser do
     )
   end
 
+  it "builds twitch metadata" do
+    metadata = described_class.metadata("https://www.twitch.tv/videos/2820449804")
+
+    expect(metadata).to include(
+      "provider" => "twitch",
+      "video_id" => "2820449804",
+      "aspect_ratio" => "16 / 9",
+      "embed_url" => "https://player.twitch.tv/?video=v2820449804&parent={parent}",
+      "watch_url" => "https://www.twitch.tv/videos/2820449804"
+    )
+  end
+
   it "builds vimeo metadata" do
     metadata = described_class.metadata("https://player.vimeo.com/video/123456789")
 

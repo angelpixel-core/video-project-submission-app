@@ -62,8 +62,11 @@ class Project < ApplicationRecord
     raw_footage_metadata_hash["provider"]
   end
 
-  def raw_footage_embed_url
-    raw_footage_metadata_hash["embed_url"]
+  def raw_footage_embed_url(parent_host: nil)
+    embed_url = raw_footage_metadata_hash["embed_url"]
+    return embed_url unless raw_footage_provider == "twitch"
+
+    embed_url&.gsub("{parent}", parent_host.presence || "localhost")
   end
 
   def raw_footage_thumbnail_url

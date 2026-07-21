@@ -28,7 +28,7 @@
       <% elsif project.raw_footage_embed_url.present? %>
         <div class="rounded-3 overflow-hidden bg-dark position-relative mb-3 raw-footage-preview-shell <%= 'is-portrait' if project.raw_footage_aspect_ratio == '9 / 16' %>" style="aspect-ratio: <%= project.raw_footage_aspect_ratio %>;">
           <iframe
-            src="<%= project.raw_footage_embed_url %>"
+            src="<%= project.raw_footage_embed_url(parent_host: request.host) %>"
             title="<%= project.name.presence || 'Project video' %>"
             allow="autoplay; fullscreen; picture-in-picture"
             allowfullscreen

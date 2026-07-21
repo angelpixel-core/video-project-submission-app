@@ -405,7 +405,12 @@ export default class extends Controller {
       return;
     }
 
-    const providerLabel = preview.provider === "vimeo" ? "Vimeo preview" : "YouTube preview";
+    const providerLabel =
+      preview.provider === "twitch"
+        ? "Twitch preview"
+        : preview.provider === "vimeo"
+          ? "Vimeo preview"
+          : "YouTube preview";
     const shellClasses = ["raw-footage-preview-shell"];
     if (preview.aspectRatio === "9 / 16") shellClasses.push("is-portrait");
 
@@ -436,6 +441,9 @@ export default class extends Controller {
 
     const youtube = this.parseYouTubeUrl(url);
     if (youtube) return youtube;
+
+    const twitch = this.parseTwitchUrl(url);
+    if (twitch) return twitch;
 
     return this.parseVimeoUrl(url);
   }
@@ -490,6 +498,28 @@ export default class extends Controller {
       aspectRatio: "16 / 9",
       embedUrl: `https://player.vimeo.com/video/${videoId}`,
       watchUrl: `https://vimeo.com/${videoId}`,
+    };
+  }
+
+  parseTwitchUrl(url) {
+    const host = url.host.toLowerCase();
+    const hosts = ["twitch.tv", "www.twitch.tv", "player.twitch.tv"];
+    if (!hosts.includes(host)) return null;
+
+    const segments = url.pathname.split("/").filter(Boolean);
+    const videoId =
+      segments[0] === "videos" && segments[1]
+        ? segments[1]
+        : segments.find((segment) => /^\d+$/.test(segment));
+
+    if (!videoId) return null;
+
+    return {
+      provider: "twitch",
+      videoId,
+      aspectRatio: "16 / 9",
+      embedUrl: `https://player.twitch.tv/?video=v${videoId}&parent=${window.location.hostname}`,
+      watchUrl: `https://www.twitch.tv/videos/${videoId}`,
     };
   }
 
