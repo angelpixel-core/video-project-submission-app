@@ -25,11 +25,11 @@ RSpec.describe "Payment modal card flip", type: :system, js: true do
     expect(page).to have_css(".payment-card-shell", visible: :all)
     expect(page).to have_no_css(".payment-card-shell.is-flipped", visible: :all)
 
-    find("#payment-card-cvc").click
+    find("#payment-card-cvc", visible: :all).click
 
     expect(page).to have_css(".payment-card-shell.is-flipped", visible: :all)
 
-    find("#payment-card-number").click
+    find("#payment-card-number", visible: :all).click
 
     expect(page).to have_no_css(".payment-card-shell.is-flipped", visible: :all)
   end

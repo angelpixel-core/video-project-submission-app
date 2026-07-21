@@ -21,10 +21,14 @@ export default class extends Controller {
     "paymentCardExpiryDisplay",
     "paymentCardCvcDisplay",
     "paymentName",
+    "paymentNameFeedback",
     "paymentEmail",
     "paymentCardNumber",
+    "paymentCardNumberFeedback",
     "paymentCardExpiry",
+    "paymentCardExpiryFeedback",
     "paymentCardCvc",
+    "paymentCardCvcFeedback",
     "finalize",
     "finalizeButton",
     "finalizeButtonLabel",
@@ -41,6 +45,8 @@ export default class extends Controller {
     this.suspendAutosave = false;
     this.isFinalizing = false;
     this.isPaymentCardFlipped = false;
+    this.paymentValidationAttempted = false;
+    this.paymentDetailsAreValid = false;
     this.rawFootageUrlIsValid = true;
     this.cart = this.loadDraftState();
     this.restoreInputs();
@@ -107,7 +113,9 @@ export default class extends Controller {
       this.cart.paymentName = this.paymentNameTarget.value;
     if (this.hasPaymentEmailTarget)
       this.cart.paymentEmail = this.paymentEmailTarget.value;
+    this.normalizePaymentInputs();
     this.validateRawFootageUrl();
+    this.validatePaymentFields();
     this.updatePaymentCardPreview();
     this.scheduleAutosave();
     this.renderCart();
@@ -137,6 +145,8 @@ export default class extends Controller {
     event.preventDefault();
 
     if (!this.canReviewProject() || this.isFinalizing) return;
+
+    if (!this.validatePaymentFields({ showErrors: true })) return;
 
     this.suspendAutosave = true;
     window.clearTimeout(this.autosaveTimer);
@@ -184,7 +194,9 @@ export default class extends Controller {
       this.cart.paymentName || this.paymentNameTarget.value;
     this.paymentEmailTarget.value =
       this.cart.paymentEmail || this.paymentEmailTarget.value;
+    this.normalizePaymentInputs();
     this.validateRawFootageUrl();
+    this.validatePaymentFields();
     this.updatePaymentCardPreview();
     this.renderCart();
     this.updateReviewButtonState();
@@ -373,7 +385,7 @@ export default class extends Controller {
   setFinalizeButtonEnabled(enabled) {
     if (!this.hasFinalizeButtonTarget || this.isFinalizing) return;
 
-    this.finalizeButtonTarget.disabled = !enabled;
+    this.finalizeButtonTarget.disabled = !enabled || !this.paymentDetailsAreValid;
   }
 
   canReviewProject() {
@@ -433,6 +445,128 @@ export default class extends Controller {
       this.paymentCardCvcDisplayTarget.textContent = cvc || "123";
 
     this.updatePaymentCardFlipState();
+  }
+
+  normalizePaymentInputs() {
+    if (this.hasPaymentCardNumberTarget) {
+      this.paymentCardNumberTarget.value = this.formatCardNumber(
+        this.paymentCardNumberTarget.value,
+      );
+    }
+
+    if (this.hasPaymentCardExpiryTarget) {
+      this.paymentCardExpiryTarget.value = this.formatCardExpiry(
+        this.paymentCardExpiryTarget.value,
+      );
+    }
+
+    if (this.hasPaymentCardCvcTarget) {
+      this.paymentCardCvcTarget.value = (this.paymentCardCvcTarget.value || "")
+        .replace(/\D/g, "")
+        .slice(0, 3);
+    }
+  }
+
+  validatePaymentFields(options = {}) {
+    const showErrors = options.showErrors === true;
+    if (showErrors) this.paymentValidationAttempted = true;
+
+    this.normalizePaymentInputs();
+
+    const name = (this.paymentNameTarget?.value || "").trim();
+    const numberDigits = (this.paymentCardNumberTarget?.value || "").replace(/\D/g, "");
+    const expiryValue = (this.paymentCardExpiryTarget?.value || "").trim();
+    const cvcDigits = (this.paymentCardCvcTarget?.value || "").replace(/\D/g, "");
+
+    const errors = {
+      name: !name ? "Name on card is required." : null,
+      number: this.validateCardNumber(numberDigits),
+      expiry: this.validateCardExpiry(expiryValue),
+      cvc: cvcDigits.length !== 3 ? "CVC must be 3 digits." : null,
+    };
+
+    this.setPaymentFieldFeedback("paymentName", errors.name, showErrors || !!name);
+    this.setPaymentFieldFeedback("paymentCardNumber", errors.number, showErrors || numberDigits.length > 0);
+    this.setPaymentFieldFeedback("paymentCardExpiry", errors.expiry, showErrors || expiryValue.length > 0);
+    this.setPaymentFieldFeedback("paymentCardCvc", errors.cvc, showErrors || cvcDigits.length > 0);
+
+    this.paymentDetailsAreValid = !Object.values(errors).some(Boolean);
+    this.updatePaymentCardPreview();
+    this.setFinalizeButtonEnabled(this.canReviewProject());
+
+    return this.paymentDetailsAreValid;
+  }
+
+  validatePaymentFieldsOnBlur() {
+    return this.validatePaymentFields({ showErrors: true });
+  }
+
+  validateCardNumber(numberDigits) {
+    if (numberDigits.length === 0) return "Card number is required.";
+    if (numberDigits.length !== 16) return "Card number must be 16 digits.";
+
+    const digits = numberDigits.split("").map((digit) => Number(digit));
+    const checksum = digits
+      .reverse()
+      .reduce((sum, digit, index) => {
+        let value = digit;
+        if (index % 2 === 1) {
+          value *= 2;
+          if (value > 9) value -= 9;
+        }
+        return sum + value;
+      }, 0);
+
+    return checksum % 10 === 0 ? null : "Card number is not valid.";
+  }
+
+  validateCardExpiry(expiryValue) {
+    if (expiryValue.length === 0) return "Expiry is required.";
+
+    const match = expiryValue.match(/^(\d{2})\/(\d{2})$/);
+    if (!match) return "Use MM/YY format.";
+
+    const month = Number(match[1]);
+    const year = Number(match[2]);
+    if (month < 1 || month > 12) return "Expiry month must be between 01 and 12.";
+
+    const now = new Date();
+    const currentYear = Number(String(now.getFullYear()).slice(-2));
+    const currentMonth = now.getMonth() + 1;
+
+    if (year < currentYear || (year === currentYear && month < currentMonth)) {
+      return "Card has expired.";
+    }
+
+    return null;
+  }
+
+  setPaymentFieldFeedback(field, message, show) {
+    const feedbackTarget = this[`${field}FeedbackTarget`];
+    const inputTarget = this[`${field}Target`];
+
+    if (!inputTarget) return;
+
+    inputTarget.classList.remove("is-valid", "is-invalid");
+    if (!show) {
+      if (feedbackTarget) feedbackTarget.textContent = "";
+      feedbackTarget?.classList.add("d-none");
+      return;
+    }
+
+    if (message) {
+      inputTarget.classList.add("is-invalid");
+      if (feedbackTarget) {
+        feedbackTarget.textContent = message;
+        feedbackTarget.classList.remove("d-none");
+      }
+    } else {
+      inputTarget.classList.add("is-valid");
+      if (feedbackTarget) {
+        feedbackTarget.textContent = "";
+        feedbackTarget.classList.add("d-none");
+      }
+    }
   }
 
   updatePaymentCardFlipState() {
