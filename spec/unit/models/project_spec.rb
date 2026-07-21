@@ -29,13 +29,27 @@ RSpec.describe Project do
     expect(project.errors[:raw_footage_url]).to be_present
   end
 
-  it "rejects invalid youtube preview urls" do
+  it "derives raw footage metadata for recognized urls" do
     client = Client.create!(name: "Client", email: "client@example.com")
     pm = PM.create!(name: "PM", email: "pm@example.com")
-    project = described_class.new(client: client, pm: pm, status: :draft, youtube_url: "https://example.com/video")
+    project = described_class.create!(client: client, pm: pm, status: :draft, raw_footage_url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ")
 
-    expect(project).not_to be_valid
-    expect(project.errors[:youtube_url]).to include("must be a valid YouTube URL")
+    expect(project.raw_footage_metadata_hash).to include(
+      "provider" => "youtube",
+      "video_id" => "dQw4w9WgXcQ"
+    )
+    expect(project.raw_footage_previewable?).to be(true)
+  end
+
+  it "derives vimeo metadata when the url is recognized" do
+    client = Client.create!(name: "Client", email: "client@example.com")
+    pm = PM.create!(name: "PM", email: "pm@example.com")
+    project = described_class.create!(client: client, pm: pm, status: :draft, raw_footage_url: "https://vimeo.com/123456789")
+
+    expect(project.raw_footage_metadata_hash).to include(
+      "provider" => "vimeo",
+      "video_id" => "123456789"
+    )
   end
 
   it "moves through the project lifecycle" do

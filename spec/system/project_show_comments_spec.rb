@@ -14,15 +14,14 @@ RSpec.describe "Project show comments", type: :system, js: true do
     VideoType.create!(name: "Highlight Reel", description: "Short edit", price_cents: 25_000, output_format: "mp4")
   end
 
-  it "shows a youtube embed and allows both workspaces to comment" do
+  it "shows a raw footage embed and allows both workspaces to comment" do
     client = Client.find_by!(email: "client@example.com")
     pm = PM.find_by!(email: "pm@example.com")
     project = Project.create!(
       client: client,
       pm: pm,
       name: "Project Alpha",
-      raw_footage_url: "https://example.com/raw.mov",
-      youtube_url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+      raw_footage_url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
       status: :in_progress
     )
 
@@ -55,8 +54,7 @@ RSpec.describe "Project show comments", type: :system, js: true do
       client: client,
       pm: pm,
       name: "Project Gamma",
-      raw_footage_url: "https://example.com/gamma.mov",
-      youtube_url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+      raw_footage_url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
       status: :in_progress
     )
 
@@ -82,15 +80,14 @@ RSpec.describe "Project show comments", type: :system, js: true do
     end
   end
 
-  it "shows a youtube preview on the client project card" do
+  it "shows a raw footage preview on the client project card" do
     client = Client.find_by!(email: "client@example.com")
     pm = PM.find_by!(email: "pm@example.com")
     Project.create!(
       client: client,
       pm: pm,
       name: "Project Beta",
-      raw_footage_url: "https://example.com/beta.mov",
-      youtube_url: "https://youtu.be/dQw4w9WgXcQ",
+      raw_footage_url: "https://youtu.be/dQw4w9WgXcQ",
       status: :pending
     )
 

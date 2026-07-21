@@ -153,3 +153,7 @@ Work items are implementation documents. Each one should map back to the docs it
 ## 28
 
 - [x] [Client Notifications and Toasts](./028-client-notifications-persistent-toasts.md)
+
+## 29
+
+- [x] [Raw Footage Provider Metadata](./029-raw-footage-provider-metadata.md)

@@ -11,10 +11,10 @@
 
   <div class="card shadow-sm border-0 mb-4">
     <div class="card-body p-4">
-      <% if youtube_embed_url(@project.youtube_url).present? %>
+      <% if @project.raw_footage_embed_url.present? %>
         <div class="ratio ratio-16x9 rounded overflow-hidden bg-dark mb-4">
           <iframe
-            src="<%= youtube_embed_url(@project.youtube_url) %>"
+            src="<%= @project.raw_footage_embed_url %>"
             title="<%= @project.name.presence || "Project video" %>"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             allowfullscreen
@@ -48,15 +48,6 @@
 
         <dt class="col-sm-3 text-body-secondary">Raw footage</dt>
         <dd class="col-sm-9"><%= @project.raw_footage_url.presence || "No footage URL yet" %></dd>
-
-        <dt class="col-sm-3 text-body-secondary">YouTube</dt>
-        <dd class="col-sm-9">
-          <% if @project.youtube_url.present? %>
-            <%= link_to youtube_watch_url(@project.youtube_url), youtube_watch_url(@project.youtube_url), target: "_blank", rel: "noopener" %>
-          <% else %>
-            <span class="text-body-secondary">No YouTube preview linked yet.</span>
-          <% end %>
-        </dd>
       </dl>
     </div>
   </div>

@@ -16,15 +16,24 @@
         </div>
       </div>
 
-      <% if youtube_thumbnail_url(project.youtube_url).present? %>
+      <% if project.raw_footage_thumbnail_url.present? %>
         <%= link_to project_path(project), class: "d-block text-reset text-decoration-none mb-3 youtube-preview" do %>
           <div class="ratio ratio-16x9 rounded-3 overflow-hidden bg-dark position-relative youtube-preview-shell">
-            <%= image_tag youtube_thumbnail_url(project.youtube_url), alt: "YouTube preview for #{project.name.presence || 'project'}", class: "w-100 h-100 object-fit-cover" %>
+            <%= image_tag project.raw_footage_thumbnail_url, alt: "YouTube preview for #{project.name.presence || 'project'}", class: "w-100 h-100 object-fit-cover" %>
             <div class="position-absolute top-50 start-50 translate-middle">
               <span class="btn btn-light rounded-pill px-3 shadow-sm">Play preview</span>
             </div>
           </div>
         <% end %>
+      <% elsif project.raw_footage_embed_url.present? %>
+        <div class="ratio ratio-16x9 rounded-3 overflow-hidden bg-dark position-relative mb-3">
+          <iframe
+            src="<%= project.raw_footage_embed_url %>"
+            title="<%= project.name.presence || 'Project video' %>"
+            allow="autoplay; fullscreen; picture-in-picture"
+            allowfullscreen
+          ></iframe>
+        </div>
       <% end %>
 
       <div class="mb-3">

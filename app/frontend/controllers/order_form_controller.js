@@ -6,8 +6,8 @@ export default class extends Controller {
     "form",
     "name",
     "rawFootageUrl",
-    "youtubeUrl",
     "rawFootageUrlFeedback",
+    "rawFootagePreview",
     "selectionsJson",
     "cartItems",
     "cartTotal",
@@ -94,7 +94,6 @@ export default class extends Controller {
   syncFields() {
     this.cart.name = this.nameTarget.value;
     this.cart.rawFootageUrl = this.rawFootageUrlTarget.value;
-    if (this.hasYoutubeUrlTarget) this.cart.youtubeUrl = this.youtubeUrlTarget.value;
     if (this.hasPaymentNameTarget)
       this.cart.paymentName = this.paymentNameTarget.value;
     if (this.hasPaymentEmailTarget)
@@ -161,9 +160,6 @@ export default class extends Controller {
     this.nameTarget.value = this.cart.name || this.nameTarget.value;
     this.rawFootageUrlTarget.value =
       this.cart.rawFootageUrl || this.rawFootageUrlTarget.value;
-    if (this.hasYoutubeUrlTarget) {
-      this.youtubeUrlTarget.value = this.cart.youtubeUrl || this.youtubeUrlTarget.value;
-    }
     this.paymentNameTarget.value =
       this.cart.paymentName || this.paymentNameTarget.value;
     this.paymentEmailTarget.value =
@@ -177,7 +173,6 @@ export default class extends Controller {
     const fallback = {
       name: "",
       rawFootageUrl: "",
-      youtubeUrl: "",
       paymentName: "",
       paymentEmail: "",
       items: [],
@@ -189,7 +184,6 @@ export default class extends Controller {
         ...fallback,
         name: this.nameTarget?.value || "",
         rawFootageUrl: this.rawFootageUrlTarget?.value || "",
-        youtubeUrl: this.hasYoutubeUrlTarget ? this.youtubeUrlTarget?.value || "" : "",
         paymentName: this.paymentNameTarget?.value || "",
         paymentEmail: this.paymentEmailTarget?.value || "",
         items: rawSelections
@@ -243,6 +237,7 @@ export default class extends Controller {
     }
 
     this.updateReviewButtonState();
+    this.updateRawFootagePreview();
   }
 
   scheduleAutosave() {
@@ -336,6 +331,7 @@ export default class extends Controller {
     }
 
     this.updateReviewButtonState();
+    this.updateRawFootagePreview();
     return isValid;
   }
 
@@ -396,6 +392,120 @@ export default class extends Controller {
     if (statusTarget)
       statusTarget.textContent = canReview ? "" : this.getReviewBlockReason();
     this.setFinalizeButtonEnabled(canReview);
+  }
+
+  updateRawFootagePreview() {
+    if (!this.hasRawFootagePreviewTarget) return;
+
+    const preview = this.parseRawFootageUrl(this.rawFootageUrlTarget.value);
+
+    if (!preview) {
+      this.rawFootagePreviewTarget.classList.remove("is-visible");
+      this.rawFootagePreviewTarget.innerHTML = "";
+      return;
+    }
+
+    const providerLabel = preview.provider === "vimeo" ? "Vimeo preview" : "YouTube preview";
+    const mediaMarkup = preview.thumbnailUrl
+      ? `<a href="${this.escapeAttribute(preview.watchUrl)}" target="_blank" rel="noopener" class="d-block position-relative raw-footage-preview-link">
+           <img src="${this.escapeAttribute(preview.thumbnailUrl)}" alt="${this.escapeAttribute(providerLabel)}" class="w-100 h-100 object-fit-cover raw-footage-preview-media" />
+           <span class="position-absolute top-50 start-50 translate-middle btn btn-light rounded-pill px-3 shadow-sm raw-footage-preview-play">Play preview</span>
+         </a>`
+      : `<iframe src="${this.escapeAttribute(preview.embedUrl)}" title="${this.escapeAttribute(providerLabel)}" class="raw-footage-preview-media" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>`;
+
+    this.rawFootagePreviewTarget.innerHTML = `
+      <div class="card border-0 shadow-sm raw-footage-preview-card">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center gap-3 mb-3">
+            <div>
+              <p class="text-uppercase text-body-secondary small mb-1">Live preview</p>
+              <h3 class="h6 mb-0">${this.escapeHtml(providerLabel)}</h3>
+            </div>
+            <span class="badge text-bg-primary">Recognized</span>
+          </div>
+          <div class="ratio ratio-16x9 rounded-3 overflow-hidden bg-dark raw-footage-preview-shell">
+            ${mediaMarkup}
+          </div>
+        </div>
+      </div>
+    `;
+    this.rawFootagePreviewTarget.classList.add("is-visible");
+  }
+
+  parseRawFootageUrl(value) {
+    const url = this.normalizeUrl(value);
+    if (!url || url.protocol !== "https:") return null;
+
+    const youtube = this.parseYouTubeUrl(url);
+    if (youtube) return youtube;
+
+    return this.parseVimeoUrl(url);
+  }
+
+  parseYouTubeUrl(url) {
+    const host = url.host.toLowerCase();
+    const hosts = ["youtube.com", "www.youtube.com", "m.youtube.com", "youtu.be", "www.youtu.be"];
+    if (!hosts.includes(host)) return null;
+
+    let videoId = null;
+    if (host === "youtu.be" || host === "www.youtu.be") {
+      videoId = url.pathname.split("/").filter(Boolean)[0] || null;
+    } else {
+      const params = new URLSearchParams(url.search);
+      videoId = params.get("v");
+      if (!videoId) {
+        const segments = url.pathname.split("/").filter(Boolean);
+        if (segments[0] === "embed" || segments[0] === "shorts") videoId = segments[1] || null;
+      }
+    }
+
+    if (!videoId) return null;
+
+    return {
+      provider: "youtube",
+      videoId,
+      embedUrl: `https://www.youtube-nocookie.com/embed/${videoId}`,
+      thumbnailUrl: `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`,
+      watchUrl: `https://www.youtube.com/watch?v=${videoId}`,
+    };
+  }
+
+  parseVimeoUrl(url) {
+    const host = url.host.toLowerCase();
+    const hosts = ["vimeo.com", "www.vimeo.com", "player.vimeo.com"];
+    if (!hosts.includes(host)) return null;
+
+    const segments = url.pathname.split("/").filter(Boolean);
+    const videoId =
+      host === "player.vimeo.com" && segments[0] === "video"
+        ? segments[1]
+        : [...segments].reverse().find((segment) => /^\d+$/.test(segment));
+
+    if (!videoId) return null;
+
+    return {
+      provider: "vimeo",
+      videoId,
+      embedUrl: `https://player.vimeo.com/video/${videoId}`,
+      watchUrl: `https://vimeo.com/${videoId}`,
+    };
+  }
+
+  normalizeUrl(value) {
+    const raw = (value || "").trim();
+    if (!raw) return null;
+
+    const normalized = raw.match(/^https?:\/\//i) ? raw : `https://${raw}`;
+
+    try {
+      return new URL(normalized);
+    } catch {
+      return null;
+    }
+  }
+
+  escapeAttribute(value) {
+    return this.escapeHtml(value).replace(/"/g, "&quot;");
   }
 
   escapeHtml(value) {

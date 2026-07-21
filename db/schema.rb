@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_20_150000) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_20_153000) do
   create_table "active_storage_attachments", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -88,6 +88,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_20_150000) do
     t.datetime "created_at", null: false
     t.string "name"
     t.bigint "pm_id", null: false
+    t.json "raw_footage_metadata"
     t.string "raw_footage_url"
     t.string "status", default: "draft", null: false
     t.datetime "updated_at", null: false
