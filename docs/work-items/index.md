@@ -164,7 +164,7 @@ Work items are implementation documents. Each one should map back to the docs it
 
 ## 31
 
-- [ ] [Payment Domain and Idempotency](./031-payment-domain-and-idempotency.md)
+- [x] [Payment Domain and Idempotency](./031-payment-domain-and-idempotency.md)
 
 ## 32
 

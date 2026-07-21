@@ -210,6 +210,10 @@ RSpec.describe "Projects requests" do
     expect(draft.status).to eq("pending")
     expect(draft.pm.email).to eq("pm@example.com")
     expect(draft.video_type_selections.count).to eq(1)
+    expect(draft.payments.count).to eq(1)
+    expect(draft.active_payment).to be_present
+    expect(draft.active_payment.amount_cents).to eq(50_000)
+    expect(draft.active_payment.payment_attempts.count).to eq(1)
   end
 
   it "accepts a pending project as the pm" do

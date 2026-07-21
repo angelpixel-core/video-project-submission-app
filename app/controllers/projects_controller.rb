@@ -110,6 +110,7 @@ class ProjectsController < ApplicationController
       @project.pm = default_pm
       @project.submit!
       sync_project_selections(@project, selections)
+      Payments::CreateOrReuseActivePayment.new(project: @project).call
     end
   end
 
