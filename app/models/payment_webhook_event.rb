@@ -13,6 +13,15 @@ class PaymentWebhookEvent < ApplicationRecord
   validates :payload, presence: true
   validates :received_at, presence: true
 
+  def references_payment?(payment)
+    data = payload.to_h.fetch("data", {}).to_h
+    data["payment_id"].to_s == payment.id.to_s || data["provider_reference"].to_s == payment.provider_reference.to_s
+  end
+
+  def applied?
+    status == "processed"
+  end
+
   private
 
   def normalize_provider
