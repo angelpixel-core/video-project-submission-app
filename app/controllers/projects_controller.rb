@@ -110,7 +110,13 @@ class ProjectsController < ApplicationController
       @project.pm = default_pm
       @project.submit!
       sync_project_selections(@project, selections)
-      Payments::CreateOrReuseActivePayment.new(project: @project).call
+
+      payment_result = Payments::CreateOrReuseActivePayment.(project: @project)
+
+      if payment_result.failure?
+        @project.errors.add(:base, payment_result.message)
+        raise ActiveRecord::RecordInvalid, @project
+      end
     end
   end
 

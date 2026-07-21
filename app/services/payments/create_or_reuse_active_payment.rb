@@ -1,15 +1,19 @@
 module Payments
   class CreateOrReuseActivePayment
+    def self.call(project:)
+      new(project:).call
+    end
+
     def initialize(project:)
       @project = project
     end
 
     def call
       project.with_lock do
-        payment = project.payments.active.order(created_at: :desc).first
-        payment ||= create_payment!
-        ensure_payment_attempt!(payment)
-        payment
+        payment = project.active_payment
+        return Payments::Result::Success.(data: { payment: payment, attempt: payment.payment_attempts.order(created_at: :desc).first }) if payment.present?
+
+        create_payment_flow!
       end
     end
 
@@ -17,24 +21,57 @@ module Payments
 
     attr_reader :project
 
-    def create_payment!
-      project.payments.create!(
+    def create_payment_flow!
+      payment = project.payments.create!(
         status: :pending,
         provider: "fake",
         idempotency_key: SecureRandom.uuid,
         amount_cents: project.total_budget_cents,
         currency: "USD"
       )
+
+      attempt = payment.payment_attempts.create!(
+        status: :pending,
+        provider: payment.provider,
+        idempotency_key: payment.idempotency_key,
+        request_payload: payment_request_payload(payment)
+      )
+
+      provider_result = Payments::PaymentProvider::Fake.(payment: payment)
+
+      return handle_provider_failure(payment:, attempt:, provider_result:) if provider_result.failure?
+
+      payment.update!(
+        status: :processing,
+        provider_reference: provider_result.data.fetch(:provider_reference)
+      )
+
+      attempt.update!(
+        status: :submitted,
+        provider_reference: provider_result.data.fetch(:provider_reference),
+        response_payload: provider_result.data.fetch(:response_payload)
+      )
+
+      Payments::Result::Success.(data: { payment: payment, attempt: attempt, provider_result: provider_result })
     end
 
-    def ensure_payment_attempt!(payment)
-      payment.payment_attempts.find_or_create_by!(idempotency_key: payment.idempotency_key) do |attempt|
-        attempt.status = :pending
-        attempt.provider = payment.provider
-        attempt.provider_reference = payment.provider_reference
-        attempt.request_payload = payment_request_payload(payment)
-        attempt.response_payload = { status: payment.status, provider: payment.provider }
-      end
+    def handle_provider_failure(payment:, attempt:, provider_result:)
+      payment.update!(
+        status: :failed,
+        failed_at: Time.current
+      )
+
+      attempt.update!(
+        status: :failed,
+        error_message: provider_result.message,
+        response_payload: provider_result.data
+      )
+
+      Payments::Result::Failure.(
+        message: provider_result.message,
+        code: provider_result.code,
+        data: provider_result.data.merge(payment_id: payment.id)
+      )
     end
 
     def payment_request_payload(payment)

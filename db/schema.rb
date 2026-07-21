@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_21_180000) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_21_193000) do
   create_table "active_storage_attachments", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -90,6 +90,23 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_21_180000) do
     t.index ["payment_id", "status"], name: "index_payment_attempts_on_payment_id_and_status"
     t.index ["payment_id"], name: "index_payment_attempts_on_payment_id"
     t.index ["provider_reference"], name: "index_payment_attempts_on_provider_reference", unique: true
+  end
+
+  create_table "payment_webhook_events", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.text "error_message"
+    t.string "event_type", null: false
+    t.json "payload", null: false
+    t.datetime "processed_at"
+    t.string "provider", null: false
+    t.string "provider_event_id", null: false
+    t.datetime "received_at", null: false
+    t.string "signature"
+    t.string "status", default: "received", null: false
+    t.datetime "updated_at", null: false
+    t.index ["provider", "provider_event_id"], name: "index_payment_webhook_events_on_provider_and_event_id", unique: true
+    t.index ["provider"], name: "index_payment_webhook_events_on_provider"
+    t.index ["status"], name: "index_payment_webhook_events_on_status"
   end
 
   create_table "payments", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|

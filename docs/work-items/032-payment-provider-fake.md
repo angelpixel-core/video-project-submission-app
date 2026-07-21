@@ -11,7 +11,7 @@ depends_on:
   - payment-domain-idempotency
 order: 32
 phase: work-items
-status: draft
+status: done
 title: Fake Payment Provider Adapter
 ---
 
@@ -19,12 +19,13 @@ title: Fake Payment Provider Adapter
 
 ## Goal
 
-- [ ] Introduce a provider adapter that can accept a payment request synchronously and return a fake provider reference.
+- [x] Introduce a provider adapter that can accept a payment request synchronously and return a fake provider reference.
 
 ## Scope
 
 - Define a provider interface that the domain can call without knowing the concrete provider.
 - Implement a fake provider that returns accepted or processing results synchronously.
+- Return explicit `Payments::Result::Success` / `Payments::Result::Failure` objects from the provider boundary.
 - Keep card validation local and independent from provider selection.
 - Leave the asynchronous confirmation for the webhook pipeline.
 
@@ -35,10 +36,10 @@ title: Fake Payment Provider Adapter
 
 ## Implementation Plan
 
-- [ ] Add a `PaymentProvider` interface and a `PaymentProvider::Fake` implementation.
-- [ ] Return a provider payment id plus an accepted/processing status from the fake provider.
-- [ ] Keep provider-specific logic behind the adapter boundary.
-- [ ] Add tests for successful and declined fake provider responses.
+- [x] Add a `PaymentProvider` interface and a `PaymentProvider::Fake` implementation.
+- [x] Return a provider payment id plus an accepted/processing status from the fake provider.
+- [x] Keep provider-specific logic behind the adapter boundary.
+- [x] Add tests for successful and declined fake provider responses.
 
 ## Affected Docs
 
@@ -48,20 +49,22 @@ title: Fake Payment Provider Adapter
 ## Affected Ops
 
 - `app/services/payment_provider/`
+- `app/services/payments/result/`
 - `app/services/`
 - `spec/services/`
 
 ## Checklist
 
-- [ ] The payment domain can call a provider through a stable interface.
-- [ ] The fake provider returns a deterministic result for test submissions.
-- [ ] Provider switching does not require domain model changes.
+- [x] The payment domain can call a provider through a stable interface.
+- [x] The fake provider returns a deterministic result for test submissions.
+- [x] Provider switching does not require domain model changes.
 
 ## Validation
 
-- [ ] Provider adapter specs pass.
-- [ ] The fake provider can be used in development and test.
+- [x] Provider adapter specs pass.
+- [x] The fake provider can be used in development and test.
 
 ## Notes
 
 - Keep the fake provider deterministic enough for repeatable tests, but allow it to emit provider ids and eventual confirmation states.
+- The `Result` object is the boundary for expected provider outcomes; use exceptions only for programmer errors.
