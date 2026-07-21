@@ -12,7 +12,7 @@ depends_on:
   - payment-provider-fake
 order: 33
 phase: work-items
-status: draft
+status: done
 title: Payment Webhook Ingestion
 ---
 
@@ -20,7 +20,7 @@ title: Payment Webhook Ingestion
 
 ## Goal
 
-- [ ] Add a webhook endpoint that records provider events and ignores duplicate deliveries.
+- [x] Add a webhook endpoint that records provider events and ignores duplicate deliveries.
 
 ## Scope
 
@@ -36,10 +36,10 @@ title: Payment Webhook Ingestion
 
 ## Implementation Plan
 
-- [ ] Add the webhook route and controller action for provider events.
-- [ ] Persist incoming payloads in a raw event table with a unique provider event id.
-- [ ] Reject or ignore duplicate webhook deliveries without reprocessing them.
-- [ ] Add a `payments:simulate_webhook` rake task for local async-response simulation.
+- [x] Add the webhook route and controller action for provider events.
+- [x] Persist incoming payloads in a raw event table with a unique provider event id.
+- [x] Reject or ignore duplicate webhook deliveries without reprocessing them.
+- [x] Add a `payments:simulate_webhook` rake task for local async-response simulation.
 
 ## Affected Docs
 
@@ -57,14 +57,14 @@ title: Payment Webhook Ingestion
 
 ## Checklist
 
-- [ ] A webhook event is stored once even if the provider retries delivery.
-- [ ] The simulated webhook task can replay a fake provider event locally.
-- [ ] Duplicate payloads do not create duplicate payment side effects.
+- [x] A webhook event is stored once even if the provider retries delivery.
+- [x] The simulated webhook task can replay a fake provider event locally.
+- [x] Duplicate payloads do not create duplicate payment side effects.
 
 ## Validation
 
-- [ ] Request specs cover valid, invalid, and duplicate webhook deliveries.
-- [ ] The simulation task works in development and test.
+- [x] Request specs cover valid, invalid, and duplicate webhook deliveries.
+- [x] The simulation task works in development and test.
 
 ## Notes
 

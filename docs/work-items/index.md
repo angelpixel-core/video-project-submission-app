@@ -172,7 +172,7 @@ Work items are implementation documents. Each one should map back to the docs it
 
 ## 33
 
-- [ ] [Payment Webhook Ingestion](./033-payment-webhook-ingestion.md)
+- [x] [Payment Webhook Ingestion](./033-payment-webhook-ingestion.md)
 
 ## 34
 

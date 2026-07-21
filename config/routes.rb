@@ -19,6 +19,10 @@ Rails.application.routes.draw do
   resources :client_notifications, only: %i[update]
   resources :notifications, only: %i[update]
 
+  namespace :payments do
+    post "webhooks/:provider/events", to: "webhooks#create", as: :webhook_events
+  end
+
   resources :projects, only: %i[index show new edit update] do
     member do
       patch :accept
