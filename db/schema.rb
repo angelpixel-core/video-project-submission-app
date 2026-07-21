@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_20_153000) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_21_180000) do
   create_table "active_storage_attachments", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -75,6 +75,42 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_20_153000) do
     t.check_constraint "((`pm_id` is not null) and (`client_id` is null)) or ((`pm_id` is null) and (`client_id` is not null))", name: "notifications_single_recipient"
   end
 
+  create_table "payment_attempts", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.text "error_message"
+    t.string "idempotency_key", null: false
+    t.bigint "payment_id", null: false
+    t.string "provider", default: "fake", null: false
+    t.string "provider_reference"
+    t.json "request_payload"
+    t.json "response_payload"
+    t.string "status", default: "pending", null: false
+    t.datetime "updated_at", null: false
+    t.index ["idempotency_key"], name: "index_payment_attempts_on_idempotency_key", unique: true
+    t.index ["payment_id", "status"], name: "index_payment_attempts_on_payment_id_and_status"
+    t.index ["payment_id"], name: "index_payment_attempts_on_payment_id"
+    t.index ["provider_reference"], name: "index_payment_attempts_on_provider_reference", unique: true
+  end
+
+  create_table "payments", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.integer "amount_cents", default: 0, null: false
+    t.datetime "canceled_at"
+    t.datetime "confirmed_at"
+    t.datetime "created_at", null: false
+    t.string "currency", default: "USD", null: false
+    t.datetime "failed_at"
+    t.string "idempotency_key", null: false
+    t.bigint "project_id", null: false
+    t.string "provider", default: "fake", null: false
+    t.string "provider_reference"
+    t.string "status", default: "pending", null: false
+    t.datetime "updated_at", null: false
+    t.index ["idempotency_key"], name: "index_payments_on_idempotency_key", unique: true
+    t.index ["project_id", "status"], name: "index_payments_on_project_id_and_status"
+    t.index ["project_id"], name: "index_payments_on_project_id"
+    t.index ["provider_reference"], name: "index_payments_on_provider_reference", unique: true
+  end
+
   create_table "pms", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "email", null: false
@@ -125,6 +161,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_20_153000) do
   add_foreign_key "notifications", "clients"
   add_foreign_key "notifications", "pms"
   add_foreign_key "notifications", "projects"
+  add_foreign_key "payment_attempts", "payments"
+  add_foreign_key "payments", "projects"
   add_foreign_key "projects", "clients"
   add_foreign_key "projects", "pms"
   add_foreign_key "video_type_selections", "projects"
