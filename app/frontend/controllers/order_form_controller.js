@@ -406,12 +406,10 @@ export default class extends Controller {
     }
 
     const providerLabel = preview.provider === "vimeo" ? "Vimeo preview" : "YouTube preview";
-    const mediaMarkup = preview.thumbnailUrl
-      ? `<a href="${this.escapeAttribute(preview.watchUrl)}" target="_blank" rel="noopener" class="d-block position-relative raw-footage-preview-link">
-           <img src="${this.escapeAttribute(preview.thumbnailUrl)}" alt="${this.escapeAttribute(providerLabel)}" class="w-100 h-100 object-fit-cover raw-footage-preview-media" />
-           <span class="position-absolute top-50 start-50 translate-middle btn btn-light rounded-pill px-3 shadow-sm raw-footage-preview-play">Play preview</span>
-         </a>`
-      : `<iframe src="${this.escapeAttribute(preview.embedUrl)}" title="${this.escapeAttribute(providerLabel)}" class="raw-footage-preview-media" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>`;
+    const shellClasses = ["raw-footage-preview-shell"];
+    if (preview.aspectRatio === "9 / 16") shellClasses.push("is-portrait");
+
+    const mediaMarkup = `<iframe src="${this.escapeAttribute(preview.embedUrl)}" title="${this.escapeAttribute(providerLabel)}" class="raw-footage-preview-media" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>`;
 
     this.rawFootagePreviewTarget.innerHTML = `
       <div class="card border-0 shadow-sm raw-footage-preview-card">
@@ -423,7 +421,7 @@ export default class extends Controller {
             </div>
             <span class="badge text-bg-primary">Recognized</span>
           </div>
-          <div class="ratio ratio-16x9 rounded-3 overflow-hidden bg-dark raw-footage-preview-shell">
+          <div class="rounded-3 overflow-hidden bg-dark ${shellClasses.join(" ")}" style="aspect-ratio: ${this.escapeAttribute(preview.aspectRatio || "16 / 9")};">
             ${mediaMarkup}
           </div>
         </div>
@@ -464,6 +462,9 @@ export default class extends Controller {
     return {
       provider: "youtube",
       videoId,
+      aspectRatio: host === "www.youtube.com" || host === "youtube.com" || host === "m.youtube.com"
+        ? (url.pathname.split("/").filter(Boolean)[0] === "shorts" ? "9 / 16" : "16 / 9")
+        : "16 / 9",
       embedUrl: `https://www.youtube-nocookie.com/embed/${videoId}`,
       thumbnailUrl: `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`,
       watchUrl: `https://www.youtube.com/watch?v=${videoId}`,
@@ -486,6 +487,7 @@ export default class extends Controller {
     return {
       provider: "vimeo",
       videoId,
+      aspectRatio: "16 / 9",
       embedUrl: `https://player.vimeo.com/video/${videoId}`,
       watchUrl: `https://vimeo.com/${videoId}`,
     };

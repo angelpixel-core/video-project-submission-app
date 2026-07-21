@@ -12,7 +12,7 @@
   <div class="card shadow-sm border-0 mb-4">
     <div class="card-body p-4">
       <% if @project.raw_footage_embed_url.present? %>
-        <div class="ratio ratio-16x9 rounded overflow-hidden bg-dark mb-4">
+        <div class="rounded overflow-hidden bg-dark mb-4 raw-footage-preview-shell <%= 'is-portrait' if @project.raw_footage_aspect_ratio == '9 / 16' %>" style="aspect-ratio: <%= @project.raw_footage_aspect_ratio %>;">
           <iframe
             src="<%= @project.raw_footage_embed_url %>"
             title="<%= @project.name.presence || "Project video" %>"

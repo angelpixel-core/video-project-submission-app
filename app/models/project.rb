@@ -70,6 +70,10 @@ class Project < ApplicationRecord
     raw_footage_metadata_hash["thumbnail_url"]
   end
 
+  def raw_footage_aspect_ratio
+    raw_footage_metadata_hash["aspect_ratio"].presence || "16 / 9"
+  end
+
   def raw_footage_watch_url
     raw_footage_metadata_hash["watch_url"].presence || raw_footage_url
   end

@@ -7,8 +7,19 @@ RSpec.describe RawFootageUrlParser do
     expect(metadata).to include(
       "provider" => "youtube",
       "video_id" => "dQw4w9WgXcQ",
+      "aspect_ratio" => "16 / 9",
       "embed_url" => "https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ",
       "thumbnail_url" => "https://img.youtube.com/vi/dQw4w9WgXcQ/hqdefault.jpg"
+    )
+  end
+
+  it "marks youtube shorts as portrait" do
+    metadata = described_class.metadata("https://www.youtube.com/shorts/hkPNAAZJwJs")
+
+    expect(metadata).to include(
+      "provider" => "youtube",
+      "video_id" => "hkPNAAZJwJs",
+      "aspect_ratio" => "9 / 16"
     )
   end
 

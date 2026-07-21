@@ -14,6 +14,7 @@ class RawFootageUrlParser
     {
       "provider" => "youtube",
       "video_id" => video_id,
+      "aspect_ratio" => youtube_aspect_ratio(url),
       "embed_url" => "https://www.youtube-nocookie.com/embed/#{video_id}",
       "thumbnail_url" => "https://img.youtube.com/vi/#{video_id}/hqdefault.jpg",
       "watch_url" => "https://www.youtube.com/watch?v=#{video_id}"
@@ -27,6 +28,7 @@ class RawFootageUrlParser
     {
       "provider" => "vimeo",
       "video_id" => video_id,
+      "aspect_ratio" => "16 / 9",
       "embed_url" => "https://player.vimeo.com/video/#{video_id}",
       "watch_url" => "https://vimeo.com/#{video_id}"
     }
@@ -68,4 +70,13 @@ class RawFootageUrlParser
     path.to_s.split("/").reject(&:blank?)
   end
   private_class_method :path_segments
+
+  def self.youtube_aspect_ratio(url)
+    uri = parse(url)
+    return "16 / 9" unless uri&.host.present? && %w[youtube.com www.youtube.com m.youtube.com].include?(uri.host.downcase)
+
+    segments = path_segments(uri.path)
+    segments.first == "shorts" ? "9 / 16" : "16 / 9"
+  end
+  private_class_method :youtube_aspect_ratio
 end
