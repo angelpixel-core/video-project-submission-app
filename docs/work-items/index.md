@@ -181,3 +181,7 @@ Work items are implementation documents. Each one should map back to the docs it
 ## 35
 
 - [ ] [Payment Retry and Observability](./035-payment-retry-and-observability.md)
+
+## 36
+
+- [x] [Project Status Badge Realtime](./036-project-status-badge-realtime.md)
