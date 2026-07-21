@@ -16,16 +16,12 @@ export default class extends Controller {
     "paymentCardShell",
     "paymentCardFront",
     "paymentCardBack",
-    "paymentCardCvcDisplay",
+    "paymentCardError",
     "paymentName",
-    "paymentNameFeedback",
     "paymentEmail",
     "paymentCardNumber",
-    "paymentCardNumberFeedback",
     "paymentCardExpiry",
-    "paymentCardExpiryFeedback",
     "paymentCardCvc",
-    "paymentCardCvcFeedback",
     "finalize",
     "finalizeButton",
     "finalizeButtonLabel",
@@ -122,6 +118,17 @@ export default class extends Controller {
   flipPaymentCard() {
     this.isPaymentCardFlipped = true;
     this.updatePaymentCardFlipState();
+  }
+
+  focusPaymentCvc() {
+    this.isPaymentCardFlipped = true;
+    this.updatePaymentCardFlipState();
+
+    if (!this.hasPaymentCardCvcTarget) return;
+
+    window.requestAnimationFrame(() => {
+      this.paymentCardCvcTarget.focus();
+    });
   }
 
   unflipPaymentCard() {
@@ -427,11 +434,6 @@ export default class extends Controller {
   updatePaymentCardPreview() {
     if (!this.hasPaymentCardShellTarget) return;
 
-    const cvc = (this.paymentCardCvcTarget?.value || "").replace(/\D/g, "");
-    if (this.hasPaymentCardCvcDisplayTarget) {
-      this.paymentCardCvcDisplayTarget.textContent = cvc || "123";
-    }
-
     this.updatePaymentCardFlipState();
   }
 
@@ -473,12 +475,13 @@ export default class extends Controller {
       cvc: cvcDigits.length !== 3 ? "CVC must be 3 digits." : null,
     };
 
-    this.setPaymentFieldFeedback("paymentName", errors.name, showErrors || !!name);
-    this.setPaymentFieldFeedback("paymentCardNumber", errors.number, showErrors || numberDigits.length > 0);
-    this.setPaymentFieldFeedback("paymentCardExpiry", errors.expiry, showErrors || expiryValue.length > 0);
-    this.setPaymentFieldFeedback("paymentCardCvc", errors.cvc, showErrors || cvcDigits.length > 0);
+    this.setPaymentFieldState("paymentName", !errors.name, showErrors || !!name);
+    this.setPaymentFieldState("paymentCardNumber", !errors.number, showErrors || numberDigits.length > 0);
+    this.setPaymentFieldState("paymentCardExpiry", !errors.expiry, showErrors || expiryValue.length > 0);
+    this.setPaymentFieldState("paymentCardCvc", !errors.cvc, showErrors || cvcDigits.length > 0);
 
     this.paymentDetailsAreValid = !Object.values(errors).some(Boolean);
+    this.setPaymentCardError(this.paymentDetailsAreValid ? "" : this.firstPaymentError(errors));
     this.updatePaymentCardPreview();
     this.setFinalizeButtonEnabled(this.canReviewProject());
 
@@ -529,31 +532,31 @@ export default class extends Controller {
     return null;
   }
 
-  setPaymentFieldFeedback(field, message, show) {
-    const feedbackTarget = this[`${field}FeedbackTarget`];
+  firstPaymentError(errors) {
+    return errors.name || errors.number || errors.expiry || errors.cvc || "Card details are not valid.";
+  }
+
+  setPaymentCardError(message) {
+    if (!this.hasPaymentCardErrorTarget) return;
+
+    this.paymentCardErrorTarget.textContent = message;
+    this.paymentCardErrorTarget.classList.toggle("d-none", message === "");
+  }
+
+  setPaymentFieldState(field, isValid, show) {
     const inputTarget = this[`${field}Target`];
 
     if (!inputTarget) return;
 
     inputTarget.classList.remove("is-valid", "is-invalid");
     if (!show) {
-      if (feedbackTarget) feedbackTarget.textContent = "";
-      feedbackTarget?.classList.add("d-none");
       return;
     }
 
-    if (message) {
-      inputTarget.classList.add("is-invalid");
-      if (feedbackTarget) {
-        feedbackTarget.textContent = message;
-        feedbackTarget.classList.remove("d-none");
-      }
-    } else {
+    if (isValid) {
       inputTarget.classList.add("is-valid");
-      if (feedbackTarget) {
-        feedbackTarget.textContent = "";
-        feedbackTarget.classList.add("d-none");
-      }
+    } else {
+      inputTarget.classList.add("is-invalid");
     }
   }
 

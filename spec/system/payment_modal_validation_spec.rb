@@ -24,6 +24,7 @@ RSpec.describe "Payment modal validation", type: :system, js: true do
     find("#payment-name", visible: :all).set("Jane Doe")
     find("#payment-card-number", visible: :all).set("4242424242424242")
     find("#payment-card-expiry", visible: :all).set(Date.current.next_month.strftime("%m/%y"))
+    click_button "Enter card security code"
     find("#payment-card-cvc", visible: :all).set("123")
 
     expect(page).to have_field("Card number", with: "4242 4242 4242 4242")
@@ -49,10 +50,11 @@ RSpec.describe "Payment modal validation", type: :system, js: true do
     find("#payment-name", visible: :all).set("Jane Doe")
     find("#payment-card-number", visible: :all).set("4242424242424242")
     find("#payment-card-expiry", visible: :all).set(Date.current.prev_month.strftime("%m/%y"))
+    click_button "Enter card security code"
     find("#payment-card-cvc", visible: :all).set("123")
 
     expect(page).to have_css("#payment-card-expiry.is-invalid", visible: :all)
-    expect(page).to have_css("#payment-card-expiry-feedback", text: "Card has expired.")
+    expect(page).to have_css("#payment-card-error", text: "Card has expired.")
     expect(page).to have_css("button[data-order-form-target='finalizeButton']:disabled", visible: :all)
   end
 end

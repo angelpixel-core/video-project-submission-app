@@ -9,7 +9,7 @@ RSpec.describe "Payment modal card flip", type: :system, js: true do
     VideoType.create!(name: "Highlight Reel", description: "Short edit", price_cents: 25_000, output_format: "mp4")
   end
 
-  it "flips the card when the cvc field gains focus" do
+  it "flips the card when the cvc control is used" do
     client = Client.find_by!(email: "client@example.com")
     pm = PM.find_by!(email: "pm@example.com")
     project = Project.create!(client: client, pm: pm, status: :draft)
@@ -25,9 +25,10 @@ RSpec.describe "Payment modal card flip", type: :system, js: true do
     expect(page).to have_css(".payment-card-shell", visible: :all)
     expect(page).to have_no_css(".payment-card-shell.is-flipped", visible: :all)
 
-    find("#payment-card-cvc", visible: :all).click
+    click_button "Enter card security code"
 
     expect(page).to have_css(".payment-card-shell.is-flipped", visible: :all)
+    expect(page).to have_field("CVC", with: "")
 
     find("#payment-card-number", visible: :all).click
 

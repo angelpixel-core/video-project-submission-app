@@ -12,7 +12,7 @@ depends_on:
   - sprint-0-client-views
 order: 30
 phase: work-items
-status: in_progress
+status: done
 title: Payment Details Card Flip
 ---
 
@@ -20,14 +20,14 @@ title: Payment Details Card Flip
 
 ## Goal
 
-- [ ] Upgrade the payment modal with a card-flip interaction and field validations for simulated checkout.
+- [x] Upgrade the payment modal with a card-flip interaction and field validations for simulated checkout.
 
 ## Scope
 
 - Keep `billing email` as contact information, not as card data.
 - Animate a credit card front/back in the modal.
 - Place the card inputs inside the card shell instead of in a separate form stack.
-- Flip the card when the CVC field receives focus.
+- Flip the card when the CVC control is used.
 - Validate `name on card`, `card number`, `expiry`, and `CVC`.
 - Format the visible card input state as the user types.
 - Keep the implementation lightweight and avoid introducing a 3D/animation library unless absolutely necessary.
@@ -44,7 +44,7 @@ title: Payment Details Card Flip
 - [x] Flip the card on `focus` of the CVC field and restore it on blur.
 - [x] Add field-level validation and formatting for card number, expiry, and CVC.
 - [x] Keep the existing billing email field as a separate contact input.
-- [ ] Update the modal copy so users understand the payment details are simulated.
+- [x] Update the modal copy so users understand the payment details are simulated.
 - [x] Add focused request/system coverage for the payment modal behavior.
 
 ## Affected Docs

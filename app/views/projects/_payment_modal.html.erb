@@ -11,36 +11,33 @@
           <strong data-order-form-target="cartTotal">$0.00</strong>
         </div>
 
+        <p class="text-muted small mb-3">This is a simulated payment step for project checkout.</p>
+
         <div class="payment-card-stage mb-4">
           <div class="payment-card-shell" data-order-form-target="paymentCardShell">
             <div class="payment-card-face payment-card-face-front" data-order-form-target="paymentCardFront">
-              <div class="d-flex justify-content-end">
-                <div class="payment-card-chip"></div>
-              </div>
+              <div class="payment-card-front-grid">
+                <div class="payment-card-field payment-card-number-field">
+                  <label class="payment-card-label" for="payment-card-number">Card number</label>
+                  <input id="payment-card-number" type="text" class="form-control payment-card-input payment-card-input-lg" placeholder="4242 4242 4242 4242" data-order-form-target="paymentCardNumber" data-action="input->order-form#syncFields blur->order-form#validatePaymentFieldsOnBlur" aria-describedby="payment-card-error">
+                </div>
 
-              <div class="payment-card-field">
-                <label class="payment-card-label" for="payment-card-number">Card number</label>
-                <input id="payment-card-number" type="text" class="form-control payment-card-input payment-card-input-lg" placeholder="4242 4242 4242 4242" data-order-form-target="paymentCardNumber" data-action="input->order-form#syncFields blur->order-form#validatePaymentFieldsOnBlur" aria-describedby="payment-card-number-feedback">
-                <div id="payment-card-number-feedback" class="payment-card-feedback invalid-feedback d-none" data-order-form-target="paymentCardNumberFeedback"></div>
-              </div>
+                <button type="button" class="payment-card-chip-trigger" data-action="click->order-form#focusPaymentCvc" aria-label="Enter card security code">
+                  <span class="visually-hidden">Enter card security code</span>
+                  <svg viewBox="0 0 48 34" focusable="false" role="presentation" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <rect x="1.5" y="1.5" width="45" height="31" rx="5" fill="none" stroke="currentColor" stroke-opacity="0.15" stroke-width="3"/>
+                    <path d="M10 6.5H38M10 11.5H38M10 16.5H38M10 21.5H38M10 26.5H38" stroke="currentColor" stroke-opacity="0.18" stroke-width="2" stroke-linecap="round"/>
+                  </svg>
+                </button>
 
-              <div class="payment-card-row">
                 <div class="payment-card-field payment-card-field-grow">
                   <label class="payment-card-label" for="payment-name">Cardholder</label>
-                  <input id="payment-name" type="text" class="form-control payment-card-input" data-order-form-target="paymentName" data-action="input->order-form#syncFields blur->order-form#validatePaymentFieldsOnBlur" aria-describedby="payment-name-feedback">
-                  <div id="payment-name-feedback" class="payment-card-feedback invalid-feedback d-none" data-order-form-target="paymentNameFeedback"></div>
+                  <input id="payment-name" type="text" class="form-control payment-card-input" data-order-form-target="paymentName" data-action="input->order-form#syncFields blur->order-form#validatePaymentFieldsOnBlur" aria-describedby="payment-card-error">
                 </div>
 
                 <div class="payment-card-field payment-card-expiry-field">
                   <label class="payment-card-label" for="payment-card-expiry">Expiry</label>
-                  <input id="payment-card-expiry" type="text" class="form-control payment-card-input" placeholder="12/28" data-order-form-target="paymentCardExpiry" data-action="input->order-form#syncFields blur->order-form#validatePaymentFieldsOnBlur" aria-describedby="payment-card-expiry-feedback">
-                  <div id="payment-card-expiry-feedback" class="payment-card-feedback invalid-feedback d-none" data-order-form-target="paymentCardExpiryFeedback"></div>
-                </div>
-
-                <div class="payment-card-field payment-card-cvc-field">
-                  <label class="payment-card-label" for="payment-card-cvc">CVC</label>
-                  <input id="payment-card-cvc" type="text" class="form-control payment-card-input payment-card-input-cvc" placeholder="123" data-order-form-target="paymentCardCvc" data-action="focus->order-form#flipPaymentCard blur->order-form#unflipPaymentCard blur->order-form#validatePaymentFieldsOnBlur input->order-form#syncFields" aria-describedby="payment-card-cvc-feedback">
-                  <div id="payment-card-cvc-feedback" class="payment-card-feedback invalid-feedback d-none" data-order-form-target="paymentCardCvcFeedback"></div>
+                  <input id="payment-card-expiry" type="text" class="form-control payment-card-input" placeholder="12/28" data-order-form-target="paymentCardExpiry" data-action="input->order-form#syncFields blur->order-form#validatePaymentFieldsOnBlur" aria-describedby="payment-card-error">
                 </div>
               </div>
             </div>
@@ -48,12 +45,14 @@
             <div class="payment-card-face payment-card-face-back" data-order-form-target="paymentCardBack">
               <div class="payment-card-magnetic-strip"></div>
               <div class="payment-card-cvc-row">
-                <div class="payment-card-label">CVC</div>
-                <div class="payment-card-cvc-value" data-order-form-target="paymentCardCvcDisplay">123</div>
+                <label class="payment-card-label" for="payment-card-cvc">CVC</label>
+                <input id="payment-card-cvc" type="text" class="form-control payment-card-input payment-card-input-back" placeholder="123" data-order-form-target="paymentCardCvc" data-action="blur->order-form#unflipPaymentCard blur->order-form#validatePaymentFieldsOnBlur input->order-form#syncFields" aria-describedby="payment-card-error">
               </div>
             </div>
           </div>
         </div>
+
+        <p id="payment-card-error" class="payment-card-error d-none mb-3" data-order-form-target="paymentCardError" role="alert" aria-live="polite"></p>
 
         <div class="mb-3">
           <label class="form-label" for="payment-email">Billing email</label>
