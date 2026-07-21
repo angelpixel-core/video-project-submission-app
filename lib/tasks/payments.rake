@@ -1,20 +1,16 @@
 namespace :payments do
-  desc "Simulate a payment webhook delivery"
+  desc "Simulate a signed payment webhook delivery"
   task simulate_webhook: :environment do
-    webhook_url = ENV["WEBHOOK_URL"]
-
-    unless webhook_url.present?
-      abort "WEBHOOK_URL is required"
-    end
+    webhook_url = ENV["WEBHOOK_URL"].presence || "http://localhost:3000/payments/webhooks/fake/events"
 
     result = Payments::WebhookSimulator.(
       webhook_url: webhook_url,
-      provider: ENV.fetch("PROVIDER", "fake"),
-      event_id: ENV.fetch("EVENT_ID", "evt_123"),
-      type: ENV.fetch("TYPE", "payment.succeeded"),
-      payment_id: ENV.fetch("PAYMENT_ID", "1"),
-      provider_reference: ENV.fetch("PROVIDER_REFERENCE", "fake-abc123"),
-      amount_cents: ENV.fetch("AMOUNT_CENTS", "50000")
+      provider: ENV["PROVIDER"].presence || "fake",
+      event_id: ENV["EVENT_ID"].presence || "evt_123",
+      type: ENV["TYPE"].presence || "payment.succeeded",
+      payment_id: ENV["PAYMENT_ID"].presence || "1",
+      provider_reference: ENV["PROVIDER_REFERENCE"].presence || "fake-abc123",
+      amount_cents: ENV["AMOUNT_CENTS"].presence || "50000"
     )
 
     if result.success?

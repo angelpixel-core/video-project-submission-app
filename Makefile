@@ -35,6 +35,10 @@ web/console:
 web/shell:
 	@STACK_ENV="$(ENV)" sh $(STACK_SCRIPT) exec
 
+.PHONY: payments/simulate_webhook
+payments/simulate_webhook:
+	@WEBHOOK_URL="$(WEBHOOK_URL)" PROVIDER="$(PROVIDER)" EVENT_ID="$(EVENT_ID)" TYPE="$(TYPE)" PAYMENT_ID="$(PAYMENT_ID)" PROVIDER_REFERENCE="$(PROVIDER_REFERENCE)" AMOUNT_CENTS="$(AMOUNT_CENTS)" bundle exec rake payments:simulate_webhook
+
 .PHONY: test/unit
 test/unit:
 	@TEST_ENV="$(TEST_ENV)" TEST_ARGS="spec/unit" sh $(TEST_SCRIPT) rspec

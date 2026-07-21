@@ -29,9 +29,12 @@ module Payments
       return failure("Webhook payload is missing an event type.", :invalid_payload, provider: provider) if event_type.blank?
 
       event = upsert_event!(event_id:, event_type:, payload: event_data)
+      created = event.previously_new_record?
+
+      Payments::ProcessWebhookEventJob.perform_later(event.id)
 
       success(
-        created: event.previously_new_record?,
+        created: created,
         event: event
       )
     rescue ActiveRecord::RecordNotUnique
