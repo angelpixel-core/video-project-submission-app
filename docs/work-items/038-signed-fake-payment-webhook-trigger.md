@@ -27,11 +27,14 @@ title: Signed Fake Payment Webhook Trigger
 
 - Keep the existing generic webhook simulator task.
 - Add a convenience task that defaults to a successful payment webhook.
+- Allow the trigger to take `PROJECT_ID` and resolve the current payment automatically.
 - Add a `make` wrapper so the trigger can run from the repo root.
 
 ## Implementation Plan
 
 - [x] Add a rake task that sends a signed fake webhook with `payment.succeeded` as the default type.
+- [x] Allow the rake task to resolve the payment from `PROJECT_ID` when present.
+- [x] Fall back to the most recent payment if the project no longer has an active payment.
 - [x] Add a `make` wrapper for the new rake task.
 - [x] Keep env-var overrides for local demos and testing.
 - [x] Add specs for the new task.
@@ -50,6 +53,8 @@ title: Signed Fake Payment Webhook Trigger
 ## Checklist
 
 - [x] The repo can trigger a signed fake successful payment webhook from `rake`.
+- [x] The repo can target the active payment for a project from `rake`.
+- [x] The repo can target the most recent payment for a project from `rake` when no active payment exists.
 - [x] The repo can trigger the same flow from `make`.
 
 ## Validation
@@ -59,3 +64,4 @@ title: Signed Fake Payment Webhook Trigger
 ## Notes
 
 - This is a convenience wrapper over the existing webhook simulator.
+- `PROJECT_ID` takes precedence when provided so local demos can target the payment associated with the project, even if it is no longer active.
