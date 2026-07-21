@@ -25,6 +25,7 @@ RSpec.describe "payments rake tasks" do
     end
 
     Rake::Task["payments:simulate_webhook"].reenable
+    Rake::Task["payments:send_signed_fake_webhook"].reenable
   end
 
   it "defaults to localhost and forwards env vars to the simulator" do
@@ -39,6 +40,20 @@ RSpec.describe "payments rake tasks" do
     ).and_return(Payments::Result::Success.(data: { status_code: 202, body: "accepted" }))
 
     Rake::Task["payments:simulate_webhook"].invoke
+  end
+
+  it "sends a signed fake webhook with a succeeded default type" do
+    expect(Payments::WebhookSimulator).to receive(:call).with(
+      webhook_url: "http://localhost:3000/payments/webhooks/fake/events",
+      provider: "fake",
+      event_id: "evt_123",
+      type: "payment.succeeded",
+      payment_id: "1",
+      provider_reference: "fake-abc123",
+      amount_cents: "50000"
+    ).and_return(Payments::Result::Success.(data: { status_code: 202, body: "accepted" }))
+
+    Rake::Task["payments:send_signed_fake_webhook"].invoke
   end
 
   it "treats blank env vars like unset values" do

@@ -39,6 +39,10 @@ web/shell:
 payments/simulate_webhook:
 	@WEBHOOK_URL="$(WEBHOOK_URL)" PROVIDER="$(PROVIDER)" EVENT_ID="$(EVENT_ID)" TYPE="$(TYPE)" PAYMENT_ID="$(PAYMENT_ID)" PROVIDER_REFERENCE="$(PROVIDER_REFERENCE)" AMOUNT_CENTS="$(AMOUNT_CENTS)" bundle exec rake payments:simulate_webhook
 
+.PHONY: payments/send_signed_fake_webhook
+payments/send_signed_fake_webhook:
+	@WEBHOOK_URL="$(WEBHOOK_URL)" PROVIDER="$(PROVIDER)" EVENT_ID="$(EVENT_ID)" TYPE="$(TYPE)" PAYMENT_ID="$(PAYMENT_ID)" PROVIDER_REFERENCE="$(PROVIDER_REFERENCE)" AMOUNT_CENTS="$(AMOUNT_CENTS)" bundle exec rake payments:send_signed_fake_webhook
+
 .PHONY: test/unit
 test/unit:
 	@TEST_ENV="$(TEST_ENV)" TEST_ARGS="spec/unit" sh $(TEST_SCRIPT) rspec
