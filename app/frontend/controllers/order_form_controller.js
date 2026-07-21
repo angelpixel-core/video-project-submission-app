@@ -13,6 +13,13 @@ export default class extends Controller {
     "cartTotal",
     "reviewButton",
     "paymentModal",
+    "paymentCardShell",
+    "paymentCardFront",
+    "paymentCardBack",
+    "paymentCardName",
+    "paymentCardNumberDisplay",
+    "paymentCardExpiryDisplay",
+    "paymentCardCvcDisplay",
     "paymentName",
     "paymentEmail",
     "paymentCardNumber",
@@ -33,11 +40,13 @@ export default class extends Controller {
     this.finalizeTimer = null;
     this.suspendAutosave = false;
     this.isFinalizing = false;
+    this.isPaymentCardFlipped = false;
     this.rawFootageUrlIsValid = true;
     this.cart = this.loadDraftState();
     this.restoreInputs();
     this.renderCart();
     this.bindRawFootageValidation();
+    this.updatePaymentCardPreview();
     this.updateReviewButtonState();
   }
 
@@ -99,9 +108,20 @@ export default class extends Controller {
     if (this.hasPaymentEmailTarget)
       this.cart.paymentEmail = this.paymentEmailTarget.value;
     this.validateRawFootageUrl();
+    this.updatePaymentCardPreview();
     this.scheduleAutosave();
     this.renderCart();
     this.updateReviewButtonState();
+  }
+
+  flipPaymentCard() {
+    this.isPaymentCardFlipped = true;
+    this.updatePaymentCardFlipState();
+  }
+
+  unflipPaymentCard() {
+    this.isPaymentCardFlipped = false;
+    this.updatePaymentCardFlipState();
   }
 
   openPaymentModal(event) {
@@ -165,6 +185,7 @@ export default class extends Controller {
     this.paymentEmailTarget.value =
       this.cart.paymentEmail || this.paymentEmailTarget.value;
     this.validateRawFootageUrl();
+    this.updatePaymentCardPreview();
     this.renderCart();
     this.updateReviewButtonState();
   }
@@ -392,6 +413,46 @@ export default class extends Controller {
     if (statusTarget)
       statusTarget.textContent = canReview ? "" : this.getReviewBlockReason();
     this.setFinalizeButtonEnabled(canReview);
+  }
+
+  updatePaymentCardPreview() {
+    if (!this.hasPaymentCardShellTarget) return;
+
+    const name = (this.paymentNameTarget?.value || "").trim();
+    const number = this.formatCardNumber(this.paymentCardNumberTarget?.value || "");
+    const expiry = this.formatCardExpiry(this.paymentCardExpiryTarget?.value || "");
+    const cvc = (this.paymentCardCvcTarget?.value || "").replace(/\D/g, "");
+
+    if (this.hasPaymentCardNameTarget)
+      this.paymentCardNameTarget.textContent = name || "Name on card";
+    if (this.hasPaymentCardNumberDisplayTarget)
+      this.paymentCardNumberDisplayTarget.textContent = number || "4242 4242 4242 4242";
+    if (this.hasPaymentCardExpiryDisplayTarget)
+      this.paymentCardExpiryDisplayTarget.textContent = expiry || "MM/YY";
+    if (this.hasPaymentCardCvcDisplayTarget)
+      this.paymentCardCvcDisplayTarget.textContent = cvc || "123";
+
+    this.updatePaymentCardFlipState();
+  }
+
+  updatePaymentCardFlipState() {
+    if (!this.hasPaymentCardShellTarget) return;
+
+    this.paymentCardShellTarget.classList.toggle("is-flipped", this.isPaymentCardFlipped);
+  }
+
+  formatCardNumber(value) {
+    return (value || "")
+      .replace(/\D/g, "")
+      .slice(0, 16)
+      .replace(/(.{4})/g, "$1 ")
+      .trim();
+  }
+
+  formatCardExpiry(value) {
+    const digits = (value || "").replace(/\D/g, "").slice(0, 4);
+    if (digits.length <= 2) return digits;
+    return `${digits.slice(0, 2)}/${digits.slice(2)}`;
   }
 
   updateRawFootagePreview() {
