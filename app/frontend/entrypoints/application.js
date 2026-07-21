@@ -5,6 +5,7 @@ import { Application } from "@hotwired/stimulus"
 import consumer from "../channels/consumer"
 import { subscribeToClientNotifications } from "../channels/client_notification_channel"
 import { subscribeToProjectComments } from "../channels/project_comments_channel"
+import { subscribeToProjectStatus } from "../channels/project_status_channel"
 import { subscribeToPMNotifications } from "../channels/pm_notification_channel"
 import "./application.css"
 import PMProjectActionController from "../controllers/pm_project_action_controller"
@@ -28,5 +29,6 @@ application.register("secret-reveal", SecretRevealController)
 subscribeToPMNotifications(consumer)
 subscribeToClientNotifications(consumer)
 subscribeToProjectComments(consumer)
+subscribeToProjectStatus(consumer)
 
 console.log("Vite Rails is ready")

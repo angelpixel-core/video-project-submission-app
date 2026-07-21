@@ -11,6 +11,7 @@ class Project < ApplicationRecord
   has_many :comments, dependent: :destroy
 
   before_validation :sync_raw_footage_metadata
+  after_update_commit :broadcast_status_badge
 
   scope :for_pm_table, lambda {
     left_outer_joins(video_type_selections: :video_type)
@@ -94,9 +95,42 @@ class Project < ApplicationRecord
     raw_footage_provider.present? && (raw_footage_embed_url.present? || raw_footage_social_preview?)
   end
 
+  def status_badge_text
+    return "Borrador" if draft?
+    return "Pendiente" if pending?
+    return "En progreso" if in_progress?
+
+    "Completado"
+  end
+
+  def status_badge_class
+    return "text-bg-warning" if draft?
+    return "text-bg-secondary" if pending?
+    return "text-bg-info" if in_progress?
+
+    "text-bg-success"
+  end
+
+  def status_badge_dom_id
+    ActionView::RecordIdentifier.dom_id(self, :status_badge)
+  end
+
   private
 
   def sync_raw_footage_metadata
     self.raw_footage_metadata = RawFootageUrlParser.metadata(raw_footage_url)
+  end
+
+  def broadcast_status_badge
+    return unless previous_changes.key?("status")
+
+    ActionCable.server.broadcast(
+      "project_status_#{id}",
+      {
+        type: "status_updated",
+        project_id: id,
+        status_badge_html: ApplicationController.render(partial: "projects/status_badge", locals: { project: self })
+      }
+    )
   end
 end
