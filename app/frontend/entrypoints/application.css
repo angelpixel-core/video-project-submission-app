@@ -330,6 +330,179 @@ a:hover {
   width: 100%;
 }
 
+.payment-card-stage {
+  perspective: 1200px;
+}
+
+.payment-card-shell {
+  position: relative;
+  min-height: 14rem;
+  border-radius: 1.25rem;
+  transform-style: preserve-3d;
+  transition: transform 260ms ease;
+}
+
+.payment-card-shell.is-flipped {
+  transform: rotateY(180deg);
+}
+
+.payment-card-face {
+  position: absolute;
+  inset: 0;
+  border-radius: 1.25rem;
+  padding: 1.25rem;
+  backface-visibility: hidden;
+  overflow: hidden;
+  box-shadow: 0 0.75rem 1.75rem rgba(31, 27, 22, 0.14);
+}
+
+.payment-card-face-front {
+  background: linear-gradient(135deg, #1f2a44, #5b4b8a 60%, #8a6bd6);
+  color: #f9fafb;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.payment-card-face-back {
+  background: linear-gradient(135deg, #2a1f3d, #111827 70%, #3f6f8f);
+  color: #f9fafb;
+  transform: rotateY(180deg);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.payment-card-front-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.9fr) minmax(0, 1fr);
+  gap: 0.85rem;
+  margin-top: auto;
+  align-items: end;
+}
+
+.payment-card-chip-trigger {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: rgba(255, 248, 214, 0.95);
+  justify-self: end;
+  align-self: end;
+  margin-bottom: 0.15rem;
+  width: 3.35rem;
+  height: 2.35rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.payment-card-chip-trigger svg {
+  width: 100%;
+  height: 100%;
+}
+
+.payment-card-chip-trigger:hover,
+.payment-card-chip-trigger:focus {
+  color: rgba(255, 248, 214, 1);
+}
+
+.payment-card-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+@media (max-width: 575.98px) {
+  .payment-card-front-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.payment-card-label {
+  font-size: 0.66rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(249, 250, 251, 0.72);
+}
+
+.payment-card-input {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  color: #f9fafb;
+  box-shadow: none;
+  font-variant-numeric: tabular-nums;
+}
+
+.payment-card-input::placeholder {
+  color: rgba(249, 250, 251, 0.55);
+}
+
+.payment-card-input:focus {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(203, 182, 255, 0.95);
+  color: #f9fafb;
+  box-shadow: 0 0 0 0.2rem rgba(122, 104, 184, 0.18);
+}
+
+.payment-card-input.is-valid,
+.payment-card-input.is-invalid {
+  background-image: none;
+}
+
+.payment-card-input.is-valid {
+  border-color: rgba(142, 208, 246, 0.95);
+}
+
+.payment-card-input.is-invalid {
+  border-color: rgba(232, 112, 112, 0.95);
+}
+
+.payment-card-input-lg {
+  font-size: 1rem;
+  letter-spacing: 0.18em;
+}
+
+.payment-card-input-back {
+  max-width: 10rem;
+  margin-left: auto;
+  text-align: center;
+}
+
+.payment-card-field-grow {
+  min-width: 0;
+}
+
+.payment-card-expiry-field {
+  min-width: 7rem;
+}
+
+.payment-card-magnetic-strip {
+  height: 2.1rem;
+  margin: 0 -1.25rem 1.2rem;
+  background: #0f172a;
+}
+
+.payment-card-cvc-row {
+  margin-left: auto;
+  margin-top: auto;
+  background: rgba(255, 255, 255, 0.92);
+  color: #1f1b16;
+  border-radius: 0.85rem;
+  padding: 0.85rem 1rem;
+  width: min(12rem, 100%);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  display: grid;
+  gap: 0.35rem;
+}
+
+.payment-card-error {
+  min-height: 1rem;
+  margin-top: 0;
+  color: #8b1f1f;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
 .pm-notification-toast {
   background: #fff6d8;
   border-color: #e8d08a;
