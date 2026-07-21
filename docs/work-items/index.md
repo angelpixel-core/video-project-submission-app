@@ -185,3 +185,7 @@ Work items are implementation documents. Each one should map back to the docs it
 ## 36
 
 - [x] [Project Status Badge Realtime](./036-project-status-badge-realtime.md)
+
+## 37
+
+- [x] [Payment History on Project Show](./037-payment-history-on-project-show.md)
