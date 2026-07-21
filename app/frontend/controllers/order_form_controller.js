@@ -6,8 +6,8 @@ export default class extends Controller {
     "form",
     "name",
     "rawFootageUrl",
-    "youtubeUrl",
     "rawFootageUrlFeedback",
+    "rawFootagePreview",
     "selectionsJson",
     "cartItems",
     "cartTotal",
@@ -94,7 +94,6 @@ export default class extends Controller {
   syncFields() {
     this.cart.name = this.nameTarget.value;
     this.cart.rawFootageUrl = this.rawFootageUrlTarget.value;
-    if (this.hasYoutubeUrlTarget) this.cart.youtubeUrl = this.youtubeUrlTarget.value;
     if (this.hasPaymentNameTarget)
       this.cart.paymentName = this.paymentNameTarget.value;
     if (this.hasPaymentEmailTarget)
@@ -161,9 +160,6 @@ export default class extends Controller {
     this.nameTarget.value = this.cart.name || this.nameTarget.value;
     this.rawFootageUrlTarget.value =
       this.cart.rawFootageUrl || this.rawFootageUrlTarget.value;
-    if (this.hasYoutubeUrlTarget) {
-      this.youtubeUrlTarget.value = this.cart.youtubeUrl || this.youtubeUrlTarget.value;
-    }
     this.paymentNameTarget.value =
       this.cart.paymentName || this.paymentNameTarget.value;
     this.paymentEmailTarget.value =
@@ -177,7 +173,6 @@ export default class extends Controller {
     const fallback = {
       name: "",
       rawFootageUrl: "",
-      youtubeUrl: "",
       paymentName: "",
       paymentEmail: "",
       items: [],
@@ -189,7 +184,6 @@ export default class extends Controller {
         ...fallback,
         name: this.nameTarget?.value || "",
         rawFootageUrl: this.rawFootageUrlTarget?.value || "",
-        youtubeUrl: this.hasYoutubeUrlTarget ? this.youtubeUrlTarget?.value || "" : "",
         paymentName: this.paymentNameTarget?.value || "",
         paymentEmail: this.paymentEmailTarget?.value || "",
         items: rawSelections
@@ -243,6 +237,7 @@ export default class extends Controller {
     }
 
     this.updateReviewButtonState();
+    this.updateRawFootagePreview();
   }
 
   scheduleAutosave() {
@@ -336,6 +331,7 @@ export default class extends Controller {
     }
 
     this.updateReviewButtonState();
+    this.updateRawFootagePreview();
     return isValid;
   }
 
@@ -396,6 +392,276 @@ export default class extends Controller {
     if (statusTarget)
       statusTarget.textContent = canReview ? "" : this.getReviewBlockReason();
     this.setFinalizeButtonEnabled(canReview);
+  }
+
+  updateRawFootagePreview() {
+    if (!this.hasRawFootagePreviewTarget) return;
+
+    const preview = this.parseRawFootageUrl(this.rawFootageUrlTarget.value);
+
+    if (!preview) {
+      this.rawFootagePreviewTarget.classList.remove("is-visible");
+      this.rawFootagePreviewTarget.innerHTML = "";
+      return;
+    }
+
+    const providerLabel =
+      preview.provider === "instagram"
+        ? "Instagram preview"
+        : preview.provider === "tiktok"
+          ? "TikTok preview"
+          :
+      preview.provider === "twitch"
+        ? "Twitch preview"
+        : preview.provider === "vimeo"
+          ? "Vimeo preview"
+          : "YouTube preview";
+    const shellClasses = ["raw-footage-preview-shell"];
+    if (preview.aspectRatio === "9 / 16") shellClasses.push("is-portrait");
+
+    const mediaMarkup = preview.provider === "instagram"
+      ? this.instagramPreviewMarkup(preview)
+      : preview.provider === "tiktok"
+        ? this.tiktokPreviewMarkup(preview)
+        : `<iframe src="${this.escapeAttribute(preview.embedUrl)}" title="${this.escapeAttribute(providerLabel)}" class="raw-footage-preview-media" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>`;
+
+    const shellMarkup = preview.provider === "instagram" || preview.provider === "tiktok"
+      ? `<div class="raw-footage-social-preview">${mediaMarkup}</div>`
+      : `<div class="rounded-3 overflow-hidden bg-dark ${shellClasses.join(" ")}" style="aspect-ratio: ${this.escapeAttribute(preview.aspectRatio || "16 / 9")};">${mediaMarkup}</div>`;
+
+    this.rawFootagePreviewTarget.innerHTML = `
+      <div class="card border-0 shadow-sm raw-footage-preview-card">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center gap-3 mb-3">
+            <div>
+              <p class="text-uppercase text-body-secondary small mb-1">Live preview</p>
+              <h3 class="h6 mb-0">${this.escapeHtml(providerLabel)}</h3>
+            </div>
+            <span class="badge text-bg-primary">Recognized</span>
+          </div>
+          ${shellMarkup}
+        </div>
+      </div>
+    `;
+    if (preview.provider === "instagram" || preview.provider === "tiktok") {
+      this.loadSocialEmbedScript(preview.provider);
+    }
+    this.rawFootagePreviewTarget.classList.add("is-visible");
+  }
+
+  parseRawFootageUrl(value) {
+    const url = this.normalizeUrl(value);
+    if (!url || url.protocol !== "https:") return null;
+
+    const youtube = this.parseYouTubeUrl(url);
+    if (youtube) return youtube;
+
+    const instagram = this.parseInstagramUrl(url);
+    if (instagram) return instagram;
+
+    const tiktok = this.parseTiktokUrl(url);
+    if (tiktok) return tiktok;
+
+    const twitch = this.parseTwitchUrl(url);
+    if (twitch) return twitch;
+
+    return this.parseVimeoUrl(url);
+  }
+
+  parseYouTubeUrl(url) {
+    const host = url.host.toLowerCase();
+    const hosts = ["youtube.com", "www.youtube.com", "m.youtube.com", "youtu.be", "www.youtu.be"];
+    if (!hosts.includes(host)) return null;
+
+    let videoId = null;
+    if (host === "youtu.be" || host === "www.youtu.be") {
+      videoId = url.pathname.split("/").filter(Boolean)[0] || null;
+    } else {
+      const params = new URLSearchParams(url.search);
+      videoId = params.get("v");
+      if (!videoId) {
+        const segments = url.pathname.split("/").filter(Boolean);
+        if (segments[0] === "embed" || segments[0] === "shorts") videoId = segments[1] || null;
+      }
+    }
+
+    if (!videoId) return null;
+
+    return {
+      provider: "youtube",
+      videoId,
+      aspectRatio: host === "www.youtube.com" || host === "youtube.com" || host === "m.youtube.com"
+        ? (url.pathname.split("/").filter(Boolean)[0] === "shorts" ? "9 / 16" : "16 / 9")
+        : "16 / 9",
+      embedUrl: `https://www.youtube-nocookie.com/embed/${videoId}`,
+      thumbnailUrl: `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`,
+      watchUrl: `https://www.youtube.com/watch?v=${videoId}`,
+    };
+  }
+
+  parseVimeoUrl(url) {
+    const host = url.host.toLowerCase();
+    const hosts = ["vimeo.com", "www.vimeo.com", "player.vimeo.com"];
+    if (!hosts.includes(host)) return null;
+
+    const segments = url.pathname.split("/").filter(Boolean);
+    const videoId =
+      host === "player.vimeo.com" && segments[0] === "video"
+        ? segments[1]
+        : [...segments].reverse().find((segment) => /^\d+$/.test(segment));
+
+    if (!videoId) return null;
+
+    return {
+      provider: "vimeo",
+      videoId,
+      aspectRatio: "16 / 9",
+      embedUrl: `https://player.vimeo.com/video/${videoId}`,
+      watchUrl: `https://vimeo.com/${videoId}`,
+    };
+  }
+
+  parseInstagramUrl(url) {
+    const host = url.host.toLowerCase();
+    const hosts = ["instagram.com", "www.instagram.com", "instagr.am", "www.instagr.am"];
+    if (!hosts.includes(host)) return null;
+
+    const segments = url.pathname.split("/").filter(Boolean);
+    if (!["p", "reel", "reels", "tv"].includes(segments[0])) return null;
+
+    const postId = segments[1];
+    if (!postId) return null;
+
+    return {
+      provider: "instagram",
+      videoId: postId,
+      aspectRatio: "4 / 5",
+      watchUrl: url.toString(),
+      permalink: url.toString(),
+    };
+  }
+
+  parseTiktokUrl(url) {
+    const host = url.host.toLowerCase();
+    const hosts = ["tiktok.com", "www.tiktok.com", "m.tiktok.com"];
+    if (!hosts.includes(host)) return null;
+
+    const segments = url.pathname.split("/").filter(Boolean);
+    const videoId =
+      segments[0]?.startsWith("@") && segments[1] === "video"
+        ? segments[2]
+        : segments.find((segment) => /^\d+$/.test(segment));
+
+    if (!videoId) return null;
+
+    return {
+      provider: "tiktok",
+      videoId,
+      aspectRatio: "9 / 16",
+      watchUrl: url.toString(),
+      permalink: url.toString(),
+    };
+  }
+
+  parseTwitchUrl(url) {
+    const host = url.host.toLowerCase();
+    const hosts = ["twitch.tv", "www.twitch.tv", "player.twitch.tv"];
+    if (!hosts.includes(host)) return null;
+
+    const segments = url.pathname.split("/").filter(Boolean);
+    const videoId =
+      segments[0] === "videos" && segments[1]
+        ? segments[1]
+        : segments.find((segment) => /^\d+$/.test(segment));
+
+    if (!videoId) return null;
+
+    return {
+      provider: "twitch",
+      videoId,
+      aspectRatio: "16 / 9",
+      embedUrl: `https://player.twitch.tv/?video=v${videoId}&parent=${window.location.hostname}`,
+      watchUrl: `https://www.twitch.tv/videos/${videoId}`,
+    };
+  }
+
+  instagramPreviewMarkup(preview) {
+    return `
+      <blockquote
+        class="instagram-media raw-footage-social-embed"
+        data-instgrm-captioned=""
+        data-instgrm-permalink="${this.escapeAttribute(preview.permalink || preview.watchUrl)}"
+        data-instgrm-version="14"
+        style="background:#FFF; border:0; margin:0 auto; max-width:540px; min-width:326px; padding:0; width:99.375%;"
+      >
+        <a href="${this.escapeAttribute(preview.permalink || preview.watchUrl)}" target="_blank" rel="noopener">${this.escapeHtml("Open Instagram post")}</a>
+      </blockquote>
+    `;
+  }
+
+  tiktokPreviewMarkup(preview) {
+    return `
+      <blockquote
+        class="tiktok-embed raw-footage-social-embed"
+        cite="${this.escapeAttribute(preview.permalink || preview.watchUrl)}"
+        data-video-id="${this.escapeAttribute(preview.videoId)}"
+        style="max-width:605px; min-width:325px; margin:0 auto;"
+      >
+        <section>
+          <a href="${this.escapeAttribute(preview.permalink || preview.watchUrl)}" target="_blank" rel="noopener">${this.escapeHtml("Open TikTok video")}</a>
+        </section>
+      </blockquote>
+    `;
+  }
+
+  loadSocialEmbedScript(provider) {
+    const scripts = {
+      instagram: "https://www.instagram.com/embed.js",
+      tiktok: "https://www.tiktok.com/embed.js",
+    };
+    const ids = {
+      instagram: "raw-footage-instagram-embed-script",
+      tiktok: "raw-footage-tiktok-embed-script",
+    };
+    const callbacks = {
+      instagram: () => window.instgrm?.Embeds?.process?.(),
+      tiktok: () => {
+        const embeds = this.rawFootagePreviewTarget.querySelectorAll("blockquote.tiktok-embed");
+        window.tiktokEmbed?.lib?.render?.(embeds);
+      },
+    };
+
+    this.appendSocialScript(ids[provider], scripts[provider], callbacks[provider]);
+  }
+
+  appendSocialScript(id, src, onload) {
+    const existing = document.getElementById(id);
+    if (existing) existing.remove();
+
+    const script = document.createElement("script");
+    script.id = id;
+    script.async = true;
+    script.defer = true;
+    script.src = src;
+    if (onload) script.addEventListener("load", onload, { once: true });
+    document.body.appendChild(script);
+  }
+
+  normalizeUrl(value) {
+    const raw = (value || "").trim();
+    if (!raw) return null;
+
+    const normalized = raw.match(/^https?:\/\//i) ? raw : `https://${raw}`;
+
+    try {
+      return new URL(normalized);
+    } catch {
+      return null;
+    }
+  }
+
+  escapeAttribute(value) {
+    return this.escapeHtml(value).replace(/"/g, "&quot;");
   }
 
   escapeHtml(value) {

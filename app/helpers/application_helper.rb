@@ -70,4 +70,21 @@ module ApplicationHelper
     video_id = youtube_video_id(url)
     video_id.present? ? "https://www.youtube.com/watch?v=#{video_id}" : url
   end
+
+  def raw_footage_embed_script_tag(project)
+    @raw_footage_embed_scripts_loaded ||= {}
+
+    case project.raw_footage_provider
+    when "instagram"
+      return if @raw_footage_embed_scripts_loaded["instagram"]
+
+      @raw_footage_embed_scripts_loaded["instagram"] = true
+      tag.script("", src: "https://www.instagram.com/embed.js", async: true, defer: true)
+    when "tiktok"
+      return if @raw_footage_embed_scripts_loaded["tiktok"]
+
+      @raw_footage_embed_scripts_loaded["tiktok"] = true
+      tag.script("", src: "https://www.tiktok.com/embed.js", async: true, defer: true)
+    end
+  end
 end

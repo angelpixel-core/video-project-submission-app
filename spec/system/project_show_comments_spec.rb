@@ -14,15 +14,14 @@ RSpec.describe "Project show comments", type: :system, js: true do
     VideoType.create!(name: "Highlight Reel", description: "Short edit", price_cents: 25_000, output_format: "mp4")
   end
 
-  it "shows a youtube embed and allows both workspaces to comment" do
+  it "shows a raw footage embed and allows both workspaces to comment" do
     client = Client.find_by!(email: "client@example.com")
     pm = PM.find_by!(email: "pm@example.com")
     project = Project.create!(
       client: client,
       pm: pm,
       name: "Project Alpha",
-      raw_footage_url: "https://example.com/raw.mov",
-      youtube_url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+      raw_footage_url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
       status: :in_progress
     )
 
@@ -55,8 +54,7 @@ RSpec.describe "Project show comments", type: :system, js: true do
       client: client,
       pm: pm,
       name: "Project Gamma",
-      raw_footage_url: "https://example.com/gamma.mov",
-      youtube_url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+      raw_footage_url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
       status: :in_progress
     )
 
@@ -82,15 +80,14 @@ RSpec.describe "Project show comments", type: :system, js: true do
     end
   end
 
-  it "shows a youtube preview on the client project card" do
+  it "shows a raw footage preview on the client project card" do
     client = Client.find_by!(email: "client@example.com")
     pm = PM.find_by!(email: "pm@example.com")
     Project.create!(
       client: client,
       pm: pm,
       name: "Project Beta",
-      raw_footage_url: "https://example.com/beta.mov",
-      youtube_url: "https://youtu.be/dQw4w9WgXcQ",
+      raw_footage_url: "https://youtu.be/dQw4w9WgXcQ",
       status: :pending
     )
 
@@ -105,5 +102,53 @@ RSpec.describe "Project show comments", type: :system, js: true do
     expect(page).to have_current_path(project_path(Project.find_by!(name: "Project Beta")))
     expect(page).to have_content("PROJECT DETAIL")
     expect(page).to have_content("Comments")
+  end
+
+  it "shows a twitch preview on the project detail page" do
+    client = Client.find_by!(email: "client@example.com")
+    pm = PM.find_by!(email: "pm@example.com")
+    project = Project.create!(
+      client: client,
+      pm: pm,
+      name: "Project Twitch",
+      raw_footage_url: "https://www.twitch.tv/videos/2820449804",
+      status: :in_progress
+    )
+
+    visit project_path(project)
+
+    expect(page).to have_css("iframe[src*='player.twitch.tv']")
+    expect(page).to have_css("iframe[src*='video=v2820449804']")
+    expect(page).to have_content("Raw footage")
+  end
+
+  it "shows an instagram preview in the draft form" do
+    client = Client.find_by!(email: "client@example.com")
+    pm = PM.find_by!(email: "pm@example.com")
+    project = Project.create!(client: client, pm: pm, status: :draft)
+
+    visit edit_project_path(project)
+
+    fill_in "Name", with: "Project Instagram"
+    fill_in "Raw footage URL", with: "https://www.instagram.com/p/DbBvSsRtfuB"
+
+    expect(page).to have_css("blockquote.instagram-media")
+  end
+
+  it "shows a tiktok preview on the project detail page" do
+    client = Client.find_by!(email: "client@example.com")
+    pm = PM.find_by!(email: "pm@example.com")
+    project = Project.create!(
+      client: client,
+      pm: pm,
+      name: "Project TikTok",
+      raw_footage_url: "https://www.tiktok.com/@demmy_061/video/7638191588631514376",
+      status: :in_progress
+    )
+
+    visit project_path(project)
+
+    expect(page).to have_css("blockquote.tiktok-embed")
+    expect(page).to have_css("script[src*='tiktok.com/embed.js']", visible: :all)
   end
 end

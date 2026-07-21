@@ -57,7 +57,7 @@ class ProjectsController < ApplicationController
   end
 
   def project_attributes
-    params.require(:project).permit(:name, :raw_footage_url, :youtube_url)
+    params.require(:project).permit(:name, :raw_footage_url)
   end
 
   def parsed_selections
