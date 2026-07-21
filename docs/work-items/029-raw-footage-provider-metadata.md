@@ -29,7 +29,7 @@ title: Raw Footage Provider Metadata
 - Keep `raw_footage_url` as the single visible input for the client.
 - Detect supported providers from the entered URL and persist derived metadata on the project.
 - Render enriched previews only when the URL is recognized.
-- Support YouTube, Vimeo, and Twitch video URLs.
+- Support YouTube, Vimeo, Twitch, Instagram, and TikTok video URLs.
 - Keep the metadata portable across MySQL and PostgreSQL by storing it as `json`.
 - Preserve the existing project submission and comment flows.
 

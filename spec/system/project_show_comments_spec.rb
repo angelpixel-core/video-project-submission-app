@@ -121,4 +121,34 @@ RSpec.describe "Project show comments", type: :system, js: true do
     expect(page).to have_css("iframe[src*='video=v2820449804']")
     expect(page).to have_content("Raw footage")
   end
+
+  it "shows an instagram preview in the draft form" do
+    client = Client.find_by!(email: "client@example.com")
+    pm = PM.find_by!(email: "pm@example.com")
+    project = Project.create!(client: client, pm: pm, status: :draft)
+
+    visit edit_project_path(project)
+
+    fill_in "Name", with: "Project Instagram"
+    fill_in "Raw footage URL", with: "https://www.instagram.com/p/DbBvSsRtfuB"
+
+    expect(page).to have_css("blockquote.instagram-media")
+  end
+
+  it "shows a tiktok preview on the project detail page" do
+    client = Client.find_by!(email: "client@example.com")
+    pm = PM.find_by!(email: "pm@example.com")
+    project = Project.create!(
+      client: client,
+      pm: pm,
+      name: "Project TikTok",
+      raw_footage_url: "https://www.tiktok.com/@demmy_061/video/7638191588631514376",
+      status: :in_progress
+    )
+
+    visit project_path(project)
+
+    expect(page).to have_css("blockquote.tiktok-embed")
+    expect(page).to have_css("script[src*='tiktok.com/embed.js']", visible: :all)
+  end
 end

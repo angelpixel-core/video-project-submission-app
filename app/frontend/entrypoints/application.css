@@ -321,6 +321,15 @@ a:hover {
   pointer-events: none;
 }
 
+.raw-footage-social-preview {
+  display: flex;
+  justify-content: center;
+}
+
+.raw-footage-social-preview .raw-footage-social-embed {
+  width: 100%;
+}
+
 .pm-notification-toast {
   background: #fff6d8;
   border-color: #e8d08a;

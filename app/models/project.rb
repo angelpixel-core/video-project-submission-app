@@ -69,6 +69,10 @@ class Project < ApplicationRecord
     embed_url&.gsub("{parent}", parent_host.presence || "localhost")
   end
 
+  def raw_footage_social_preview?
+    %w[instagram tiktok].include?(raw_footage_provider)
+  end
+
   def raw_footage_thumbnail_url
     raw_footage_metadata_hash["thumbnail_url"]
   end
@@ -82,7 +86,7 @@ class Project < ApplicationRecord
   end
 
   def raw_footage_previewable?
-    raw_footage_provider.present? && raw_footage_embed_url.present?
+    raw_footage_provider.present? && (raw_footage_embed_url.present? || raw_footage_social_preview?)
   end
 
   private

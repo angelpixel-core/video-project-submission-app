@@ -406,6 +406,11 @@ export default class extends Controller {
     }
 
     const providerLabel =
+      preview.provider === "instagram"
+        ? "Instagram preview"
+        : preview.provider === "tiktok"
+          ? "TikTok preview"
+          :
       preview.provider === "twitch"
         ? "Twitch preview"
         : preview.provider === "vimeo"
@@ -414,7 +419,15 @@ export default class extends Controller {
     const shellClasses = ["raw-footage-preview-shell"];
     if (preview.aspectRatio === "9 / 16") shellClasses.push("is-portrait");
 
-    const mediaMarkup = `<iframe src="${this.escapeAttribute(preview.embedUrl)}" title="${this.escapeAttribute(providerLabel)}" class="raw-footage-preview-media" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>`;
+    const mediaMarkup = preview.provider === "instagram"
+      ? this.instagramPreviewMarkup(preview)
+      : preview.provider === "tiktok"
+        ? this.tiktokPreviewMarkup(preview)
+        : `<iframe src="${this.escapeAttribute(preview.embedUrl)}" title="${this.escapeAttribute(providerLabel)}" class="raw-footage-preview-media" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>`;
+
+    const shellMarkup = preview.provider === "instagram" || preview.provider === "tiktok"
+      ? `<div class="raw-footage-social-preview">${mediaMarkup}</div>`
+      : `<div class="rounded-3 overflow-hidden bg-dark ${shellClasses.join(" ")}" style="aspect-ratio: ${this.escapeAttribute(preview.aspectRatio || "16 / 9")};">${mediaMarkup}</div>`;
 
     this.rawFootagePreviewTarget.innerHTML = `
       <div class="card border-0 shadow-sm raw-footage-preview-card">
@@ -426,12 +439,13 @@ export default class extends Controller {
             </div>
             <span class="badge text-bg-primary">Recognized</span>
           </div>
-          <div class="rounded-3 overflow-hidden bg-dark ${shellClasses.join(" ")}" style="aspect-ratio: ${this.escapeAttribute(preview.aspectRatio || "16 / 9")};">
-            ${mediaMarkup}
-          </div>
+          ${shellMarkup}
         </div>
       </div>
     `;
+    if (preview.provider === "instagram" || preview.provider === "tiktok") {
+      this.loadSocialEmbedScript(preview.provider);
+    }
     this.rawFootagePreviewTarget.classList.add("is-visible");
   }
 
@@ -441,6 +455,12 @@ export default class extends Controller {
 
     const youtube = this.parseYouTubeUrl(url);
     if (youtube) return youtube;
+
+    const instagram = this.parseInstagramUrl(url);
+    if (instagram) return instagram;
+
+    const tiktok = this.parseTiktokUrl(url);
+    if (tiktok) return tiktok;
 
     const twitch = this.parseTwitchUrl(url);
     if (twitch) return twitch;
@@ -501,6 +521,48 @@ export default class extends Controller {
     };
   }
 
+  parseInstagramUrl(url) {
+    const host = url.host.toLowerCase();
+    const hosts = ["instagram.com", "www.instagram.com", "instagr.am", "www.instagr.am"];
+    if (!hosts.includes(host)) return null;
+
+    const segments = url.pathname.split("/").filter(Boolean);
+    if (!["p", "reel", "reels", "tv"].includes(segments[0])) return null;
+
+    const postId = segments[1];
+    if (!postId) return null;
+
+    return {
+      provider: "instagram",
+      videoId: postId,
+      aspectRatio: "4 / 5",
+      watchUrl: url.toString(),
+      permalink: url.toString(),
+    };
+  }
+
+  parseTiktokUrl(url) {
+    const host = url.host.toLowerCase();
+    const hosts = ["tiktok.com", "www.tiktok.com", "m.tiktok.com"];
+    if (!hosts.includes(host)) return null;
+
+    const segments = url.pathname.split("/").filter(Boolean);
+    const videoId =
+      segments[0]?.startsWith("@") && segments[1] === "video"
+        ? segments[2]
+        : segments.find((segment) => /^\d+$/.test(segment));
+
+    if (!videoId) return null;
+
+    return {
+      provider: "tiktok",
+      videoId,
+      aspectRatio: "9 / 16",
+      watchUrl: url.toString(),
+      permalink: url.toString(),
+    };
+  }
+
   parseTwitchUrl(url) {
     const host = url.host.toLowerCase();
     const hosts = ["twitch.tv", "www.twitch.tv", "player.twitch.tv"];
@@ -521,6 +583,68 @@ export default class extends Controller {
       embedUrl: `https://player.twitch.tv/?video=v${videoId}&parent=${window.location.hostname}`,
       watchUrl: `https://www.twitch.tv/videos/${videoId}`,
     };
+  }
+
+  instagramPreviewMarkup(preview) {
+    return `
+      <blockquote
+        class="instagram-media raw-footage-social-embed"
+        data-instgrm-captioned=""
+        data-instgrm-permalink="${this.escapeAttribute(preview.permalink || preview.watchUrl)}"
+        data-instgrm-version="14"
+        style="background:#FFF; border:0; margin:0 auto; max-width:540px; min-width:326px; padding:0; width:99.375%;"
+      >
+        <a href="${this.escapeAttribute(preview.permalink || preview.watchUrl)}" target="_blank" rel="noopener">${this.escapeHtml("Open Instagram post")}</a>
+      </blockquote>
+    `;
+  }
+
+  tiktokPreviewMarkup(preview) {
+    return `
+      <blockquote
+        class="tiktok-embed raw-footage-social-embed"
+        cite="${this.escapeAttribute(preview.permalink || preview.watchUrl)}"
+        data-video-id="${this.escapeAttribute(preview.videoId)}"
+        style="max-width:605px; min-width:325px; margin:0 auto;"
+      >
+        <section>
+          <a href="${this.escapeAttribute(preview.permalink || preview.watchUrl)}" target="_blank" rel="noopener">${this.escapeHtml("Open TikTok video")}</a>
+        </section>
+      </blockquote>
+    `;
+  }
+
+  loadSocialEmbedScript(provider) {
+    const scripts = {
+      instagram: "https://www.instagram.com/embed.js",
+      tiktok: "https://www.tiktok.com/embed.js",
+    };
+    const ids = {
+      instagram: "raw-footage-instagram-embed-script",
+      tiktok: "raw-footage-tiktok-embed-script",
+    };
+    const callbacks = {
+      instagram: () => window.instgrm?.Embeds?.process?.(),
+      tiktok: () => {
+        const embeds = this.rawFootagePreviewTarget.querySelectorAll("blockquote.tiktok-embed");
+        window.tiktokEmbed?.lib?.render?.(embeds);
+      },
+    };
+
+    this.appendSocialScript(ids[provider], scripts[provider], callbacks[provider]);
+  }
+
+  appendSocialScript(id, src, onload) {
+    const existing = document.getElementById(id);
+    if (existing) existing.remove();
+
+    const script = document.createElement("script");
+    script.id = id;
+    script.async = true;
+    script.defer = true;
+    script.src = src;
+    if (onload) script.addEventListener("load", onload, { once: true });
+    document.body.appendChild(script);
   }
 
   normalizeUrl(value) {

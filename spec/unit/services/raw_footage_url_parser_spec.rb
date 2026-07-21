@@ -35,6 +35,28 @@ RSpec.describe RawFootageUrlParser do
     )
   end
 
+  it "builds instagram metadata" do
+    metadata = described_class.metadata("https://www.instagram.com/p/DbBvSsRtfuB")
+
+    expect(metadata).to include(
+      "provider" => "instagram",
+      "video_id" => "DbBvSsRtfuB",
+      "aspect_ratio" => "4 / 5",
+      "watch_url" => "https://www.instagram.com/p/DbBvSsRtfuB"
+    )
+  end
+
+  it "builds tiktok metadata" do
+    metadata = described_class.metadata("https://www.tiktok.com/@demmy_061/video/7638191588631514376")
+
+    expect(metadata).to include(
+      "provider" => "tiktok",
+      "video_id" => "7638191588631514376",
+      "aspect_ratio" => "9 / 16",
+      "watch_url" => "https://www.tiktok.com/@demmy_061/video/7638191588631514376"
+    )
+  end
+
   it "builds vimeo metadata" do
     metadata = described_class.metadata("https://player.vimeo.com/video/123456789")
 

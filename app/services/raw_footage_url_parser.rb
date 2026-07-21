@@ -1,11 +1,12 @@
 require "uri"
 
 class RawFootageUrlParser
+  INSTAGRAM_HOSTS = %w[instagram.com www.instagram.com instagr.am www.instagr.am].freeze
   TWITCH_HOSTS = %w[twitch.tv www.twitch.tv player.twitch.tv].freeze
   VIMEO_HOSTS = %w[vimeo.com www.vimeo.com player.vimeo.com].freeze
 
   def self.metadata(url)
-    youtube_metadata(url) || twitch_metadata(url) || vimeo_metadata(url)
+    youtube_metadata(url) || instagram_metadata(url) || tiktok_metadata(url) || twitch_metadata(url) || vimeo_metadata(url)
   end
 
   def self.youtube_metadata(url)
@@ -48,6 +49,30 @@ class RawFootageUrlParser
     }
   end
 
+  def self.instagram_metadata(url)
+    post_id = instagram_post_id(url)
+    return unless post_id
+
+    {
+      "provider" => "instagram",
+      "video_id" => post_id,
+      "aspect_ratio" => "4 / 5",
+      "watch_url" => normalize(url)
+    }
+  end
+
+  def self.tiktok_metadata(url)
+    video_id = tiktok_video_id(url)
+    return unless video_id
+
+    {
+      "provider" => "tiktok",
+      "video_id" => video_id,
+      "aspect_ratio" => "9 / 16",
+      "watch_url" => normalize(url)
+    }
+  end
+
   def self.vimeo_video_id(url)
     uri = parse(url)
     return unless uri&.host.present? && VIMEO_HOSTS.include?(uri.host.downcase)
@@ -61,6 +86,28 @@ class RawFootageUrlParser
     segments.reverse.find { |segment| segment.match?(/\A\d+\z/) }
   end
   private_class_method :vimeo_video_id
+
+  def self.instagram_post_id(url)
+    uri = parse(url)
+    return unless uri&.host.present? && INSTAGRAM_HOSTS.include?(uri.host.downcase)
+
+    segments = path_segments(uri.path)
+    return unless %w[p reel reels tv].include?(segments.first)
+
+    segments.second
+  end
+  private_class_method :instagram_post_id
+
+  def self.tiktok_video_id(url)
+    uri = parse(url)
+    return unless uri&.host.present? && %w[tiktok.com www.tiktok.com m.tiktok.com].include?(uri.host.downcase)
+
+    segments = path_segments(uri.path)
+    return segments.third if segments.first.start_with?("@") && segments.second == "video"
+
+    segments.find { |segment| segment.match?(/\A\d+\z/) }
+  end
+  private_class_method :tiktok_video_id
 
   def self.twitch_video_id(url)
     uri = parse(url)
