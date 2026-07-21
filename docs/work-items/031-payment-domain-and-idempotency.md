@@ -1,0 +1,69 @@
+---
+id: payment-domain-idempotency
+aliases: []
+tags:
+  - work-items
+  - payment
+  - domain
+  - idempotency
+  - backend
+depends_on:
+  - payment-details-card-flip
+order: 31
+phase: work-items
+status: draft
+title: Payment Domain and Idempotency
+---
+
+# Payment Domain and Idempotency
+
+## Goal
+
+- [ ] Model payments as first-class records and make checkout idempotent before any provider integration is added.
+
+## Scope
+
+- Introduce a `Payment` record separate from `Project`.
+- Track payment attempts, provider references, and a durable idempotency key.
+- Prevent duplicate payment creation when the client retries submission.
+- Keep the payment state machine small and explicit.
+
+## Operational Note
+
+- This item establishes the payment domain boundary.
+- Do not call a real provider here; the provider adapter comes in the next work item.
+
+## Implementation Plan
+
+- [ ] Add `Payment` and `PaymentAttempt` persistence with status, provider, provider reference, and idempotency key fields.
+- [ ] Add model validations and unique constraints that prevent duplicate payment attempts for the same idempotency key.
+- [ ] Add a service that creates or reuses the payment attempt for a submission request.
+- [ ] Add tests for duplicate submission reuse and the initial payment state transitions.
+
+## Affected Docs
+
+- `docs/sprints/00-foundation/01-scope.md`
+- `docs/work-items/030-payment-details-card-flip.md`
+
+## Affected Ops
+
+- `db/migrate/`
+- `app/models/`
+- `app/services/`
+- `spec/models/`
+- `spec/services/`
+
+## Checklist
+
+- [ ] One checkout submission creates one active payment record.
+- [ ] Repeated submission requests reuse the same idempotent payment attempt.
+- [ ] Duplicate idempotency keys cannot create a second payment attempt.
+
+## Validation
+
+- [ ] Model and service specs pass.
+- [ ] The payment domain can be created without a provider integration.
+
+## Notes
+
+- Keep the `Project` model focused on project lifecycle; payment state should live in the payment domain.
