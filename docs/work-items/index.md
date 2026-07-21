@@ -160,4 +160,24 @@ Work items are implementation documents. Each one should map back to the docs it
 
 ## 30
 
-- [ ] [Payment Details Card Flip](./030-payment-details-card-flip.md)
+- [x] [Payment Details Card Flip](./030-payment-details-card-flip.md)
+
+## 31
+
+- [ ] [Payment Domain and Idempotency](./031-payment-domain-and-idempotency.md)
+
+## 32
+
+- [ ] [Fake Payment Provider Adapter](./032-payment-provider-fake.md)
+
+## 33
+
+- [ ] [Payment Webhook Ingestion](./033-payment-webhook-ingestion.md)
+
+## 34
+
+- [ ] [Payment Event Handler Pipeline](./034-payment-event-handler-pipeline.md)
+
+## 35
+
+- [ ] [Payment Retry and Observability](./035-payment-retry-and-observability.md)
