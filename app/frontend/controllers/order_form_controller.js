@@ -16,9 +16,6 @@ export default class extends Controller {
     "paymentCardShell",
     "paymentCardFront",
     "paymentCardBack",
-    "paymentCardName",
-    "paymentCardNumberDisplay",
-    "paymentCardExpiryDisplay",
     "paymentCardCvcDisplay",
     "paymentName",
     "paymentNameFeedback",
@@ -430,19 +427,10 @@ export default class extends Controller {
   updatePaymentCardPreview() {
     if (!this.hasPaymentCardShellTarget) return;
 
-    const name = (this.paymentNameTarget?.value || "").trim();
-    const number = this.formatCardNumber(this.paymentCardNumberTarget?.value || "");
-    const expiry = this.formatCardExpiry(this.paymentCardExpiryTarget?.value || "");
     const cvc = (this.paymentCardCvcTarget?.value || "").replace(/\D/g, "");
-
-    if (this.hasPaymentCardNameTarget)
-      this.paymentCardNameTarget.textContent = name || "Name on card";
-    if (this.hasPaymentCardNumberDisplayTarget)
-      this.paymentCardNumberDisplayTarget.textContent = number || "4242 4242 4242 4242";
-    if (this.hasPaymentCardExpiryDisplayTarget)
-      this.paymentCardExpiryDisplayTarget.textContent = expiry || "MM/YY";
-    if (this.hasPaymentCardCvcDisplayTarget)
+    if (this.hasPaymentCardCvcDisplayTarget) {
       this.paymentCardCvcDisplayTarget.textContent = cvc || "123";
+    }
 
     this.updatePaymentCardFlipState();
   }

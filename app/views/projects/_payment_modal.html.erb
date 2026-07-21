@@ -14,16 +14,33 @@
         <div class="payment-card-stage mb-4">
           <div class="payment-card-shell" data-order-form-target="paymentCardShell">
             <div class="payment-card-face payment-card-face-front" data-order-form-target="paymentCardFront">
-              <div class="payment-card-chip"></div>
-              <div class="payment-card-number" data-order-form-target="paymentCardNumberDisplay">4242 4242 4242 4242</div>
-              <div class="payment-card-meta d-flex justify-content-between gap-3">
-                <div>
-                  <div class="payment-card-label">Cardholder</div>
-                  <div class="payment-card-value" data-order-form-target="paymentCardName">Name on card</div>
+              <div class="d-flex justify-content-end">
+                <div class="payment-card-chip"></div>
+              </div>
+
+              <div class="payment-card-field">
+                <label class="payment-card-label" for="payment-card-number">Card number</label>
+                <input id="payment-card-number" type="text" class="form-control payment-card-input payment-card-input-lg" placeholder="4242 4242 4242 4242" data-order-form-target="paymentCardNumber" data-action="input->order-form#syncFields blur->order-form#validatePaymentFieldsOnBlur" aria-describedby="payment-card-number-feedback">
+                <div id="payment-card-number-feedback" class="payment-card-feedback invalid-feedback d-none" data-order-form-target="paymentCardNumberFeedback"></div>
+              </div>
+
+              <div class="payment-card-row">
+                <div class="payment-card-field payment-card-field-grow">
+                  <label class="payment-card-label" for="payment-name">Cardholder</label>
+                  <input id="payment-name" type="text" class="form-control payment-card-input" data-order-form-target="paymentName" data-action="input->order-form#syncFields blur->order-form#validatePaymentFieldsOnBlur" aria-describedby="payment-name-feedback">
+                  <div id="payment-name-feedback" class="payment-card-feedback invalid-feedback d-none" data-order-form-target="paymentNameFeedback"></div>
                 </div>
-                <div class="text-end">
-                  <div class="payment-card-label">Expiry</div>
-                  <div class="payment-card-value" data-order-form-target="paymentCardExpiryDisplay">MM/YY</div>
+
+                <div class="payment-card-field payment-card-expiry-field">
+                  <label class="payment-card-label" for="payment-card-expiry">Expiry</label>
+                  <input id="payment-card-expiry" type="text" class="form-control payment-card-input" placeholder="12/28" data-order-form-target="paymentCardExpiry" data-action="input->order-form#syncFields blur->order-form#validatePaymentFieldsOnBlur" aria-describedby="payment-card-expiry-feedback">
+                  <div id="payment-card-expiry-feedback" class="payment-card-feedback invalid-feedback d-none" data-order-form-target="paymentCardExpiryFeedback"></div>
+                </div>
+
+                <div class="payment-card-field payment-card-cvc-field">
+                  <label class="payment-card-label" for="payment-card-cvc">CVC</label>
+                  <input id="payment-card-cvc" type="text" class="form-control payment-card-input payment-card-input-cvc" placeholder="123" data-order-form-target="paymentCardCvc" data-action="focus->order-form#flipPaymentCard blur->order-form#unflipPaymentCard blur->order-form#validatePaymentFieldsOnBlur input->order-form#syncFields" aria-describedby="payment-card-cvc-feedback">
+                  <div id="payment-card-cvc-feedback" class="payment-card-feedback invalid-feedback d-none" data-order-form-target="paymentCardCvcFeedback"></div>
                 </div>
               </div>
             </div>
@@ -31,7 +48,7 @@
             <div class="payment-card-face payment-card-face-back" data-order-form-target="paymentCardBack">
               <div class="payment-card-magnetic-strip"></div>
               <div class="payment-card-cvc-row">
-                <div class="payment-card-cvc-label">CVC</div>
+                <div class="payment-card-label">CVC</div>
                 <div class="payment-card-cvc-value" data-order-form-target="paymentCardCvcDisplay">123</div>
               </div>
             </div>
@@ -39,32 +56,8 @@
         </div>
 
         <div class="mb-3">
-          <label class="form-label" for="payment-name">Name on card</label>
-          <input id="payment-name" type="text" class="form-control" data-order-form-target="paymentName" data-action="input->order-form#syncFields blur->order-form#validatePaymentFieldsOnBlur" aria-describedby="payment-name-feedback">
-          <div id="payment-name-feedback" class="invalid-feedback d-none" data-order-form-target="paymentNameFeedback"></div>
-        </div>
-
-        <div class="mb-3">
           <label class="form-label" for="payment-email">Billing email</label>
           <input id="payment-email" type="email" class="form-control" data-order-form-target="paymentEmail" data-action="input->order-form#syncFields">
-        </div>
-
-        <div class="row g-3">
-          <div class="col-12">
-            <label class="form-label" for="payment-card-number">Card number</label>
-            <input id="payment-card-number" type="text" class="form-control" placeholder="4242 4242 4242 4242" data-order-form-target="paymentCardNumber" data-action="input->order-form#syncFields blur->order-form#validatePaymentFieldsOnBlur" aria-describedby="payment-card-number-feedback">
-            <div id="payment-card-number-feedback" class="invalid-feedback d-none" data-order-form-target="paymentCardNumberFeedback"></div>
-          </div>
-          <div class="col-6">
-            <label class="form-label" for="payment-card-expiry">Expiry</label>
-            <input id="payment-card-expiry" type="text" class="form-control" placeholder="12/28" data-order-form-target="paymentCardExpiry" data-action="input->order-form#syncFields blur->order-form#validatePaymentFieldsOnBlur" aria-describedby="payment-card-expiry-feedback">
-            <div id="payment-card-expiry-feedback" class="invalid-feedback d-none" data-order-form-target="paymentCardExpiryFeedback"></div>
-          </div>
-          <div class="col-6">
-            <label class="form-label" for="payment-card-cvc">CVC</label>
-            <input id="payment-card-cvc" type="text" class="form-control" placeholder="123" data-order-form-target="paymentCardCvc" data-action="focus->order-form#flipPaymentCard blur->order-form#unflipPaymentCard blur->order-form#validatePaymentFieldsOnBlur input->order-form#syncFields" aria-describedby="payment-card-cvc-feedback">
-            <div id="payment-card-cvc-feedback" class="invalid-feedback d-none" data-order-form-target="paymentCardCvcFeedback"></div>
-          </div>
         </div>
       </div>
       <div class="modal-footer">

@@ -26,6 +26,7 @@ title: Payment Details Card Flip
 
 - Keep `billing email` as contact information, not as card data.
 - Animate a credit card front/back in the modal.
+- Place the card inputs inside the card shell instead of in a separate form stack.
 - Flip the card when the CVC field receives focus.
 - Validate `name on card`, `card number`, `expiry`, and `CVC`.
 - Format the visible card input state as the user types.
@@ -42,7 +43,7 @@ title: Payment Details Card Flip
 - [x] Add a card visual inside the payment modal with front/back faces.
 - [x] Flip the card on `focus` of the CVC field and restore it on blur.
 - [x] Add field-level validation and formatting for card number, expiry, and CVC.
-- [ ] Keep the existing billing email field as a separate contact input.
+- [x] Keep the existing billing email field as a separate contact input.
 - [ ] Update the modal copy so users understand the payment details are simulated.
 - [x] Add focused request/system coverage for the payment modal behavior.
 
@@ -64,7 +65,7 @@ title: Payment Details Card Flip
 - [x] Focusing CVC flips the card to the back.
 - [x] Blurring CVC returns the card to the front.
 - [x] Card fields are validated and formatted.
-- [ ] Billing email remains a contact field.
+- [x] Billing email remains a contact field.
 
 ## Validation
 
@@ -74,4 +75,4 @@ title: Payment Details Card Flip
 
 ## Notes
 
-- The front/back card shell, flip behavior, and card-field validation are in place; the remaining slice is billing-email/copy cleanup.
+- The front/back card shell now carries the visible card inputs; the remaining slice is billing-email/copy cleanup.
