@@ -297,6 +297,7 @@ a:hover {
 }
 
 .raw-footage-preview-shell {
+  position: relative;
   aspect-ratio: var(--raw-footage-aspect-ratio, 16 / 9);
   min-height: 14rem;
 }
@@ -307,6 +308,9 @@ a:hover {
 }
 
 .raw-footage-preview-media {
+  position: absolute;
+  inset: 0;
+  display: block;
   width: 100%;
   height: 100%;
   border: 0;
@@ -315,6 +319,21 @@ a:hover {
 .raw-footage-preview-link {
   width: 100%;
   height: 100%;
+}
+
+.youtube-preview {
+  display: block;
+  width: 100%;
+}
+
+.youtube-preview-shell {
+  width: 100%;
+  overflow: hidden;
+}
+
+.youtube-preview-shell img {
+  object-fit: cover;
+  object-position: center;
 }
 
 .raw-footage-preview-play {
@@ -328,6 +347,15 @@ a:hover {
 
 .raw-footage-social-preview .raw-footage-social-embed {
   width: 100%;
+}
+
+.client-project-title-link {
+  display: inline-block;
+}
+
+.client-project-title-link:hover,
+.client-project-title-link:focus-visible {
+  text-decoration: underline !important;
 }
 
 .payment-card-stage {

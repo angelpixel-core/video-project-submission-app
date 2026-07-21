@@ -7,7 +7,7 @@
           <p class="mb-0 text-body-secondary"><%= project.client.name %></p>
         </div>
         <div class="d-flex flex-column align-items-end gap-2">
-          <span class="badge <%= project.pending? ? "text-bg-secondary" : project.in_progress? ? "text-bg-info" : "text-bg-success" %> text-uppercase"><%= project.pending? ? "Pendiente" : project.in_progress? ? "En progreso" : "Completado" %></span>
+          <span class="badge <%= project.status_badge_class %> text-white text-uppercase"><%= project.status_badge_text %></span>
           <% if project.pending? %>
             <%= button_to "Aceptar proyecto", accept_project_path(project), method: :patch, class: "btn btn-sm btn-outline-primary" %>
           <% elsif project.in_progress? %>

@@ -41,6 +41,7 @@ export default class extends Controller {
     this.paymentValidationAttempted = false;
     this.paymentDetailsAreValid = false;
     this.rawFootageUrlIsValid = true;
+    this.lastRawFootagePreviewSignature = null;
     this.cart = this.loadDraftState();
     this.restoreInputs();
     this.renderCart();
@@ -99,20 +100,34 @@ export default class extends Controller {
     this.updateReviewButtonState();
   }
 
-  syncFields() {
-    this.cart.name = this.nameTarget.value;
-    this.cart.rawFootageUrl = this.rawFootageUrlTarget.value;
-    if (this.hasPaymentNameTarget)
+  syncFields(event) {
+    const target = event?.target;
+    const isProjectField = !target || target === this.nameTarget || target === this.rawFootageUrlTarget;
+    const isPaymentField =
+      !target ||
+      target === this.paymentNameTarget ||
+      target === this.paymentEmailTarget ||
+      target === this.paymentCardNumberTarget ||
+      target === this.paymentCardExpiryTarget ||
+      target === this.paymentCardCvcTarget;
+
+    if (target === this.nameTarget || !target) this.cart.name = this.nameTarget.value;
+    if (target === this.rawFootageUrlTarget || !target)
+      this.cart.rawFootageUrl = this.rawFootageUrlTarget.value;
+    if (target === this.paymentNameTarget || !target)
       this.cart.paymentName = this.paymentNameTarget.value;
-    if (this.hasPaymentEmailTarget)
+    if (target === this.paymentEmailTarget || !target)
       this.cart.paymentEmail = this.paymentEmailTarget.value;
-    this.normalizePaymentInputs();
-    this.validateRawFootageUrl();
-    this.validatePaymentFields();
-    this.updatePaymentCardPreview();
-    this.scheduleAutosave();
-    this.renderCart();
-    this.updateReviewButtonState();
+
+    if (isPaymentField) this.normalizePaymentInputs();
+    if (target === this.rawFootageUrlTarget || !target) this.validateRawFootageUrl();
+    if (isPaymentField) this.validatePaymentFields();
+
+    if (isProjectField) {
+      this.scheduleAutosave();
+      this.renderCart();
+      this.updateReviewButtonState();
+    }
   }
 
   flipPaymentCard() {
@@ -274,7 +289,6 @@ export default class extends Controller {
     }
 
     this.updateReviewButtonState();
-    this.updateRawFootagePreview();
   }
 
   scheduleAutosave() {
@@ -586,10 +600,19 @@ export default class extends Controller {
     const preview = this.parseRawFootageUrl(this.rawFootageUrlTarget.value);
 
     if (!preview) {
+      this.lastRawFootagePreviewSignature = null;
       this.rawFootagePreviewTarget.classList.remove("is-visible");
       this.rawFootagePreviewTarget.innerHTML = "";
       return;
     }
+
+    const previewSignature = this.rawFootagePreviewSignature(preview);
+    if (previewSignature === this.lastRawFootagePreviewSignature) {
+      this.rawFootagePreviewTarget.classList.add("is-visible");
+      return;
+    }
+
+    this.lastRawFootagePreviewSignature = previewSignature;
 
     const providerLabel =
       preview.provider === "instagram"
@@ -633,6 +656,17 @@ export default class extends Controller {
       this.loadSocialEmbedScript(preview.provider);
     }
     this.rawFootagePreviewTarget.classList.add("is-visible");
+  }
+
+  rawFootagePreviewSignature(preview) {
+    return [
+      preview.provider,
+      preview.videoId || "",
+      preview.embedUrl || "",
+      preview.watchUrl || "",
+      preview.thumbnailUrl || "",
+      preview.aspectRatio || "",
+    ].join("|");
   }
 
   parseRawFootageUrl(value) {
