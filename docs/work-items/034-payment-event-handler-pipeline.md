@@ -11,7 +11,7 @@ depends_on:
   - payment-webhook-ingestion
 order: 34
 phase: work-items
-status: draft
+status: done
 title: Payment Event Handler Pipeline
 ---
 
@@ -19,7 +19,7 @@ title: Payment Event Handler Pipeline
 
 ## Goal
 
-- [ ] Process stored payment webhook events and drive the payment state machine from those events.
+- [x] Process stored payment webhook events and drive the payment state machine from those events.
 
 ## Scope
 
@@ -35,10 +35,11 @@ title: Payment Event Handler Pipeline
 
 ## Implementation Plan
 
-- [ ] Add a `PaymentEventHandler` or dispatcher that loads stored webhook events and routes them by event type.
-- [ ] Apply payment state transitions only after idempotency and ordering checks succeed.
-- [ ] Update project submission state or downstream notifications when payment confirmation is received.
-- [ ] Add tests for success, duplicate, and out-of-order event handling.
+- [x] Add a `PaymentEventHandler` dispatcher that loads stored webhook events and routes them by event type.
+- [x] Enqueue async processing through a `ProcessWebhookEventJob` after ingestion.
+- [x] Apply payment state transitions only after idempotency and ordering checks succeed.
+- [x] Update project submission state or downstream notifications when payment confirmation is received.
+- [x] Add tests for success, duplicate, and out-of-order event handling.
 
 ## Affected Docs
 
@@ -55,14 +56,14 @@ title: Payment Event Handler Pipeline
 
 ## Checklist
 
-- [ ] Stored webhook events can be dispatched to a dedicated handler.
-- [ ] Confirmed payment events update payment state exactly once.
-- [ ] Project state changes happen only after the payment pipeline confirms success.
+- [x] Stored webhook events can be dispatched to a dedicated handler.
+- [x] Confirmed payment events update payment state exactly once.
+- [x] Project state changes happen only after the payment pipeline confirms success.
 
 ## Validation
 
-- [ ] Service and job specs cover event replay and duplicate handling.
-- [ ] The pipeline can be rerun without creating duplicate payments.
+- [x] Service and job specs cover event replay and duplicate handling.
+- [x] The pipeline can be rerun without creating duplicate payments.
 
 ## Notes
 

@@ -176,7 +176,7 @@ Work items are implementation documents. Each one should map back to the docs it
 
 ## 34
 
-- [ ] [Payment Event Handler Pipeline](./034-payment-event-handler-pipeline.md)
+- [x] [Payment Event Handler Pipeline](./034-payment-event-handler-pipeline.md)
 
 ## 35
 
@@ -185,3 +185,11 @@ Work items are implementation documents. Each one should map back to the docs it
 ## 36
 
 - [x] [Project Status Badge Realtime](./036-project-status-badge-realtime.md)
+
+## 37
+
+- [x] [Payment History on Project Show](./037-payment-history-on-project-show.md)
+
+## 38
+
+- [x] [Signed Fake Payment Webhook Trigger](./038-signed-fake-payment-webhook-trigger.md)

@@ -23,6 +23,10 @@ class Payment < ApplicationRecord
     ACTIVE_STATUSES.include?(status)
   end
 
+  def webhook_events
+    PaymentWebhookEvent.where(provider: provider).select { |event| event.references_payment?(self) }
+  end
+
   private
 
   def normalize_provider
