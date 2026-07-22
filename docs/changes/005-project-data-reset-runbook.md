@@ -46,11 +46,11 @@ tags:
 ## Command
 
 ```bash
-bundle exec rake maintenance:reset_project_data DRY_RUN=1
+make maintenance/reset_project_data DRY_RUN=1
 ```
 
 ```bash
-bundle exec rake maintenance:reset_project_data CONFIRM=YES
+make maintenance/reset_project_data CONFIRM=YES
 ```
 
 ## Expected Result
