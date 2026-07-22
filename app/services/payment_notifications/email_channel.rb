@@ -5,7 +5,8 @@ module PaymentNotifications
     end
 
     def call
-      PaymentNotificationMailer.payment_status_changed(intent).deliver_now
+      PaymentNotificationMailer.payment_status_changed(intent, recipient_role: :client).deliver_now
+      PaymentNotificationMailer.payment_status_changed(intent, recipient_role: :pm).deliver_now
     end
 
     private

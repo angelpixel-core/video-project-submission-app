@@ -135,6 +135,7 @@ class ProjectsController < ApplicationController
         kind: "project_accepted",
         body: "Your project #{@pm_project.name.presence || 'Untitled project'} was accepted and is now in progress."
       )
+      ProjectNotifications::Delivery.call(project: @pm_project, event_type: :project_accepted)
     end
 
     Notification.broadcast_refresh_for(@pm_project.pm) if success

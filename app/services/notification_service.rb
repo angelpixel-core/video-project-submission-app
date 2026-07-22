@@ -7,7 +7,8 @@ class NotificationService
     project = load_project
 
     create_notification(project)
-    deliver_notification(project)
+    NotificationDelivery::LoggerChannel.new(project).call
+    ProjectNotifications::Delivery.call(project: project, event_type: :project_created)
   end
 
   private
@@ -27,14 +28,4 @@ class NotificationService
     )
   end
 
-  def deliver_notification(project)
-    delivery_channels(project).each(&:call)
-  end
-
-  def delivery_channels(project)
-    [
-      NotificationDelivery::LoggerChannel.new(project),
-      NotificationDelivery::EmailChannel.new(project)
-    ]
-  end
 end

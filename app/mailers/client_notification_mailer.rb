@@ -1,4 +1,4 @@
-class PMNotificationMailer < ApplicationMailer
+class ClientNotificationMailer < ApplicationMailer
   def project_created(project)
     notify(project, :project_created)
   end
@@ -17,19 +17,19 @@ class PMNotificationMailer < ApplicationMailer
     @project = project
     @event_type = event_type.to_s
 
-    mail(to: project.pm.email, subject: subject_for(project, event_type), template_name: "notification")
+    mail(to: project.client.email, subject: subject_for(project, event_type), template_name: "notification")
   end
 
   def subject_for(project, event_type)
     case event_type.to_s
     when "project_created"
-      "New project created: #{project.name}"
+      "Your project #{project.name} was created"
     when "project_accepted"
-      "Project accepted: #{project.name}"
+      "Your project #{project.name} was accepted"
     when "project_rejected"
-      "Project rejected: #{project.name}"
+      "Your project #{project.name} needs attention"
     else
-      "Project update: #{project.name}"
+      "Project update for #{project.name}"
     end
   end
 end

@@ -1,0 +1,22 @@
+<%= case @event_type
+when "project_created"
+  "Your project was created"
+when "project_accepted"
+  "Your project was accepted"
+when "project_rejected"
+  "Your project needs attention"
+else
+  "Project update"
+end %>
+
+Project: <%= @project.name %>
+Client: <%= @project.client.name %>
+Status: <%= @project.status.humanize %>
+
+<% if @event_type == "project_created" %>
+Next step: Your PM will review the project and move it forward.
+<% elsif @event_type == "project_accepted" %>
+Next step: Your PM has accepted the project and work is in progress.
+<% elsif @event_type == "project_rejected" %>
+Next step: Your PM needs changes before the project can move forward.
+<% end %>

@@ -1,0 +1,23 @@
+<h1><%= case @event_type
+when "project_created"
+  "New project created"
+when "project_accepted"
+  "Project accepted"
+when "project_rejected"
+  "Project rejected"
+else
+  "Project update"
+end %></h1>
+
+<p><strong>Project:</strong> <%= @project.name %></p>
+<p><strong>Client:</strong> <%= @project.client.name %></p>
+<p><strong>Status:</strong> <%= @project.status.humanize %></p>
+<p><strong>Budget:</strong> <%= number_to_currency(@project.total_budget_cents.to_f / 100, unit: (@project.payments.first&.currency || "USD") + " ") %></p>
+
+<% if @event_type == "project_created" %>
+  <p>This project is ready for review and next-step planning.</p>
+<% elsif @event_type == "project_accepted" %>
+  <p>The client has been notified and the project is moving forward.</p>
+<% elsif @event_type == "project_rejected" %>
+  <p>The client should be notified of the requested changes.</p>
+<% end %>
