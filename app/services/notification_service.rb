@@ -27,5 +27,4 @@ class NotificationService
       body: "Project #{project.name} submitted for review"
     )
   end
-
 end

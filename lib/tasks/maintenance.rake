@@ -10,15 +10,15 @@ def reset_project_data!
   confirm = ENV["CONFIRM"].to_s.upcase == "YES"
 
   tables = [
-    ["payment_webhook_event_attempts", PaymentWebhookEventAttempt],
-    ["payment_notification_intents", PaymentNotificationIntent],
-    ["payment_attempts", PaymentAttempt],
-    ["payment_webhook_events", PaymentWebhookEvent],
-    ["comments", Comment],
-    ["notifications", Notification],
-    ["video_type_selections", VideoTypeSelection],
-    ["payments", Payment],
-    ["projects", Project]
+    [ "payment_webhook_event_attempts", PaymentWebhookEventAttempt ],
+    [ "payment_notification_intents", PaymentNotificationIntent ],
+    [ "payment_attempts", PaymentAttempt ],
+    [ "payment_webhook_events", PaymentWebhookEvent ],
+    [ "comments", Comment ],
+    [ "notifications", Notification ],
+    [ "video_type_selections", VideoTypeSelection ],
+    [ "payments", Payment ],
+    [ "projects", Project ]
   ]
 
   puts "Project data reset plan:"
