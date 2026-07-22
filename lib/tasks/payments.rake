@@ -11,7 +11,7 @@ namespace :payments do
 
   desc "Replay a single webhook event by provider event id"
   task replay_webhook_event: :environment do
-    replay_webhook_events([ENV.fetch("EVENT_ID")])
+    replay_webhook_events([ ENV.fetch("EVENT_ID") ])
   end
 
   desc "Replay failed or unprocessed webhook events"

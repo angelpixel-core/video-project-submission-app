@@ -14,7 +14,7 @@ depends_on:
   - payment-event-handler-pipeline
 order: 35
 phase: work-items
-status: draft
+status: done
 title: Payment Retry and Observability
 ---
 
@@ -22,12 +22,13 @@ title: Payment Retry and Observability
 
 ## Goal
 
-- [ ] Make payment processing safe to retry and easy to inspect when something fails.
+- [x] Make payment processing safe to retry and easy to inspect when something fails.
 
 ## Scope
 
 - Add retry policy for webhook processing and downstream event jobs.
 - Record processing timestamps, attempts, and failure reasons for payment events.
+- Store direct `payment_id` and `project_id` references on webhook events so retries and replay can be traced without parsing payloads.
 - Add replay support for failed or unprocessed events.
 - Keep duplicate-payment prevention intact across retries and replays.
 
@@ -38,10 +39,11 @@ title: Payment Retry and Observability
 
 ## Implementation Plan
 
-- [ ] Add retry configuration for payment event jobs and webhook follow-up work.
-- [ ] Store audit data for event processing attempts and failures.
-- [ ] Add a replay path for failed events that keeps idempotency guarantees intact.
-- [ ] Add tests for retries, duplicate prevention, and replay behavior.
+- [x] Add retry configuration for payment event jobs and webhook follow-up work.
+- [x] Store audit data for event processing attempts and failures.
+- [x] Store direct `payment_id` and `project_id` references on webhook events.
+- [x] Add a replay path for failed events that keeps idempotency guarantees intact.
+- [x] Add tests for retries, duplicate prevention, and replay behavior.
 
 ## Affected Docs
 
@@ -61,15 +63,16 @@ title: Payment Retry and Observability
 
 ## Checklist
 
-- [ ] A failed payment event can be retried without creating a duplicate payment.
-- [ ] Event processing leaves an audit trail that helps explain failures.
-- [ ] Failed events can be replayed locally or in test.
+- [x] A failed payment event can be retried without creating a duplicate payment.
+- [x] Event processing leaves an audit trail that helps explain failures.
+- [x] Failed events can be replayed locally or in test.
 
 ## Validation
 
-- [ ] Retry and replay specs pass.
-- [ ] Duplicate delivery and retry scenarios do not duplicate payment side effects.
+- [x] Retry and replay specs pass.
+- [x] Duplicate delivery and retry scenarios do not duplicate payment side effects.
 
 ## Notes
 
 - Favor simple retryable jobs and audit rows over a separate event-streaming stack.
+- Demo retry path: `DEMO_FAIL_ONCE=1 make payments/send_signed_fake_webhook PROJECT_ID=<id> EVENT_ID=evt_retry`.
