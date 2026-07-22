@@ -76,7 +76,7 @@ title: Payment Outbound Notifications
 
 - [x] Introduce a domain event or notification intent for payment state transitions.
 - [x] Persist outbound notification intent in the same transaction that updates payment status.
-- [ ] Add an async worker to dispatch payment notification intents after commit.
+- [x] Add an async worker to dispatch payment notification intents after commit.
 - [ ] Implement customer mail notifications for payment success and payment failure.
 - [ ] Wire logger notifications as an additional subscriber.
 - [ ] Add specs for atomic state change + intent persistence, plus async delivery behavior.
@@ -110,6 +110,14 @@ title: Payment Outbound Notifications
 ### `app/services/payment_notifications/logger_service.rb`
 - Responsibility: audit/log the notification
 - Must not decide business rules
+
+## Current Slice
+
+- [x] Persist payment notification intents on payment state change.
+- [x] Enqueue `PaymentNotificationDispatcherJob` after commit when an intent is created.
+- [x] Dispatch intents through a dedicated `PaymentNotifications::Dispatcher` service.
+- [x] Provide a logger subscriber as the first delivery channel.
+- [ ] Add customer mail notifications and any additional subscribers.
 
 ## Affected Docs
 

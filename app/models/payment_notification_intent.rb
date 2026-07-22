@@ -4,6 +4,8 @@ class PaymentNotificationIntent < ApplicationRecord
   belongs_to :payment
   belongs_to :project
 
+  after_commit :enqueue_dispatch_job, on: :create
+
   before_validation :normalize_status
   before_validation :normalize_payload
   before_validation :stamp_scheduled_at, on: :create
@@ -25,7 +27,23 @@ class PaymentNotificationIntent < ApplicationRecord
     update!(status: :failed, last_error: message, processed_at: nil)
   end
 
+  def pending?
+    status == "pending"
+  end
+
+  def sent?
+    status == "sent"
+  end
+
+  def failed?
+    status == "failed"
+  end
+
   private
+
+  def enqueue_dispatch_job
+    PaymentNotificationDispatcherJob.perform_later(id)
+  end
 
   def normalize_status
     self.status = status.to_s.presence || "pending"
