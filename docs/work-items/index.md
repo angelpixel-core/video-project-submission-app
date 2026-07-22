@@ -211,3 +211,7 @@ Payments docs are centralized at [Payments Index](../payments.md).
 ## 42
 
 - [ ] [Order Workflow Orchestration](./042-order-workflow-orchestration.md)
+
+## 43
+
+- [ ] [Payment Final Failure Notifications](./043-payment-final-failure-notifications.md)

@@ -29,6 +29,7 @@ Use this page as the single entry point for payment-related docs.
 - [Payment Invoice Generation and Storage](./work-items/040-payment-invoice-generation-and-storage.md)
 - [Application Boundaries and Repositories](./work-items/041-application-boundaries-and-repositories.md)
 - [Order Workflow Orchestration](./work-items/042-order-workflow-orchestration.md)
+- [Payment Final Failure Notifications](./work-items/043-payment-final-failure-notifications.md)
 
 ## Related Entry Points
 
