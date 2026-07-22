@@ -3,7 +3,7 @@ module Payments
     retry_on ActiveRecord::Deadlocked, wait: 1.second, attempts: 5
 
     def perform(payment_id)
-      payment = Payment.find_by(id: payment_id)
+      payment = ::Payment.find_by(id: payment_id)
       return unless payment.present?
       return unless payment.succeeded?
       return if payment.payment_invoice_delivery_intents.exists?

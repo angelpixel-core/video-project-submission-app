@@ -4,7 +4,7 @@ module Payments
     rescue_from ActionDispatch::Http::Parameters::ParseError, with: :render_unprocessable_entity
 
     def create
-      result = Payments::WebhookIngest.(
+      result = Payments::Webhook::Event::Ingest.(
         provider: params[:provider],
         raw_body: request.raw_post,
         headers: request.headers
