@@ -79,6 +79,8 @@ RSpec.describe "Payments webhooks requests" do
     expect(event.project_id).to eq(payment.project_id)
     expect(event.processing_attempts_count).to eq(1)
     expect(event.last_attempted_at).to be_present
+    expect(event.processing_attempts.count).to eq(1)
+    expect(event.processing_attempts.first.status).to eq("succeeded")
     expect(event.payload).to include("data" => hash_including("provider_reference" => "fake-abc123"))
     expect(event.status).to eq("processed")
     expect(event.processed_at).to be_present

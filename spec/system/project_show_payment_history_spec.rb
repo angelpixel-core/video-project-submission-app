@@ -51,7 +51,7 @@ RSpec.describe "Project show payment history", type: :system, js: true do
       response_payload: { "status" => "accepted" }
     )
 
-    PaymentWebhookEvent.create!(
+    event = PaymentWebhookEvent.create!(
       provider: "fake",
       provider_event_id: "evt_123",
       event_type: "payment.succeeded",
@@ -69,7 +69,17 @@ RSpec.describe "Project show payment history", type: :system, js: true do
       signature: "signature",
       status: :processed,
       received_at: 1.minute.ago,
-      processed_at: Time.current
+      processed_at: Time.current,
+      processing_attempts_count: 1,
+      last_attempted_at: Time.current
+    )
+
+    PaymentWebhookEventAttempt.create!(
+      payment_webhook_event: event,
+      attempt_number: 1,
+      status: :succeeded,
+      started_at: 1.minute.ago,
+      finished_at: Time.current
     )
 
     visit project_path(project)
@@ -84,9 +94,10 @@ RSpec.describe "Project show payment history", type: :system, js: true do
     expect(page).to have_css("#payment-history", text: "Event: evt_123")
     expect(page).to have_css("#payment-history", text: "Payment ##{payment.id}")
     expect(page).to have_css("#payment-history", text: "Project ##{project.id}")
-    expect(page).to have_css("#payment-history", text: "Attempts: 0")
+    expect(page).to have_css("#payment-history", text: "Attempts: 1")
     expect(page).to have_css("#payment-history", text: "submitted")
     expect(page).to have_css("#payment-history", text: "PROCESSED")
+    expect(page).to have_css("#payment-history", text: "Attempt #1")
   end
 
   it "shows confirmed when the payment has been successfully processed" do
@@ -145,6 +156,7 @@ RSpec.describe "Project show payment history", type: :system, js: true do
     expect(page).to have_css("#payment-history", text: "Payment ##{payment.id}")
     expect(page).to have_css("#payment-history", text: "Project ##{project.id}")
     expect(page).to have_css("#payment-history", text: "Attempts: 1")
+    expect(page).to have_css("#payment-history", text: "Attempt #1")
     expect(page).to have_css("#payment-history", text: payment.reload.confirmed_at.to_fs(:short))
   end
 end

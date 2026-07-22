@@ -92,6 +92,7 @@ DEMO_FAIL_ONCE=1 make payments/send_signed_fake_webhook PROJECT_ID=<project_id> 
 - `processing_attempts_count = 2`
 - `last_failure_message = Demo transient webhook failure.`
 - event status ending in `processed`
+- separate `Attempt #1` and `Attempt #2` rows under the webhook event
 5. If you want to replay a failed or received event manually:
 
 ```bash

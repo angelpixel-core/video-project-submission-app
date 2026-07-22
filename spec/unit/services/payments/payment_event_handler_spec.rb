@@ -81,6 +81,8 @@ RSpec.describe Payments::PaymentEventHandler do
     expect(event.error_message).to be_nil
     expect(event.processing_attempts_count).to eq(1)
     expect(event.last_attempted_at).to be_present
+    expect(event.processing_attempts.count).to eq(1)
+    expect(event.processing_attempts.first.status).to eq("succeeded")
   end
 
   it "is idempotent when the same processed event is handled again" do
@@ -109,6 +111,7 @@ RSpec.describe Payments::PaymentEventHandler do
     expect(event.error_message).to eq("Unsupported payment webhook event type.")
     expect(event.processing_attempts_count).to eq(1)
     expect(event.last_failure_message).to eq("Unsupported payment webhook event type.")
+    expect(event.processing_attempts.first.status).to eq("failed")
     expect(payment.reload.status).to eq("processing")
   end
 
@@ -120,6 +123,7 @@ RSpec.describe Payments::PaymentEventHandler do
     expect(event.reload.status).to eq("failed")
     expect(event.processing_attempts_count).to eq(1)
     expect(event.last_failure_message).to eq(Payments::PaymentEventHandler::DEMO_FAILURE_MESSAGE)
+    expect(event.processing_attempts.first.status).to eq("failed")
 
     second_result = described_class.(event: event.reload)
 
@@ -127,6 +131,7 @@ RSpec.describe Payments::PaymentEventHandler do
     expect(second_result.data[:applied]).to eq(true)
     expect(event.reload.status).to eq("processed")
     expect(event.processing_attempts_count).to eq(2)
+    expect(event.processing_attempts.order(:attempt_number).pluck(:status)).to eq(%w[failed succeeded])
     expect(payment.reload.status).to eq("succeeded")
   end
 
@@ -145,5 +150,6 @@ RSpec.describe Payments::PaymentEventHandler do
     expect(failure_event.reload.status).to eq("processed")
     expect(failure_event.processed_at).to be_present
     expect(failure_event.processing_attempts_count).to eq(1)
+    expect(failure_event.processing_attempts.first.status).to eq("succeeded")
   end
 end

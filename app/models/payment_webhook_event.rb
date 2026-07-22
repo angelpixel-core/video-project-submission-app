@@ -3,6 +3,7 @@ class PaymentWebhookEvent < ApplicationRecord
 
   belongs_to :payment, optional: true
   belongs_to :project, optional: true
+  has_many :processing_attempts, class_name: "PaymentWebhookEventAttempt", dependent: :destroy
 
   before_validation :normalize_provider
   before_validation :normalize_status
@@ -27,11 +28,18 @@ class PaymentWebhookEvent < ApplicationRecord
 
   def record_processing_attempt!
     now = Time.current
+    attempt = processing_attempts.create!(
+      attempt_number: processing_attempts.count + 1,
+      status: :started,
+      started_at: now
+    )
     increment!(:processing_attempts_count)
     update!(last_attempted_at: now)
+    attempt
   end
 
-  def mark_failed!(message)
+  def mark_failed!(message, attempt: nil)
+    attempt&.fail!(message)
     update!(
       status: :failed,
       error_message: message,
@@ -40,7 +48,8 @@ class PaymentWebhookEvent < ApplicationRecord
     )
   end
 
-  def mark_processed!
+  def mark_processed!(attempt: nil)
+    attempt&.succeed!
     update!(status: :processed, processed_at: Time.current, error_message: nil)
   end
 

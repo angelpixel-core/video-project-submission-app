@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_21_234500) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_22_004500) do
   create_table "active_storage_attachments", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -90,6 +90,20 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_21_234500) do
     t.index ["payment_id", "status"], name: "index_payment_attempts_on_payment_id_and_status"
     t.index ["payment_id"], name: "index_payment_attempts_on_payment_id"
     t.index ["provider_reference"], name: "index_payment_attempts_on_provider_reference", unique: true
+  end
+
+  create_table "payment_webhook_event_attempts", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.integer "attempt_number", null: false
+    t.datetime "created_at", null: false
+    t.text "error_message"
+    t.datetime "finished_at"
+    t.bigint "payment_webhook_event_id", null: false
+    t.datetime "started_at", null: false
+    t.string "status", default: "started", null: false
+    t.datetime "updated_at", null: false
+    t.index ["payment_webhook_event_id", "attempt_number"], name: "index_payment_webhook_event_attempts_on_event_and_number", unique: true
+    t.index ["payment_webhook_event_id", "status"], name: "index_payment_webhook_event_attempts_on_event_and_status"
+    t.index ["payment_webhook_event_id"], name: "idx_on_payment_webhook_event_id_8977d48d0c"
   end
 
   create_table "payment_webhook_events", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
@@ -189,6 +203,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_21_234500) do
   add_foreign_key "notifications", "pms"
   add_foreign_key "notifications", "projects"
   add_foreign_key "payment_attempts", "payments"
+  add_foreign_key "payment_webhook_event_attempts", "payment_webhook_events"
   add_foreign_key "payment_webhook_events", "payments"
   add_foreign_key "payment_webhook_events", "projects"
   add_foreign_key "payments", "projects"

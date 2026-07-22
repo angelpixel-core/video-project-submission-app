@@ -107,6 +107,7 @@ RSpec.describe Payments::ProcessWebhookEventJob do
     expect(event.status).to eq("processed")
     expect(event.processing_attempts_count).to eq(2)
     expect(event.last_failure_message).to eq(Payments::PaymentEventHandler::DEMO_FAILURE_MESSAGE)
+    expect(event.processing_attempts.order(:attempt_number).pluck(:status)).to eq(%w[failed succeeded])
     expect(payment.reload.status).to eq("succeeded")
   end
 end
