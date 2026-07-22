@@ -101,7 +101,6 @@ module Payments
         def event_payload
           @event_payload ||= event.payload.to_h
         end
-
       end
     end
   end

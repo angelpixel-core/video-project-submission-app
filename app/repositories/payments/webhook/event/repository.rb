@@ -23,7 +23,7 @@ module Payments
           )
           event.save!
 
-          [event, created]
+          [ event, created ]
         end
       end
     end
