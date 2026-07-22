@@ -23,7 +23,7 @@ title: Mail Delivery Environment Setup
 
 ## Scope
 
-- Use `letter_opener` for local mail previews in development.
+- Use `letter_opener_web` for local mail previews in development.
 - Keep test delivery isolated with the `:test` mailer adapter.
 - Configure QA with SMTP settings provided through environment variables.
 - Configure production with SMTP settings provided through environment variables.
@@ -36,8 +36,9 @@ title: Mail Delivery Environment Setup
 
 ## Implementation Plan
 
-- [x] `Gemfile` - add `letter_opener` for development previews.
-- [x] `config/environments/development.rb` - enable `letter_opener` for development.
+- [x] `Gemfile` - add `letter_opener_web` for development previews.
+- [x] `config/environments/development.rb` - enable `letter_opener_web` for development.
+- [x] `config/routes.rb` - mount the mail preview UI in development.
 - [x] `config/environments/test.rb` - keep the `:test` delivery method intact.
 - [x] `config/environments/qa.rb` - configure QA mail delivery from environment variables.
 - [x] `config/environments/production.rb` - configure production mail delivery from environment variables.
@@ -73,6 +74,7 @@ title: Mail Delivery Environment Setup
 
 ## Notes
 
-- `letter_opener` is the chosen development preview tool.
+- `letter_opener_web` is the chosen development preview tool.
+- In development, open `http://localhost:3000/letter_opener` to browse generated emails.
 - Keep this work item separate from the mailer content so provider setup stays isolated.
 - QA/production should keep using the repo's existing environment-variable secret wiring; do not switch this work item to Rails credentials.

@@ -195,3 +195,23 @@ Payments docs are centralized at [Payments Index](../payments.md).
 ## 38
 
 - [x] [Signed Fake Payment Webhook Trigger](./038-signed-fake-payment-webhook-trigger.md)
+
+## 39
+
+- [ ] [Payment Outbound Notifications](./039-payment-outbound-notifications.md)
+
+## 40
+
+- [ ] [Payment Invoice Generation and Storage](./040-payment-invoice-generation-and-storage.md)
+
+## 41
+
+- [ ] [Application Boundaries and Repositories](./041-application-boundaries-and-repositories.md)
+
+## 42
+
+- [ ] [Order Workflow Orchestration](./042-order-workflow-orchestration.md)
+
+## 43
+
+- [ ] [Payment Final Failure Notifications](./043-payment-final-failure-notifications.md)

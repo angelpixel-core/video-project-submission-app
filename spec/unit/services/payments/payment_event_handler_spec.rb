@@ -76,6 +76,8 @@ RSpec.describe Payments::PaymentEventHandler do
     expect(payment.status).to eq("succeeded")
     expect(payment.confirmed_at).to be_present
     expect(payment.payment_attempts.first.status).to eq("succeeded")
+    expect(payment.payment_notification_intents.count).to eq(1)
+    expect(payment.payment_notification_intents.first.event_type).to eq("payment.succeeded")
     expect(event.status).to eq("processed")
     expect(event.processed_at).to be_present
     expect(event.error_message).to be_nil
@@ -112,6 +114,7 @@ RSpec.describe Payments::PaymentEventHandler do
     expect(event.processing_attempts_count).to eq(1)
     expect(event.last_failure_message).to eq("Unsupported payment webhook event type.")
     expect(event.processing_attempts.first.status).to eq("failed")
+    expect(payment.payment_notification_intents.count).to eq(0)
     expect(payment.reload.status).to eq("processing")
   end
 
@@ -124,6 +127,7 @@ RSpec.describe Payments::PaymentEventHandler do
     expect(event.processing_attempts_count).to eq(1)
     expect(event.last_failure_message).to eq(Payments::PaymentEventHandler::DEMO_FAILURE_MESSAGE)
     expect(event.processing_attempts.first.status).to eq("failed")
+    expect(payment.payment_notification_intents.count).to eq(0)
 
     second_result = described_class.(event: event.reload)
 
@@ -132,6 +136,7 @@ RSpec.describe Payments::PaymentEventHandler do
     expect(event.reload.status).to eq("processed")
     expect(event.processing_attempts_count).to eq(2)
     expect(event.processing_attempts.order(:attempt_number).pluck(:status)).to eq(%w[failed succeeded])
+    expect(payment.payment_notification_intents.count).to eq(1)
     expect(payment.reload.status).to eq("succeeded")
   end
 
@@ -151,5 +156,6 @@ RSpec.describe Payments::PaymentEventHandler do
     expect(failure_event.processed_at).to be_present
     expect(failure_event.processing_attempts_count).to eq(1)
     expect(failure_event.processing_attempts.first.status).to eq("succeeded")
+    expect(payment.payment_notification_intents.count).to eq(1)
   end
 end

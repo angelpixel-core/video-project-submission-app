@@ -19,6 +19,10 @@ Rails.application.routes.draw do
   resources :client_notifications, only: %i[update]
   resources :notifications, only: %i[update]
 
+  if Rails.env.development?
+    mount LetterOpenerWeb::Engine, at: "/letter_opener"
+  end
+
   namespace :payments do
     post "webhooks/:provider/events", to: "webhooks#create", as: :webhook_events
   end

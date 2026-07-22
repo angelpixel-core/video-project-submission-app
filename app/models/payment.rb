@@ -2,6 +2,7 @@ class Payment < ApplicationRecord
   belongs_to :project
   has_many :payment_attempts, dependent: :destroy
   has_many :payment_webhook_events, dependent: :nullify
+  has_many :payment_notification_intents, dependent: :destroy
 
   ACTIVE_STATUSES = %w[pending processing].freeze
   TERMINAL_STATUSES = %w[succeeded failed canceled].freeze
