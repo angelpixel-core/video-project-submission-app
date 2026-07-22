@@ -15,7 +15,7 @@ depends_on:
   - mail-delivery-environment-setup
 order: 40
 phase: work-items
-status: draft
+status: done
 title: Payment Invoice Generation and Storage
 ---
 
@@ -23,13 +23,13 @@ title: Payment Invoice Generation and Storage
 
 ## Goal
 
-- [ ] Generate an invoice after a successful payment, store it durably, and notify the customer with the invoice attached or linked.
+- [x] Generate an invoice after a successful payment, store it durably, and notify the customer with the invoice attached or linked.
 
 ## Scope
 
 - Trigger invoice generation only after the payment reaches a confirmed success state.
 - Generate the invoice as a separate async step after the payment transaction commits.
-- Store the generated invoice in durable storage via `ActiveStorage` or an equivalent storage backend.
+- Store the generated invoice in durable storage via `ActiveStorage` as an HTML artifact.
 - Send a follow-up email to the customer once the invoice is ready.
 - Keep payment storage/card-data concerns separate from invoice storage.
 - Do not introduce card credential persistence.
@@ -39,15 +39,16 @@ title: Payment Invoice Generation and Storage
 - The payment state change should complete before invoice generation begins.
 - Invoice generation is a downstream workflow step, not part of the payment transaction.
 - The invoice artifact is a durable output asset, so storage is part of the domain flow.
+- The initial implementation stores an HTML invoice attachment on the payment record and emails the customer after the invoice is attached.
 
 ## Implementation Plan
 
-- [ ] Add an invoice generation step that runs after payment success is committed.
-- [ ] Persist invoice metadata on the payment or project domain model.
-- [ ] Generate the invoice artifact and store it in `ActiveStorage` or the chosen storage backend.
-- [ ] Enqueue a mail/send step when the invoice is available.
-- [ ] Add customer-facing email content for invoice delivery.
-- [ ] Add specs for success flow, storage persistence, and email delivery.
+- [x] Add an invoice generation step that runs after payment success is committed.
+- [x] Persist invoice metadata on the payment domain model.
+- [x] Generate the invoice artifact and store it in `ActiveStorage`.
+- [x] Enqueue a mail/send step when the invoice is available.
+- [x] Add customer-facing email content for invoice delivery.
+- [x] Add specs for success flow, storage persistence, and email delivery.
 
 ## Affected Docs
 
@@ -70,17 +71,17 @@ title: Payment Invoice Generation and Storage
 
 ## Checklist
 
-- [ ] Successful payment enqueues invoice generation after commit.
-- [ ] Invoice artifact is stored durably.
-- [ ] Customer receives invoice email after the invoice is ready.
-- [ ] Payment success mail and invoice mail are separated cleanly.
-- [ ] No sensitive card data is stored as part of the invoice flow.
+- [x] Successful payment enqueues invoice generation after commit.
+- [x] Invoice artifact is stored durably.
+- [x] Customer receives invoice email after the invoice is ready.
+- [x] Payment success mail and invoice mail are separated cleanly.
+- [x] No sensitive card data is stored as part of the invoice flow.
 
 ## Validation
 
-- [ ] Specs cover invoice generation and storage.
-- [ ] Specs cover the follow-up email delivery.
-- [ ] The flow remains retry-safe and idempotent.
+- [x] Specs cover invoice generation and storage.
+- [x] Specs cover the follow-up email delivery.
+- [x] The flow remains retry-safe and idempotent.
 
 ## Notes
 

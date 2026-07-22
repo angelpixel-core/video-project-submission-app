@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_22_012000) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_22_025100) do
   create_table "active_storage_attachments", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -92,6 +92,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_22_012000) do
     t.index ["provider_reference"], name: "index_payment_attempts_on_provider_reference", unique: true
   end
 
+  create_table "payment_invoice_delivery_intents", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.integer "attempts_count", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.text "last_error"
+    t.bigint "payment_id", null: false
+    t.datetime "processed_at"
+    t.datetime "scheduled_at", null: false
+    t.string "status", default: "pending", null: false
+    t.datetime "updated_at", null: false
+    t.index ["payment_id"], name: "index_payment_invoice_delivery_intents_on_payment_id", unique: true
+  end
+
   create_table "payment_notification_intents", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.integer "attempts_count", default: 0, null: false
     t.datetime "created_at", null: false
@@ -161,12 +173,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_22_012000) do
     t.string "currency", default: "USD", null: false
     t.datetime "failed_at"
     t.string "idempotency_key", null: false
+    t.datetime "invoice_emailed_at"
+    t.datetime "invoice_generated_at"
+    t.string "invoice_number"
     t.bigint "project_id", null: false
     t.string "provider", default: "fake", null: false
     t.string "provider_reference"
     t.string "status", default: "pending", null: false
     t.datetime "updated_at", null: false
     t.index ["idempotency_key"], name: "index_payments_on_idempotency_key", unique: true
+    t.index ["invoice_number"], name: "index_payments_on_invoice_number", unique: true
     t.index ["project_id", "status"], name: "index_payments_on_project_id_and_status"
     t.index ["project_id"], name: "index_payments_on_project_id"
     t.index ["provider_reference"], name: "index_payments_on_provider_reference", unique: true
@@ -223,6 +239,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_22_012000) do
   add_foreign_key "notifications", "pms"
   add_foreign_key "notifications", "projects"
   add_foreign_key "payment_attempts", "payments"
+  add_foreign_key "payment_invoice_delivery_intents", "payments"
   add_foreign_key "payment_notification_intents", "payments"
   add_foreign_key "payment_notification_intents", "projects"
   add_foreign_key "payment_webhook_event_attempts", "payment_webhook_events"
