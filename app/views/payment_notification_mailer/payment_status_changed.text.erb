@@ -1,0 +1,6 @@
+Payment <%= @intent.to_status.humanize.downcase %>
+
+Project: <%= @project.name %>
+Client: <%= @project.client.name %>
+Status: <%= @intent.from_status.humanize %> -> <%= @intent.to_status.humanize %>
+Amount: <%= @payment.currency %> <%= format("%.2f", @payment.amount_cents.to_f / 100) %>

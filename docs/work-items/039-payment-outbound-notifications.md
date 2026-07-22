@@ -117,7 +117,7 @@ title: Payment Outbound Notifications
 - [x] Enqueue `PaymentNotificationDispatcherJob` after commit when an intent is created.
 - [x] Dispatch intents through a dedicated `PaymentNotifications::Dispatcher` service.
 - [x] Provide a logger subscriber as the first delivery channel.
-- [ ] Add customer mail notifications and any additional subscribers.
+- [x] Add customer mail notifications and any additional subscribers.
 
 ## Affected Docs
 
@@ -146,15 +146,15 @@ title: Payment Outbound Notifications
 
 - [x] Payment success persists the state change and notification intent atomically.
 - [x] Payment failure persists the state change and notification intent atomically.
-- [ ] The email send happens async after the transaction commits.
-- [ ] Multiple notification subscribers can react to the same payment event.
+- [x] The email send happens async after the transaction commits.
+- [x] Multiple notification subscribers can react to the same payment event.
 - [ ] Demo/test-only flags are not part of domain models or controller params.
 
 ## Validation
 
-- [ ] Specs cover success and failure notification paths.
-- [ ] Specs cover async delivery and duplicate-safe behavior.
-- [ ] The flow remains safe if a notification worker retries.
+- [x] Specs cover success and failure notification paths.
+- [x] Specs cover async delivery and duplicate-safe behavior.
+- [x] The flow remains safe if a notification worker retries.
 
 ## Notes
 

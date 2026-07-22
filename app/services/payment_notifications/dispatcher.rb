@@ -18,7 +18,8 @@ module PaymentNotifications
 
     def delivery_channels
       [
-        PaymentNotifications::LoggerChannel.new(intent)
+        PaymentNotifications::LoggerChannel.new(intent),
+        PaymentNotifications::EmailChannel.new(intent)
       ]
     end
   end
