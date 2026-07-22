@@ -54,6 +54,8 @@ module Payments
     def handle_payment_succeeded(payment, attempt:)
       return finish_noop(payment, :stale_payment_state, attempt: attempt) if terminal_payment_status?(payment)
 
+      from_status = payment.status
+
       payment.update!(
         status: :succeeded,
         confirmed_at: Time.current,
@@ -62,6 +64,7 @@ module Payments
       )
 
       update_payment_attempt!(payment, status: :succeeded)
+      record_notification_intent!(payment, from_status: from_status, to_status: :succeeded)
       event.mark_processed!(attempt: attempt)
 
       Payments::Result::Success.(data: { event: event, payment: payment, applied: true })
@@ -72,6 +75,8 @@ module Payments
     def handle_payment_failed(payment, attempt:)
       return finish_noop(payment, :stale_payment_state, attempt: attempt) if terminal_payment_status?(payment)
 
+      from_status = payment.status
+
       payment.update!(
         status: :failed,
         failed_at: Time.current,
@@ -80,6 +85,7 @@ module Payments
       )
 
       update_payment_attempt!(payment, status: :failed, error_message: "Payment failed via webhook.")
+      record_notification_intent!(payment, from_status: from_status, to_status: :failed)
       event.mark_processed!(attempt: attempt)
 
       Payments::Result::Success.(data: { event: event, payment: payment, applied: true })
@@ -130,6 +136,25 @@ module Payments
 
     def mark_event_processed!
       event.mark_processed!
+    end
+
+    def record_notification_intent!(payment, from_status:, to_status:)
+      PaymentNotificationIntent.create!(
+        payment: payment,
+        project: payment.project,
+        event_type: "payment.#{to_status}",
+        from_status: from_status,
+        to_status: to_status,
+        payload: {
+          payment_id: payment.id,
+          project_id: payment.project_id,
+          provider_event_id: event.provider_event_id,
+          webhook_event_id: event.id,
+          payment_status: to_status
+        },
+        status: :pending,
+        scheduled_at: Time.current
+      )
     end
 
     def fail_event(message, code, attempt: nil)
