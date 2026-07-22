@@ -78,6 +78,33 @@ WEBHOOK_URL=https://qa.example.com/payments/webhooks/fake/events \
 3. If the project has no active payment, the trigger falls back to the most recent payment.
 4. Confirm the PM view shows the payment history and the client view does not.
 
+## Retry Demo
+
+1. Pick a project with an active or recent payment.
+2. Run the signed trigger with the demo fail flag:
+
+```bash
+DEMO_FAIL_ONCE=1 make payments/send_signed_fake_webhook PROJECT_ID=<project_id> EVENT_ID=evt_retry
+```
+
+3. Confirm the first attempt fails transiently and the job retries automatically.
+4. Check the payment history or logs for:
+- `processing_attempts_count = 2`
+- `last_failure_message = Demo transient webhook failure.`
+- event status ending in `processed`
+- separate `Attempt #1` and `Attempt #2` rows under the webhook event
+5. If you want to replay a failed or received event manually:
+
+```bash
+make payments/replay_failed_webhook_events
+```
+
+6. To replay a single event by provider event id:
+
+```bash
+EVENT_ID=evt_retry make payments/replay_webhook_event
+```
+
 ## Troubleshooting
 
 - If the payment stays `processing`, check whether the worker is running.
@@ -90,3 +117,4 @@ WEBHOOK_URL=https://qa.example.com/payments/webhooks/fake/events \
 - `PROJECT_ID` is the preferred input for the trigger.
 - `PAYMENT_ID` still works as an explicit override.
 - `WEBHOOK_URL` defaults to the local app endpoint, so local demos usually only need `PROJECT_ID`.
+- `DEMO_FAIL_ONCE=1` is for demos only and forces one transient failure before the job succeeds on retry.

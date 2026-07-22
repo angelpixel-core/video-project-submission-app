@@ -1,6 +1,7 @@
 class Payment < ApplicationRecord
   belongs_to :project
   has_many :payment_attempts, dependent: :destroy
+  has_many :payment_webhook_events, dependent: :nullify
 
   ACTIVE_STATUSES = %w[pending processing].freeze
   TERMINAL_STATUSES = %w[succeeded failed canceled].freeze
@@ -24,7 +25,10 @@ class Payment < ApplicationRecord
   end
 
   def webhook_events
-    PaymentWebhookEvent.where(provider: provider).select { |event| event.references_payment?(self) }
+    associated_events = payment_webhook_events.order(created_at: :desc).to_a
+    legacy_events = PaymentWebhookEvent.where(provider: provider).select { |event| event.references_payment?(self) }
+
+    (associated_events + legacy_events).uniq(&:id).sort_by(&:created_at).reverse
   end
 
   private

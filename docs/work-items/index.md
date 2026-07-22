@@ -14,6 +14,8 @@ title: Work Items Index
 
 Work items are implementation documents. Each one should map back to the docs it resolves and the checklist items it affects.
 
+Payments docs are centralized at [Payments Index](../payments.md).
+
 ## Standard Frontmatter
 
 - `id`

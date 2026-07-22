@@ -41,3 +41,7 @@ This folder organizes the project baseline, decisions, changes, and work items.
 - [x] Sprint 0 lives under `docs/sprints/00-foundation/`.
 - [x] New requirements should be captured as new change documents instead of rewriting the baseline.
 - [x] Numeric prefixes keep the reading order stable as the documentation grows.
+
+## Operational Runbooks
+
+- [x] [Payments Index](./payments.md)
