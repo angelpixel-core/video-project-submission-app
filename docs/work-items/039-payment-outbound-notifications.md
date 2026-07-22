@@ -33,6 +33,24 @@ title: Payment Outbound Notifications
 - Allow multiple subscribers for the same payment event, including email and logging.
 - Keep demo/test flags out of domain objects and model parameters.
 
+## Mail Matrix
+
+| Event | Client | PM | Templates |
+|---|---|---|---|
+| `project_created` | Yes | Yes | `text` + `html` |
+| `project_accepted` | Yes | Yes | `text` + `html` |
+| `project_rejected` | Yes | Yes | `text` + `html` |
+| `payment_failed` | Yes | Yes | `text` + `html` |
+| `payment_succeeded` | Yes | Yes | `text` + `html` |
+
+## Content Rules
+
+- Client emails should stay short and action-oriented.
+- PM emails should be more detailed and operational.
+- `project_rejected` should be prepared even though the reject action does not exist yet.
+- Payment emails should go to both the client and the PM.
+- Every mail should have both a text and an HTML template.
+
 ## Operational Note
 
 - The transaction should own the state change and the notification intent.
@@ -53,9 +71,24 @@ title: Payment Outbound Notifications
 2. In the same transaction, it creates a `notification_intent` or outbox event.
 3. A job processes the intent after commit.
 4. A dispatcher fans out to services:
-   - email
-   - logger
-   - future subscribers
+    - email
+    - logger
+    - future subscribers
+
+## Proposed Mailers
+
+- `app/mailers/pm_notification_mailer.rb`
+- `app/mailers/client_notification_mailer.rb`
+- `app/mailers/payment_notification_mailer.rb`
+
+## Proposed Templates
+
+- `app/views/pm_notification_mailer/*.text.erb`
+- `app/views/pm_notification_mailer/*.html.erb`
+- `app/views/client_notification_mailer/*.text.erb`
+- `app/views/client_notification_mailer/*.html.erb`
+- `app/views/payment_notification_mailer/*.text.erb`
+- `app/views/payment_notification_mailer/*.html.erb`
 
 ## Proposed Files
 
@@ -110,6 +143,28 @@ title: Payment Outbound Notifications
 ### `app/services/payment_notifications/logger_service.rb`
 - Responsibility: audit/log the notification
 - Must not decide business rules
+
+## Email Events
+
+### `project_created`
+- Send to the client and the PM.
+- Use separate content for each recipient.
+
+### `project_accepted`
+- Send to the client and the PM.
+- Content should describe the next workflow step.
+
+### `project_rejected`
+- Send to the client and the PM.
+- Keep the mailer/template ready for a future reject action.
+
+### `payment_failed`
+- Send to the client and the PM.
+- Include the failure reason and the retry context when available.
+
+### `payment_succeeded`
+- Send to the client and the PM.
+- Include the successful payment context and the relevant amounts.
 
 ## Current Slice
 
