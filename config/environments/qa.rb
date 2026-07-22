@@ -18,8 +18,8 @@ Rails.application.configure do
   # Cache assets for far-future expiry since they are all digest stamped.
   config.public_file_server.headers = { "cache-control" => "public, max-age=#{1.year.to_i}" }
 
-  # Store uploaded files on the local file system (see config/storage.yml for options).
-  config.active_storage.service = :local
+  # Store uploads in S3-compatible object storage in QA.
+  config.active_storage.service = :amazon
 
   # Log to STDOUT with the current request id as a default log tag.
   config.log_tags = [ :request_id ]

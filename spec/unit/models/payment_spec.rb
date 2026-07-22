@@ -71,4 +71,22 @@ RSpec.describe Payment do
     expect(duplicate).not_to be_valid
     expect(duplicate.errors[:idempotency_key]).to be_present
   end
+
+  it "enqueues invoice generation after a payment succeeds" do
+    client = Client.create!(name: "Client", email: "client@example.com")
+    pm = PM.create!(name: "PM", email: "pm@example.com")
+    project = Project.create!(client: client, pm: pm, status: :draft)
+    payment = described_class.create!(
+      project: project,
+      status: :processing,
+      provider: "fake",
+      idempotency_key: "invoice-job-1",
+      amount_cents: 20_000,
+      currency: "usd"
+    )
+
+    expect(Payments::GenerateInvoiceJob).to receive(:perform_later).with(payment.id)
+
+    payment.update!(status: :succeeded, confirmed_at: Time.current)
+  end
 end
