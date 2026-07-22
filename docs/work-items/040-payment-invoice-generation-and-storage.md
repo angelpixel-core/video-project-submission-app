@@ -40,12 +40,14 @@ title: Payment Invoice Generation and Storage
 - Invoice generation is a downstream workflow step, not part of the payment transaction.
 - The invoice artifact is a durable output asset, so storage is part of the domain flow.
 - The initial implementation stores an HTML invoice attachment on the payment record and emails the customer after the invoice is attached.
+- QA and production use S3-compatible object storage for ActiveStorage attachments; development and test stay on disk.
 
 ## Implementation Plan
 
 - [x] Add an invoice generation step that runs after payment success is committed.
 - [x] Persist invoice metadata on the payment domain model.
 - [x] Generate the invoice artifact and store it in `ActiveStorage`.
+- [x] Route QA and production attachments through object storage instead of local disk.
 - [x] Enqueue a mail/send step when the invoice is available.
 - [x] Add customer-facing email content for invoice delivery.
 - [x] Add specs for success flow, storage persistence, and email delivery.
