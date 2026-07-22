@@ -1,5 +1,7 @@
 module Payments
   class PaymentEventHandler
+    DEMO_FAILURE_MESSAGE = "Demo transient webhook failure.".freeze
+
     HANDLED_EVENT_TYPES = {
       "payment.succeeded" => :handle_payment_succeeded,
       "payment.failed" => :handle_payment_failed
@@ -14,7 +16,11 @@ module Payments
     end
 
     def call
+      maybe_fail_demo_once!
+
       event.with_lock do
+        event.record_processing_attempt!
+
         return already_processed_result if event.processed_at.present?
 
         handler = HANDLED_EVENT_TYPES[event.event_type]
@@ -23,8 +29,13 @@ module Payments
         payment = locate_payment
         return fail_event("Unable to locate payment for webhook event.", :payment_not_found) unless payment
 
+        event.synchronize_payment_context!(payment)
+
         send(handler, payment)
       end
+    rescue Payments::DemoTransientFailure => e
+      record_demo_failure!(e.message)
+      raise
     end
 
     private
@@ -46,7 +57,7 @@ module Payments
       )
 
       update_payment_attempt!(payment, status: :succeeded)
-      mark_event_processed!
+      event.mark_processed!
 
       Payments::Result::Success.(data: { event: event, payment: payment, applied: true })
     rescue ActiveRecord::RecordInvalid => e
@@ -64,7 +75,7 @@ module Payments
       )
 
       update_payment_attempt!(payment, status: :failed, error_message: "Payment failed via webhook.")
-      mark_event_processed!
+      event.mark_processed!
 
       Payments::Result::Success.(data: { event: event, payment: payment, applied: true })
     rescue ActiveRecord::RecordInvalid => e
@@ -72,7 +83,7 @@ module Payments
     end
 
     def finish_noop(payment, reason)
-      mark_event_processed!
+      event.mark_processed!
       Payments::Result::Success.(data: { event: event, payment: payment, applied: false, reason: reason })
     end
 
@@ -113,12 +124,30 @@ module Payments
     end
 
     def mark_event_processed!
-      event.update!(status: :processed, processed_at: Time.current, error_message: nil)
+      event.mark_processed!
     end
 
     def fail_event(message, code)
-      event.update!(status: :failed, error_message: message) if event.persisted?
+      event.mark_failed!(message) if event.persisted?
       Payments::Result::Failure.(message: message, code: code, data: { event: event })
+    end
+
+    def maybe_fail_demo_once!
+      return unless demo_fail_once?
+      return unless event.processing_attempts_count.zero?
+
+      raise Payments::DemoTransientFailure, DEMO_FAILURE_MESSAGE
+    end
+
+    def demo_fail_once?
+      ActiveModel::Type::Boolean.new.cast(event_payload["data"].to_h["demo_fail_once"])
+    end
+
+    def record_demo_failure!(message)
+      event.with_lock do
+        event.record_processing_attempt!
+        event.mark_failed!(message)
+      end
     end
 
     def event_payload

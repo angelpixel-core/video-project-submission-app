@@ -37,11 +37,11 @@ web/shell:
 
 .PHONY: payments/simulate_webhook
 payments/simulate_webhook:
-	@WEBHOOK_URL="$(WEBHOOK_URL)" PROJECT_ID="$(PROJECT_ID)" PROVIDER="$(PROVIDER)" EVENT_ID="$(EVENT_ID)" TYPE="$(TYPE)" PAYMENT_ID="$(PAYMENT_ID)" PROVIDER_REFERENCE="$(PROVIDER_REFERENCE)" AMOUNT_CENTS="$(AMOUNT_CENTS)" bundle exec rake payments:simulate_webhook
+	@WEBHOOK_URL="$(WEBHOOK_URL)" PROJECT_ID="$(PROJECT_ID)" PROVIDER="$(PROVIDER)" EVENT_ID="$(EVENT_ID)" TYPE="$(TYPE)" PAYMENT_ID="$(PAYMENT_ID)" PROVIDER_REFERENCE="$(PROVIDER_REFERENCE)" AMOUNT_CENTS="$(AMOUNT_CENTS)" DEMO_FAIL_ONCE="$(DEMO_FAIL_ONCE)" bundle exec rake payments:simulate_webhook
 
 .PHONY: payments/send_signed_fake_webhook
 payments/send_signed_fake_webhook:
-	@WEBHOOK_URL="$(WEBHOOK_URL)" PROJECT_ID="$(PROJECT_ID)" PROVIDER="$(PROVIDER)" EVENT_ID="$(EVENT_ID)" TYPE="$(TYPE)" PAYMENT_ID="$(PAYMENT_ID)" PROVIDER_REFERENCE="$(PROVIDER_REFERENCE)" AMOUNT_CENTS="$(AMOUNT_CENTS)" bundle exec rake payments:send_signed_fake_webhook
+	@WEBHOOK_URL="$(WEBHOOK_URL)" PROJECT_ID="$(PROJECT_ID)" PROVIDER="$(PROVIDER)" EVENT_ID="$(EVENT_ID)" TYPE="$(TYPE)" PAYMENT_ID="$(PAYMENT_ID)" PROVIDER_REFERENCE="$(PROVIDER_REFERENCE)" AMOUNT_CENTS="$(AMOUNT_CENTS)" DEMO_FAIL_ONCE="$(DEMO_FAIL_ONCE)" bundle exec rake payments:send_signed_fake_webhook
 
 .PHONY: test/unit
 test/unit:

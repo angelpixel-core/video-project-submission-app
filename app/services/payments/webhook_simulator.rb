@@ -4,7 +4,7 @@ require "uri"
 
 module Payments
   class WebhookSimulator
-    def self.call(webhook_url:, provider: "fake", event_id:, type:, payment_id:, provider_reference:, amount_cents:)
+    def self.call(webhook_url:, provider: "fake", event_id:, type:, payment_id:, provider_reference:, amount_cents:, demo_fail_once: false)
       new(
         webhook_url:,
         provider:,
@@ -12,11 +12,12 @@ module Payments
         type:,
         payment_id:,
         provider_reference:,
-        amount_cents:
+        amount_cents:,
+        demo_fail_once:
       ).call
     end
 
-    def initialize(webhook_url:, provider:, event_id:, type:, payment_id:, provider_reference:, amount_cents:)
+    def initialize(webhook_url:, provider:, event_id:, type:, payment_id:, provider_reference:, amount_cents:, demo_fail_once: false)
       @webhook_url = webhook_url.to_s.strip
       @provider = provider.to_s.strip
       @event_id = event_id.to_s.strip
@@ -24,6 +25,7 @@ module Payments
       @payment_id = payment_id
       @provider_reference = provider_reference.to_s.strip
       @amount_cents = amount_cents
+      @demo_fail_once = demo_fail_once
     end
 
     def call
@@ -51,7 +53,7 @@ module Payments
 
     private
 
-    attr_reader :webhook_url, :provider, :event_id, :type, :payment_id, :provider_reference, :amount_cents
+    attr_reader :webhook_url, :provider, :event_id, :type, :payment_id, :provider_reference, :amount_cents, :demo_fail_once
 
     def payload
       {
@@ -61,7 +63,8 @@ module Payments
           payment_id: payment_id,
           provider_reference: provider_reference,
           amount_cents: amount_cents,
-          provider: provider
+          provider: provider,
+          demo_fail_once: demo_fail_once
         }
       }
     end

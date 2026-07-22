@@ -50,11 +50,29 @@
                           <small class="text-body-secondary"><%= l(event.received_at, format: :short) %></small>
                         </div>
                         <div class="small text-body-secondary">
+                          Event: <%= event.provider_event_id %>
+                          <% if event.payment_id.present? %>
+                            · Payment #<%= event.payment_id %>
+                          <% end %>
+                          <% if event.project_id.present? %>
+                            · Project #<%= event.project_id %>
+                          <% end %>
+                        </div>
+                        <div class="small text-body-secondary">
+                          Attempts: <%= event.processing_attempts_count %>
+                          <% if event.last_attempted_at.present? %>
+                            · Last attempt <%= l(event.last_attempted_at, format: :short) %>
+                          <% end %>
+                        </div>
+                        <div class="small text-body-secondary">
                           <span class="badge <%= event.applied? ? "text-bg-success" : event.status == "failed" ? "text-bg-danger" : "text-bg-secondary" %> text-white text-uppercase me-2"><%= event.status %></span>
                           Applied: <%= event.applied? ? "yes" : "no" %>
                         </div>
                         <% if event.error_message.present? %>
                           <div class="small text-danger mt-1"><%= event.error_message %></div>
+                        <% end %>
+                        <% if event.last_failure_message.present? && event.last_failure_message != event.error_message %>
+                          <div class="small text-warning mt-1">Last failure: <%= event.last_failure_message %></div>
                         <% end %>
                       </div>
                     <% end %>

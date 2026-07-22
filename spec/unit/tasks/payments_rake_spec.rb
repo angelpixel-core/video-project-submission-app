@@ -16,7 +16,8 @@ RSpec.describe "payments rake tasks" do
       "TYPE" => ENV["TYPE"],
       "PAYMENT_ID" => ENV["PAYMENT_ID"],
       "PROVIDER_REFERENCE" => ENV["PROVIDER_REFERENCE"],
-      "AMOUNT_CENTS" => ENV["AMOUNT_CENTS"]
+      "AMOUNT_CENTS" => ENV["AMOUNT_CENTS"],
+      "DEMO_FAIL_ONCE" => ENV["DEMO_FAIL_ONCE"]
     }
 
     example.run
@@ -27,6 +28,8 @@ RSpec.describe "payments rake tasks" do
 
     Rake::Task["payments:simulate_webhook"].reenable
     Rake::Task["payments:send_signed_fake_webhook"].reenable
+    Rake::Task["payments:replay_webhook_event"].reenable
+    Rake::Task["payments:replay_failed_webhook_events"].reenable
   end
 
   it "defaults to localhost and forwards env vars to the simulator" do
@@ -162,5 +165,84 @@ RSpec.describe "payments rake tasks" do
     ).and_return(Payments::Result::Success.(data: { status_code: 202, body: "accepted" }))
 
     Rake::Task["payments:simulate_webhook"].invoke
+  end
+
+  it "forwards the demo fail-once flag to the webhook simulator" do
+    ENV["DEMO_FAIL_ONCE"] = "1"
+
+    expect(Payments::WebhookSimulator).to receive(:call).with(
+      webhook_url: "http://localhost:3000/payments/webhooks/fake/events",
+      provider: "fake",
+      event_id: "evt_123",
+      type: "payment.succeeded",
+      payment_id: "1",
+      provider_reference: "fake-abc123",
+      amount_cents: "50000",
+      demo_fail_once: true
+    ).and_return(Payments::Result::Success.(data: { status_code: 202, body: "accepted" }))
+
+    Rake::Task["payments:send_signed_fake_webhook"].invoke
+  end
+
+  it "replays a single event by provider event id" do
+    payment = Payment.create!(
+      project: Project.create!(client: Client.create!(name: "Client", email: "replay-client@example.com"), pm: PM.create!(name: "PM", email: "replay-pm@example.com"), name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :pending),
+      status: :processing,
+      provider: "fake",
+      idempotency_key: SecureRandom.uuid,
+      amount_cents: 50_000,
+      currency: "USD",
+      provider_reference: "fake-replay-ref"
+    )
+
+    event = PaymentWebhookEvent.create!(
+      provider: "fake",
+      provider_event_id: "evt_replay",
+      event_type: "payment.succeeded",
+      payment: payment,
+      project: payment.project,
+      payload: {
+        "id" => "evt_replay",
+        "type" => "payment.succeeded",
+        "data" => { "payment_id" => payment.id, "provider_reference" => payment.provider_reference, "amount_cents" => payment.amount_cents }
+      },
+      signature: "signature",
+      status: :failed,
+      received_at: Time.current,
+      error_message: "Transient failure",
+      processing_attempts_count: 1
+    )
+
+    ENV["EVENT_ID"] = event.provider_event_id
+
+    expect(Payments::ProcessWebhookEventJob).to receive(:perform_later).with(event.id)
+
+    Rake::Task["payments:replay_webhook_event"].invoke
+  end
+
+  it "replays failed or received events" do
+    failed = PaymentWebhookEvent.create!(
+      provider: "fake",
+      provider_event_id: "evt_failed",
+      event_type: "payment.succeeded",
+      payload: { "id" => "evt_failed", "type" => "payment.succeeded", "data" => {} },
+      status: :failed,
+      received_at: Time.current,
+      error_message: "Transient failure"
+    )
+
+    received = PaymentWebhookEvent.create!(
+      provider: "fake",
+      provider_event_id: "evt_received",
+      event_type: "payment.succeeded",
+      payload: { "id" => "evt_received", "type" => "payment.succeeded", "data" => {} },
+      status: :received,
+      received_at: Time.current
+    )
+
+    expect(Payments::ProcessWebhookEventJob).to receive(:perform_later).with(failed.id).ordered
+    expect(Payments::ProcessWebhookEventJob).to receive(:perform_later).with(received.id).ordered
+
+    Rake::Task["payments:replay_failed_webhook_events"].invoke
   end
 end

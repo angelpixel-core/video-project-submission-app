@@ -30,6 +30,7 @@ module Payments
 
       event = upsert_event!(event_id:, event_type:, payload: event_data)
       created = event.previously_new_record?
+      event.synchronize_payment_context!(payment_for_event(event_data))
 
       Payments::ProcessWebhookEventJob.perform_later(event.id)
 
@@ -77,6 +78,16 @@ module Payments
         event.status = :received
         event.received_at = Time.current
       end
+    end
+
+    def payment_for_event(event_data)
+      payment_id = event_data["data"].to_h["payment_id"].presence
+      return Payment.find_by(id: payment_id) if payment_id.present?
+
+      reference = event_data["data"].to_h["provider_reference"].presence || event_data["provider_reference"].presence
+      return if reference.blank?
+
+      Payment.find_by(provider_reference: reference)
     end
 
     def success(created:, event:)

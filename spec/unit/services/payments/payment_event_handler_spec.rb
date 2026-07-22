@@ -38,18 +38,21 @@ RSpec.describe Payments::PaymentEventHandler do
     payment
   end
 
-  def build_event(payment:, event_type: "payment.succeeded", event_id: "evt_123")
+  def build_event(payment:, event_type: "payment.succeeded", event_id: "evt_123", demo_fail_once: false)
     PaymentWebhookEvent.create!(
       provider: "fake",
       provider_event_id: event_id,
       event_type: event_type,
+      payment: payment,
+      project: payment.project,
       payload: {
         "id" => event_id,
         "type" => event_type,
         "data" => {
           "payment_id" => payment.id,
           "provider_reference" => payment.provider_reference,
-          "amount_cents" => payment.amount_cents
+          "amount_cents" => payment.amount_cents,
+          "demo_fail_once" => demo_fail_once
         }
       },
       signature: "signature",
@@ -76,6 +79,8 @@ RSpec.describe Payments::PaymentEventHandler do
     expect(event.status).to eq("processed")
     expect(event.processed_at).to be_present
     expect(event.error_message).to be_nil
+    expect(event.processing_attempts_count).to eq(1)
+    expect(event.last_attempted_at).to be_present
   end
 
   it "is idempotent when the same processed event is handled again" do
@@ -102,7 +107,27 @@ RSpec.describe Payments::PaymentEventHandler do
     expect(result.code).to eq(:unknown_event_type)
     expect(event.reload.status).to eq("failed")
     expect(event.error_message).to eq("Unsupported payment webhook event type.")
+    expect(event.processing_attempts_count).to eq(1)
+    expect(event.last_failure_message).to eq("Unsupported payment webhook event type.")
     expect(payment.reload.status).to eq("processing")
+  end
+
+  it "fails once for the demo retry flag and succeeds on the next attempt" do
+    payment = build_payment
+    event = build_event(payment: payment, demo_fail_once: true)
+
+    expect { described_class.(event: event) }.to raise_error(Payments::DemoTransientFailure, Payments::PaymentEventHandler::DEMO_FAILURE_MESSAGE)
+    expect(event.reload.status).to eq("failed")
+    expect(event.processing_attempts_count).to eq(1)
+    expect(event.last_failure_message).to eq(Payments::PaymentEventHandler::DEMO_FAILURE_MESSAGE)
+
+    second_result = described_class.(event: event.reload)
+
+    expect(second_result).to be_success
+    expect(second_result.data[:applied]).to eq(true)
+    expect(event.reload.status).to eq("processed")
+    expect(event.processing_attempts_count).to eq(2)
+    expect(payment.reload.status).to eq("succeeded")
   end
 
   it "ignores an out-of-order failure after success" do
@@ -119,5 +144,6 @@ RSpec.describe Payments::PaymentEventHandler do
     expect(payment.reload.status).to eq("succeeded")
     expect(failure_event.reload.status).to eq("processed")
     expect(failure_event.processed_at).to be_present
+    expect(failure_event.processing_attempts_count).to eq(1)
   end
 end

@@ -1,6 +1,9 @@
 class PaymentWebhookEvent < ApplicationRecord
   STATUSES = %w[received processed failed].freeze
 
+  belongs_to :payment, optional: true
+  belongs_to :project, optional: true
+
   before_validation :normalize_provider
   before_validation :normalize_status
   before_validation :normalize_payload
@@ -20,6 +23,31 @@ class PaymentWebhookEvent < ApplicationRecord
 
   def applied?
     status == "processed"
+  end
+
+  def record_processing_attempt!
+    now = Time.current
+    increment!(:processing_attempts_count)
+    update!(last_attempted_at: now)
+  end
+
+  def mark_failed!(message)
+    update!(
+      status: :failed,
+      error_message: message,
+      last_failure_at: Time.current,
+      last_failure_message: message
+    )
+  end
+
+  def mark_processed!
+    update!(status: :processed, processed_at: Time.current, error_message: nil)
+  end
+
+  def synchronize_payment_context!(payment)
+    return unless payment.present?
+
+    update!(payment: payment, project: payment.project) if self.payment_id != payment.id || self.project_id != payment.project_id
   end
 
   private
