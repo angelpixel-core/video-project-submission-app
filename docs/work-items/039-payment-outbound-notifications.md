@@ -28,7 +28,7 @@ title: Payment Outbound Notifications
 ## Scope
 
 - Capture payment success and payment failure notifications as part of the same business transaction that changes payment state.
-- Keep the controller thin; the payment state transition and notification intent should happen in a use case / handler layer.
+- Keep controllers thin; the payment state transition and notification intent should happen in a `use_cases` layer.
 - Deliver emails asynchronously after commit so the transaction does not wait on slow side effects.
 - Allow multiple subscribers for the same payment event, including email and logging.
 - Keep demo/test flags out of domain objects and model parameters.
@@ -39,6 +39,39 @@ title: Payment Outbound Notifications
 - The actual mail delivery must happen outside the transaction, via job or outbox processing.
 - Logger-based notification is a first-class subscriber, not a special case in controller code.
 
+## Architecture
+
+- `controllers`: only HTTP, params, and response.
+- `use_cases`: business orchestration.
+- `repositories`: local persistence access.
+- `services`: external side effects.
+- `domain`: pure events and value objects.
+
+## Proposed Flow
+
+1. A payment use case changes `Payment#status`.
+2. In the same transaction, it creates a `notification_intent` or outbox event.
+3. A job processes the intent after commit.
+4. A dispatcher fans out to services:
+   - email
+   - logger
+   - future subscribers
+
+## Proposed Files
+
+- `app/use_cases/payments/confirm.rb`
+- `app/use_cases/payments/fail.rb`
+- `app/use_cases/payment_notifications/record_intent.rb`
+- `app/use_cases/payment_notifications/dispatch.rb`
+- `app/repositories/payment_notification_intent_repository.rb`
+- `app/repositories/payment_repository.rb`
+- `app/services/payment_notifications/email_service.rb`
+- `app/services/payment_notifications/logger_service.rb`
+- `app/services/payment_notifications/dispatcher.rb`
+- `app/domain/payment_status_changed.rb`
+- `app/domain/payment_notification_intent.rb`
+- `app/jobs/payment_notification_dispatcher_job.rb`
+
 ## Implementation Plan
 
 - [ ] Introduce a domain event or notification intent for payment state transitions.
@@ -48,24 +81,58 @@ title: Payment Outbound Notifications
 - [ ] Wire logger notifications as an additional subscriber.
 - [ ] Add specs for atomic state change + intent persistence, plus async delivery behavior.
 
+## Contracts
+
+### `app/use_cases/payments/confirm.rb`
+- Input: `payment_id`, optional context
+- Responsibility: update payment state and persist notification intent
+- Output: success or failure result
+
+### `app/use_cases/payments/fail.rb`
+- Input: `payment_id`, optional context
+- Responsibility: mark payment failed and persist notification intent
+- Output: success or failure result
+
+### `app/use_cases/payment_notifications/record_intent.rb`
+- Input: `PaymentStatusChanged`
+- Responsibility: create the outbox row
+- Output: persisted intent
+
+### `app/services/payment_notifications/dispatcher.rb`
+- Input: intent
+- Responsibility: call subscribers based on event type/state
+- Output: dispatch result
+
+### `app/services/payment_notifications/email_service.rb`
+- Responsibility: send payment success/failure mail
+- Must not decide business rules
+
+### `app/services/payment_notifications/logger_service.rb`
+- Responsibility: audit/log the notification
+- Must not decide business rules
+
 ## Affected Docs
 
 - `docs/work-items/031-payment-domain-and-idempotency.md`
 - `docs/work-items/034-payment-event-handler-pipeline.md`
 - `docs/work-items/035-payment-retry-and-observability.md`
 - `docs/work-items/018-mail-delivery-environment-setup.md`
+- `docs/work-items/040-payment-invoice-generation-and-storage.md`
 
 ## Affected Ops
 
 - `app/controllers/`
+- `app/use_cases/`
+- `app/repositories/`
 - `app/services/`
+- `app/domain/`
 - `app/jobs/`
 - `app/mailers/`
 - `app/models/`
-- `spec/requests/`
-- `spec/system/`
 - `spec/mailers/`
 - `spec/unit/`
+- `spec/requests/`
+- `spec/system/`
 
 ## Checklist
 
