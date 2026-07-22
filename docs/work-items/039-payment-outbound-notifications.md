@@ -23,7 +23,7 @@ title: Payment Outbound Notifications
 
 ## Goal
 
-- [ ] Persist payment state changes and their outbound notification intents atomically, then deliver emails and other subscribers asynchronously after commit.
+- [x] Persist payment state changes and their outbound notification intents atomically, then deliver emails and other subscribers asynchronously after commit.
 
 ## Scope
 
@@ -77,9 +77,9 @@ title: Payment Outbound Notifications
 - [x] Introduce a domain event or notification intent for payment state transitions.
 - [x] Persist outbound notification intent in the same transaction that updates payment status.
 - [x] Add an async worker to dispatch payment notification intents after commit.
-- [ ] Implement customer mail notifications for payment success and payment failure.
-- [ ] Wire logger notifications as an additional subscriber.
-- [ ] Add specs for atomic state change + intent persistence, plus async delivery behavior.
+- [x] Implement customer mail notifications for payment success and payment failure.
+- [x] Wire logger notifications as an additional subscriber.
+- [x] Add specs for atomic state change + intent persistence, plus async delivery behavior.
 
 ## Contracts
 
@@ -148,7 +148,7 @@ title: Payment Outbound Notifications
 - [x] Payment failure persists the state change and notification intent atomically.
 - [x] The email send happens async after the transaction commits.
 - [x] Multiple notification subscribers can react to the same payment event.
-- [ ] Demo/test-only flags are not part of domain models or controller params.
+- [x] Demo/test-only flags are not part of domain models or controller params.
 
 ## Validation
 
