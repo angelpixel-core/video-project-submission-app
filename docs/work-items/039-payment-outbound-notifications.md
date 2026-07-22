@@ -15,7 +15,7 @@ depends_on:
   - notification-delivery-channels
 order: 39
 phase: work-items
-status: draft
+status: done
 title: Payment Outbound Notifications
 ---
 
