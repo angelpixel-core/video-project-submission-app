@@ -111,7 +111,7 @@ class ProjectsController < ApplicationController
       @project.submit!
       sync_project_selections(@project, selections)
 
-      payment_result = Payments::Application::Commands::CreateOrReuseActivePayment.(project: @project)
+      payment_result = Payments::Application::Commands::CreatePayment.(project: @project)
 
       if payment_result.failure?
         @project.errors.add(:base, payment_result.message)

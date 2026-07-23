@@ -17,6 +17,10 @@ module Payments
           Payments::Domain::ValueObjects::PaymentMethodType.new(method_type)
         end
 
+        def reference_object
+          Payments::Domain::ValueObjects::PaymentProviderReference.new(reference)
+        end
+
         private
 
         def normalize_provider

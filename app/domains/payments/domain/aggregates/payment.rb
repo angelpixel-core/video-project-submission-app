@@ -11,9 +11,9 @@ module Payments
         has_many :payment_notification_intents, class_name: "Payments::Domain::Entities::PaymentNotificationIntent", dependent: :destroy
         has_many :payment_invoice_delivery_intents, class_name: "Payments::Domain::Entities::PaymentInvoiceDeliveryIntent", dependent: :destroy
 
-        ACTIVE_STATUSES = %w[pending processing].freeze
-        TERMINAL_STATUSES = %w[succeeded failed canceled].freeze
-        STATUSES = (ACTIVE_STATUSES + TERMINAL_STATUSES).freeze
+        ACTIVE_STATUSES = Payments::Domain::ValueObjects::PaymentStatus::ACTIVE_STATUSES
+        TERMINAL_STATUSES = Payments::Domain::ValueObjects::PaymentStatus::TERMINAL_STATUSES
+        STATUSES = Payments::Domain::ValueObjects::PaymentStatus::ALLOWED_VALUES
 
         before_validation :normalize_provider
         before_validation :normalize_currency
@@ -31,11 +31,11 @@ module Payments
         scope :active, -> { where(status: ACTIVE_STATUSES) }
 
         def active?
-          ACTIVE_STATUSES.include?(status)
+          status_object.active?
         end
 
         def succeeded?
-          status == "succeeded"
+          status_object.succeeded?
         end
 
         def webhook_events
@@ -51,6 +51,20 @@ module Payments
 
         def current_payment_method_type
           payment_method_reference&.method_type_object
+        end
+
+        def status_object
+          Payments::Domain::ValueObjects::PaymentStatus.new(status)
+        end
+
+        def idempotency_key_object
+          Payments::Domain::ValueObjects::IdempotencyKey.new(idempotency_key)
+        end
+
+        def provider_reference_object
+          return if provider_reference.blank?
+
+          Payments::Domain::ValueObjects::PaymentProviderReference.new(provider_reference)
         end
 
         private

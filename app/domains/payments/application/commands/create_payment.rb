@@ -1,18 +1,20 @@
 module Payments
   module Application
     module Commands
-      class CreateOrReuseActivePayment
-        def self.call(project:)
-          new(project:).call
+      class CreatePayment
+        def self.call(project:, provider: "fake", payment_method_type: "card")
+          new(project:, provider:, payment_method_type:).call
         end
 
-        def initialize(project:)
+        def initialize(project:, provider: "fake", payment_method_type: "card")
           @project = project
+          @provider = provider.to_s.strip.presence || "fake"
+          @payment_method_type = payment_method_type.to_s.strip.presence || "card"
         end
 
         def call
           project.with_lock do
-            payment = project.active_payment
+            payment = Payments::Domain::Repositories::PaymentRepository.find_active_by_project(project)
             return Core::Result::Success.(data: { payment: payment, attempt: payment.payment_attempts.order(created_at: :desc).first }) if payment.present?
 
             create_payment_flow!
@@ -26,7 +28,7 @@ module Payments
         def create_payment_flow!
           payment = project.payments.create!(
             status: :pending,
-            provider: "fake",
+            provider: provider_name,
             idempotency_key: SecureRandom.uuid,
             amount_cents: project.total_budget_cents,
             currency: "USD"
@@ -34,8 +36,8 @@ module Payments
 
           payment.create_payment_method_reference!(
             provider: payment.provider,
-            method_type: "card",
-            reference: "fake-card-#{payment.idempotency_key}"
+            method_type: payment_method_type,
+            reference: "#{payment.provider}-#{payment.idempotency_key}"
           )
 
           attempt = payment.payment_attempts.create!(
@@ -45,7 +47,7 @@ module Payments
             request_payload: payment_request_payload(payment)
           )
 
-          provider_result = Payments::Adapters::Outbound::Gateways::Fake.(payment: payment)
+          provider_result = payment_gateway_for(payment).call(payment: payment)
 
           return handle_provider_failure(payment:, attempt:, provider_result:) if provider_result.failure?
 
@@ -90,6 +92,23 @@ module Payments
             status: payment.status
           }
         end
+
+        def provider_name
+          provider
+        end
+
+        def payment_gateway_for(payment)
+          case payment.provider
+          when "stripe"
+            Payments::Adapters::Outbound::Gateways::StripePaymentGateway
+          when "mercadopago"
+            Payments::Adapters::Outbound::Gateways::MercadoPagoPaymentGateway
+          else
+            Payments::Adapters::Outbound::Gateways::Fake
+          end
+        end
+
+        attr_reader :provider, :payment_method_type
       end
     end
   end

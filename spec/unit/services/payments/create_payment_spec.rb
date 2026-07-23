@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe Payments::Application::Commands::CreateOrReuseActivePayment do
+RSpec.describe Payments::Application::Commands::CreatePayment do
   it "creates an active payment and its first attempt" do
     client = Client.create!(name: "Client", email: "client@example.com")
     pm = PM.create!(name: "PM", email: "pm@example.com")

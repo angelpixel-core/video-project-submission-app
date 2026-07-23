@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe Payments::Adapters::Persistence::Payment::Repository do
+RSpec.describe Payments::Domain::Repositories::PaymentRepository do
   def build_payment(provider_reference: "fake-abc123")
     payment = Payments::Domain::Aggregates::Payment.create!(
       project: Project.create!(

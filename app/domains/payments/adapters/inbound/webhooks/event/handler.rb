@@ -66,14 +66,14 @@ module Payments
               payment_id = event_payload["data"].to_h["payment_id"].presence
               return if payment_id.blank?
 
-              Payments::Adapters::Persistence::Payment::Repository.find_by_id(payment_id)
+              Payments::Domain::Repositories::PaymentRepository.find_by_id(payment_id)
             end
 
             def payment_by_provider_reference
               reference = event_payload["data"].to_h["provider_reference"].presence || event_payload["provider_reference"].presence
               return if reference.blank?
 
-              Payments::Adapters::Persistence::Payment::Repository.find_by_provider_reference(reference)
+              Payments::Domain::Repositories::PaymentRepository.find_by_provider_reference(reference)
             end
 
             def associated_payment

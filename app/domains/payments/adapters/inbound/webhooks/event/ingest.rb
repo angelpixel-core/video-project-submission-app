@@ -78,12 +78,12 @@ module Payments
 
             def payment_for_event(event_data)
               payment_id = event_data["data"].to_h["payment_id"].presence
-              return Payments::Adapters::Persistence::Payment::Repository.find_by_id(payment_id) if payment_id.present?
+              return Payments::Domain::Repositories::PaymentRepository.find_by_id(payment_id) if payment_id.present?
 
               reference = event_data["data"].to_h["provider_reference"].presence || event_data["provider_reference"].presence
               return if reference.blank?
 
-              Payments::Adapters::Persistence::Payment::Repository.find_by_provider_reference(reference)
+              Payments::Domain::Repositories::PaymentRepository.find_by_provider_reference(reference)
             end
 
             def success(created:, event:)
