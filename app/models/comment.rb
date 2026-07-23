@@ -9,6 +9,8 @@ class Comment < ApplicationRecord
 
   scope :chronological, -> { order(created_at: :asc) }
 
+  before_validation :sync_legacy_author_columns
+
   def author
     case author_type
     when "Client" then Client.find_by(id: author_id)
@@ -43,5 +45,12 @@ class Comment < ApplicationRecord
 
   def broadcast_refresh
     self.class.broadcast_refresh_for(project)
+  end
+
+  def sync_legacy_author_columns
+    return if author_account.blank?
+
+    self.author_type = author_account.class.name
+    self.author_id ||= author_account.id
   end
 end

@@ -10,6 +10,7 @@ class Project < ApplicationRecord
   has_many :notifications, dependent: :destroy
   has_many :comments, dependent: :destroy
 
+  before_validation :sync_legacy_identity_columns
   before_validation :sync_raw_footage_metadata
   after_update_commit :broadcast_status_badge
 
@@ -137,6 +138,11 @@ class Project < ApplicationRecord
 
   def sync_raw_footage_metadata
     self.raw_footage_metadata = Parsers::RawFootageUrlParser.metadata(raw_footage_url)
+  end
+
+  def sync_legacy_identity_columns
+    self.client_id ||= client_account_id || client_account&.id
+    self.pm_id ||= pm_account_id || pm_account&.id
   end
 
   def broadcast_status_badge

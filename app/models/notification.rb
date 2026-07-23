@@ -4,6 +4,8 @@ class Notification < ApplicationRecord
   belongs_to :project
   belongs_to :account, class_name: "Identity::Domain::Aggregates::Account", foreign_key: :account_id, optional: true
 
+  before_validation :sync_legacy_recipient_columns
+
   scope :read, -> { where.not(read_at: nil) }
   scope :unread, -> { where(read_at: nil) }
   scope :for_pm, -> { joins(:account).where(accounts: { role: "pm" }) }
@@ -78,5 +80,20 @@ class Notification < ApplicationRecord
     if account.blank?
       errors.add(:account, :blank)
     end
+  end
+
+  def sync_legacy_recipient_columns
+    return if account.blank?
+
+    if account.pm?
+      self.pm_id ||= account.id
+      self.client_id = nil if client_id.blank?
+    elsif account.client?
+      self.client_id ||= account.id
+      self.pm_id = nil if pm_id.blank?
+    end
+
+    self.pm_id ||= pm&.id
+    self.client_id ||= client&.id
   end
 end
