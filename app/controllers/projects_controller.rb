@@ -219,7 +219,7 @@ class ProjectsController < ApplicationController
   end
 
   def load_video_types
-    @video_types = VideoType.order(:name)
+    @video_types = Catalog::Application::Queries::ListPublicVideoTypes.call(account: current_client).data.fetch(:video_types)
   end
 
   def ensure_draft_project
