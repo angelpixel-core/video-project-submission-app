@@ -32,6 +32,8 @@ video_types.each do |attrs|
 end
 
 Project.find_or_create_by!(client_account: default_client, pm_account: default_pm, name: "Seed Project") do |project|
+  project.client = default_client
+  project.pm = default_pm
   project.raw_footage_url = "https://example.com/raw-footage.mov"
   project.status = :draft
 end

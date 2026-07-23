@@ -15,6 +15,16 @@ RSpec.describe Project do
     expect(project.pm).to eq(pm)
   end
 
+  it "keeps legacy identity ids populated when using account-backed associations" do
+    client = Client.create!(name: "Client", email: "client@example.com")
+    pm = PM.create!(name: "PM", email: "pm@example.com")
+
+    project = described_class.create!(client_account: client, pm_account: pm, status: :draft)
+
+    expect(project.client_id).to eq(client.id)
+    expect(project.pm_id).to eq(pm.id)
+  end
+
   it "requires submission fields once submitted" do
     client = Client.create!(name: "Client", email: "client@example.com")
     pm = PM.create!(name: "PM", email: "pm@example.com")
