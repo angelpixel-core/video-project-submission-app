@@ -23,7 +23,7 @@ RSpec.describe PaymentNotificationDispatcherJob do
       scheduled_at: Time.current
     )
 
-    expect(PaymentNotifications::Dispatcher).to receive(:call).with(intent: intent)
+    expect(Payments::Notifications::Dispatcher).to receive(:call).with(intent: intent)
 
     described_class.perform_now(intent.id)
 
@@ -54,7 +54,7 @@ RSpec.describe PaymentNotificationDispatcherJob do
       scheduled_at: Time.current
     )
 
-    allow(PaymentNotifications::Dispatcher).to receive(:call).and_raise(StandardError, "boom")
+    allow(Payments::Notifications::Dispatcher).to receive(:call).and_raise(StandardError, "boom")
 
     expect do
       described_class.perform_now(intent.id)
@@ -66,7 +66,7 @@ RSpec.describe PaymentNotificationDispatcherJob do
   end
 
   it "does nothing for missing or already sent intents" do
-    expect(PaymentNotifications::Dispatcher).not_to receive(:call)
+    expect(Payments::Notifications::Dispatcher).not_to receive(:call)
 
     described_class.perform_now(-1)
 
@@ -92,7 +92,7 @@ RSpec.describe PaymentNotificationDispatcherJob do
       processed_at: Time.current
     )
 
-    expect(PaymentNotifications::Dispatcher).not_to receive(:call)
+    expect(Payments::Notifications::Dispatcher).not_to receive(:call)
 
     described_class.perform_now(intent.id)
   end

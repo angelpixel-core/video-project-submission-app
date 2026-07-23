@@ -6,7 +6,7 @@ class PaymentNotificationDispatcherJob < ApplicationJob
     return unless intent.present?
     return if intent.sent?
 
-    PaymentNotifications::Dispatcher.call(intent: intent)
+    Payments::Notifications::Dispatcher.call(intent: intent)
     intent.mark_sent!
   rescue StandardError => e
     intent.mark_failed!(e.message) if intent.present?

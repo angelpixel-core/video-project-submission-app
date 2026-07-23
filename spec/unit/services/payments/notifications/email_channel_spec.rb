@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe PaymentNotifications::EmailChannel do
+RSpec.describe Payments::Notifications::EmailChannel do
   it "delivers the payment status email to client and pm" do
     client = Client.create!(name: "Client", email: "client@example.com")
     pm = PM.create!(name: "PM", email: "pm@example.com")
