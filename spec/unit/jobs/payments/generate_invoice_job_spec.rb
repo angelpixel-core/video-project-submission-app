@@ -1,11 +1,11 @@
 require "rails_helper"
 
-RSpec.describe Payments::GenerateInvoiceJob do
+RSpec.describe Payments::Application::Handlers::GenerateInvoiceJob do
   it "attaches an invoice and creates a delivery intent once" do
     client = Client.create!(name: "Client", email: "client@example.com")
     pm = PM.create!(name: "PM", email: "pm@example.com")
     project = Project.create!(client: client, pm: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :draft)
-    payment = Payment.create!(
+    payment = Payments::Domain::Aggregates::Payment.create!(
       project: project,
       status: :succeeded,
       provider: "fake",
@@ -17,7 +17,7 @@ RSpec.describe Payments::GenerateInvoiceJob do
 
     expect do
       described_class.perform_now(payment.id)
-    end.to change(PaymentInvoiceDeliveryIntent, :count).by(1)
+    end.to change(Payments::Domain::Entities::PaymentInvoiceDeliveryIntent, :count).by(1)
 
     payment.reload
     expect(payment.invoice_generated_at).to be_present

@@ -127,7 +127,7 @@ title: Payment Outbound Notifications
 - Output: success or failure result
 
 ### `app/use_cases/payment_notifications/record_intent.rb`
-- Input: `PaymentStatusChanged`
+- Input: `Payments::Domain::Entities::PaymentNotificationIntent`
 - Responsibility: create the outbox row
 - Output: persisted intent
 

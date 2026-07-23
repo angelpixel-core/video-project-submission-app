@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe Payments::CreateOrReuseActivePayment do
+RSpec.describe Payments::Application::Commands::CreateOrReuseActivePayment do
   it "creates an active payment and its first attempt" do
     client = Client.create!(name: "Client", email: "client@example.com")
     pm = PM.create!(name: "PM", email: "pm@example.com")
@@ -34,10 +34,10 @@ RSpec.describe Payments::CreateOrReuseActivePayment do
       second_result = described_class.(project: project)
       second_payment = second_result.data.fetch(:payment)
       expect(second_payment).to eq(first_payment)
-    end.not_to change(Payment, :count)
+    end.not_to change(Payments::Domain::Aggregates::Payment, :count)
 
     expect(first_result).to be_success
-    expect(PaymentAttempt.count).to eq(1)
+    expect(Payments::Domain::Entities::PaymentAttempt.count).to eq(1)
   end
 
   it "returns a failure when the provider rejects the payment" do
@@ -45,8 +45,8 @@ RSpec.describe Payments::CreateOrReuseActivePayment do
     pm = PM.create!(name: "PM", email: "pm@example.com")
     project = Project.create!(client: client, pm: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :pending)
 
-    allow(Payments::PaymentProvider::Fake).to receive(:call).and_return(
-      Payments::Result::Failure.(message: "Rejected", code: :provider_rejected, data: { payment_id: 123 })
+    allow(Payments::Adapters::Outbound::Gateways::Fake).to receive(:call).and_return(
+      Core::Result::Failure.(message: "Rejected", code: :provider_rejected, data: { payment_id: 123 })
     )
 
     result = described_class.(project: project)

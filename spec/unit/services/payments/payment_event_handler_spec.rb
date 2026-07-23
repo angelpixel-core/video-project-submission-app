@@ -1,12 +1,12 @@
 require "rails_helper"
 
-RSpec.describe Payments::PaymentEventHandler do
+RSpec.describe Payments::Adapters::Inbound::Webhooks::Event::Handler do
   def build_payment(status: :processing)
     client = Client.create!(name: "Client", email: "client@example.com")
     pm = PM.create!(name: "PM", email: "pm@example.com")
     project = Project.create!(client: client, pm: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :pending)
 
-    payment = Payment.create!(
+    payment = Payments::Domain::Aggregates::Payment.create!(
       project: project,
       status: status,
       provider: "fake",
@@ -16,7 +16,7 @@ RSpec.describe Payments::PaymentEventHandler do
       provider_reference: "fake-abc123"
     )
 
-    PaymentAttempt.create!(
+    Payments::Domain::Entities::PaymentAttempt.create!(
       payment: payment,
       status: :submitted,
       provider: payment.provider,
@@ -39,7 +39,7 @@ RSpec.describe Payments::PaymentEventHandler do
   end
 
   def build_event(payment:, event_type: "payment.succeeded", event_id: "evt_123", demo_fail_once: false)
-    PaymentWebhookEvent.create!(
+    Payments::Domain::Entities::PaymentWebhookEvent.create!(
       provider: "fake",
       provider_event_id: event_id,
       event_type: event_type,
@@ -122,10 +122,10 @@ RSpec.describe Payments::PaymentEventHandler do
     payment = build_payment
     event = build_event(payment: payment, demo_fail_once: true)
 
-    expect { described_class.(event: event) }.to raise_error(Payments::DemoTransientFailure, Payments::PaymentEventHandler::DEMO_FAILURE_MESSAGE)
+    expect { described_class.(event: event) }.to raise_error(Payments::Domain::Errors::DemoTransientFailure, Payments::Adapters::Inbound::Webhooks::Event::Handler::DEMO_FAILURE_MESSAGE)
     expect(event.reload.status).to eq("failed")
     expect(event.processing_attempts_count).to eq(1)
-    expect(event.last_failure_message).to eq(Payments::PaymentEventHandler::DEMO_FAILURE_MESSAGE)
+    expect(event.last_failure_message).to eq(Payments::Adapters::Inbound::Webhooks::Event::Handler::DEMO_FAILURE_MESSAGE)
     expect(event.processing_attempts.first.status).to eq("failed")
     expect(payment.payment_notification_intents.count).to eq(0)
 

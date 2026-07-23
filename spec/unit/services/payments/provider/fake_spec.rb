@@ -1,11 +1,11 @@
 require "rails_helper"
 
-RSpec.describe Payments::PaymentProvider::Fake do
+RSpec.describe Payments::Adapters::Outbound::Gateways::Fake do
   it "returns a success result for a valid payment" do
     client = Client.create!(name: "Client", email: "client@example.com")
     pm = PM.create!(name: "PM", email: "pm@example.com")
     project = Project.create!(client: client, pm: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :draft)
-    payment = Payment.create!(
+    payment = Payments::Domain::Aggregates::Payment.create!(
       project: project,
       status: :pending,
       provider: "fake",
@@ -30,7 +30,7 @@ RSpec.describe Payments::PaymentProvider::Fake do
     client = Client.create!(name: "Client", email: "client@example.com")
     pm = PM.create!(name: "PM", email: "pm@example.com")
     project = Project.create!(client: client, pm: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :draft)
-    payment = Payment.create!(
+    payment = Payments::Domain::Aggregates::Payment.create!(
       project: project,
       status: :pending,
       provider: "fake",

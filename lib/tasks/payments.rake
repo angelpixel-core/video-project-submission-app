@@ -16,7 +16,7 @@ namespace :payments do
 
   desc "Replay failed or unprocessed webhook events"
   task replay_failed_webhook_events: :environment do
-    replay_webhook_events(PaymentWebhookEvent.where(status: %w[failed received]).order(:created_at).pluck(:provider_event_id))
+    replay_webhook_events(Payments::Domain::Entities::PaymentWebhookEvent.where(status: %w[failed received]).order(:created_at).pluck(:provider_event_id))
   end
 end
 
@@ -35,7 +35,7 @@ def deliver_signed_webhook(default_type:)
 
   simulator_args[:demo_fail_once] = true if ENV["DEMO_FAIL_ONCE"].present?
 
-  result = Payments::WebhookSimulator.(**simulator_args)
+  result = Payments::Adapters::Outbound::Webhooks::WebhookSimulator.(**simulator_args)
 
   if result.success?
     puts "Webhook delivered (#{result.data[:status_code]}): #{result.data[:body]}"
@@ -48,10 +48,10 @@ end
 
 def replay_webhook_events(provider_event_ids)
   provider_event_ids.compact_blank.each do |provider_event_id|
-    event = PaymentWebhookEvent.find_by(provider_event_id: provider_event_id)
+    event = Payments::Domain::Entities::PaymentWebhookEvent.find_by(provider_event_id: provider_event_id)
 
     if event.present?
-      Payments::ProcessWebhookEventJob.perform_later(event.id)
+      Payments::Adapters::Inbound::Webhooks::Event::Job.perform_later(event.id)
       puts "Replayed #{event.provider}:#{event.provider_event_id}"
     else
       warn "Skipping missing event #{provider_event_id}"
@@ -61,7 +61,7 @@ end
 
 def resolved_payment_from_env
   explicit_payment_id = ENV["PAYMENT_ID"].presence
-  return Payment.find(explicit_payment_id) if explicit_payment_id.present?
+  return Payments::Domain::Aggregates::Payment.find(explicit_payment_id) if explicit_payment_id.present?
 
   project_id = ENV["PROJECT_ID"].presence
   return unless project_id.present?

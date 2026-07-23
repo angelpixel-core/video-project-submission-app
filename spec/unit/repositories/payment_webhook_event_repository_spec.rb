@@ -1,8 +1,8 @@
 require "rails_helper"
 
-RSpec.describe Payments::Webhook::Event::Repository do
+RSpec.describe Payments::Adapters::Persistence::Webhook::Event::Repository do
   def build_payment
-    Payment.create!(
+    Payments::Domain::Aggregates::Payment.create!(
       project: Project.create!(
         client: Client.create!(name: "Client", email: "client@example.com"),
         pm: PM.create!(name: "PM", email: "pm@example.com"),
@@ -46,7 +46,7 @@ RSpec.describe Payments::Webhook::Event::Repository do
   end
 
   it "finds an event by id" do
-    event = PaymentWebhookEvent.create!(
+    event = Payments::Domain::Entities::PaymentWebhookEvent.create!(
       provider: "fake",
       provider_event_id: "evt_123",
       event_type: "payment.succeeded",

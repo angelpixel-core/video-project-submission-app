@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe PaymentAttempt do
+RSpec.describe Payments::Domain::Entities::PaymentAttempt do
   it "is an ActiveRecord model" do
     expect(described_class.superclass).to eq(ApplicationRecord)
   end
@@ -9,7 +9,7 @@ RSpec.describe PaymentAttempt do
     client = Client.create!(name: "Client", email: "client@example.com")
     pm = PM.create!(name: "PM", email: "pm@example.com")
     project = Project.create!(client: client, pm: pm, status: :draft)
-    payment = Payment.create!(
+    payment = Payments::Domain::Aggregates::Payment.create!(
       project: project,
       status: :pending,
       provider: "fake",

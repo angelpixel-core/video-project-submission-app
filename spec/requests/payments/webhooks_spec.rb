@@ -16,7 +16,7 @@ RSpec.describe "Payments webhooks requests" do
   end
 
   def webhook_signature(body)
-    OpenSSL::HMAC.hexdigest("SHA256", Payments::WebhookIngest::WEBHOOK_SECRET, body)
+    OpenSSL::HMAC.hexdigest("SHA256", Payments::Adapters::Inbound::Webhooks::Event::Ingest::WEBHOOK_SECRET, body)
   end
 
   def build_payment(status: :processing)
@@ -24,7 +24,7 @@ RSpec.describe "Payments webhooks requests" do
     pm = PM.create!(name: "PM", email: "pm@example.com")
     project = Project.create!(client: client, pm: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :pending)
 
-    payment = Payment.create!(
+    payment = Payments::Domain::Aggregates::Payment.create!(
       project: project,
       status: status,
       provider: "fake",
@@ -34,7 +34,7 @@ RSpec.describe "Payments webhooks requests" do
       provider_reference: "fake-abc123"
     )
 
-    PaymentAttempt.create!(
+    Payments::Domain::Entities::PaymentAttempt.create!(
       payment: payment,
       status: :submitted,
       provider: payment.provider,
@@ -67,11 +67,11 @@ RSpec.describe "Payments webhooks requests" do
           "X-Payment-Signature" => webhook_signature(body)
         }
       end
-    end.to change(PaymentWebhookEvent, :count).by(1)
+    end.to change(Payments::Domain::Entities::PaymentWebhookEvent, :count).by(1)
 
     expect(response).to have_http_status(:accepted)
 
-    event = PaymentWebhookEvent.order(:created_at).last
+    event = Payments::Domain::Entities::PaymentWebhookEvent.order(:created_at).last
     expect(event.provider).to eq("fake")
     expect(event.provider_event_id).to eq("evt_123")
     expect(event.event_type).to eq("payment.succeeded")
@@ -124,7 +124,7 @@ RSpec.describe "Payments webhooks requests" do
     }
 
     expect(response).to have_http_status(:unauthorized)
-    expect(PaymentWebhookEvent.count).to eq(0)
+    expect(Payments::Domain::Entities::PaymentWebhookEvent.count).to eq(0)
   end
 
   it "rejects malformed json" do
@@ -136,7 +136,7 @@ RSpec.describe "Payments webhooks requests" do
     }
 
     expect(response).to have_http_status(:unprocessable_content)
-    expect(PaymentWebhookEvent.count).to eq(0)
+    expect(Payments::Domain::Entities::PaymentWebhookEvent.count).to eq(0)
   end
 
   it "rejects unknown providers" do
@@ -149,6 +149,6 @@ RSpec.describe "Payments webhooks requests" do
     }
 
     expect(response).to have_http_status(:not_found)
-    expect(PaymentWebhookEvent.count).to eq(0)
+    expect(Payments::Domain::Entities::PaymentWebhookEvent.count).to eq(0)
   end
 end

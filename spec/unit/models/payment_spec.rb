@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe Payment do
+RSpec.describe Payments::Domain::Aggregates::Payment do
   it "is an ActiveRecord model" do
     expect(described_class.superclass).to eq(ApplicationRecord)
   end
@@ -85,7 +85,7 @@ RSpec.describe Payment do
       currency: "usd"
     )
 
-    expect(Payments::GenerateInvoiceJob).to receive(:perform_later).with(payment.id)
+    expect(Payments::Application::Handlers::GenerateInvoiceJob).to receive(:perform_later).with(payment.id)
 
     payment.update!(status: :succeeded, confirmed_at: Time.current)
   end
