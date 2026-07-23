@@ -19,10 +19,10 @@ class ApplicationController < ActionController::Base
   end
 
   def unread_notifications
-    @unread_notifications ||= default_pm.notifications.unread.includes(project: :client).order(created_at: :desc)
+    @unread_notifications ||= default_pm.notifications.unread.includes(project: :client_account).order(created_at: :desc)
   end
 
   def unread_client_notifications
-    @unread_client_notifications ||= current_client.notifications.unread.includes(project: :pm).order(created_at: :desc)
+    @unread_client_notifications ||= current_client.notifications.unread.includes(project: :pm_account).order(created_at: :desc)
   end
 end

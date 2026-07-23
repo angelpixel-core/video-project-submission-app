@@ -2,14 +2,21 @@ module Workspace
   module Context
     class Provider
       def client
-        Client.find_by!(email: fetch_required_email("DEFAULT_CLIENT_EMAIL"))
+        resolve_accounts.fetch(:client)
       end
 
       def pm
-        PM.find_by!(email: fetch_required_email("DEFAULT_PM_EMAIL"))
+        resolve_accounts.fetch(:pm)
       end
 
       private
+
+      def resolve_accounts
+        @resolve_accounts ||= Identity::Application::Queries::ResolveWorkspaceAccounts.call(
+          client_email: fetch_required_email("DEFAULT_CLIENT_EMAIL"),
+          pm_email: fetch_required_email("DEFAULT_PM_EMAIL")
+        ).data
+      end
 
       def fetch_required_email(key)
         value = ENV[key].to_s.strip

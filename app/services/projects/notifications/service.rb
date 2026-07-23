@@ -17,7 +17,7 @@ module Projects
       attr_reader :project_id
 
       def load_project
-        Project.includes(:pm).find(project_id)
+        Project.includes(:pm_account).find(project_id)
       end
 
       def create_notification(project)

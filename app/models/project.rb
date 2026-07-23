@@ -1,8 +1,8 @@
 class Project < ApplicationRecord
   include AASM
 
-  belongs_to :client
-  belongs_to :pm, class_name: "PM"
+  belongs_to :client_account, class_name: "Identity::Domain::Aggregates::Account", foreign_key: :client_account_id
+  belongs_to :pm_account, class_name: "Identity::Domain::Aggregates::Account", foreign_key: :pm_account_id
 
   has_many :video_type_selections, dependent: :destroy
   has_many :video_types, through: :video_type_selections
@@ -58,6 +58,24 @@ class Project < ApplicationRecord
 
   def active_payment
     payments.active.order(created_at: :desc).first
+  end
+
+  def client
+    Client.find_by(id: client_account_id || client_id)
+  end
+
+  def client=(account)
+    self.client_account = account
+    self.client_id = account&.id
+  end
+
+  def pm
+    PM.find_by(id: pm_account_id || pm_id)
+  end
+
+  def pm=(account)
+    self.pm_account = account
+    self.pm_id = account&.id
   end
 
   def raw_footage_metadata_hash

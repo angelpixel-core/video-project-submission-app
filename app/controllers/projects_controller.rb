@@ -18,9 +18,9 @@ class ProjectsController < ApplicationController
   end
 
   def show
-    @project = Project.includes(:client, :pm, comments: :author, video_type_selections: :video_type).find(params[:id])
+    @project = Project.includes(:client_account, :pm_account, comments: :author_account, video_type_selections: :video_type).find(params[:id])
     @payments = @project.payments.includes(:payment_attempts).order(created_at: :desc)
-    @comments = @project.comments.chronological.includes(:author)
+    @comments = @project.comments.chronological.includes(:author_account)
     @comment = Comment.new
   end
 

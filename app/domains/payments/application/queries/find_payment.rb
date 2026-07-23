@@ -25,7 +25,7 @@ module Payments
 
         def find_payment
           return Payments::Domain::Repositories::PaymentRepository.find_by_id(id) if id.present?
-          return Payments::Domain::Repositories::PaymentRepository.find_by_provider_reference(provider_reference) if provider_reference.present?
+          Payments::Domain::Repositories::PaymentRepository.find_by_provider_reference(provider_reference) if provider_reference.present?
         end
       end
     end

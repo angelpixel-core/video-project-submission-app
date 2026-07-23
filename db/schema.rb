@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_22_025100) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_23_121000) do
   create_table "active_storage_attachments", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -39,6 +39,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_22_025100) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
+  create_table "accounts", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "email", null: false
+    t.string "name", null: false
+    t.string "role", null: false
+    t.datetime "updated_at", null: false
+    t.index ["email", "role"], name: "index_accounts_on_email_and_role", unique: true
+    t.index ["role"], name: "index_accounts_on_role"
+  end
+
   create_table "clients", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "email", null: false
@@ -52,15 +62,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_22_025100) do
     t.string "author_type", null: false
     t.text "body", null: false
     t.datetime "created_at", null: false
+    t.bigint "author_account_id"
     t.bigint "project_id", null: false
     t.datetime "updated_at", null: false
     t.index ["author_type", "author_id"], name: "index_comments_on_author_type_and_author_id"
+    t.index ["author_account_id"], name: "index_comments_on_author_account_id"
     t.index ["project_id"], name: "index_comments_on_project_id"
   end
 
   create_table "notifications", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.text "body", null: false
     t.bigint "client_id"
+    t.bigint "account_id"
     t.datetime "created_at", null: false
     t.datetime "delivered_at"
     t.string "kind", null: false
@@ -68,6 +81,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_22_025100) do
     t.bigint "project_id", null: false
     t.datetime "read_at"
     t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_notifications_on_account_id"
     t.index ["client_id"], name: "index_notifications_on_client_id"
     t.index ["kind"], name: "index_notifications_on_kind"
     t.index ["pm_id"], name: "index_notifications_on_pm_id"
@@ -198,15 +212,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_22_025100) do
 
   create_table "projects", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "client_id", null: false
+    t.bigint "client_account_id"
     t.datetime "created_at", null: false
     t.string "name"
     t.bigint "pm_id", null: false
+    t.bigint "pm_account_id"
     t.json "raw_footage_metadata"
     t.string "raw_footage_url"
     t.string "status", default: "draft", null: false
     t.datetime "updated_at", null: false
     t.string "youtube_url"
+    t.index ["client_account_id"], name: "index_projects_on_client_account_id"
     t.index ["client_id"], name: "index_projects_on_client_id"
+    t.index ["pm_account_id"], name: "index_projects_on_pm_account_id"
     t.index ["pm_id"], name: "index_projects_on_pm_id"
     t.index ["status"], name: "index_projects_on_status"
   end
@@ -234,7 +252,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_22_025100) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "comments", "accounts", column: "author_account_id"
   add_foreign_key "comments", "projects"
+  add_foreign_key "notifications", "accounts", column: "account_id"
   add_foreign_key "notifications", "clients"
   add_foreign_key "notifications", "pms"
   add_foreign_key "notifications", "projects"
@@ -246,6 +266,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_22_025100) do
   add_foreign_key "payment_webhook_events", "payments"
   add_foreign_key "payment_webhook_events", "projects"
   add_foreign_key "payments", "projects"
+  add_foreign_key "projects", "accounts", column: "client_account_id"
+  add_foreign_key "projects", "accounts", column: "pm_account_id"
   add_foreign_key "projects", "clients"
   add_foreign_key "projects", "pms"
   add_foreign_key "video_type_selections", "projects"

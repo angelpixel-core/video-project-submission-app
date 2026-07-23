@@ -51,7 +51,7 @@ module Projects
     end
 
     def relation
-      Project.for_budget_summary.where.not(status: :draft).includes(:client)
+      Project.for_budget_summary.where.not(status: :draft).includes(:client_account)
     end
 
     def order_column
