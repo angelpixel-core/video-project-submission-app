@@ -1,6 +1,6 @@
 module Payments
   module Application
-    module Dto
+    module DTO
       PaymentDTO = Struct.new(:id, :status, :amount_cents, :currency, :provider, :provider_reference, keyword_init: true) do
         def self.from_payment(payment)
           new(
