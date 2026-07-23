@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe Projects::Notifications::Delivery do
+RSpec.describe Projects::Notifications::Dispatcher do
   it "delivers project_created emails to client and pm" do
     client = Client.create!(name: "Client", email: "client@example.com")
     pm = PM.create!(name: "PM", email: "pm@example.com")

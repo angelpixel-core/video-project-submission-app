@@ -31,7 +31,7 @@ RSpec.describe "Project show payment history", type: :system, js: true do
     client = Client.find_by!(email: "client@example.com")
     pm = PM.find_by!(email: "pm@example.com")
     project = Project.create!(client: client, pm: pm, name: "Project Alpha", raw_footage_url: "https://example.com/raw.mov", status: :pending)
-    payment = Payment.create!(
+    payment = Payments::Domain::Aggregates::Payment.create!(
       project: project,
       status: :processing,
       provider: "fake",
@@ -41,7 +41,7 @@ RSpec.describe "Project show payment history", type: :system, js: true do
       provider_reference: "fake-abc123"
     )
 
-    PaymentAttempt.create!(
+    Payments::Domain::Entities::PaymentAttempt.create!(
       payment: payment,
       status: :submitted,
       provider: payment.provider,
@@ -51,7 +51,7 @@ RSpec.describe "Project show payment history", type: :system, js: true do
       response_payload: { "status" => "accepted" }
     )
 
-    event = PaymentWebhookEvent.create!(
+    event = Payments::Domain::Entities::PaymentWebhookEvent.create!(
       provider: "fake",
       provider_event_id: "evt_123",
       event_type: "payment.succeeded",
@@ -74,7 +74,7 @@ RSpec.describe "Project show payment history", type: :system, js: true do
       last_attempted_at: Time.current
     )
 
-    PaymentWebhookEventAttempt.create!(
+    Payments::Domain::Entities::PaymentWebhookEventAttempt.create!(
       payment_webhook_event: event,
       attempt_number: 1,
       status: :succeeded,
@@ -104,7 +104,7 @@ RSpec.describe "Project show payment history", type: :system, js: true do
     client = Client.find_by!(email: "client@example.com")
     pm = PM.find_by!(email: "pm@example.com")
     project = Project.create!(client: client, pm: pm, name: "Project Beta", raw_footage_url: "https://example.com/raw.mov", status: :pending)
-    payment = Payment.create!(
+    payment = Payments::Domain::Aggregates::Payment.create!(
       project: project,
       status: :processing,
       provider: "fake",
@@ -114,7 +114,7 @@ RSpec.describe "Project show payment history", type: :system, js: true do
       provider_reference: "fake-xyz789"
     )
 
-    PaymentAttempt.create!(
+    Payments::Domain::Entities::PaymentAttempt.create!(
       payment: payment,
       status: :submitted,
       provider: payment.provider,
@@ -124,7 +124,7 @@ RSpec.describe "Project show payment history", type: :system, js: true do
       response_payload: { "status" => "accepted" }
     )
 
-    event = PaymentWebhookEvent.create!(
+    event = Payments::Domain::Entities::PaymentWebhookEvent.create!(
       provider: "fake",
       provider_event_id: "evt_456",
       event_type: "payment.succeeded",
@@ -144,7 +144,7 @@ RSpec.describe "Project show payment history", type: :system, js: true do
       received_at: Time.current
     )
 
-    Payments::ProcessWebhookEventJob.perform_now(event.id)
+    Payments::Adapters::Inbound::Webhooks::Event::Job.perform_now(event.id)
 
     visit project_path(project)
 

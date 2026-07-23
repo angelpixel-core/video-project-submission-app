@@ -7,7 +7,7 @@ class ApplicationController < ActionController::Base
   private
 
   def workspace_resolver
-    @workspace_resolver ||= WorkspaceResolver.new
+    @workspace_resolver ||= Workspace::Context::Provider.new
   end
 
   def current_client

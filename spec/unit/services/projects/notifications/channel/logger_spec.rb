@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe Projects::Notifications::LoggerChannel do
+RSpec.describe Projects::Notifications::Channel::Logger do
   it "logs a message for the project's pm" do
     client = Client.create!(name: "Client", email: "client@example.com")
     pm = PM.create!(name: "PM", email: "pm@example.com")

@@ -9,11 +9,10 @@ class ProjectsController < ApplicationController
 
     @projects = current_client.projects.includes(video_type_selections: :video_type).order(status_order, created_at: :desc)
 
-    pm_table_params = ::PMProjectsTableParams.new(params)
-    @pm_sort = pm_table_params.sort.presence || "created_at"
-    @pm_direction = pm_table_params.direction.presence || "desc"
-    @pm_page = pm_table_params.page
-    @pm_table_query = ::PMTableQuery.new(sort: @pm_sort, direction: @pm_direction, page: @pm_page, per_page: 10)
+    @pm_table_query = ::Projects::ListingQuery.new(params)
+    @pm_sort = @pm_table_query.sort.presence || "created_at"
+    @pm_direction = @pm_table_query.direction.presence || "desc"
+    @pm_page = @pm_table_query.page
     @pm_total_pages = @pm_table_query.total_pages
     @pm_projects = @pm_table_query.call
   end
@@ -112,7 +111,7 @@ class ProjectsController < ApplicationController
       @project.submit!
       sync_project_selections(@project, selections)
 
-      payment_result = Payments::CreateOrReuseActivePayment.(project: @project)
+      payment_result = Payments::Application::Commands::CreateOrReuseActivePayment.(project: @project)
 
       if payment_result.failure?
         @project.errors.add(:base, payment_result.message)
@@ -135,7 +134,7 @@ class ProjectsController < ApplicationController
         kind: "project_accepted",
         body: "Your project #{@pm_project.name.presence || 'Untitled project'} was accepted and is now in progress."
       )
-      Projects::Notifications::Delivery.call(project: @pm_project, event_type: :project_accepted)
+      Projects::Notifications::Dispatcher.call(project: @pm_project, event_type: :project_accepted)
     end
 
     Notification.broadcast_refresh_for(@pm_project.pm) if success

@@ -6,14 +6,14 @@ class Project < ApplicationRecord
 
   has_many :video_type_selections, dependent: :destroy
   has_many :video_types, through: :video_type_selections
-  has_many :payments, dependent: :destroy
+  has_many :payments, class_name: "Payments::Domain::Aggregates::Payment", dependent: :destroy
   has_many :notifications, dependent: :destroy
   has_many :comments, dependent: :destroy
 
   before_validation :sync_raw_footage_metadata
   after_update_commit :broadcast_status_badge
 
-  scope :for_pm_table, lambda {
+  scope :for_budget_summary, lambda {
     left_outer_joins(video_type_selections: :video_type)
       .select(<<~SQL.squish)
         projects.*,
@@ -118,7 +118,7 @@ class Project < ApplicationRecord
   private
 
   def sync_raw_footage_metadata
-    self.raw_footage_metadata = RawFootageUrlParser.metadata(raw_footage_url)
+    self.raw_footage_metadata = Parsers::RawFootageUrlParser.metadata(raw_footage_url)
   end
 
   def broadcast_status_badge
