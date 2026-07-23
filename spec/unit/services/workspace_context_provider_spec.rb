@@ -1,6 +1,8 @@
 require "rails_helper"
 
-RSpec.describe WorkspaceResolver do
+require Rails.root.join("lib/workspace/context/provider")
+
+RSpec.describe Workspace::Context::Provider do
   around do |example|
     original_client = ENV["DEFAULT_CLIENT_EMAIL"]
     original_pm = ENV["DEFAULT_PM_EMAIL"]

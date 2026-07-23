@@ -1,6 +1,7 @@
 require "rails_helper"
+require Rails.root.join("lib/parsers/raw_footage_url_parser")
 
-RSpec.describe RawFootageUrlParser do
+RSpec.describe Parsers::RawFootageUrlParser do
   it "builds youtube metadata" do
     metadata = described_class.metadata("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
 
