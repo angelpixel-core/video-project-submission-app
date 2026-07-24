@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_23_122000) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_23_123000) do
   create_table "active_storage_attachments", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -255,8 +255,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_23_122000) do
   add_foreign_key "comments", "accounts", column: "author_account_id"
   add_foreign_key "comments", "projects"
   add_foreign_key "notifications", "accounts", column: "account_id"
-  add_foreign_key "notifications", "clients"
-  add_foreign_key "notifications", "pms"
+  add_foreign_key "notifications", "accounts", column: "client_id"
+  add_foreign_key "notifications", "accounts", column: "pm_id"
   add_foreign_key "notifications", "projects"
   add_foreign_key "payment_attempts", "payments"
   add_foreign_key "payment_invoice_delivery_intents", "payments"
