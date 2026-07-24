@@ -1,8 +1,8 @@
 require "rails_helper"
 
 RSpec.describe Client do
-  it "is an ActiveRecord model" do
-    expect(described_class.superclass).to eq(ApplicationRecord)
+  it "inherits from the shared account aggregate" do
+    expect(described_class.superclass).to eq(Identity::Domain::Aggregates::Account)
   end
 
   it "normalizes and validates email addresses" do
