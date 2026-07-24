@@ -8,8 +8,8 @@ module Identity
           @account_repository = account_repository
         end
 
-        def self.call(client_email:, pm_email:)
-          new(client_email:, pm_email:).call
+        def self.call(client_email:, pm_email:, account_repository: Identity::Adapters::Persistence::Account::Repository.new)
+          new(client_email:, pm_email:, account_repository:).call
         end
 
         def call
