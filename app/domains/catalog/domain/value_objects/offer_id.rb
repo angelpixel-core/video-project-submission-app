@@ -1,7 +1,7 @@
 module Catalog
   module Domain
     module ValueObjects
-      class OfferId
+      class OfferID
         def initialize(value)
           @value = value.to_i
           raise ArgumentError, "Invalid offer id: #{value.inspect}" unless @value.positive?

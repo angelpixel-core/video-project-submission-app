@@ -4,10 +4,15 @@ module Ordering
   module Domain
     module ValueObjects
       class OrderNumber
+        FORMAT = "ord_%<order_id>d_%<uuid>s".freeze
         PATTERN = /\Aord_(\d+)_([0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})\z/i
 
-        def self.generate(order_id:)
-          new("ord_#{OrderId.new(order_id).to_i}_#{uuid_v7}")
+        def self.generate(order_id:, uuid: uuid_v7)
+          new(compose(order_id:, uuid:))
+        end
+
+        def self.compose(order_id:, uuid:)
+          format(FORMAT, order_id: OrderID.parse(order_id).to_i, uuid: uuid)
         end
 
         def self.valid?(value)
@@ -16,7 +21,7 @@ module Ordering
 
         def self.uuid_v7
           timestamp_ms = (Time.now.utc.to_f * 1000).to_i
-          timestamp_bytes = [timestamp_ms].pack("Q>").bytes.last(6)
+          timestamp_bytes = [ timestamp_ms ].pack("Q>").bytes.last(6)
           random = SecureRandom.bytes(10).bytes
 
           bytes = []

@@ -21,7 +21,7 @@ module Ordering
           production_status: :not_started,
           delivery_status: :not_ready
         )
-          @id = id && Ordering::Domain::ValueObjects::OrderId.new(id).to_i
+          @id = id && Ordering::Domain::ValueObjects::OrderID.parse(id).to_i
           @uid = build_uid(uid, @id)
           @customer_snapshot = build_customer_snapshot(customer_snapshot)
           @order_lines = Array(order_lines).map { |line| build_order_line(line) }
@@ -34,7 +34,7 @@ module Ordering
         end
 
         def assign_identity!(id:, uid: nil)
-          @id = Ordering::Domain::ValueObjects::OrderId.new(id).to_i
+          @id = Ordering::Domain::ValueObjects::OrderID.parse(id).to_i
           @uid = build_uid(uid, @id)
           self
         end

@@ -1,7 +1,7 @@
 module Identity
   module Domain
     module ValueObjects
-      class UserId < AccountId
+      class UserID < AccountID
       end
     end
   end

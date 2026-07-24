@@ -1,7 +1,7 @@
 module Payments
   module Domain
     module ValueObjects
-      class PaymentId
+      class PaymentID
         def self.valid?(value)
           value.to_i.positive?
         end

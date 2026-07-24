@@ -53,6 +53,51 @@ title: Application Boundaries and Repositories
 - `Ordering::Adapters::Persistence::Order::Mapper` converts between `Order` aggregates and persistence records.
 - `Ordering::Adapters::Persistence::Order::OrderRecord`, `OrderLineRecord`, and `SourceVideoRecord` are the ORM-backed records.
 
+### Ordering Flow
+
+```text
+COMMAND / USE CASE
+  CreateCheckoutOrder / PlaceOrder / ConfirmOrder
+        |
+        v
+DOMAIN AGGREGATE
+  Ordering::Domain::Aggregates::Order
+        |
+        |  applies policies
+        |  emits events
+        v
+DOMAIN EVENT
+  OrderDraftedEvent / OrderPlacedEvent / ...
+        |
+        v
+DOMAIN CONTRACT
+  Ordering::Domain::Repositories::Order::Contract
+        |
+        v
+PERSISTENCE ADAPTER
+  Ordering::Adapters::Persistence::Order::Repository
+        |
+        v
+MAPPER
+  Ordering::Adapters::Persistence::Order::Mapper
+        |
+        +------------------------------+
+        |                              |
+        v                              v
+ACTIVE RECORD ROOT                ACTIVE RECORD CHILDREN
+  OrderRecord                       OrderLineRecord
+                                        SourceVideoRecord
+        |                              |
+        +--------------+---------------+
+                       v
+                      DB
+```
+
+- The use case talks to the domain contract, never directly to Active Record.
+- The adapter implements the contract and uses the mapper to translate the aggregate tree.
+- The records are infrastructure only; they do not carry domain behavior.
+- The aggregate root owns the lifecycle and event emission for its children.
+
 ## Implementation Plan
 
 - [ ] Identify the highest-value flows to extract first.

@@ -6,6 +6,7 @@ RSpec.describe "Ordering value objects" do
 
     expect(number.to_s).to match(/\Aord_42_[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\z/i)
     expect(number.order_id).to eq(42)
+    expect(Ordering::Domain::ValueObjects::OrderNumber.compose(order_id: 42, uuid: "00000000-0000-7000-8000-000000000000")).to eq("ord_42_00000000-0000-7000-8000-000000000000")
   end
 
   it "tracks order and fulfillment status values" do

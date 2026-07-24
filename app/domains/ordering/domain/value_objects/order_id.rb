@@ -1,10 +1,14 @@
 module Ordering
   module Domain
     module ValueObjects
-      class OrderId
+      class OrderID
+        def self.parse(value)
+          new(value)
+        end
+
         def initialize(value)
           @value = Integer(value)
-          raise ArgumentError, "OrderId must be positive" if @value <= 0
+          raise ArgumentError, "OrderID must be positive" if @value <= 0
         rescue ArgumentError, TypeError
           raise ArgumentError, "Invalid order id: #{value.inspect}"
         end

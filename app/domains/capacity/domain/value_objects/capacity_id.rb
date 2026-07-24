@@ -1,7 +1,7 @@
 module Capacity
   module Domain
     module ValueObjects
-      class CapacityId
+      class CapacityID
         def initialize(value)
           @value = value.to_i
           raise ArgumentError, "Invalid capacity id" unless @value.positive?

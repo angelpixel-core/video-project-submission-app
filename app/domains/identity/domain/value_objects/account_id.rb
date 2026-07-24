@@ -1,7 +1,7 @@
 module Identity
   module Domain
     module ValueObjects
-      class AccountId
+      class AccountID
         def self.valid?(value)
           value.to_i.positive?
         end
