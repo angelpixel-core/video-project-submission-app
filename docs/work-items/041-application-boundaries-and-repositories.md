@@ -39,6 +39,20 @@ title: Application Boundaries and Repositories
 - `use case` / `handler` should orchestrate business steps and talk to repositories/services.
 - Controllers should only parse request input and render responses.
 
+## Architecture Pattern
+
+- Domain contracts live under `app/domains/**/domain/repositories/**/contract.rb`.
+- Persistence implementations live under `app/models/**/adapters/persistence/**/repository.rb`.
+- Active Record classes live alongside the adapter implementation under the same persistence namespace.
+- Mappers translate between domain aggregates and persistence records; they keep repositories thin.
+
+### Ordering Example
+
+- `Ordering::Domain::Repositories::Order::Contract` defines the expected repository API.
+- `Ordering::Adapters::Persistence::Order::Repository` implements the contract using Active Record.
+- `Ordering::Adapters::Persistence::Order::Mapper` converts between `Order` aggregates and persistence records.
+- `Ordering::Adapters::Persistence::Order::OrderRecord`, `OrderLineRecord`, and `SourceVideoRecord` are the ORM-backed records.
+
 ## Implementation Plan
 
 - [ ] Identify the highest-value flows to extract first.
@@ -84,3 +98,4 @@ title: Application Boundaries and Repositories
 - Start small: one flow first, then repeat the pattern.
 - Don’t introduce repositories everywhere by default.
 - Route modularization can be a follow-up if controller extraction forces it.
+- For nested domain areas, prefer `Contract` in the domain and `Repository` in persistence to keep the boundary explicit.
