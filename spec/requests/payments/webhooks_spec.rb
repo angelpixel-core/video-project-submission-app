@@ -108,10 +108,10 @@ RSpec.describe "Payments webhooks requests" do
       perform_enqueued_jobs do
         post payments_webhook_events_path(provider: "fake"), params: body, headers: headers
       end
-    end.not_to change(PaymentWebhookEvent, :count)
+    end.not_to change(Payments::Domain::Entities::PaymentWebhookEvent, :count)
 
     expect(response).to have_http_status(:ok)
-    expect(PaymentWebhookEvent.order(:created_at).last.status).to eq("processed")
+    expect(Payments::Domain::Entities::PaymentWebhookEvent.order(:created_at).last.status).to eq("processed")
   end
 
   it "rejects an invalid signature" do
