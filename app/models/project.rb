@@ -62,7 +62,7 @@ class Project < ApplicationRecord
   end
 
   def client
-    Client.find_by(id: client_account_id || client_id)
+    client_account || Identity::Domain::Aggregates::Account.find_by(id: client_account_id || client_id, role: "client")
   end
 
   def client=(account)
@@ -71,7 +71,7 @@ class Project < ApplicationRecord
   end
 
   def pm
-    PM.find_by(id: pm_account_id || pm_id)
+    pm_account || Identity::Domain::Aggregates::Account.find_by(id: pm_account_id || pm_id, role: "pm")
   end
 
   def pm=(account)

@@ -12,11 +12,7 @@ class Comment < ApplicationRecord
   before_validation :sync_legacy_author_columns
 
   def author
-    case author_type
-    when "Client" then Client.find_by(id: author_id)
-    when "PM" then PM.find_by(id: author_id)
-    else author_account
-    end
+    author_account || Identity::Domain::Aggregates::Account.find_by(id: author_id)
   end
 
   def author=(value)

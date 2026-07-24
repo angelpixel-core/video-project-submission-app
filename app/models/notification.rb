@@ -20,15 +20,19 @@ class Notification < ApplicationRecord
   end
 
   def recipient
-    pm || client
+    account || pm || client
   end
 
   def pm
-    PM.find_by(id: pm_id || account_id) if account&.pm? || pm_id.present? || account_id.present?
+    return account if account&.pm?
+
+    Identity::Domain::Aggregates::Account.find_by(id: pm_id || account_id, role: "pm")
   end
 
   def client
-    Client.find_by(id: client_id || account_id) if account&.client? || client_id.present? || account_id.present?
+    return account if account&.client?
+
+    Identity::Domain::Aggregates::Account.find_by(id: client_id || account_id, role: "client")
   end
 
   def pm=(value)
@@ -87,13 +91,8 @@ class Notification < ApplicationRecord
 
     if account.pm?
       self.pm_id ||= account.id
-      self.client_id = nil if client_id.blank?
     elsif account.client?
       self.client_id ||= account.id
-      self.pm_id = nil if pm_id.blank?
     end
-
-    self.pm_id ||= pm&.id
-    self.client_id ||= client&.id
   end
 end
