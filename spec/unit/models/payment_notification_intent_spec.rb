@@ -3,7 +3,7 @@ require "rails_helper"
 RSpec.describe Payments::Domain::Entities::PaymentNotificationIntent do
   it "enqueues the dispatcher job after commit when created" do
     payment = Payments::Domain::Aggregates::Payment.create!(
-      project: Project.create!(client: Client.create!(name: "Client", email: "client@example.com"), pm: PM.create!(name: "PM", email: "pm@example.com"), name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :pending),
+      project: Project.create!(client: client_account(name: "Client"), pm: pm_account(name: "PM"), name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :pending),
       status: :succeeded,
       provider: "fake",
       idempotency_key: SecureRandom.uuid,
@@ -30,7 +30,7 @@ RSpec.describe Payments::Domain::Entities::PaymentNotificationIntent do
 
   it "normalizes payload and status" do
     payment = Payments::Domain::Aggregates::Payment.create!(
-      project: Project.create!(client: Client.create!(name: "Client", email: "client@example.com"), pm: PM.create!(name: "PM", email: "pm@example.com"), name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :pending),
+      project: Project.create!(client: client_account(name: "Client"), pm: pm_account(name: "PM"), name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :pending),
       status: :succeeded,
       provider: "fake",
       idempotency_key: SecureRandom.uuid,

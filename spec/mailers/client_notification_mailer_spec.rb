@@ -3,8 +3,8 @@ require "rails_helper"
 RSpec.describe ClientNotificationMailer do
   describe "project_created" do
     it "sends a compact text email to the client" do
-      client = Client.create!(name: "Client", email: "client@example.com")
-      pm = PM.create!(name: "PM", email: "pm@example.com")
+      client = client_account(name: "Client")
+      pm = pm_account(name: "PM")
       project = Project.create!(client: client, pm: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :pending)
 
       mail = described_class.project_created(project)
@@ -19,8 +19,8 @@ RSpec.describe ClientNotificationMailer do
 
   describe "project_accepted" do
     it "sends a compact text email to the client" do
-      client = Client.create!(name: "Client", email: "client@example.com")
-      pm = PM.create!(name: "PM", email: "pm@example.com")
+      client = client_account(name: "Client")
+      pm = pm_account(name: "PM")
       project = Project.create!(client: client, pm: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :in_progress)
 
       mail = described_class.project_accepted(project)
@@ -34,8 +34,8 @@ RSpec.describe ClientNotificationMailer do
 
   describe "project_rejected" do
     it "sends a compact text email to the client" do
-      client = Client.create!(name: "Client", email: "client@example.com")
-      pm = PM.create!(name: "PM", email: "pm@example.com")
+      client = client_account(name: "Client")
+      pm = pm_account(name: "PM")
       project = Project.create!(client: client, pm: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :pending)
 
       mail = described_class.project_rejected(project)

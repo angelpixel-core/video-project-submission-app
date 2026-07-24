@@ -6,8 +6,8 @@ RSpec.describe Project do
   end
 
   it "belongs to a client and pm and starts as draft" do
-    client = Client.create!(name: "Client", email: "client@example.com")
-    pm = PM.create!(name: "PM", email: "pm@example.com")
+    client = client_account(name: "Client")
+    pm = pm_account(name: "PM")
     project = described_class.create!(client: client, pm: pm, status: :draft)
 
     expect(project.status).to eq("draft")
@@ -16,8 +16,8 @@ RSpec.describe Project do
   end
 
   it "keeps legacy identity ids populated when using account-backed associations" do
-    client = Client.create!(name: "Client", email: "client@example.com")
-    pm = PM.create!(name: "PM", email: "pm@example.com")
+    client = client_account(name: "Client")
+    pm = pm_account(name: "PM")
 
     project = described_class.create!(client_account: client, pm_account: pm, status: :draft)
 
@@ -26,8 +26,8 @@ RSpec.describe Project do
   end
 
   it "requires submission fields once submitted" do
-    client = Client.create!(name: "Client", email: "client@example.com")
-    pm = PM.create!(name: "PM", email: "pm@example.com")
+    client = client_account(name: "Client")
+    pm = pm_account(name: "PM")
     project = described_class.new(client: client, pm: pm, status: :draft)
 
     expect(project).to be_valid
@@ -40,8 +40,8 @@ RSpec.describe Project do
   end
 
   it "derives raw footage metadata for recognized urls" do
-    client = Client.create!(name: "Client", email: "client@example.com")
-    pm = PM.create!(name: "PM", email: "pm@example.com")
+    client = client_account(name: "Client")
+    pm = pm_account(name: "PM")
     project = described_class.create!(client: client, pm: pm, status: :draft, raw_footage_url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ")
 
     expect(project.raw_footage_metadata_hash).to include(
@@ -52,8 +52,8 @@ RSpec.describe Project do
   end
 
   it "derives vimeo metadata when the url is recognized" do
-    client = Client.create!(name: "Client", email: "client@example.com")
-    pm = PM.create!(name: "PM", email: "pm@example.com")
+    client = client_account(name: "Client")
+    pm = pm_account(name: "PM")
     project = described_class.create!(client: client, pm: pm, status: :draft, raw_footage_url: "https://vimeo.com/123456789")
 
     expect(project.raw_footage_metadata_hash).to include(
@@ -63,8 +63,8 @@ RSpec.describe Project do
   end
 
   it "moves through the project lifecycle" do
-    client = Client.create!(name: "Client", email: "client@example.com")
-    pm = PM.create!(name: "PM", email: "pm@example.com")
+    client = client_account(name: "Client")
+    pm = pm_account(name: "PM")
     project = described_class.create!(client: client, pm: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :draft)
 
     project.submit!
@@ -78,8 +78,8 @@ RSpec.describe Project do
   end
 
   it "sums the project budget from selections" do
-    client = Client.create!(name: "Client", email: "client@example.com")
-    pm = PM.create!(name: "PM", email: "pm@example.com")
+    client = client_account(name: "Client")
+    pm = pm_account(name: "PM")
     project = described_class.create!(client: client, pm: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :pending)
     highlight_reel = VideoType.create!(name: "Highlight Reel", description: "Short edit", price_cents: 25_000, output_format: "mp4")
     social_cut = VideoType.create!(name: "Social Cut", description: "Social edit", price_cents: 15_000, output_format: "mp4")
@@ -91,8 +91,8 @@ RSpec.describe Project do
   end
 
   it "rejects invalid lifecycle jumps" do
-    client = Client.create!(name: "Client", email: "client@example.com")
-    pm = PM.create!(name: "PM", email: "pm@example.com")
+    client = client_account(name: "Client")
+    pm = pm_account(name: "PM")
     project = described_class.create!(client: client, pm: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :draft)
 
     expect { project.accept! }.to raise_error(AASM::InvalidTransition)

@@ -3,8 +3,8 @@ require "rails_helper"
 RSpec.describe Payments::Adapters::Outbound::Email::PaymentInvoiceMailer do
   describe "invoice_ready" do
     it "sends the invoice email with an attachment link" do
-      client = Client.create!(name: "Client", email: "client@example.com")
-      pm = PM.create!(name: "PM", email: "pm@example.com")
+      client = client_account(name: "Client")
+      pm = pm_account(name: "PM")
       project = Project.create!(client: client, pm: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :draft)
       payment = Payments::Domain::Aggregates::Payment.create!(
         project: project,

@@ -9,14 +9,14 @@ RSpec.describe "Project show comments", type: :system, js: true do
   before do
     driven_by :selenium_chrome_headless
 
-    Client.create!(name: "Default Client", email: "client@example.com")
-    PM.create!(name: "Default PM", email: "pm@example.com")
+    client_account(name: "Default Client")
+    pm_account(name: "Default PM")
     VideoType.create!(name: "Highlight Reel", description: "Short edit", price_cents: 25_000, output_format: "mp4")
   end
 
   it "shows a raw footage embed and allows both workspaces to comment" do
-    client = Client.find_by!(email: "client@example.com")
-    pm = PM.find_by!(email: "pm@example.com")
+    client = find_client_account
+    pm = find_pm_account
     project = Project.create!(
       client: client,
       pm: pm,
@@ -48,8 +48,8 @@ RSpec.describe "Project show comments", type: :system, js: true do
   end
 
   it "refreshes comments and notifications across workspaces in realtime" do
-    client = Client.find_by!(email: "client@example.com")
-    pm = PM.find_by!(email: "pm@example.com")
+    client = find_client_account
+    pm = find_pm_account
     project = Project.create!(
       client: client,
       pm: pm,
@@ -81,8 +81,8 @@ RSpec.describe "Project show comments", type: :system, js: true do
   end
 
   it "shows a raw footage preview on the client project card" do
-    client = Client.find_by!(email: "client@example.com")
-    pm = PM.find_by!(email: "pm@example.com")
+    client = find_client_account
+    pm = find_pm_account
     Project.create!(
       client: client,
       pm: pm,
@@ -94,10 +94,10 @@ RSpec.describe "Project show comments", type: :system, js: true do
     visit projects_path
 
     expect(page).to have_css(".client-project-card .youtube-preview img[src*='img.youtube.com/vi/dQw4w9WgXcQ/hqdefault.jpg']")
-    expect(page).to have_link("View details", href: project_path(Project.find_by!(name: "Project Beta")))
+    expect(page).to have_link("Project Beta", href: project_path(Project.find_by!(name: "Project Beta")))
     expect(page).to have_link("Play preview", href: project_path(Project.find_by!(name: "Project Beta")))
 
-    click_link "View details"
+    click_link "Project Beta"
 
     expect(page).to have_current_path(project_path(Project.find_by!(name: "Project Beta")))
     expect(page).to have_content("PROJECT DETAIL")
@@ -105,8 +105,8 @@ RSpec.describe "Project show comments", type: :system, js: true do
   end
 
   it "shows a twitch preview on the project detail page" do
-    client = Client.find_by!(email: "client@example.com")
-    pm = PM.find_by!(email: "pm@example.com")
+    client = find_client_account
+    pm = find_pm_account
     project = Project.create!(
       client: client,
       pm: pm,
@@ -123,8 +123,8 @@ RSpec.describe "Project show comments", type: :system, js: true do
   end
 
   it "shows an instagram preview in the draft form" do
-    client = Client.find_by!(email: "client@example.com")
-    pm = PM.find_by!(email: "pm@example.com")
+    client = find_client_account
+    pm = find_pm_account
     project = Project.create!(client: client, pm: pm, status: :draft)
 
     visit edit_project_path(project)
@@ -136,8 +136,8 @@ RSpec.describe "Project show comments", type: :system, js: true do
   end
 
   it "shows a tiktok preview on the project detail page" do
-    client = Client.find_by!(email: "client@example.com")
-    pm = PM.find_by!(email: "pm@example.com")
+    client = find_client_account
+    pm = find_pm_account
     project = Project.create!(
       client: client,
       pm: pm,

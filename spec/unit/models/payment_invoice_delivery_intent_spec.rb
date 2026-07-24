@@ -2,8 +2,8 @@ require "rails_helper"
 
 RSpec.describe Payments::Domain::Entities::PaymentInvoiceDeliveryIntent do
   it "enqueues the dispatch job after commit when created" do
-    client = Client.create!(name: "Client", email: "client@example.com")
-    pm = PM.create!(name: "PM", email: "pm@example.com")
+    client = client_account(name: "Client")
+    pm = pm_account(name: "PM")
     project = Project.create!(client: client, pm: pm, status: :draft)
     payment = Payments::Domain::Aggregates::Payment.create!(
       project: project,

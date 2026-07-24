@@ -4,14 +4,14 @@ RSpec.describe "Payment modal validation", type: :system, js: true do
   before do
     driven_by :selenium_chrome_headless
 
-    Client.create!(name: "Default Client", email: "client@example.com")
-    PM.create!(name: "Default PM", email: "pm@example.com")
+    client_account(name: "Default Client")
+    pm_account(name: "Default PM")
     VideoType.create!(name: "Highlight Reel", description: "Short edit", price_cents: 25_000, output_format: "mp4")
   end
 
   it "formats and validates card fields" do
-    client = Client.find_by!(email: "client@example.com")
-    pm = PM.find_by!(email: "pm@example.com")
+    client = find_client_account
+    pm = find_pm_account
     project = Project.create!(client: client, pm: pm, status: :draft)
 
     visit edit_project_path(project)
@@ -36,8 +36,8 @@ RSpec.describe "Payment modal validation", type: :system, js: true do
   end
 
   it "flags an expired card" do
-    client = Client.find_by!(email: "client@example.com")
-    pm = PM.find_by!(email: "pm@example.com")
+    client = find_client_account
+    pm = find_pm_account
     project = Project.create!(client: client, pm: pm, status: :draft)
 
     visit edit_project_path(project)

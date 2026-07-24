@@ -3,8 +3,8 @@ require "rails_helper"
 RSpec.describe Payments::Adapters::Outbound::Email::PaymentNotificationMailer do
   describe "payment_status_changed" do
     it "sends a compact text email for a succeeded payment to the client" do
-      client = Client.create!(name: "Client", email: "client@example.com")
-      pm = PM.create!(name: "PM", email: "pm@example.com")
+      client = client_account(name: "Client")
+      pm = pm_account(name: "PM")
       project = Project.create!(client: client, pm: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :in_progress)
       payment = Payments::Domain::Aggregates::Payment.create!(project: project, status: :succeeded, provider: "fake", idempotency_key: SecureRandom.uuid, amount_cents: 50_000, currency: "USD", provider_reference: "fake-abc123")
       intent = Payments::Domain::Entities::PaymentNotificationIntent.create!(payment: payment, project: project, event_type: "payment.succeeded", from_status: "processing", to_status: "succeeded", payload: { "payment_id" => payment.id }, status: :pending, scheduled_at: Time.current)
@@ -21,8 +21,8 @@ RSpec.describe Payments::Adapters::Outbound::Email::PaymentNotificationMailer do
     end
 
     it "sends a compact text email for a succeeded payment to the pm" do
-      client = Client.create!(name: "Client", email: "client@example.com")
-      pm = PM.create!(name: "PM", email: "pm@example.com")
+      client = client_account(name: "Client")
+      pm = pm_account(name: "PM")
       project = Project.create!(client: client, pm: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :in_progress)
       payment = Payments::Domain::Aggregates::Payment.create!(project: project, status: :succeeded, provider: "fake", idempotency_key: SecureRandom.uuid, amount_cents: 25_000, currency: "USD", provider_reference: "fake-def456")
       intent = Payments::Domain::Entities::PaymentNotificationIntent.create!(payment: payment, project: project, event_type: "payment.succeeded", from_status: "processing", to_status: "succeeded", payload: { "payment_id" => payment.id, "provider_event_id" => "evt_123", "webhook_event_id" => 5 }, status: :pending, scheduled_at: Time.current)
@@ -38,8 +38,8 @@ RSpec.describe Payments::Adapters::Outbound::Email::PaymentNotificationMailer do
     end
 
     it "sends a compact text email for a failed payment to the client" do
-      client = Client.create!(name: "Client", email: "client@example.com")
-      pm = PM.create!(name: "PM", email: "pm@example.com")
+      client = client_account(name: "Client")
+      pm = pm_account(name: "PM")
       project = Project.create!(client: client, pm: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :in_progress)
       payment = Payments::Domain::Aggregates::Payment.create!(project: project, status: :failed, provider: "fake", idempotency_key: SecureRandom.uuid, amount_cents: 25_000, currency: "USD", provider_reference: "fake-def456")
       intent = Payments::Domain::Entities::PaymentNotificationIntent.create!(payment: payment, project: project, event_type: "payment.failed", from_status: "processing", to_status: "failed", payload: { "payment_id" => payment.id }, status: :pending, scheduled_at: Time.current)
@@ -54,8 +54,8 @@ RSpec.describe Payments::Adapters::Outbound::Email::PaymentNotificationMailer do
     end
 
     it "sends a compact text email for a failed payment to the pm" do
-      client = Client.create!(name: "Client", email: "client@example.com")
-      pm = PM.create!(name: "PM", email: "pm@example.com")
+      client = client_account(name: "Client")
+      pm = pm_account(name: "PM")
       project = Project.create!(client: client, pm: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :in_progress)
       payment = Payments::Domain::Aggregates::Payment.create!(project: project, status: :failed, provider: "fake", idempotency_key: SecureRandom.uuid, amount_cents: 25_000, currency: "USD", provider_reference: "fake-def456")
       intent = Payments::Domain::Entities::PaymentNotificationIntent.create!(payment: payment, project: project, event_type: "payment.failed", from_status: "processing", to_status: "failed", payload: { "payment_id" => payment.id, "provider_event_id" => "evt_456", "webhook_event_id" => 7 }, status: :pending, scheduled_at: Time.current)

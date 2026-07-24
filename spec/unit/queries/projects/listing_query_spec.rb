@@ -5,15 +5,15 @@ RSpec.describe Projects::ListingQuery do
   include ActiveSupport::Testing::TimeHelpers
 
   before do
-    Client.create!(name: "Default Client", email: "client@example.com")
-    PM.create!(name: "Default PM", email: "pm@example.com")
+    client_account(name: "Default Client")
+    pm_account(name: "Default PM")
     VideoType.create!(name: "Highlight Reel", description: "Short edit", price_cents: 25_000, output_format: "mp4")
     VideoType.create!(name: "Social Cut", description: "Social edit", price_cents: 15_000, output_format: "mp4")
   end
 
   it "orders by newest first by default" do
-    client = Client.find_by!(email: "client@example.com")
-    pm = PM.find_by!(email: "pm@example.com")
+    client = find_client_account
+    pm = find_pm_account
 
     travel_to 2.days.ago do
       Project.create!(client: client, pm: pm, name: "Older Project", raw_footage_url: "https://example.com/older.mov", status: :pending)
@@ -31,8 +31,8 @@ RSpec.describe Projects::ListingQuery do
   end
 
   it "orders created_at ascending when requested" do
-    client = Client.find_by!(email: "client@example.com")
-    pm = PM.find_by!(email: "pm@example.com")
+    client = find_client_account
+    pm = find_pm_account
 
     travel_to 2.days.ago do
       Project.create!(client: client, pm: pm, name: "Older Project", raw_footage_url: "https://example.com/older.mov", status: :pending)
@@ -50,8 +50,8 @@ RSpec.describe Projects::ListingQuery do
   end
 
   it "orders by total budget when requested" do
-    client = Client.find_by!(email: "client@example.com")
-    pm = PM.find_by!(email: "pm@example.com")
+    client = find_client_account
+    pm = find_pm_account
     highlight_reel = VideoType.find_by!(name: "Highlight Reel")
     social_cut = VideoType.find_by!(name: "Social Cut")
 
@@ -67,8 +67,8 @@ RSpec.describe Projects::ListingQuery do
   end
 
   it "paginates ten records per page by default" do
-    client = Client.find_by!(email: "client@example.com")
-    pm = PM.find_by!(email: "pm@example.com")
+    client = find_client_account
+    pm = find_pm_account
 
     11.times do |index|
       Project.create!(client: client, pm: pm, name: "Project #{index + 1}", raw_footage_url: "https://example.com/#{index + 1}.mov", status: :pending)

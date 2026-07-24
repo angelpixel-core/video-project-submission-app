@@ -22,14 +22,14 @@ RSpec.describe "Project show payment history", type: :system, js: true do
   before do
     driven_by :selenium_chrome_headless
 
-    Client.create!(name: "Default Client", email: "client@example.com")
-    PM.create!(name: "Default PM", email: "pm@example.com")
+    client_account(name: "Default Client")
+    pm_account(name: "Default PM")
     VideoType.create!(name: "Highlight Reel", description: "Short edit", price_cents: 25_000, output_format: "mp4")
   end
 
   it "shows payment history to the pm and keeps it hidden from the client workspace" do
-    client = Client.find_by!(email: "client@example.com")
-    pm = PM.find_by!(email: "pm@example.com")
+    client = find_client_account
+    pm = find_pm_account
     project = Project.create!(client: client, pm: pm, name: "Project Alpha", raw_footage_url: "https://example.com/raw.mov", status: :pending)
     payment = Payments::Domain::Aggregates::Payment.create!(
       project: project,
@@ -101,8 +101,8 @@ RSpec.describe "Project show payment history", type: :system, js: true do
   end
 
   it "shows confirmed when the payment has been successfully processed" do
-    client = Client.find_by!(email: "client@example.com")
-    pm = PM.find_by!(email: "pm@example.com")
+    client = find_client_account
+    pm = find_pm_account
     project = Project.create!(client: client, pm: pm, name: "Project Beta", raw_footage_url: "https://example.com/raw.mov", status: :pending)
     payment = Payments::Domain::Aggregates::Payment.create!(
       project: project,
