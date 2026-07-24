@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe VideoType do
   it "is an ActiveRecord model" do
-    expect(described_class.superclass).to eq(ApplicationRecord)
+    expect(described_class.superclass).to eq(Catalog::Domain::Entities::VideoType)
   end
 
   it "requires the core attributes" do

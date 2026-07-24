@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_23_122000) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_23_123000) do
   create_table "active_storage_attachments", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -202,6 +202,36 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_23_122000) do
     t.index ["provider_reference"], name: "index_payments_on_provider_reference", unique: true
   end
 
+  create_table "payment_method_references", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.json "metadata"
+    t.string "method_type", null: false
+    t.bigint "payment_id", null: false
+    t.string "provider", default: "fake", null: false
+    t.string "reference", null: false
+    t.datetime "updated_at", null: false
+    t.index ["method_type"], name: "index_payment_method_references_on_method_type"
+    t.index ["payment_id"], name: "index_payment_method_references_on_payment_id", unique: true
+    t.index ["provider", "method_type"], name: "index_payment_method_references_on_provider_and_method_type"
+    t.index ["reference"], name: "index_payment_method_references_on_reference", unique: true
+  end
+
+  create_table "refunds", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.integer "amount_cents", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.text "reason"
+    t.bigint "payment_id", null: false
+    t.bigint "payment_method_reference_id", null: false
+    t.datetime "processed_at"
+    t.string "provider", default: "fake", null: false
+    t.string "provider_reference"
+    t.string "status", default: "pending", null: false
+    t.datetime "updated_at", null: false
+    t.index ["payment_id", "status"], name: "index_refunds_on_payment_id_and_status"
+    t.index ["payment_method_reference_id", "status"], name: "index_refunds_on_payment_method_reference_id_and_status"
+    t.index ["provider_reference"], name: "index_refunds_on_provider_reference", unique: true
+  end
+
   create_table "pms", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "email", null: false
@@ -255,17 +285,20 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_23_122000) do
   add_foreign_key "comments", "accounts", column: "author_account_id"
   add_foreign_key "comments", "projects"
   add_foreign_key "notifications", "accounts", column: "account_id"
-  add_foreign_key "notifications", "clients"
-  add_foreign_key "notifications", "pms"
+  add_foreign_key "notifications", "accounts", column: "client_id"
+  add_foreign_key "notifications", "accounts", column: "pm_id"
   add_foreign_key "notifications", "projects"
   add_foreign_key "payment_attempts", "payments"
   add_foreign_key "payment_invoice_delivery_intents", "payments"
   add_foreign_key "payment_notification_intents", "payments"
   add_foreign_key "payment_notification_intents", "projects"
+  add_foreign_key "payment_method_references", "payments"
   add_foreign_key "payment_webhook_event_attempts", "payment_webhook_events"
   add_foreign_key "payment_webhook_events", "payments"
   add_foreign_key "payment_webhook_events", "projects"
   add_foreign_key "payments", "projects"
+  add_foreign_key "refunds", "payment_method_references"
+  add_foreign_key "refunds", "payments"
   add_foreign_key "projects", "accounts", column: "client_account_id"
   add_foreign_key "projects", "accounts", column: "pm_account_id"
   add_foreign_key "projects", "accounts", column: "client_id"

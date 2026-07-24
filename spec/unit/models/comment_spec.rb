@@ -6,7 +6,7 @@ RSpec.describe Comment do
 
     expect(comment).not_to be_valid
     expect(comment.errors[:project]).to be_present
-    expect(comment.errors[:author]).to be_present
+    expect(comment.errors[:author_account]).to be_present
     expect(comment.errors[:body]).to be_present
   end
 
