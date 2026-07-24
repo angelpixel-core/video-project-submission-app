@@ -138,6 +138,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_23_123000) do
     t.index ["status", "scheduled_at"], name: "index_payment_notification_intents_on_status_and_scheduled_at"
   end
 
+  create_table "payment_method_references", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.string "method_type", null: false
+    t.datetime "created_at", null: false
+    t.json "metadata"
+    t.bigint "payment_id", null: false
+    t.string "provider", default: "fake", null: false
+    t.string "reference", null: false
+    t.datetime "updated_at", null: false
+    t.index ["provider", "method_type"], name: "index_payment_method_references_on_provider_and_method_type"
+    t.index ["payment_id"], name: "index_payment_method_references_on_payment_id", unique: true
+    t.index ["reference"], name: "index_payment_method_references_on_reference", unique: true
+  end
+
   create_table "payment_webhook_event_attempts", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.integer "attempt_number", null: false
     t.datetime "created_at", null: false
@@ -262,6 +275,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_23_123000) do
   add_foreign_key "payment_invoice_delivery_intents", "payments"
   add_foreign_key "payment_notification_intents", "payments"
   add_foreign_key "payment_notification_intents", "projects"
+  add_foreign_key "payment_method_references", "payments"
   add_foreign_key "payment_webhook_event_attempts", "payment_webhook_events"
   add_foreign_key "payment_webhook_events", "payments"
   add_foreign_key "payment_webhook_events", "projects"
