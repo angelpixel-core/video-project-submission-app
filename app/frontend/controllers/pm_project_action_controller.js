@@ -1,5 +1,5 @@
 import { Controller } from "@hotwired/stimulus"
-import { forceRefreshPmWorkspace } from "../lib/pm_workspace_refresh"
+import { forceRefreshPmWorkspace } from "../lib/workspace_refresh"
 
 export default class extends Controller {
   async submit(event) {

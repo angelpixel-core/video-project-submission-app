@@ -16,7 +16,6 @@ Rails.application.routes.draw do
   root "projects#index"
   resource :profile, only: %i[show update], controller: "profile"
 
-  resources :client_notifications, only: %i[update]
   resources :notifications, only: %i[update]
 
   if Rails.env.development?

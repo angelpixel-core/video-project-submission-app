@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "Client notifications", type: :system, js: true do
+RSpec.describe "Notifications", type: :system, js: true do
   before do
     driven_by :selenium_chrome_headless
 

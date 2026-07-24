@@ -8,8 +8,8 @@ module Projects
         end
 
         def call
-          ClientNotificationMailer.public_send(event_type, project).deliver_now
-          PMNotificationMailer.public_send(event_type, project).deliver_now
+          ProjectNotificationMailer.public_send(event_type, project, recipient_role: :client).deliver_now
+          ProjectNotificationMailer.public_send(event_type, project, recipient_role: :pm).deliver_now
         end
 
         private

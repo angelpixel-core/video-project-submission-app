@@ -9,8 +9,8 @@ RSpec.describe Projects::Notifications::Channel::Email do
     client_mail = instance_double(ActionMailer::MessageDelivery)
     pm_mail = instance_double(ActionMailer::MessageDelivery)
 
-    expect(ClientNotificationMailer).to receive(:project_created).with(project).and_return(client_mail)
-    expect(PMNotificationMailer).to receive(:project_created).with(project).and_return(pm_mail)
+    expect(ProjectNotificationMailer).to receive(:project_created).with(project, recipient_role: :client).and_return(client_mail)
+    expect(ProjectNotificationMailer).to receive(:project_created).with(project, recipient_role: :pm).and_return(pm_mail)
     expect(client_mail).to receive(:deliver_now)
     expect(pm_mail).to receive(:deliver_now)
 
