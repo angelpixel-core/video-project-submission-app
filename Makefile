@@ -23,6 +23,10 @@ repo/create:
 db/seeds:
 	@STACK_ENV="$(STACK_ENV)" sh $(DB_SCRIPT) seeds
 
+.PHONY: db/migrate
+db/migrate:
+	@STACK_ENV="$(STACK_ENV)" sh $(DB_SCRIPT) migrate
+
 .PHONY: maintenance/reset_project_data
 maintenance/reset_project_data:
 	@STACK_ENV="$(STACK_ENV)" CONFIRM="$(CONFIRM)" DRY_RUN="$(DRY_RUN)" sh $(DB_SCRIPT) maintenance/reset_project_data
