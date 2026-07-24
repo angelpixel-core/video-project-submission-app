@@ -14,7 +14,6 @@ class Notification < ApplicationRecord
   validates :kind, presence: true
   validates :body, presence: true
   validate :recipient_presence
-  validate :recipient_exclusive
 
   def mark_as_read!
     update!(read_at: Time.current)
@@ -81,13 +80,6 @@ class Notification < ApplicationRecord
     if account.blank?
       errors.add(:account, :blank)
     end
-  end
-
-  def recipient_exclusive
-    return if account.blank?
-    return if pm_id.present? ^ client_id.present?
-
-    errors.add(:base, "Notification recipient must be exclusive")
   end
 
   def sync_legacy_recipient_columns

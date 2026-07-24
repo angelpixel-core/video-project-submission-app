@@ -10,7 +10,8 @@ RSpec.describe Notification do
 
     expect(notification).not_to be_valid
     expect(notification.errors[:project]).to be_present
-    expect(notification.errors[:account]).to be_present
+    expect(notification.errors[:pm]).to be_present
+    expect(notification.errors[:client]).to be_present
     expect(notification.errors[:kind]).to be_present
     expect(notification.errors[:body]).to be_present
   end
@@ -26,7 +27,7 @@ RSpec.describe Notification do
     with_only_client = described_class.new(project: project, client: client, kind: "project_status_changed", body: "Project updated")
     expect(with_only_client).to be_valid
 
-    with_both = described_class.new(project: project, account: pm, pm_id: pm.id, client_id: client.id, kind: "project_status_changed", body: "Project updated")
+    with_both = described_class.new(project: project, pm: pm, client: client, kind: "project_status_changed", body: "Project updated")
     expect(with_both).not_to be_valid
     expect(with_both.errors[:base]).to include("Notification recipient must be exclusive")
   end

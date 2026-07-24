@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe PM do
   it "is an ActiveRecord model" do
-    expect(described_class.superclass).to eq(Identity::Domain::Aggregates::Account)
+    expect(described_class.superclass).to eq(ApplicationRecord)
   end
 
   it "normalizes and validates email addresses" do
