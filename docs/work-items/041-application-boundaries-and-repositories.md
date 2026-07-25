@@ -136,13 +136,14 @@ ACTIVE RECORD ROOT                ACTIVE RECORD CHILDREN
 ### Identity Rollout Plan
 
 1. Schema
-   - [ ] Add a new `users` table with unique email, access state, preferences, and lifecycle fields.
-   - [ ] Add a `memberships` table that links `user_id` to `account_id`.
-   - [ ] Add role fields to `memberships` or a `roles` join depending on how much granularity we need.
+   - [x] Migration 1: create a new `users` table with `email` (unique, not null), `access_state`, `preferred_locale`, `timezone`, `notification_settings`, and lifecycle timestamps such as `invited_at`, `verified_at`, `suspended_at`, and `deactivated_at`.
+   - [x] Migration 2: create a new `memberships` table with `user_id`, `account_id`, `role`, timestamps, a unique index on `[user_id, account_id]`, and lookup indexes for account/role queries.
+   - [ ] Migration 3: add tenant/workspace configuration columns to `accounts` only if we need them during the transition, such as `plan`, `limits`, and `settings`, without dropping the existing columns yet.
+   - [ ] Migration 4: keep the current `accounts.email`, `accounts.role`, and existing relationship columns in place until the later migration/cleanup step proves parity.
 2. Domain model
-   - [ ] Promote `User` to the canonical identity aggregate.
+   - [x] Promote `User` to the canonical identity aggregate.
    - [ ] Define `Account` as the tenant/workspace aggregate with plan, limits, and settings.
-   - [ ] Introduce `Membership` as the association object that carries the role.
+   - [x] Introduce `Membership` as the association object that carries the role.
    - [ ] Keep `Role` as the capability-bearing value object or membership attribute.
 3. Persistence
    - [ ] Add a `User` repository/adapter pair.
@@ -157,8 +158,8 @@ ACTIVE RECORD ROOT                ACTIVE RECORD CHILDREN
    - [ ] Validate that client/PM access still resolves correctly after the backfill.
    - [ ] Remove legacy assumptions that `Account` owns identity or authorization only after parity is proven.
 6. Specs
-   - [ ] Add unit specs for `User` invariants.
-   - [ ] Add specs for `Membership` role behavior.
+   - [x] Add unit specs for `User` invariants.
+   - [x] Add specs for `Membership` role behavior.
    - [ ] Add repository specs for the new persistence boundaries.
    - [ ] Add transition specs for workspace resolution and existing account-facing flows.
 
