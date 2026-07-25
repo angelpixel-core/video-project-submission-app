@@ -11,6 +11,8 @@ module Identity
           has_many :pm_projects, class_name: "Project", foreign_key: :pm_account_id, dependent: :restrict_with_error
           has_many :notifications, class_name: "Notification", foreign_key: :account_id, dependent: :destroy
           has_many :comments, class_name: "Comment", foreign_key: :author_account_id, dependent: :destroy
+          has_many :memberships, class_name: "Identity::Adapters::Persistence::Membership::MembershipRecord", foreign_key: :account_id, dependent: :destroy
+          has_many :users, through: :memberships
 
           before_validation :normalize_email
           before_validation :normalize_role

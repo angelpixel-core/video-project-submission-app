@@ -10,7 +10,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_23_123000) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_25_150000) do
+  create_table "accounts", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "email", null: false
+    t.string "name", null: false
+    t.string "role", null: false
+    t.datetime "updated_at", null: false
+    t.index ["email", "role"], name: "index_accounts_on_email_and_role", unique: true
+    t.index ["role"], name: "index_accounts_on_role"
+  end
+
   create_table "active_storage_attachments", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -39,16 +49,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_23_123000) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
-  create_table "accounts", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.string "email", null: false
-    t.string "name", null: false
-    t.string "role", null: false
-    t.datetime "updated_at", null: false
-    t.index ["email", "role"], name: "index_accounts_on_email_and_role", unique: true
-    t.index ["role"], name: "index_accounts_on_role"
-  end
-
   create_table "clients", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "email", null: false
@@ -58,22 +58,34 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_23_123000) do
   end
 
   create_table "comments", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.bigint "author_account_id"
     t.bigint "author_id", null: false
     t.string "author_type", null: false
     t.text "body", null: false
     t.datetime "created_at", null: false
-    t.bigint "author_account_id"
     t.bigint "project_id", null: false
     t.datetime "updated_at", null: false
-    t.index ["author_type", "author_id"], name: "index_comments_on_author_type_and_author_id"
     t.index ["author_account_id"], name: "index_comments_on_author_account_id"
+    t.index ["author_type", "author_id"], name: "index_comments_on_author_type_and_author_id"
     t.index ["project_id"], name: "index_comments_on_project_id"
   end
 
+  create_table "memberships", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.bigint "account_id", null: false
+    t.datetime "created_at", null: false
+    t.string "role", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["account_id", "role"], name: "index_memberships_on_account_id_and_role"
+    t.index ["account_id"], name: "index_memberships_on_account_id"
+    t.index ["user_id", "account_id"], name: "index_memberships_on_user_id_and_account_id", unique: true
+    t.index ["user_id"], name: "index_memberships_on_user_id"
+  end
+
   create_table "notifications", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.bigint "account_id"
     t.text "body", null: false
     t.bigint "client_id"
-    t.bigint "account_id"
     t.datetime "created_at", null: false
     t.datetime "delivered_at"
     t.string "kind", null: false
@@ -118,6 +130,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_23_123000) do
     t.index ["payment_id"], name: "index_payment_invoice_delivery_intents_on_payment_id", unique: true
   end
 
+  create_table "payment_method_references", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.json "metadata"
+    t.string "method_type", null: false
+    t.bigint "payment_id", null: false
+    t.string "provider", default: "fake", null: false
+    t.string "reference", null: false
+    t.datetime "updated_at", null: false
+    t.index ["payment_id"], name: "index_payment_method_references_on_payment_id"
+    t.index ["provider", "method_type"], name: "index_payment_method_references_on_provider_and_method_type"
+    t.index ["reference"], name: "index_payment_method_references_on_reference", unique: true
+  end
+
   create_table "payment_notification_intents", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.integer "attempts_count", default: 0, null: false
     t.datetime "created_at", null: false
@@ -136,19 +161,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_23_123000) do
     t.index ["payment_id"], name: "index_payment_notification_intents_on_payment_id"
     t.index ["project_id"], name: "index_payment_notification_intents_on_project_id"
     t.index ["status", "scheduled_at"], name: "index_payment_notification_intents_on_status_and_scheduled_at"
-  end
-
-  create_table "payment_method_references", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.string "method_type", null: false
-    t.datetime "created_at", null: false
-    t.json "metadata"
-    t.bigint "payment_id", null: false
-    t.string "provider", default: "fake", null: false
-    t.string "reference", null: false
-    t.datetime "updated_at", null: false
-    t.index ["provider", "method_type"], name: "index_payment_method_references_on_provider_and_method_type"
-    t.index ["payment_id"], name: "index_payment_method_references_on_payment_id", unique: true
-    t.index ["reference"], name: "index_payment_method_references_on_reference", unique: true
   end
 
   create_table "payment_webhook_event_attempts", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
@@ -224,12 +236,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_23_123000) do
   end
 
   create_table "projects", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.bigint "client_id", null: false
     t.bigint "client_account_id"
+    t.bigint "client_id", null: false
     t.datetime "created_at", null: false
     t.string "name"
-    t.bigint "pm_id", null: false
     t.bigint "pm_account_id"
+    t.bigint "pm_id", null: false
     t.json "raw_footage_metadata"
     t.string "raw_footage_url"
     t.string "status", default: "draft", null: false
@@ -240,6 +252,39 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_23_123000) do
     t.index ["pm_account_id"], name: "index_projects_on_pm_account_id"
     t.index ["pm_id"], name: "index_projects_on_pm_id"
     t.index ["status"], name: "index_projects_on_status"
+  end
+
+  create_table "refunds", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.integer "amount_cents", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.bigint "payment_id", null: false
+    t.bigint "payment_method_reference_id", null: false
+    t.datetime "processed_at"
+    t.string "provider", default: "fake", null: false
+    t.string "provider_reference"
+    t.text "reason"
+    t.string "status", default: "pending", null: false
+    t.datetime "updated_at", null: false
+    t.index ["payment_id", "status"], name: "index_refunds_on_payment_id_and_status"
+    t.index ["payment_method_reference_id", "status"], name: "index_refunds_on_payment_method_reference_id_and_status"
+    t.index ["provider_reference"], name: "index_refunds_on_provider_reference", unique: true
+  end
+
+  create_table "users", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.string "access_state", default: "active", null: false
+    t.datetime "created_at", null: false
+    t.datetime "deactivated_at"
+    t.string "email", null: false
+    t.datetime "invited_at"
+    t.string "name", null: false
+    t.json "notification_settings", null: false
+    t.string "preferred_locale"
+    t.datetime "suspended_at"
+    t.string "timezone"
+    t.datetime "updated_at", null: false
+    t.datetime "verified_at"
+    t.index ["access_state"], name: "index_users_on_access_state"
+    t.index ["email"], name: "index_users_on_email", unique: true
   end
 
   create_table "video_type_selections", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
@@ -267,23 +312,27 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_23_123000) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "comments", "accounts", column: "author_account_id"
   add_foreign_key "comments", "projects"
-  add_foreign_key "notifications", "accounts", column: "account_id"
+  add_foreign_key "memberships", "accounts"
+  add_foreign_key "memberships", "users"
+  add_foreign_key "notifications", "accounts"
   add_foreign_key "notifications", "accounts", column: "client_id"
   add_foreign_key "notifications", "accounts", column: "pm_id"
   add_foreign_key "notifications", "projects"
   add_foreign_key "payment_attempts", "payments"
   add_foreign_key "payment_invoice_delivery_intents", "payments"
+  add_foreign_key "payment_method_references", "payments"
   add_foreign_key "payment_notification_intents", "payments"
   add_foreign_key "payment_notification_intents", "projects"
-  add_foreign_key "payment_method_references", "payments"
   add_foreign_key "payment_webhook_event_attempts", "payment_webhook_events"
   add_foreign_key "payment_webhook_events", "payments"
   add_foreign_key "payment_webhook_events", "projects"
   add_foreign_key "payments", "projects"
   add_foreign_key "projects", "accounts", column: "client_account_id"
-  add_foreign_key "projects", "accounts", column: "pm_account_id"
   add_foreign_key "projects", "accounts", column: "client_id"
+  add_foreign_key "projects", "accounts", column: "pm_account_id"
   add_foreign_key "projects", "accounts", column: "pm_id"
+  add_foreign_key "refunds", "payment_method_references"
+  add_foreign_key "refunds", "payments"
   add_foreign_key "video_type_selections", "projects"
   add_foreign_key "video_type_selections", "video_types"
 end
