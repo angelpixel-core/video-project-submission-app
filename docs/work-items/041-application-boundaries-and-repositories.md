@@ -155,18 +155,18 @@ ACTIVE RECORD ROOT                ACTIVE RECORD CHILDREN
    - [x] 5. Add persistence specs for `User`, `Membership`, and the compatibility behavior in `AccountRepository`.
    - [x] 6. Preserve the existing `Account` lookup APIs until the application boundary switches over.
 4. Application boundary
-   - [x] Keep `ResolveWorkspaceAccounts` stable.
-   - [x] Update `WorkspaceResolver` and workspace helpers to derive behavior from the new identity model.
-   - [ ] Preserve `Account`-based callsites until the migration is complete.
+    - [x] Keep `ResolveWorkspaceAccounts` stable.
+    - [x] Update `WorkspaceResolver` and workspace helpers to derive behavior from the new identity model.
+    - [x] Preserve `Account`-based callsites until the migration is complete.
 5. Migration
    - [x] Backfill existing workspace identities into `users` and `memberships`.
    - [x] Validate that client/PM access still resolves correctly after the backfill.
    - [x] Remove legacy assumptions that `Account` owns identity or authorization only after parity is proven.
 6. Specs
-   - [x] Add unit specs for `User` invariants.
-   - [x] Add specs for `Membership` role behavior.
-   - [x] Add repository specs for the new persistence boundaries.
-   - [ ] Add transition specs for workspace resolution and existing account-facing flows.
+    - [x] Add unit specs for `User` invariants.
+    - [x] Add specs for `Membership` role behavior.
+    - [x] Add repository specs for the new persistence boundaries.
+    - [x] Add transition specs for workspace resolution and existing account-facing flows.
 
 Do not start step N+1 until step N is complete and validated.
 
@@ -217,9 +217,3 @@ Do not start step N+1 until step N is complete and validated.
 - For nested domain areas, prefer `Contract` in the domain and `Repository` in persistence to keep the boundary explicit.
 - For `identity`, keep the operational `Account` surface stable while the richer `User`/`Role` model is introduced underneath it.
 - Identity decision: `User` is identity, `Account` is tenant, `Membership` binds them, and `Role` grants capabilities.
-- Next checkbox to attack: `Introduce the User/Role redesign without breaking the current Account-based application flows.`
-- Next persistence step: `Keep the current Account repository/adapter working during the transition, but teach it to traverse memberships when the caller needs user-account relationships.`
-- Next persistence step: `Move UserRepository off direct UserRecord access into the new adapter boundary so application code only talks to contracts.`
-- Next persistence step: `Add transition specs for workspace resolution and existing account-facing flows.`
-- Next application step: `Preserve Account-based callsites until the migration is complete.`
-- Next migration step: `Preserve Account-based callsites until the migration is complete.`
