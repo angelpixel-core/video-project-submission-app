@@ -25,6 +25,17 @@ module Identity
             role_object.pm?
           end
 
+          def capabilities
+            case role
+            when "client"
+              %i[read_project submit_project view_notifications]
+            when "pm"
+              %i[read_project accept_project complete_project view_notifications]
+            else
+              []
+            end
+          end
+
           private
 
           def normalize_role

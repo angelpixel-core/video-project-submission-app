@@ -5,7 +5,7 @@ module Identity
         class UserRecord < ApplicationRecord
           self.table_name = "users"
 
-          has_many :memberships, class_name: "Identity::Adapters::Persistence::Membership::MembershipRecord", dependent: :destroy
+          has_many :memberships, class_name: "Identity::Domain::Aggregates::Membership", foreign_key: :user_id, dependent: :destroy
           has_many :accounts, through: :memberships
 
           before_validation :normalize_email
@@ -30,6 +30,22 @@ module Identity
 
           def deactivated?
             access_state == "deactivated"
+          end
+
+          def membership_for(account)
+            memberships.find_by(account_id: account.id)
+          end
+
+          def role_for(account)
+            membership_for(account)&.role_object
+          end
+
+          def member_of?(account)
+            membership_for(account).present?
+          end
+
+          def roles
+            memberships.map(&:role_object).uniq
           end
 
           private

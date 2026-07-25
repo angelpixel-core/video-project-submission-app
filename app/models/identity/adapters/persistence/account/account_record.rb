@@ -11,7 +11,7 @@ module Identity
           has_many :pm_projects, class_name: "Project", foreign_key: :pm_account_id, dependent: :restrict_with_error
           has_many :notifications, class_name: "Notification", foreign_key: :account_id, dependent: :destroy
           has_many :comments, class_name: "Comment", foreign_key: :author_account_id, dependent: :destroy
-          has_many :memberships, class_name: "Identity::Adapters::Persistence::Membership::MembershipRecord", foreign_key: :account_id, dependent: :destroy
+          has_many :memberships, class_name: "Identity::Domain::Aggregates::Membership", foreign_key: :account_id, dependent: :destroy
           has_many :users, through: :memberships
 
           before_validation :normalize_email
@@ -35,6 +35,18 @@ module Identity
 
           def projects
             client? ? client_projects : pm_projects
+          end
+
+          def membership_for(user)
+            memberships.find_by(user_id: user.id)
+          end
+
+          def role_for(user)
+            membership_for(user)&.role_object
+          end
+
+          def users_with_role(role)
+            memberships.where(role: role.to_s.strip.downcase).includes(:user).map(&:user)
           end
 
           def normalize_for_role!
