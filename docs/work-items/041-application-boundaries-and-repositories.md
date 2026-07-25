@@ -66,6 +66,15 @@ title: Application Boundaries and Repositories
 - `Identity::Domain::ValueObjects::Role` models role membership so a user can hold one or many roles.
 - `Identity::Adapters::Persistence::Account::Repository` remains the persistence adapter for account lookups while the model transitions.
 
+### Identity Architecture
+
+- `User` is the identity root and owns the stable person-level invariants.
+- `Account` is the tenant/workspace surface and keeps plan, limits, features, and workspace settings.
+- `Membership` binds a `User` to an `Account`.
+- `Role` belongs to the membership and grants capabilities/privileges.
+- Capabilities live on `Role`, not on `Account`.
+- If needed later, `role_capabilities` can refine granular permissions without changing the core split.
+
 ### Ordering Flow
 
 ```text
@@ -124,6 +133,37 @@ ACTIVE RECORD ROOT                ACTIVE RECORD CHILDREN
 - [ ] Migrate or wrap the current single-role account behavior so client/PM access still resolves correctly.
 - [ ] Add specs that document the new identity vocabulary and the transition boundary.
 
+### Identity Rollout Plan
+
+1. Schema
+   - [ ] Add a new `users` table with unique email, access state, preferences, and lifecycle fields.
+   - [ ] Add a `memberships` table that links `user_id` to `account_id`.
+   - [ ] Add role fields to `memberships` or a `roles` join depending on how much granularity we need.
+2. Domain model
+   - [ ] Promote `User` to the canonical identity aggregate.
+   - [ ] Define `Account` as the tenant/workspace aggregate with plan, limits, and settings.
+   - [ ] Introduce `Membership` as the association object that carries the role.
+   - [ ] Keep `Role` as the capability-bearing value object or membership attribute.
+3. Persistence
+   - [ ] Add a `User` repository/adapter pair.
+   - [ ] Keep the current `Account` repository/adapter working during the transition.
+   - [ ] Wire `Membership` persistence so both sides can be loaded without breaking existing callers.
+4. Application boundary
+   - [ ] Keep `ResolveWorkspaceAccounts` stable.
+   - [ ] Update `WorkspaceResolver` and workspace helpers to derive behavior from the new identity model.
+   - [ ] Preserve `Account`-based callsites until the migration is complete.
+5. Migration
+   - [ ] Backfill existing workspace identities into `users` and `memberships`.
+   - [ ] Validate that client/PM access still resolves correctly after the backfill.
+   - [ ] Remove legacy assumptions that `Account` owns identity or authorization only after parity is proven.
+6. Specs
+   - [ ] Add unit specs for `User` invariants.
+   - [ ] Add specs for `Membership` role behavior.
+   - [ ] Add repository specs for the new persistence boundaries.
+   - [ ] Add transition specs for workspace resolution and existing account-facing flows.
+
+Do not start step N+1 until step N is complete and validated.
+
 ## Affected Docs
 
 - `docs/work-items/031-payment-domain-and-idempotency.md`
@@ -152,6 +192,8 @@ ACTIVE RECORD ROOT                ACTIVE RECORD CHILDREN
 - [x] `ResolveWorkspaceAccounts` is the only workspace lookup query name used by application code.
 - [ ] `User`, `Account`, and `Role` have distinct responsibilities.
 - [ ] Role assignment can evolve beyond a single enum-like field on `Account`.
+- [ ] `User` owns identity and lifecycle while `Account` owns tenant/workspace settings.
+- [ ] `Membership` binds a user to an account and carries the role.
 
 ## Validation
 
@@ -168,4 +210,5 @@ ACTIVE RECORD ROOT                ACTIVE RECORD CHILDREN
 - Route modularization can be a follow-up if controller extraction forces it.
 - For nested domain areas, prefer `Contract` in the domain and `Repository` in persistence to keep the boundary explicit.
 - For `identity`, keep the operational `Account` surface stable while the richer `User`/`Role` model is introduced underneath it.
+- Identity decision: `User` is identity, `Account` is tenant, `Membership` binds them, and `Role` grants capabilities.
 - Next checkbox to attack: `Introduce the User/Role redesign without breaking the current Account-based application flows.`
