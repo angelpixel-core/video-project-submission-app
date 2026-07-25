@@ -22,6 +22,7 @@ title: Application Boundaries and Repositories
 ## Goal
 
 - [ ] Modularize the application boundaries so controllers stay thin, business workflows move to use cases/handlers, and local persistence access is isolated behind repositories.
+- [ ] Consolidate the `identity` vocabulary so workspace lookup, `User`, `Account`, and `Role` follow one explicit model instead of overlapping legacy names.
 
 ## Scope
 
@@ -31,6 +32,10 @@ title: Application Boundaries and Repositories
 - Keep repositories focused on `ActiveRecord` access, not external integrations.
 - Remove demo-only flags from domain objects and move them to test/demo tooling.
 - Prepare the codebase for more explicit domain workflows without over-abstracting.
+- Keep `Identity::Application::Queries::ResolveWorkspaceAccounts` as the single workspace lookup entrypoint.
+- Redesign the `identity` model so `User` is the identity root, `Account` is the operational workspace profile, and `Role` is an assignable concept that can grow from one role to many.
+- Remove the assumption that a role is encoded only on `Account`; existing `client` and `pm` access should be expressible through `User` role assignments.
+- Keep the current runtime behavior stable while the model is reshaped behind the existing application boundary.
 
 ## Operational Note
 
@@ -52,6 +57,14 @@ title: Application Boundaries and Repositories
 - `Ordering::Adapters::Persistence::Order::Repository` implements the contract using Active Record.
 - `Ordering::Adapters::Persistence::Order::Mapper` converts between `Order` aggregates and persistence records.
 - `Ordering::Adapters::Persistence::Order::OrderRecord`, `OrderLineRecord`, and `SourceVideoRecord` are the ORM-backed records.
+
+### Identity Example
+
+- `Identity::Application::Queries::ResolveWorkspaceAccounts` resolves the active workspace accounts used by the application.
+- `Identity::Domain::Aggregates::User` owns identity-level data, access state, preferences, memberships, and lifecycle rules.
+- `Identity::Domain::Aggregates::Account` remains the workspace-facing profile used by the app.
+- `Identity::Domain::ValueObjects::Role` models role membership so a user can hold one or many roles.
+- `Identity::Adapters::Persistence::Account::Repository` remains the persistence adapter for account lookups while the model transitions.
 
 ### Ordering Flow
 
@@ -106,6 +119,10 @@ ACTIVE RECORD ROOT                ACTIVE RECORD CHILDREN
 - [ ] Keep domain objects free of HTTP/demo concerns.
 - [ ] Define a consistent folder/package structure for application, domain, repository, and service layers.
 - [ ] Add specs around the extracted boundaries.
+- [ ] Keep `WorkspaceResolver` on `ResolveWorkspaceAccounts` and document that the defaults are injected implicitly through configuration.
+- [ ] Introduce the `User`/`Role` redesign without breaking the current `Account`-based application flows.
+- [ ] Migrate or wrap the current single-role account behavior so client/PM access still resolves correctly.
+- [ ] Add specs that document the new identity vocabulary and the transition boundary.
 
 ## Affected Docs
 
@@ -113,6 +130,7 @@ ACTIVE RECORD ROOT                ACTIVE RECORD CHILDREN
 - `docs/work-items/034-payment-event-handler-pipeline.md`
 - `docs/work-items/039-payment-outbound-notifications.md`
 - `docs/work-items/040-payment-invoice-generation-and-storage.md`
+- `docs/work-items/041-application-boundaries-and-repositories.md`
 
 ## Affected Ops
 
@@ -131,12 +149,17 @@ ACTIVE RECORD ROOT                ACTIVE RECORD CHILDREN
 - [ ] Use cases coordinate domain steps and side effects.
 - [ ] Demo/test flags are not part of domain models.
 - [ ] The architecture is easier to extend for invoices, mail, and future payment methods.
+- [x] `ResolveWorkspaceAccounts` is the only workspace lookup query name used by application code.
+- [ ] `User`, `Account`, and `Role` have distinct responsibilities.
+- [ ] Role assignment can evolve beyond a single enum-like field on `Account`.
 
 ## Validation
 
 - [ ] Specs cover the extracted use cases.
 - [ ] Specs cover repository behavior.
 - [ ] Controllers remain thin and stable.
+- [ ] Specs cover `ResolveWorkspaceAccounts` and its consumers.
+- [ ] Specs cover the `User`/`Account`/`Role` relationship boundary.
 
 ## Notes
 
@@ -144,3 +167,5 @@ ACTIVE RECORD ROOT                ACTIVE RECORD CHILDREN
 - Don’t introduce repositories everywhere by default.
 - Route modularization can be a follow-up if controller extraction forces it.
 - For nested domain areas, prefer `Contract` in the domain and `Repository` in persistence to keep the boundary explicit.
+- For `identity`, keep the operational `Account` surface stable while the richer `User`/`Role` model is introduced underneath it.
+- Next checkbox to attack: `Introduce the User/Role redesign without breaking the current Account-based application flows.`
