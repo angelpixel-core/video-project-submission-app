@@ -141,10 +141,12 @@ ACTIVE RECORD ROOT                ACTIVE RECORD CHILDREN
    - [ ] Migration 3: add tenant/workspace configuration columns to `accounts` only if we need them during the transition, such as `plan`, `limits`, and `settings`, without dropping the existing columns yet.
    - [ ] Migration 4: keep the current `accounts.email`, `accounts.role`, and existing relationship columns in place until the later migration/cleanup step proves parity.
 2. Domain model
-   - [x] Promote `User` to the canonical identity aggregate.
-   - [ ] Define `Account` as the tenant/workspace aggregate with plan, limits, and settings.
-   - [x] Introduce `Membership` as the association object that carries the role.
-   - [ ] Keep `Role` as the capability-bearing value object or membership attribute.
+   - [x] Define the `User` aggregate as the canonical identity root with email uniqueness, access state, lifecycle timestamps, and preferences.
+   - [ ] Define the `Account` aggregate as the tenant/workspace surface with plan, limits, feature flags, and workspace settings.
+   - [x] Introduce `Membership` as the association object that binds one `User` to one `Account`.
+   - [x] Move role assignment onto `Membership` and keep `Role` as the capability-bearing value object or membership attribute.
+   - [x] Keep `Account` role-related behavior only as a compatibility bridge until callers move to memberships.
+   - [ ] Add domain invariants that make `User` the source of identity and `Account` the source of tenant/workspace configuration.
 3. Persistence
    - [ ] Add a `User` repository/adapter pair.
    - [ ] Keep the current `Account` repository/adapter working during the transition.
