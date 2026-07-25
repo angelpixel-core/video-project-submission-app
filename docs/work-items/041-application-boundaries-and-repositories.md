@@ -155,8 +155,8 @@ ACTIVE RECORD ROOT                ACTIVE RECORD CHILDREN
    - [x] 5. Add persistence specs for `User`, `Membership`, and the compatibility behavior in `AccountRepository`.
    - [x] 6. Preserve the existing `Account` lookup APIs until the application boundary switches over.
 4. Application boundary
-   - [ ] Keep `ResolveWorkspaceAccounts` stable.
-   - [ ] Update `WorkspaceResolver` and workspace helpers to derive behavior from the new identity model.
+   - [x] Keep `ResolveWorkspaceAccounts` stable.
+   - [x] Update `WorkspaceResolver` and workspace helpers to derive behavior from the new identity model.
    - [ ] Preserve `Account`-based callsites until the migration is complete.
 5. Migration
    - [ ] Backfill existing workspace identities into `users` and `memberships`.
@@ -221,3 +221,4 @@ Do not start step N+1 until step N is complete and validated.
 - Next persistence step: `Keep the current Account repository/adapter working during the transition, but teach it to traverse memberships when the caller needs user-account relationships.`
 - Next persistence step: `Move UserRepository off direct UserRecord access into the new adapter boundary so application code only talks to contracts.`
 - Next persistence step: `Add transition specs for workspace resolution and existing account-facing flows.`
+- Next application step: `Preserve Account-based callsites until the migration is complete.`
