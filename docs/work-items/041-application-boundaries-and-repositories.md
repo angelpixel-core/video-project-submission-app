@@ -150,10 +150,10 @@ ACTIVE RECORD ROOT                ACTIVE RECORD CHILDREN
 3. Persistence
    - [x] 1. Add a `User` contract plus repository/adapter pair for user lookups and lifecycle updates.
    - [x] 2. Add a `Membership` contract plus repository/adapter pair for binding users to accounts and resolving roles.
-   - [ ] 3. Keep the current `Account` repository/adapter working during the transition, but teach it to traverse memberships when the caller needs user-account relationships.
+   - [x] 3. Keep the current `Account` repository/adapter working during the transition, but teach it to traverse memberships when the caller needs user-account relationships.
    - [ ] 4. Move `UserRepository` off direct `UserRecord` access into the new adapter boundary so application code only talks to contracts.
-   - [ ] 5. Add persistence specs for `User`, `Membership`, and the compatibility behavior in `AccountRepository`.
-   - [ ] 6. Preserve the existing `Account` lookup APIs until the application boundary switches over.
+   - [x] 5. Add persistence specs for `User`, `Membership`, and the compatibility behavior in `AccountRepository`.
+   - [x] 6. Preserve the existing `Account` lookup APIs until the application boundary switches over.
 4. Application boundary
    - [ ] Keep `ResolveWorkspaceAccounts` stable.
    - [ ] Update `WorkspaceResolver` and workspace helpers to derive behavior from the new identity model.
@@ -219,3 +219,4 @@ Do not start step N+1 until step N is complete and validated.
 - Identity decision: `User` is identity, `Account` is tenant, `Membership` binds them, and `Role` grants capabilities.
 - Next checkbox to attack: `Introduce the User/Role redesign without breaking the current Account-based application flows.`
 - Next persistence step: `Keep the current Account repository/adapter working during the transition, but teach it to traverse memberships when the caller needs user-account relationships.`
+- Next persistence step: `Move UserRepository off direct UserRecord access into the new adapter boundary so application code only talks to contracts.`
