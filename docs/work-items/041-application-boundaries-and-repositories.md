@@ -122,16 +122,16 @@ ACTIVE RECORD ROOT                ACTIVE RECORD CHILDREN
 
 ## Implementation Plan
 
-- [ ] Identify the highest-value flows to extract first.
-- [ ] Move payment and notification orchestration out of controllers into use cases.
+- [x] Identify the highest-value flows to extract first.
+- [x] Move payment and notification orchestration out of controllers into use cases.
 - [ ] Add repositories for local models only where repeated query/write logic exists.
 - [ ] Keep domain objects free of HTTP/demo concerns.
 - [ ] Define a consistent folder/package structure for application, domain, repository, and service layers.
-- [ ] Add specs around the extracted boundaries.
-- [ ] Keep `WorkspaceResolver` on `ResolveWorkspaceAccounts` and document that the defaults are injected implicitly through configuration.
-- [ ] Introduce the `User`/`Role` redesign without breaking the current `Account`-based application flows.
-- [ ] Migrate or wrap the current single-role account behavior so client/PM access still resolves correctly.
-- [ ] Add specs that document the new identity vocabulary and the transition boundary.
+- [x] Add specs around the extracted boundaries.
+- [x] Keep `WorkspaceResolver` on `ResolveWorkspaceAccounts` and document that the defaults are injected implicitly through configuration.
+- [x] Introduce the `User`/`Role` redesign without breaking the current `Account`-based application flows.
+- [x] Migrate or wrap the current single-role account behavior so client/PM access still resolves correctly.
+- [x] Add specs that document the new identity vocabulary and the transition boundary.
 
 ### Identity Rollout Plan
 
@@ -219,3 +219,4 @@ Do not start step N+1 until step N is complete and validated.
 - Identity decision: `User` is identity, `Account` is tenant, `Membership` binds them, and `Role` grants capabilities.
 - PM accept/complete orchestration now lives in `Projects::PMActionService` instead of `ProjectsController`.
 - Next controller extraction to tackle: move the draft submission/payment flow out of `ProjectsController#update`.
+- Draft submission and payment orchestration now lives in `Projects::SubmissionService`.

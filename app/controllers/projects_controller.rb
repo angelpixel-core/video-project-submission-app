@@ -37,9 +37,20 @@ class ProjectsController < ApplicationController
     selections = parsed_selections
 
     if finalize_submission?
-      finalize_project!(selections)
-      NotificationJob.perform_later(@project.id)
-      redirect_to projects_path, notice: "Project submitted for review."
+      result = Projects::SubmissionService.call(
+        project: @project,
+        pm: default_pm,
+        attributes: project_attributes,
+        selections: selections
+      )
+
+      if result.success?
+        redirect_to projects_path, notice: "Project submitted for review."
+      else
+        @project.errors.add(:base, result.message) if @project.errors.empty?
+        @selections_json = selections_json_for(@project)
+        render :edit, status: :unprocessable_content
+      end
     else
       autosave_project!(selections)
       head :no_content
@@ -96,27 +107,6 @@ class ProjectsController < ApplicationController
       @project.status = :draft
       @project.save!
       sync_project_selections(@project, selections)
-    end
-  end
-
-  def finalize_project!(selections)
-    if selections.empty?
-      @project.errors.add(:base, "Add at least one video type")
-      raise ActiveRecord::RecordInvalid, @project
-    end
-
-    Project.transaction do
-      @project.assign_attributes(project_attributes)
-      @project.pm = default_pm
-      @project.submit!
-      sync_project_selections(@project, selections)
-
-      payment_result = Payments::Application::Commands::CreatePayment.(project: @project)
-
-      if payment_result.failure?
-        @project.errors.add(:base, payment_result.message)
-        raise ActiveRecord::RecordInvalid, @project
-      end
     end
   end
 
