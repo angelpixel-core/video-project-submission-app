@@ -25,12 +25,37 @@ module Identity
             mapper.scope_for(role)
           end
 
+          def find_by_user(user)
+            records_to_domain(
+              AccountRecord.joins(:memberships).where(memberships: { user_id: user.id }).distinct
+            )
+          end
+
+          def find_by_user_and_role(user, role)
+            records_to_domain(
+              AccountRecord.joins(:memberships).where(
+                memberships: {
+                  user_id: user.id,
+                  role: normalize_role(role)
+                }
+              ).distinct
+            )
+          end
+
           private
 
           attr_reader :mapper
 
           def normalize_email(email)
             email.to_s.strip.downcase
+          end
+
+          def normalize_role(role)
+            role.to_s.strip.downcase
+          end
+
+          def records_to_domain(records)
+            records.map { |record| mapper.to_domain(record) }.compact
           end
         end
       end

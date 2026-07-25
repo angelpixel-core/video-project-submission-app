@@ -17,6 +17,14 @@ module Identity
         def self.find_by_role(role)
           repository.find_by_role(role)
         end
+
+        def self.find_by_user(user)
+          repository.find_by_user(user)
+        end
+
+        def self.find_by_user_and_role(user, role)
+          repository.find_by_user_and_role(user, role)
+        end
       end
     end
   end
