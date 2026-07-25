@@ -159,8 +159,8 @@ ACTIVE RECORD ROOT                ACTIVE RECORD CHILDREN
    - [x] Update `WorkspaceResolver` and workspace helpers to derive behavior from the new identity model.
    - [ ] Preserve `Account`-based callsites until the migration is complete.
 5. Migration
-   - [ ] Backfill existing workspace identities into `users` and `memberships`.
-   - [ ] Validate that client/PM access still resolves correctly after the backfill.
+   - [x] Backfill existing workspace identities into `users` and `memberships`.
+   - [x] Validate that client/PM access still resolves correctly after the backfill.
    - [ ] Remove legacy assumptions that `Account` owns identity or authorization only after parity is proven.
 6. Specs
    - [x] Add unit specs for `User` invariants.
@@ -222,3 +222,4 @@ Do not start step N+1 until step N is complete and validated.
 - Next persistence step: `Move UserRepository off direct UserRecord access into the new adapter boundary so application code only talks to contracts.`
 - Next persistence step: `Add transition specs for workspace resolution and existing account-facing flows.`
 - Next application step: `Preserve Account-based callsites until the migration is complete.`
+- Next migration step: `Remove legacy assumptions that Account owns identity or authorization only after parity is proven.`
