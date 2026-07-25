@@ -38,11 +38,12 @@ module Identity
 
         def resolve_account(email, role)
           user = user_repository.find_by_email(email)
-          account = account_repository.find_by_user_and_role(user, role) if user.present?
-          return account.first if account.respond_to?(:first)
-          return account if account.present?
+          return unless user.present?
 
-          account_repository.find_by_email_and_role(email, role)
+          account = account_repository.find_by_user_and_role(user, role)
+          return account.first if account.respond_to?(:first)
+
+          account
         end
       end
     end

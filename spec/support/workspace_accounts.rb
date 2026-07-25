@@ -1,6 +1,17 @@
 module WorkspaceAccounts
   def workspace_account(role, email:, name:)
-    Identity::Domain::Aggregates::Account.create!(name: name, email: email, role: role)
+    account = Identity::Domain::Aggregates::Account.create!(name: name, email: email, role: role)
+    user = Identity::Domain::Aggregates::User.find_or_initialize_by(email: email)
+
+    user.name = name
+    user.access_state = :active
+    user.save!
+
+    Identity::Domain::Aggregates::Membership.find_or_create_by!(user: user, account: account) do |membership|
+      membership.role = role
+    end
+
+    account
   end
 
   def client_account(email: "client@example.com", name: "Client")

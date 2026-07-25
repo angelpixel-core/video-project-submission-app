@@ -3,7 +3,7 @@ require "rails_helper"
 require Rails.root.join("app/domains/identity/application/queries/resolve_workspace_accounts")
 
 RSpec.describe Identity::Application::Queries::ResolveWorkspaceAccounts do
-  it "resolves accounts through user memberships and falls back to legacy account lookup" do
+  it "resolves accounts through user memberships" do
     client_workspace = build_client_account(email: "client@example.com", name: "Client")
     pm_workspace = build_pm_account(email: "pm@example.com", name: "PM")
 
@@ -30,16 +30,11 @@ RSpec.describe Identity::Application::Queries::ResolveWorkspaceAccounts do
     expect(result.data[:pm]).to eq(pm_workspace)
   end
 
-  it "falls back to direct account lookup when user resolution is unavailable" do
+  it "returns nil when the workspace user cannot be resolved" do
     user_repository = class_double(Identity::Domain::Repositories::UserRepository).as_stubbed_const
     account_repository = instance_double(Identity::Adapters::Persistence::Account::Repository)
 
     allow(user_repository).to receive(:find_by_email).and_return(nil)
-    fallback_client = build_client_account(email: "fallback-client@example.com", name: "Fallback Client")
-    fallback_pm = build_pm_account(email: "fallback-pm@example.com", name: "Fallback PM")
-
-    allow(account_repository).to receive(:find_by_email_and_role).with("client@example.com", :client).and_return(fallback_client)
-    allow(account_repository).to receive(:find_by_email_and_role).with("pm@example.com", :pm).and_return(fallback_pm)
 
     result = described_class.call(
       client_email: "client@example.com",
@@ -48,8 +43,8 @@ RSpec.describe Identity::Application::Queries::ResolveWorkspaceAccounts do
       account_repository: account_repository
     )
 
-    expect(result.data[:client]).to eq(fallback_client)
-    expect(result.data[:pm]).to eq(fallback_pm)
+    expect(result.data[:client]).to be_nil
+    expect(result.data[:pm]).to be_nil
   end
 
   def build_client_account(email: "client@example.com", name: "Client")
