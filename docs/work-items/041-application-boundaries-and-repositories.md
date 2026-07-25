@@ -151,7 +151,7 @@ ACTIVE RECORD ROOT                ACTIVE RECORD CHILDREN
    - [x] 1. Add a `User` contract plus repository/adapter pair for user lookups and lifecycle updates.
    - [x] 2. Add a `Membership` contract plus repository/adapter pair for binding users to accounts and resolving roles.
    - [x] 3. Keep the current `Account` repository/adapter working during the transition, but teach it to traverse memberships when the caller needs user-account relationships.
-   - [ ] 4. Move `UserRepository` off direct `UserRecord` access into the new adapter boundary so application code only talks to contracts.
+   - [x] 4. Move `UserRepository` off direct `UserRecord` access into the new adapter boundary so application code only talks to contracts.
    - [x] 5. Add persistence specs for `User`, `Membership`, and the compatibility behavior in `AccountRepository`.
    - [x] 6. Preserve the existing `Account` lookup APIs until the application boundary switches over.
 4. Application boundary
@@ -220,3 +220,4 @@ Do not start step N+1 until step N is complete and validated.
 - Next checkbox to attack: `Introduce the User/Role redesign without breaking the current Account-based application flows.`
 - Next persistence step: `Keep the current Account repository/adapter working during the transition, but teach it to traverse memberships when the caller needs user-account relationships.`
 - Next persistence step: `Move UserRepository off direct UserRecord access into the new adapter boundary so application code only talks to contracts.`
+- Next persistence step: `Add transition specs for workspace resolution and existing account-facing flows.`
