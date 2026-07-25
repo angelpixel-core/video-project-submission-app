@@ -2,8 +2,14 @@ module Identity
   module Application
     module Services
       class WorkspaceResolver
-        def initialize(account_repository: Identity::Adapters::Persistence::Account::Repository.new)
+        def initialize(
+          query: Identity::Application::Queries::ResolveWorkspaceAccounts,
+          account_repository: Identity::Adapters::Persistence::Account::Repository.new,
+          user_repository: Identity::Domain::Repositories::UserRepository
+        )
+          @query = query
           @account_repository = account_repository
+          @user_repository = user_repository
         end
 
         def client
@@ -16,12 +22,13 @@ module Identity
 
         private
 
-        attr_reader :account_repository
+        attr_reader :query, :account_repository, :user_repository
 
         def resolve_accounts
-          @resolve_accounts ||= Identity::Application::Queries::ResolveWorkspaceAccounts.call(
+          @resolve_accounts ||= query.call(
             client_email: fetch_required_email("DEFAULT_CLIENT_EMAIL"),
             pm_email: fetch_required_email("DEFAULT_PM_EMAIL"),
+            user_repository: user_repository,
             account_repository: account_repository
           ).data
         end
