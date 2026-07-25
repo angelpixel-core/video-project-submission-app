@@ -217,3 +217,5 @@ Do not start step N+1 until step N is complete and validated.
 - For nested domain areas, prefer `Contract` in the domain and `Repository` in persistence to keep the boundary explicit.
 - For `identity`, keep the operational `Account` surface stable while the richer `User`/`Role` model is introduced underneath it.
 - Identity decision: `User` is identity, `Account` is tenant, `Membership` binds them, and `Role` grants capabilities.
+- PM accept/complete orchestration now lives in `Projects::PMActionService` instead of `ProjectsController`.
+- Next controller extraction to tackle: move the draft submission/payment flow out of `ProjectsController#update`.

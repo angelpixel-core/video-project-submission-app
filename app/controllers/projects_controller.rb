@@ -123,59 +123,32 @@ class ProjectsController < ApplicationController
   public
 
   def accept
-    success = perform_pm_row_action(
+    process_pm_action(
       event: :accept,
       success_notice: "Project accepted.",
       stale_alert: "Only pending projects can be accepted."
-    ) do
-      @pm_project.accept!
-      @pm_project.notifications.unread.update_all(read_at: Time.current)
-      create_client_status_notification!(
-        kind: "project_accepted",
-        body: "Your project #{@pm_project.name.presence || 'Untitled project'} was accepted and is now in progress."
-      )
-      Projects::Notifications::Dispatcher.call(project: @pm_project, event_type: :project_accepted)
-    end
-
-    Notification.broadcast_refresh_for(@pm_project.pm) if success
+    )
   end
 
   def complete
-    perform_pm_row_action(
+    process_pm_action(
       event: :complete,
       success_notice: "Project completed.",
       stale_alert: "Only in-progress projects can be completed."
-    ) do
-      @pm_project.complete!
-      create_client_status_notification!(
-        kind: "project_completed",
-        body: "Your project #{@pm_project.name.presence || 'Untitled project'} has been completed."
-      )
-    end
+    )
   end
 
   private
 
-  def perform_pm_row_action(event:, success_notice:, stale_alert:)
-    success = false
+  def process_pm_action(event:, success_notice:, stale_alert:)
+    result = Projects::PMActionService.call(project: @pm_project, event: event)
 
-    @pm_project.with_lock do
-      unless @pm_project.public_send("may_#{event}?")
-        respond_pm_row_action_stale(stale_alert)
-        next
-      end
-
-      yield
-      success = true
+    if result.success?
+      respond_pm_row_action_success(success_notice)
+      Notification.broadcast_refresh_for(@pm_project.pm) if result.data.fetch(:broadcast_refresh, false)
+    else
+      respond_pm_row_action_stale(stale_alert)
     end
-
-    return false unless success
-
-    respond_pm_row_action_success(success_notice)
-    true
-  rescue AASM::InvalidTransition, ActiveRecord::RecordInvalid
-    respond_pm_row_action_stale(stale_alert)
-    false
   end
 
   def respond_pm_row_action_success(success_notice)
@@ -196,15 +169,6 @@ class ProjectsController < ApplicationController
 
   def pm_async_action_request?
     request.headers["X-PM-Async-Action"] == "1"
-  end
-
-  def create_client_status_notification!(kind:, body:)
-    Notification.create!(
-      project: @pm_project,
-      client: @pm_project.client,
-      kind: kind,
-      body: body
-    )
   end
 
   def sync_project_selections(project, selections)
