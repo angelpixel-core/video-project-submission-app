@@ -11,7 +11,7 @@ export default class ProjectActionController extends Controller {
       const response = await fetch(this.element.action, {
         method: "POST",
         headers: {
-          "X-PM-Async-Action": "1"
+          "X-Workspace-Async-Action": "1"
         },
         body: new FormData(this.element)
       })
@@ -28,7 +28,7 @@ export default class ProjectActionController extends Controller {
           }
 
           const actionCell = currentRow.querySelector("td:nth-child(6)")
-          if (actionCell) actionCell.innerHTML = buildPmActionMarkup({ projectId: data.project_id, action: data.action })
+          if (actionCell) actionCell.innerHTML = buildActionMarkup({ projectId: data.project_id, action: data.action })
         }
       }
     } catch {
@@ -40,7 +40,7 @@ export default class ProjectActionController extends Controller {
   }
 }
 
-function buildPmActionMarkup({ projectId, action }) {
+function buildActionMarkup({ projectId, action }) {
   if (action === "complete") {
     return `
       <div class="d-inline-flex flex-wrap gap-2 justify-content-end">

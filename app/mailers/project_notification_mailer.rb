@@ -21,17 +21,12 @@ class ProjectNotificationMailer < ApplicationMailer
     mail(
       to: recipient_email(project, recipient_role),
       subject: subject_for(project, recipient_role, event_type),
-      template_path: template_path_for(recipient_role),
       template_name: "notification"
     )
   end
 
   def recipient_email(project, recipient_role)
     recipient_role.to_s == "pm" ? project.participant.email : project.owner.email
-  end
-
-  def template_path_for(recipient_role)
-    recipient_role.to_s == "pm" ? "pm_notification_mailer" : "client_notification_mailer"
   end
 
   def subject_for(project, recipient_role, event_type)

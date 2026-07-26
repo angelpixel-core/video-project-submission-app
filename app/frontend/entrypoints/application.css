@@ -593,12 +593,12 @@ a:hover {
   text-decoration: underline;
 }
 
-.pm-project-name-link {
+.workspace-project-name-link {
   color: inherit;
   max-width: 100%;
 }
 
-.pm-project-name-link-text {
+.workspace-project-name-link-text {
   position: relative;
   display: block;
   max-width: 100%;
@@ -608,7 +608,7 @@ a:hover {
   padding-bottom: 0.1rem;
 }
 
-.pm-project-name-link-text::after {
+.workspace-project-name-link-text::after {
   content: "";
   position: absolute;
   left: 50%;
@@ -619,51 +619,51 @@ a:hover {
   transition: width 180ms ease;
 }
 
-.pm-project-name-link:hover .pm-project-name-link-text::after,
-.pm-project-name-link:focus-visible .pm-project-name-link-text::after {
+.workspace-project-name-link:hover .workspace-project-name-link-text::after,
+.workspace-project-name-link:focus-visible .workspace-project-name-link-text::after {
   width: 100%;
 }
 
-.pm-projects-table {
+.workspace-projects-table {
   table-layout: fixed;
 }
 
-.pm-projects-col-id {
+.workspace-projects-col-id {
   width: 4.5rem;
 }
 
-.pm-projects-col-project {
+.workspace-projects-col-project {
   width: auto;
   min-width: 15rem;
 }
 
-.pm-projects-col-created {
+.workspace-projects-col-created {
   width: 10.5rem;
 }
 
-.pm-projects-col-budget {
+.workspace-projects-col-budget {
   width: 9.5rem;
 }
 
-.pm-projects-col-status {
+.workspace-projects-col-status {
   width: 10rem;
 }
 
-.pm-projects-col-actions {
+.workspace-projects-col-actions {
   width: 13rem;
 }
 
-.pm-projects-table th,
-.pm-projects-table td {
+.workspace-projects-table th,
+.workspace-projects-table td {
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.pm-projects-table th {
+.workspace-projects-table th {
   white-space: nowrap;
 }
 
-.pm-projects-table td:nth-child(2) {
+.workspace-projects-table td:nth-child(2) {
   min-width: 0;
 }
 

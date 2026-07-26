@@ -3,7 +3,7 @@ module Identity
     module Services
       class WorkspaceResolver
         def initialize(
-          query: Identity::Application::Queries::ResolveWorkspaceAccounts,
+          query: Identity::Application::Queries::ResolveWorkspaceAccount,
           account_repository: Identity::Adapters::Persistence::Account::Repository.new,
           user_repository: Identity::Domain::Repositories::UserRepository
         )
@@ -13,23 +13,25 @@ module Identity
         end
 
         def workspace_for(role)
-          resolve_accounts.fetch(role.to_sym)
+          resolve_workspace(role)
         end
 
         private
 
         attr_reader :query, :account_repository, :user_repository
 
-        def resolve_accounts
-          @resolve_accounts ||= query.call(
-            client_email: fetch_required_email("DEFAULT_CLIENT_EMAIL"),
-            pm_email: fetch_required_email("DEFAULT_PM_EMAIL"),
+        def resolve_workspace(role)
+          @resolved_workspaces ||= {}
+          @resolved_workspaces[role.to_sym] ||= query.call(
+            email: required_email_for(role),
+            role: role.to_sym,
             user_repository: user_repository,
             account_repository: account_repository
-          ).data
+          ).data.fetch(:account)
         end
 
-        def fetch_required_email(key)
+        def required_email_for(role)
+          key = role.to_sym == :pm ? "DEFAULT_PM_WORKSPACE_EMAIL" : "DEFAULT_CLIENT_WORKSPACE_EMAIL"
           value = ENV[key].to_s.strip
           return value if value.present?
 

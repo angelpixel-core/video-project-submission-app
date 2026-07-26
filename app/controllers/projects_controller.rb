@@ -1,7 +1,7 @@
 class ProjectsController < ApplicationController
   before_action :load_project, only: %i[edit update]
   before_action :ensure_draft_project, only: %i[edit update]
-  before_action :load_pm_project, only: %i[accept complete]
+  before_action :load_workspace_project, only: %i[accept complete]
   before_action :load_video_types, only: %i[edit update]
 
   def index
@@ -9,12 +9,12 @@ class ProjectsController < ApplicationController
 
     @projects = workspace_for(:client).projects.includes(video_type_selections: :video_type).order(status_order, created_at: :desc)
 
-    @pm_table_query = ::Projects::ListingQuery.new(params)
-    @pm_sort = @pm_table_query.sort.presence || "created_at"
-    @pm_direction = @pm_table_query.direction.presence || "desc"
-    @pm_page = @pm_table_query.page
-    @pm_total_pages = @pm_table_query.total_pages
-    @pm_projects = @pm_table_query.call
+    @workspace_table_query = ::Projects::ListingQuery.new(params)
+    @workspace_sort = @workspace_table_query.sort.presence || "created_at"
+    @workspace_direction = @workspace_table_query.direction.presence || "desc"
+    @workspace_page = @workspace_table_query.page
+    @workspace_total_pages = @workspace_table_query.total_pages
+    @workspace_projects = @workspace_table_query.call
   end
 
   def show
@@ -115,7 +115,7 @@ class ProjectsController < ApplicationController
   public
 
   def accept
-    process_pm_action(
+    process_workspace_action(
       event: :accept,
       success_notice: "Project accepted.",
       stale_alert: "Only pending projects can be accepted."
@@ -123,7 +123,7 @@ class ProjectsController < ApplicationController
   end
 
   def complete
-    process_pm_action(
+    process_workspace_action(
       event: :complete,
       success_notice: "Project completed.",
       stale_alert: "Only in-progress projects can be completed."
@@ -132,35 +132,35 @@ class ProjectsController < ApplicationController
 
   private
 
-  def process_pm_action(event:, success_notice:, stale_alert:)
-    result = Projects::ActionService.call(project: @pm_project, event: event)
+  def process_workspace_action(event:, success_notice:, stale_alert:)
+    result = Projects::ActionService.call(project: @workspace_project, event: event)
 
     if result.success?
-      respond_pm_row_action_success(success_notice)
-      Notification.broadcast_refresh_for(@pm_project.participant) if result.data.fetch(:broadcast_refresh, false)
+      respond_workspace_action_success(success_notice)
+      Notification.broadcast_refresh_for(@workspace_project.participant) if result.data.fetch(:broadcast_refresh, false)
     else
-      respond_pm_row_action_stale(stale_alert)
+      respond_workspace_action_stale(stale_alert)
     end
   end
 
-  def respond_pm_row_action_success(success_notice)
-    if pm_async_action_request?
-      render json: pm_row_action_payload
+  def respond_workspace_action_success(success_notice)
+    if workspace_async_action_request?
+      render json: workspace_row_action_payload
     else
       redirect_to projects_path, notice: success_notice
     end
   end
 
-  def respond_pm_row_action_stale(stale_alert)
-    if pm_async_action_request?
+  def respond_workspace_action_stale(stale_alert)
+    if workspace_async_action_request?
       head :conflict
     else
       redirect_to projects_path, alert: stale_alert
     end
   end
 
-  def pm_async_action_request?
-    request.headers["X-PM-Async-Action"] == "1"
+  def workspace_async_action_request?
+    request.headers["X-Workspace-Async-Action"] == "1"
   end
 
   def sync_project_selections(project, selections)
@@ -184,16 +184,16 @@ class ProjectsController < ApplicationController
     redirect_to projects_path, alert: "Only draft projects can be edited."
   end
 
-  def load_pm_project
-    @pm_project = workspace_for(:pm).projects.find(params[:id])
+  def load_workspace_project
+    @workspace_project = workspace_for(:pm).projects.find(params[:id])
   end
 
-  def pm_row_action_payload
+  def workspace_row_action_payload
     {
-      project_id: @pm_project.id,
-      status_badge_text: @pm_project.status_badge_text,
-      status_badge_class: @pm_project.status_badge_class,
-      action: @pm_project.pending? ? "complete" : (@pm_project.in_progress? ? "complete" : nil)
+      project_id: @workspace_project.id,
+      status_badge_text: @workspace_project.status_badge_text,
+      status_badge_class: @workspace_project.status_badge_class,
+      action: @workspace_project.pending? ? "complete" : (@workspace_project.in_progress? ? "complete" : nil)
     }
   end
 end
