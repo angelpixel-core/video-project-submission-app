@@ -72,12 +72,12 @@ class Notification < ApplicationRecord
     nil
   end
 
-  def should_broadcast_refresh?
-    previously_new_record? || saved_change_to_read_at?
-  end
-
   def broadcast_refresh
     self.class.broadcast_refresh_for(recipient, notification: self)
+  end
+
+  def should_broadcast_refresh?
+    previously_new_record? || saved_change_to_read_at?
   end
 
   def recipient_presence

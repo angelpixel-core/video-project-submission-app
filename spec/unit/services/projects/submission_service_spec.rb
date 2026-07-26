@@ -4,16 +4,16 @@ RSpec.describe Projects::SubmissionService do
   it "submits a draft project, creates a payment, and enqueues notification dispatch" do
     client = client_account
     pm = pm_account
-    project = Project.create!(client: client, pm: pm, name: "Project Draft", raw_footage_url: "https://example.com/draft.mov", status: :draft)
+    project = Project.create!(owner: client, participant: pm, name: "Project Draft", raw_footage_url: "https://example.com/draft.mov", status: :draft)
     video_type = VideoType.create!(name: "Highlight Reel", description: "Short edit", price_cents: 25_000, output_format: "mp4")
 
     expect(NotificationJob).to receive(:perform_later).with(project.id)
 
     result = described_class.call(
       project: project,
-      pm: pm,
+      participant: pm,
       attributes: { name: "Project Draft", raw_footage_url: "https://example.com/draft.mov" },
-      selections: [{ video_type_id: video_type.id, quantity: 2 }]
+      selections: [ { video_type_id: video_type.id, quantity: 2 } ]
     )
 
     expect(result).to be_success
@@ -24,11 +24,11 @@ RSpec.describe Projects::SubmissionService do
   end
 
   it "returns a failure when there are no selections" do
-    project = Project.create!(client: client_account, pm: pm_account(email: "submission-failure-pm@example.com"), name: "Project Draft", raw_footage_url: "https://example.com/draft.mov", status: :draft)
+    project = Project.create!(owner: client_account, participant: pm_account(email: "submission-failure-pm@example.com"), name: "Project Draft", raw_footage_url: "https://example.com/draft.mov", status: :draft)
 
     result = described_class.call(
       project: project,
-      pm: pm_account,
+      participant: pm_account,
       attributes: { name: "Project Draft", raw_footage_url: "https://example.com/draft.mov" },
       selections: []
     )

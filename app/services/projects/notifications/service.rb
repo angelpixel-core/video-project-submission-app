@@ -17,17 +17,17 @@ module Projects
       attr_reader :project_id
 
       def load_project
-        Project.includes(:pm_account).find(project_id)
+        Project.includes(:participant).find(project_id)
       end
 
-      def create_notification(project)
-        Notification.create!(
-          project: project,
-          pm: project.pm,
-          kind: "project_created",
-          body: "Project #{project.name} submitted for review"
-        )
-      end
+        def create_notification(project)
+          Notification.create!(
+            project: project,
+            pm: project.participant,
+            kind: "project_created",
+            body: "Project #{project.name} submitted for review"
+          )
+        end
     end
   end
 end

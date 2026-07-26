@@ -5,7 +5,7 @@ RSpec.describe Payments::Adapters::Outbound::Email::PaymentInvoiceMailer do
     it "sends the invoice email with an attachment link" do
       client = client_account(name: "Client")
       pm = pm_account(name: "PM")
-      project = Project.create!(client: client, pm: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :draft)
+      project = Project.create!(owner: client, participant: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :draft)
       payment = Payments::Domain::Aggregates::Payment.create!(
         project: project,
         status: :succeeded,

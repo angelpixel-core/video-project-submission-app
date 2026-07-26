@@ -63,7 +63,7 @@ RSpec.describe "payments rake tasks" do
   it "resolves the payment from a project id when provided" do
     client = client_account(name: "Client", email: "project-client@example.com")
     pm = pm_account(name: "PM", email: "project-pm@example.com")
-    project = Project.create!(client: client, pm: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :pending)
+     project = Project.create!(owner: client, participant: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :pending)
     payment = Payments::Domain::Aggregates::Payment.create!(
       project: project,
       status: :processing,
@@ -102,7 +102,7 @@ RSpec.describe "payments rake tasks" do
   it "falls back to the most recent payment when the project has no active payment" do
     client = client_account(name: "Client", email: "fallback-client@example.com")
     pm = pm_account(name: "PM", email: "fallback-pm@example.com")
-    project = Project.create!(client: client, pm: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :pending)
+     project = Project.create!(owner: client, participant: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :pending)
 
     historical_payment = Payments::Domain::Aggregates::Payment.create!(
       project: project,
@@ -186,7 +186,7 @@ RSpec.describe "payments rake tasks" do
 
   it "replays a single event by provider event id" do
     payment = Payments::Domain::Aggregates::Payment.create!(
-      project: Project.create!(client: client_account(name: "Client", email: "replay-client@example.com"), pm: pm_account(name: "PM", email: "replay-pm@example.com"), name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :pending),
+       project: Project.create!(owner: client_account(name: "Client", email: "replay-client@example.com"), participant: pm_account(name: "PM", email: "replay-pm@example.com"), name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :pending),
       status: :processing,
       provider: "fake",
       idempotency_key: SecureRandom.uuid,

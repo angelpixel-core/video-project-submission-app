@@ -4,7 +4,7 @@
       <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
         <div>
           <h2 class="h5 mb-1"><%= project.name.presence || "Untitled project" %></h2>
-          <p class="mb-0 text-body-secondary"><%= project.client.name %></p>
+          <p class="mb-0 text-body-secondary"><%= project.owner.name %></p>
         </div>
         <div class="d-flex flex-column align-items-end gap-2">
           <span class="badge <%= project.status_badge_class %> text-white text-uppercase"><%= project.status_badge_text %></span>
@@ -33,7 +33,7 @@
       </div>
 
       <div class="small text-body-secondary">
-        Client: <%= project.client.name %>
+        Client: <%= project.owner.name %>
       </div>
     </div>
   </div>

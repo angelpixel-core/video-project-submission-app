@@ -32,10 +32,10 @@
 
       <dl class="row mb-0">
         <dt class="col-sm-3 text-body-secondary">Client</dt>
-        <dd class="col-sm-9"><%= @project.client.name %></dd>
+        <dd class="col-sm-9"><%= @project.owner.name %></dd>
 
         <dt class="col-sm-3 text-body-secondary">PM</dt>
-        <dd class="col-sm-9"><%= @project.pm.name %></dd>
+        <dd class="col-sm-9"><%= @project.participant.name %></dd>
 
         <dt class="col-sm-3 text-body-secondary">Raw footage</dt>
         <dd class="col-sm-9"><%= @project.raw_footage_url.presence || "No footage URL yet" %></dd>

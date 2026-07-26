@@ -22,7 +22,7 @@ RSpec.describe "Payments webhooks requests" do
   def build_payment(status: :processing)
     client = client_account(name: "Client")
     pm = pm_account(name: "PM")
-    project = Project.create!(client: client, pm: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :pending)
+    project = Project.create!(owner: client, participant: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :pending)
 
     payment = Payments::Domain::Aggregates::Payment.create!(
       project: project,

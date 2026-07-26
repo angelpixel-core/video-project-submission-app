@@ -7,8 +7,8 @@ module Identity
 
           has_one_attached :avatar
 
-          has_many :client_projects, class_name: "Project", foreign_key: :client_account_id, dependent: :restrict_with_error
-          has_many :pm_projects, class_name: "Project", foreign_key: :pm_account_id, dependent: :restrict_with_error
+          has_many :owner_projects, class_name: "Project", foreign_key: :owner_account_id, dependent: :restrict_with_error
+          has_many :participant_projects, class_name: "Project", foreign_key: :participant_account_id, dependent: :restrict_with_error
           has_many :notifications, class_name: "Notification", foreign_key: :account_id, dependent: :destroy
           has_many :comments, class_name: "Comment", foreign_key: :author_account_id, dependent: :destroy
           has_many :memberships, class_name: "Identity::Domain::Aggregates::Membership", foreign_key: :account_id, dependent: :destroy
@@ -34,7 +34,7 @@ module Identity
           end
 
           def projects
-            client? ? client_projects : pm_projects
+            client? ? owner_projects : participant_projects
           end
 
           def membership_for(user)

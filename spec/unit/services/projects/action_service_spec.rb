@@ -4,7 +4,7 @@ RSpec.describe Projects::ActionService do
   it "accepts a pending project and marks unread pm notifications as read" do
     client = client_account
     pm = pm_account
-    project = Project.create!(client: client, pm: pm, name: "Project Pending", raw_footage_url: "https://example.com/pending.mov", status: :pending)
+    project = Project.create!(owner: client, participant: pm, name: "Project Pending", raw_footage_url: "https://example.com/pending.mov", status: :pending)
     unread_notification = Notification.create!(project: project, pm: pm, kind: "project_created", body: "Unread PM notification")
 
     expect(Projects::Notifications::Dispatcher).to receive(:call).with(project: project, event_type: :project_accepted)
@@ -21,7 +21,7 @@ RSpec.describe Projects::ActionService do
   it "completes an in-progress project without requesting a broadcast refresh" do
     client = client_account
     pm = pm_account
-    project = Project.create!(client: client, pm: pm, name: "Project Active", raw_footage_url: "https://example.com/active.mov", status: :in_progress)
+    project = Project.create!(owner: client, participant: pm, name: "Project Active", raw_footage_url: "https://example.com/active.mov", status: :in_progress)
 
     result = described_class.call(project: project, event: :complete)
 
@@ -32,7 +32,7 @@ RSpec.describe Projects::ActionService do
   end
 
   it "returns a failure for stale actions" do
-    project = Project.create!(client: client_account, pm: pm_account, name: "Project Draft", raw_footage_url: "https://example.com/draft.mov", status: :draft)
+    project = Project.create!(owner: client_account, participant: pm_account, name: "Project Draft", raw_footage_url: "https://example.com/draft.mov", status: :draft)
 
     result = described_class.call(project: project, event: :complete)
 

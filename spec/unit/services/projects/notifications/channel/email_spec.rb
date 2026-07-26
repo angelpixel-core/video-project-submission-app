@@ -4,7 +4,7 @@ RSpec.describe Projects::Notifications::Channel::Email do
   it "delivers the project status emails to client and pm" do
     client = client_account(name: "Client")
     pm = pm_account(name: "PM")
-    project = Project.create!(client: client, pm: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :in_progress)
+    project = Project.create!(owner: client, participant: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :in_progress)
 
     client_mail = instance_double(ActionMailer::MessageDelivery)
     pm_mail = instance_double(ActionMailer::MessageDelivery)

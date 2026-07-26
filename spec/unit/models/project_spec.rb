@@ -5,30 +5,30 @@ RSpec.describe Project do
     expect(described_class.superclass).to eq(ApplicationRecord)
   end
 
-  it "belongs to a client and pm and starts as draft" do
+  it "belongs to an owner and participant and starts as draft" do
     client = client_account(name: "Client")
     pm = pm_account(name: "PM")
-    project = described_class.create!(client: client, pm: pm, status: :draft)
+    project = described_class.create!(owner: client, participant: pm, status: :draft)
 
     expect(project.status).to eq("draft")
-    expect(project.client).to eq(client)
-    expect(project.pm).to eq(pm)
+    expect(project.owner).to eq(client)
+    expect(project.participant).to eq(pm)
   end
 
-  it "keeps legacy identity ids populated when using account-backed associations" do
+  it "keeps account ids populated when using the neutral associations" do
     client = client_account(name: "Client")
     pm = pm_account(name: "PM")
 
-    project = described_class.create!(client_account: client, pm_account: pm, status: :draft)
+    project = described_class.create!(owner: client, participant: pm, status: :draft)
 
-    expect(project.client_id).to eq(client.id)
-    expect(project.pm_id).to eq(pm.id)
+    expect(project.owner_account_id).to eq(client.id)
+    expect(project.participant_account_id).to eq(pm.id)
   end
 
   it "requires submission fields once submitted" do
     client = client_account(name: "Client")
     pm = pm_account(name: "PM")
-    project = described_class.new(client: client, pm: pm, status: :draft)
+    project = described_class.new(owner: client, participant: pm, status: :draft)
 
     expect(project).to be_valid
 
@@ -42,7 +42,7 @@ RSpec.describe Project do
   it "derives raw footage metadata for recognized urls" do
     client = client_account(name: "Client")
     pm = pm_account(name: "PM")
-    project = described_class.create!(client: client, pm: pm, status: :draft, raw_footage_url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ")
+    project = described_class.create!(owner: client, participant: pm, status: :draft, raw_footage_url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ")
 
     expect(project.raw_footage_metadata_hash).to include(
       "provider" => "youtube",
@@ -54,7 +54,7 @@ RSpec.describe Project do
   it "derives vimeo metadata when the url is recognized" do
     client = client_account(name: "Client")
     pm = pm_account(name: "PM")
-    project = described_class.create!(client: client, pm: pm, status: :draft, raw_footage_url: "https://vimeo.com/123456789")
+    project = described_class.create!(owner: client, participant: pm, status: :draft, raw_footage_url: "https://vimeo.com/123456789")
 
     expect(project.raw_footage_metadata_hash).to include(
       "provider" => "vimeo",
@@ -65,7 +65,7 @@ RSpec.describe Project do
   it "moves through the project lifecycle" do
     client = client_account(name: "Client")
     pm = pm_account(name: "PM")
-    project = described_class.create!(client: client, pm: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :draft)
+    project = described_class.create!(owner: client, participant: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :draft)
 
     project.submit!
     expect(project.status).to eq("pending")
@@ -80,7 +80,7 @@ RSpec.describe Project do
   it "sums the project budget from selections" do
     client = client_account(name: "Client")
     pm = pm_account(name: "PM")
-    project = described_class.create!(client: client, pm: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :pending)
+    project = described_class.create!(owner: client, participant: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :pending)
     highlight_reel = VideoType.create!(name: "Highlight Reel", description: "Short edit", price_cents: 25_000, output_format: "mp4")
     social_cut = VideoType.create!(name: "Social Cut", description: "Social edit", price_cents: 15_000, output_format: "mp4")
 
@@ -93,7 +93,7 @@ RSpec.describe Project do
   it "rejects invalid lifecycle jumps" do
     client = client_account(name: "Client")
     pm = pm_account(name: "PM")
-    project = described_class.create!(client: client, pm: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :draft)
+    project = described_class.create!(owner: client, participant: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :draft)
 
     expect { project.accept! }.to raise_error(AASM::InvalidTransition)
   end

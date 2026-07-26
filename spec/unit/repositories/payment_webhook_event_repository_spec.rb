@@ -4,8 +4,8 @@ RSpec.describe Payments::Adapters::Persistence::Webhook::Event::Repository do
   def build_payment
     Payments::Domain::Aggregates::Payment.create!(
       project: Project.create!(
-        client: client_account(name: "Client"),
-        pm: pm_account(name: "PM"),
+        owner: client_account(name: "Client"),
+        participant: pm_account(name: "PM"),
         name: "Project",
         raw_footage_url: "https://example.com/raw.mov",
         status: :pending

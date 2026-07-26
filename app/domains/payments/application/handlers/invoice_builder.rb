@@ -35,7 +35,7 @@ module Payments
               <body>
                 <h1>Invoice #{invoice_number}</h1>
                 <p>Project: #{payment.project.name}</p>
-                <p>Client: #{payment.project.client.name}</p>
+                <p>Owner: #{payment.project.owner.name}</p>
                 <p>Payment ID: #{payment.id}</p>
                 <p>Provider reference: #{payment.provider_reference}</p>
                 <p>Amount: #{payment.currency} #{format('%.2f', payment.amount_cents.to_f / 100)}</p>

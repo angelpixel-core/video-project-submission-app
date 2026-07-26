@@ -4,7 +4,7 @@ RSpec.describe Payments::Adapters::Outbound::Gateways::Fake do
   it "returns a success result for a valid payment" do
     client = client_account(name: "Client")
     pm = pm_account(name: "PM")
-    project = Project.create!(client: client, pm: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :draft)
+    project = Project.create!(owner: client, participant: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :draft)
     payment = Payments::Domain::Aggregates::Payment.create!(
       project: project,
       status: :pending,
@@ -29,7 +29,7 @@ RSpec.describe Payments::Adapters::Outbound::Gateways::Fake do
   it "returns a failure for a zero amount payment" do
     client = client_account(name: "Client")
     pm = pm_account(name: "PM")
-    project = Project.create!(client: client, pm: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :draft)
+    project = Project.create!(owner: client, participant: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :draft)
     payment = Payments::Domain::Aggregates::Payment.create!(
       project: project,
       status: :pending,

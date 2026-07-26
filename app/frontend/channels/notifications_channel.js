@@ -1,4 +1,4 @@
-import { refreshWorkspace } from "../lib/workspace_refresh"
+import { forceRefreshWorkspace } from "../lib/workspace_refresh"
 import { shouldSuppressNotificationToast } from "../lib/workspace_notification_refresh"
 
 export function subscribeToNotifications(consumer, { role }) {
@@ -15,7 +15,9 @@ export function subscribeToNotifications(consumer, { role }) {
 
       if (data?.type === "notifications_updated") {
         const suppressToast = shouldSuppressNotificationToast(data)
-        await refreshWorkspace({ role, suppressToast })
+        await forceRefreshWorkspace({ role, suppressToast })
+        await new Promise((resolve) => window.setTimeout(resolve, 50))
+        await forceRefreshWorkspace({ role, suppressToast })
       }
     }
   })

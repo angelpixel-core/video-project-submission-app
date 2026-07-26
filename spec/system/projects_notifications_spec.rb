@@ -20,7 +20,7 @@ RSpec.describe "PM notifications", type: :system, js: true do
   it "shows unread notifications and lets the pm acknowledge them" do
     client = find_client_account
     pm = find_pm_account
-    project = Project.create!(client: client, pm: pm, name: "Project Alpha", raw_footage_url: "https://example.com/raw.mov", status: :in_progress)
+    project = Project.create!(owner: client, participant: pm, name: "Project Alpha", raw_footage_url: "https://example.com/raw.mov", status: :in_progress)
     notification = Notification.create!(project: project, pm: pm, kind: "project_created", body: "Unread PM notification")
     Notification.create!(project: project, pm: pm, kind: "project_created", body: "Second unread notification")
     Notification.create!(project: project, pm: pm, kind: "project_created", body: "Third unread notification")
@@ -64,7 +64,7 @@ RSpec.describe "PM notifications", type: :system, js: true do
   it "marks a pm toast as read when the project link is clicked" do
     client = find_client_account
     pm = find_pm_account
-    project = Project.create!(client: client, pm: pm, name: "Project Toast", raw_footage_url: "https://example.com/toast.mov", status: :in_progress)
+    project = Project.create!(owner: client, participant: pm, name: "Project Toast", raw_footage_url: "https://example.com/toast.mov", status: :in_progress)
     notification = Notification.create!(project: project, pm: pm, kind: "project_created", body: "Unread PM notification")
 
     visit projects_path
@@ -82,7 +82,7 @@ RSpec.describe "PM notifications", type: :system, js: true do
   it "updates pm workspace project actions without a full reload" do
     client = find_client_account
     pm = find_pm_account
-    project = Project.create!(client: client, pm: pm, name: "Project Beta", raw_footage_url: "https://example.com/beta.mov", status: :pending)
+    project = Project.create!(owner: client, participant: pm, name: "Project Beta", raw_footage_url: "https://example.com/beta.mov", status: :pending)
     project.video_type_selections.create!(video_type: VideoType.find_by!(name: "Highlight Reel"), quantity: 2)
 
     visit projects_path
@@ -126,7 +126,7 @@ RSpec.describe "PM notifications", type: :system, js: true do
 
     11.times do |index|
       travel_to (10 - index).minutes.ago do
-        Project.create!(client: client, pm: pm, name: "Project #{index + 1}", raw_footage_url: "https://example.com/#{index + 1}.mov", status: :pending)
+        Project.create!(owner: client, participant: pm, name: "Project #{index + 1}", raw_footage_url: "https://example.com/#{index + 1}.mov", status: :pending)
       end
     end
 
@@ -157,7 +157,7 @@ RSpec.describe "PM notifications", type: :system, js: true do
 
     11.times do |index|
       travel_to (10 - index).minutes.ago do
-        Project.create!(client: client, pm: pm, name: "Project #{index + 1}", raw_footage_url: "https://example.com/#{index + 1}.mov", status: :pending)
+        Project.create!(owner: client, participant: pm, name: "Project #{index + 1}", raw_footage_url: "https://example.com/#{index + 1}.mov", status: :pending)
       end
     end
 
@@ -190,7 +190,7 @@ RSpec.describe "PM notifications realtime", type: :system, js: true do
   it "refreshes the inbox when a notification is created or acknowledged" do
     client = find_client_account
     pm = find_pm_account
-    project = Project.create!(client: client, pm: pm, status: :draft)
+    project = Project.create!(owner: client, participant: pm, status: :draft)
     notification_body = "Project Gamma submitted for review"
     highlight_reel = VideoType.find_by!(name: "Highlight Reel")
 

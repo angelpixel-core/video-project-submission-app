@@ -17,9 +17,9 @@ module Payments
           def recipient_email_for(recipient_role)
             case recipient_role.to_s
             when "pm"
-              @project.pm.email
+              @project.participant.email
             else
-              @project.client.email
+              @project.owner.email
             end
           end
 

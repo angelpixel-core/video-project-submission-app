@@ -20,6 +20,6 @@ class ApplicationController < ActionController::Base
 
   def workspace_notifications_for(role)
     @workspace_notifications ||= {}
-    @workspace_notifications[role.to_sym] ||= workspace_for(role).notifications.unread.includes(project: role == :pm ? :client_account : :pm_account).order(created_at: :desc)
+    @workspace_notifications[role.to_sym] ||= workspace_for(role).notifications.unread.includes(project: role == :pm ? :owner : :participant).order(created_at: :desc)
   end
 end

@@ -10,7 +10,7 @@ else
 end %>
 
 Project: <%= @project.name %>
-Client: <%= @project.client.name %>
+Client: <%= @project.owner.name %>
 Status: <%= @project.status.humanize %>
 Budget: <%= number_to_currency(@project.total_budget_cents.to_f / 100, unit: (@project.payments.first&.currency || "USD") + " ") %>
 

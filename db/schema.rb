@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_25_152000) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_26_100000) do
   create_table "accounts", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "email", null: false
@@ -236,21 +236,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_25_152000) do
   end
 
   create_table "projects", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.bigint "client_account_id"
-    t.bigint "client_id", null: false
     t.datetime "created_at", null: false
     t.string "name"
-    t.bigint "pm_account_id"
-    t.bigint "pm_id", null: false
+    t.bigint "owner_account_id", null: false
+    t.bigint "participant_account_id", null: false
     t.json "raw_footage_metadata"
     t.string "raw_footage_url"
     t.string "status", default: "draft", null: false
     t.datetime "updated_at", null: false
     t.string "youtube_url"
-    t.index ["client_account_id"], name: "index_projects_on_client_account_id"
-    t.index ["client_id"], name: "index_projects_on_client_id"
-    t.index ["pm_account_id"], name: "index_projects_on_pm_account_id"
-    t.index ["pm_id"], name: "index_projects_on_pm_id"
+    t.index ["owner_account_id"], name: "index_projects_on_owner_account_id"
+    t.index ["participant_account_id"], name: "index_projects_on_participant_account_id"
     t.index ["status"], name: "index_projects_on_status"
   end
 
@@ -327,10 +323,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_25_152000) do
   add_foreign_key "payment_webhook_events", "payments"
   add_foreign_key "payment_webhook_events", "projects"
   add_foreign_key "payments", "projects"
-  add_foreign_key "projects", "accounts", column: "client_account_id"
-  add_foreign_key "projects", "accounts", column: "client_id"
-  add_foreign_key "projects", "accounts", column: "pm_account_id"
-  add_foreign_key "projects", "accounts", column: "pm_id"
+  add_foreign_key "projects", "accounts", column: "owner_account_id"
+  add_foreign_key "projects", "accounts", column: "participant_account_id"
   add_foreign_key "refunds", "payment_method_references"
   add_foreign_key "refunds", "payments"
   add_foreign_key "video_type_selections", "projects"

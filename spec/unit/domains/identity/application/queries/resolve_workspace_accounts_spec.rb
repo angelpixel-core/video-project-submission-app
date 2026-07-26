@@ -16,8 +16,8 @@ RSpec.describe Identity::Application::Queries::ResolveWorkspaceAccounts do
     allow(user_repository).to receive(:find_by_email).with("client@example.com").and_return(client_user)
     allow(user_repository).to receive(:find_by_email).with("pm@example.com").and_return(pm_user)
 
-    allow(account_repository).to receive(:find_by_user_and_role).with(client_user, :client).and_return([client_workspace])
-    allow(account_repository).to receive(:find_by_user_and_role).with(pm_user, :pm).and_return([pm_workspace])
+    allow(account_repository).to receive(:find_by_user_and_role).with(client_user, :client).and_return([ client_workspace ])
+    allow(account_repository).to receive(:find_by_user_and_role).with(pm_user, :pm).and_return([ pm_workspace ])
 
     result = described_class.call(
       client_email: "client@example.com",

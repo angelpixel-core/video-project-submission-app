@@ -30,7 +30,7 @@ RSpec.describe "Project show payment history", type: :system, js: true do
   it "shows payment history to the pm and keeps it hidden from the client workspace" do
     client = find_client_account
     pm = find_pm_account
-    project = Project.create!(client: client, pm: pm, name: "Project Alpha", raw_footage_url: "https://example.com/raw.mov", status: :pending)
+    project = Project.create!(owner: client, participant: pm, name: "Project Alpha", raw_footage_url: "https://example.com/raw.mov", status: :pending)
     payment = Payments::Domain::Aggregates::Payment.create!(
       project: project,
       status: :processing,
@@ -103,7 +103,7 @@ RSpec.describe "Project show payment history", type: :system, js: true do
   it "shows confirmed when the payment has been successfully processed" do
     client = find_client_account
     pm = find_pm_account
-    project = Project.create!(client: client, pm: pm, name: "Project Beta", raw_footage_url: "https://example.com/raw.mov", status: :pending)
+    project = Project.create!(owner: client, participant: pm, name: "Project Beta", raw_footage_url: "https://example.com/raw.mov", status: :pending)
     payment = Payments::Domain::Aggregates::Payment.create!(
       project: project,
       status: :processing,

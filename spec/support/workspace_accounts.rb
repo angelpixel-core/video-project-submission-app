@@ -1,15 +1,9 @@
 module WorkspaceAccounts
   def workspace_account(role, email:, name:)
-    account = Identity::Domain::Aggregates::Account.find_by(email: email)
-    unless account
-      account = Identity::Domain::Aggregates::Account.create!(name: name, email: email, role: role)
-    end
+    account = find_or_create_workspace_account(email:, role:, name:)
     account.update_columns(name: name) if account.name != name
 
-    user = Identity::Domain::Aggregates::User.find_by(email: email)
-    unless user
-      user = Identity::Domain::Aggregates::User.create!(name: name, email: email, access_state: :active, notification_settings: {})
-    end
+    user = find_or_create_workspace_user(email:, name:)
     user.update_columns(name: name, access_state: "active", notification_settings: {}) if user.name != name || user.access_state != "active" || user.notification_settings.blank?
 
     Identity::Domain::Aggregates::Membership.find_or_create_by!(user: user, account: account) do |membership|
@@ -17,6 +11,20 @@ module WorkspaceAccounts
     end
 
     account
+  end
+
+  def find_or_create_workspace_account(email:, role:, name:)
+    Identity::Domain::Aggregates::Account.find_by(email: email, role: role) ||
+      Identity::Domain::Aggregates::Account.create!(name: name, email: email, role: role)
+  rescue ActiveRecord::RecordNotUnique
+    Identity::Domain::Aggregates::Account.find_by!(email: email, role: role)
+  end
+
+  def find_or_create_workspace_user(email:, name:)
+    Identity::Domain::Aggregates::User.find_by(email: email) ||
+      Identity::Domain::Aggregates::User.create!(name: name, email: email, access_state: :active, notification_settings: {})
+  rescue ActiveRecord::RecordNotUnique
+    Identity::Domain::Aggregates::User.find_by!(email: email)
   end
 
   def client_account(email: "client@example.com", name: "Client")

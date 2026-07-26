@@ -16,11 +16,11 @@ RSpec.describe Projects::ListingQuery do
     pm = find_pm_account
 
     travel_to 2.days.ago do
-      Project.create!(client: client, pm: pm, name: "Older Project", raw_footage_url: "https://example.com/older.mov", status: :pending)
+      Project.create!(owner: client, participant: pm, name: "Older Project", raw_footage_url: "https://example.com/older.mov", status: :pending)
     end
 
     travel_to 1.day.ago do
-      Project.create!(client: client, pm: pm, name: "Newer Project", raw_footage_url: "https://example.com/newer.mov", status: :in_progress)
+      Project.create!(owner: client, participant: pm, name: "Newer Project", raw_footage_url: "https://example.com/newer.mov", status: :in_progress)
     end
 
     names = described_class.new(ActionController::Parameters.new({})).call.map(&:name)
@@ -35,11 +35,11 @@ RSpec.describe Projects::ListingQuery do
     pm = find_pm_account
 
     travel_to 2.days.ago do
-      Project.create!(client: client, pm: pm, name: "Older Project", raw_footage_url: "https://example.com/older.mov", status: :pending)
+      Project.create!(owner: client, participant: pm, name: "Older Project", raw_footage_url: "https://example.com/older.mov", status: :pending)
     end
 
     travel_to 1.day.ago do
-      Project.create!(client: client, pm: pm, name: "Newer Project", raw_footage_url: "https://example.com/newer.mov", status: :in_progress)
+      Project.create!(owner: client, participant: pm, name: "Newer Project", raw_footage_url: "https://example.com/newer.mov", status: :in_progress)
     end
 
     names = described_class.new(ActionController::Parameters.new(sort: "created_at", direction: "asc")).call.map(&:name)
@@ -55,10 +55,10 @@ RSpec.describe Projects::ListingQuery do
     highlight_reel = VideoType.find_by!(name: "Highlight Reel")
     social_cut = VideoType.find_by!(name: "Social Cut")
 
-    low_budget = Project.create!(client: client, pm: pm, name: "Low Budget", raw_footage_url: "https://example.com/low.mov", status: :pending)
+    low_budget = Project.create!(owner: client, participant: pm, name: "Low Budget", raw_footage_url: "https://example.com/low.mov", status: :pending)
     low_budget.video_type_selections.create!(video_type: social_cut, quantity: 1)
 
-    high_budget = Project.create!(client: client, pm: pm, name: "High Budget", raw_footage_url: "https://example.com/high.mov", status: :pending)
+    high_budget = Project.create!(owner: client, participant: pm, name: "High Budget", raw_footage_url: "https://example.com/high.mov", status: :pending)
     high_budget.video_type_selections.create!(video_type: highlight_reel, quantity: 3)
 
     names = described_class.new(ActionController::Parameters.new(sort: "total_budget")).call.map(&:name)
@@ -71,7 +71,7 @@ RSpec.describe Projects::ListingQuery do
     pm = find_pm_account
 
     11.times do |index|
-      Project.create!(client: client, pm: pm, name: "Project #{index + 1}", raw_footage_url: "https://example.com/#{index + 1}.mov", status: :pending)
+      Project.create!(owner: client, participant: pm, name: "Project #{index + 1}", raw_footage_url: "https://example.com/#{index + 1}.mov", status: :pending)
     end
 
     first_page = described_class.new(ActionController::Parameters.new(page: 1)).call

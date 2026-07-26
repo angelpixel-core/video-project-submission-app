@@ -27,7 +27,7 @@ class ProjectNotificationMailer < ApplicationMailer
   end
 
   def recipient_email(project, recipient_role)
-    recipient_role.to_s == "pm" ? project.pm.email : project.client.email
+    recipient_role.to_s == "pm" ? project.participant.email : project.owner.email
   end
 
   def template_path_for(recipient_role)

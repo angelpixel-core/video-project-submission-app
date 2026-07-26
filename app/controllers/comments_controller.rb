@@ -17,7 +17,7 @@ class CommentsController < ApplicationController
   private
 
   def load_project
-    @project = Project.includes(:client_account, :pm_account, comments: :author_account, video_type_selections: :video_type).find(params[:project_id])
+    @project = Project.includes(:owner, :participant, comments: :author_account, video_type_selections: :video_type).find(params[:project_id])
   end
 
   def comment_params
@@ -30,9 +30,9 @@ class CommentsController < ApplicationController
 
   def create_comment_notification!(comment)
     if comment.author.pm?
-      Notification.create!(project: @project, client: @project.client, kind: "comment_created", body: "New comment from PM on #{@project.name.presence || 'Untitled project'}.")
+      Notification.create!(project: @project, client: @project.owner, kind: "comment_created", body: "New comment from PM on #{@project.name.presence || 'Untitled project'}.")
     else
-      Notification.create!(project: @project, pm: @project.pm, kind: "comment_created", body: "New comment from client on #{@project.name.presence || 'Untitled project'}.")
+      Notification.create!(project: @project, pm: @project.participant, kind: "comment_created", body: "New comment from client on #{@project.name.presence || 'Untitled project'}.")
     end
   end
 end

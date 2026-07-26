@@ -8,7 +8,7 @@ else
 end %></h1>
 
 <p><strong>Project:</strong> <%= @project.name %></p>
-<p><strong>Client:</strong> <%= @project.client.name %></p>
+<p><strong>Client:</strong> <%= @project.owner.name %></p>
 <p><strong>Payment status:</strong> <%= @intent.from_status.humanize %> -> <%= @intent.to_status.humanize %></p>
 <p><strong>Amount:</strong> <%= @payment.currency %> <%= format("%.2f", @payment.amount_cents.to_f / 100) %></p>
 

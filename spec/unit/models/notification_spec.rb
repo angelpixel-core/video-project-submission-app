@@ -18,7 +18,7 @@ RSpec.describe Notification do
   it "uses the account recipient API" do
     client = client_account(name: "Client")
     pm = pm_account(name: "PM")
-    project = Project.create!(client: client, pm: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :in_progress)
+    project = Project.create!(owner: client, participant: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :in_progress)
 
     with_pm_account = described_class.new(project: project, account: pm, kind: "project_created", body: "Project created")
     expect(with_pm_account).to be_valid
@@ -32,7 +32,7 @@ RSpec.describe Notification do
   it "defaults to unread and can be marked as read" do
     client = client_account(name: "Client")
     pm = pm_account(name: "PM")
-    project = Project.create!(client: client, pm: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :in_progress)
+    project = Project.create!(owner: client, participant: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :in_progress)
     notification = described_class.create!(project: project, account: pm, kind: "project_created", body: "Project created")
 
     expect(described_class.unread).to include(notification)
@@ -48,7 +48,7 @@ RSpec.describe Notification do
   it "broadcasts refreshes to the recipient stream" do
     client = client_account(name: "Client")
     pm = pm_account(name: "PM")
-    project = Project.create!(client: client, pm: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :in_progress)
+    project = Project.create!(owner: client, participant: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :in_progress)
 
     expect(ActionCable.server).to receive(:broadcast).with(
       "client_notifications",

@@ -7,7 +7,7 @@ module Projects
         end
 
         def call
-          Rails.logger.info("Notification for PM #{project.pm.email}: project #{project.id} was created")
+          Rails.logger.info("Notification for participant #{project.participant.email}: project #{project.id} was created")
         end
 
         private

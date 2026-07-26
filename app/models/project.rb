@@ -1,8 +1,8 @@
 class Project < ApplicationRecord
   include AASM
 
-  belongs_to :client_account, class_name: "Identity::Domain::Aggregates::Account", foreign_key: :client_account_id
-  belongs_to :pm_account, class_name: "Identity::Domain::Aggregates::Account", foreign_key: :pm_account_id
+  belongs_to :owner, class_name: "Identity::Domain::Aggregates::Account", foreign_key: :owner_account_id
+  belongs_to :participant, class_name: "Identity::Domain::Aggregates::Account", foreign_key: :participant_account_id
 
   has_many :video_type_selections, dependent: :destroy
   has_many :video_types, through: :video_type_selections
@@ -10,7 +10,6 @@ class Project < ApplicationRecord
   has_many :notifications, dependent: :destroy
   has_many :comments, dependent: :destroy
 
-  before_validation :sync_legacy_identity_columns
   before_validation :sync_raw_footage_metadata
   after_update_commit :broadcast_status_badge
 
@@ -59,24 +58,6 @@ class Project < ApplicationRecord
 
   def active_payment
     payments.active.order(created_at: :desc).first
-  end
-
-  def client
-    client_account || Identity::Domain::Aggregates::Account.find_by(id: client_account_id || client_id, role: "client")
-  end
-
-  def client=(account)
-    self.client_account = account
-    self.client_id = account&.id
-  end
-
-  def pm
-    pm_account || Identity::Domain::Aggregates::Account.find_by(id: pm_account_id || pm_id, role: "pm")
-  end
-
-  def pm=(account)
-    self.pm_account = account
-    self.pm_id = account&.id
   end
 
   def raw_footage_metadata_hash
@@ -138,11 +119,6 @@ class Project < ApplicationRecord
 
   def sync_raw_footage_metadata
     self.raw_footage_metadata = Parsers::RawFootageUrlParser.metadata(raw_footage_url)
-  end
-
-  def sync_legacy_identity_columns
-    self.client_id ||= client_account_id || client_account&.id
-    self.pm_id ||= pm_account_id || pm_account&.id
   end
 
   def broadcast_status_badge

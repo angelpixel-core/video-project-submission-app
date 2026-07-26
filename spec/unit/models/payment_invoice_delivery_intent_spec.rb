@@ -4,7 +4,7 @@ RSpec.describe Payments::Domain::Entities::PaymentInvoiceDeliveryIntent do
   it "enqueues the dispatch job after commit when created" do
     client = client_account(name: "Client")
     pm = pm_account(name: "PM")
-    project = Project.create!(client: client, pm: pm, status: :draft)
+    project = Project.create!(owner: client, participant: pm, status: :draft)
     payment = Payments::Domain::Aggregates::Payment.create!(
       project: project,
       status: :succeeded,

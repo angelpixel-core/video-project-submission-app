@@ -1,12 +1,12 @@
 module Projects
   class SubmissionService
-    def self.call(project:, pm:, attributes:, selections:)
-      new(project:, pm:, attributes:, selections:).call
+    def self.call(project:, participant:, attributes:, selections:)
+      new(project:, participant:, attributes:, selections:).call
     end
 
-    def initialize(project:, pm:, attributes:, selections:)
+    def initialize(project:, participant:, attributes:, selections:)
       @project = project
-      @pm = pm
+      @participant = participant
       @attributes = attributes
       @selections = selections
     end
@@ -21,7 +21,7 @@ module Projects
       Project.transaction do
         project.with_lock do
           project.assign_attributes(attributes)
-          project.pm = pm
+          project.participant = participant
           project.submit!
           sync_project_selections
 
@@ -48,7 +48,7 @@ module Projects
 
     private
 
-    attr_reader :project, :pm, :attributes, :selections
+    attr_reader :project, :participant, :attributes, :selections
 
     def sync_project_selections
       project.video_type_selections.delete_all

@@ -17,6 +17,9 @@ export default class ProjectActionController extends Controller {
         body: new FormData(this.element)
       })
 
+      await new Promise((resolve) => window.setTimeout(resolve, 50))
+      await forceRefreshWorkspace({ role: "pm" })
+      await new Promise((resolve) => window.setTimeout(resolve, 50))
       await forceRefreshWorkspace({ role: "pm" })
     } catch {
       // If the async path fails, the next refresh or navigation will restore state.

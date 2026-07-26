@@ -12,7 +12,7 @@ RSpec.describe "Notifications", type: :system, js: true do
   it "shows client notifications in the navbar and as floating toasts" do
     client = find_client_account
     pm = find_pm_account
-    project = Project.create!(client: client, pm: pm, name: "Project Alpha", raw_footage_url: "https://example.com/raw.mov", status: :pending)
+    project = Project.create!(owner: client, participant: pm, name: "Project Alpha", raw_footage_url: "https://example.com/raw.mov", status: :pending)
     Notification.create!(project: project, client: client, kind: "project_accepted", body: "Your project Project Alpha was accepted and is now in progress.")
 
     visit projects_path
@@ -37,7 +37,7 @@ RSpec.describe "Notifications", type: :system, js: true do
   it "marks a client toast as read when the project link is clicked" do
     client = find_client_account
     pm = find_pm_account
-    project = Project.create!(client: client, pm: pm, name: "Project Gamma", raw_footage_url: "https://example.com/gamma.mov", status: :pending)
+    project = Project.create!(owner: client, participant: pm, name: "Project Gamma", raw_footage_url: "https://example.com/gamma.mov", status: :pending)
     notification = Notification.create!(project: project, client: client, kind: "project_accepted", body: "Your project Project Gamma was accepted and is now in progress.")
 
     visit projects_path
@@ -53,7 +53,7 @@ RSpec.describe "Notifications", type: :system, js: true do
   it "receives client notifications in realtime after a pm action" do
     client = find_client_account
     pm = find_pm_account
-    project = Project.create!(client: client, pm: pm, name: "Project Beta", raw_footage_url: "https://example.com/beta.mov", status: :pending)
+    project = Project.create!(owner: client, participant: pm, name: "Project Beta", raw_footage_url: "https://example.com/beta.mov", status: :pending)
     project.video_type_selections.create!(video_type: VideoType.find_by!(name: "Highlight Reel"), quantity: 1)
 
     using_session(:client) do

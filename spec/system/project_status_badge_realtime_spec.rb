@@ -30,7 +30,7 @@ RSpec.describe "Project status badge realtime", type: :system, js: true do
   it "updates the client project badge when the pm changes the status" do
     client = find_client_account
     pm = find_pm_account
-    project = Project.create!(client: client, pm: pm, name: "Project Alpha", raw_footage_url: "https://example.com/raw.mov", status: :pending)
+    project = Project.create!(owner: client, participant: pm, name: "Project Alpha", raw_footage_url: "https://example.com/raw.mov", status: :pending)
 
     using_session(:client) do
       visit projects_path

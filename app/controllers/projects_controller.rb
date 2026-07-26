@@ -18,7 +18,7 @@ class ProjectsController < ApplicationController
   end
 
   def show
-    @project = Project.includes(:client_account, :pm_account, comments: :author_account, video_type_selections: :video_type).find(params[:id])
+    @project = Project.includes(:owner, :participant, comments: :author_account, video_type_selections: :video_type).find(params[:id])
     @payments = @project.payments.includes(:payment_attempts).order(created_at: :desc)
     @comments = @project.comments.chronological.includes(:author_account)
     @comment = Comment.new
@@ -27,7 +27,7 @@ class ProjectsController < ApplicationController
   def new
     client_workspace = workspace_for(:client)
     pm_workspace = workspace_for(:pm)
-    project = client_workspace.projects.draft.order(created_at: :desc).first || client_workspace.projects.create!(pm: pm_workspace, status: :draft)
+    project = client_workspace.projects.draft.order(created_at: :desc).first || client_workspace.projects.create!(participant: pm_workspace, status: :draft)
     redirect_to edit_project_path(project)
   end
 
@@ -41,7 +41,7 @@ class ProjectsController < ApplicationController
     if finalize_submission?
       result = Projects::SubmissionService.call(
         project: @project,
-        pm: workspace_for(:pm),
+        participant: workspace_for(:pm),
         attributes: project_attributes,
         selections: selections
       )
@@ -105,7 +105,7 @@ class ProjectsController < ApplicationController
   def autosave_project!(selections)
     Project.transaction do
       @project.assign_attributes(project_attributes)
-      @project.pm ||= workspace_for(:pm)
+      @project.participant ||= workspace_for(:pm)
       @project.status = :draft
       @project.save!
       sync_project_selections(@project, selections)
@@ -137,7 +137,7 @@ class ProjectsController < ApplicationController
 
     if result.success?
       respond_pm_row_action_success(success_notice)
-      Notification.broadcast_refresh_for(@pm_project.pm) if result.data.fetch(:broadcast_refresh, false)
+      Notification.broadcast_refresh_for(@pm_project.participant) if result.data.fetch(:broadcast_refresh, false)
     else
       respond_pm_row_action_stale(stale_alert)
     end

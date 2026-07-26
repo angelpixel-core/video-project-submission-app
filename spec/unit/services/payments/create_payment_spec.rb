@@ -4,7 +4,7 @@ RSpec.describe Payments::Application::Commands::CreatePayment do
   it "creates an active payment and its first attempt" do
     client = client_account
     pm = pm_account
-    project = Project.create!(client: client, pm: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :pending)
+    project = Project.create!(owner: client, participant: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :pending)
     video_type = VideoType.create!(name: "Highlight Reel", description: "Short edit", price_cents: 25_000, output_format: "mp4")
     project.video_type_selections.create!(video_type: video_type, quantity: 1)
 
@@ -23,7 +23,7 @@ RSpec.describe Payments::Application::Commands::CreatePayment do
   it "reuses the existing active payment instead of creating a duplicate" do
     client = client_account
     pm = pm_account
-    project = Project.create!(client: client, pm: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :pending)
+    project = Project.create!(owner: client, participant: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :pending)
     video_type = VideoType.create!(name: "Highlight Reel", description: "Short edit", price_cents: 25_000, output_format: "mp4")
     project.video_type_selections.create!(video_type: video_type, quantity: 1)
 
@@ -43,7 +43,7 @@ RSpec.describe Payments::Application::Commands::CreatePayment do
   it "returns a failure when the provider rejects the payment" do
     client = client_account
     pm = pm_account
-    project = Project.create!(client: client, pm: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :pending)
+    project = Project.create!(owner: client, participant: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :pending)
 
     allow(Payments::Adapters::Outbound::Gateways::Fake).to receive(:call).and_return(
       Core::Result::Failure.(message: "Rejected", code: :provider_rejected, data: { payment_id: 123 })

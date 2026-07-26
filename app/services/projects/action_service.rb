@@ -55,7 +55,7 @@ module Projects
     end
 
     def create_client_status_notification!(kind:, body:)
-      Notification.create!(project: project, client: project.client, kind: kind, body: body)
+      Notification.create!(project: project, client: project.owner, kind: kind, body: body)
     end
 
     def unsupported_event_failure

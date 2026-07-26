@@ -10,7 +10,7 @@
         <p class="text-uppercase text-body-secondary small mb-1">Project update</p>
         <h3 class="h6 mb-1 <%= prefix %>-notification-project-name"><%= notification.project.name %></h3>
         <p class="mb-1"><%= notification.body %></p>
-        <p class="mb-0 text-body-secondary small"><%= counterpart_label %>: <%= role == "pm" ? notification.project.client.name : notification.project.pm.name %></p>
+        <p class="mb-0 text-body-secondary small"><%= counterpart_label %>: <%= role == "pm" ? notification.project.owner.name : notification.project.participant.name %></p>
       <% end %>
       <%= form_with url: read_url, method: :patch, local: true, data: { controller: "notification-action", action: "submit->notification-action#submit" } do |form| %>
         <%= form.button class: "#{prefix}-notification-check btn btn-sm btn-outline-dark", aria: { label: "Mark as read" } do %>

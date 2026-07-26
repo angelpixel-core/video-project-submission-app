@@ -12,7 +12,7 @@ RSpec.describe "Payment modal card flip", type: :system, js: true do
   it "flips the card when the cvc control is used" do
     client = find_client_account
     pm = find_pm_account
-    project = Project.create!(client: client, pm: pm, status: :draft)
+    project = Project.create!(owner: client, participant: pm, status: :draft)
 
     visit edit_project_path(project)
 

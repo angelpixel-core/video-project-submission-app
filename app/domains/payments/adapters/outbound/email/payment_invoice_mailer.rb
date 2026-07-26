@@ -10,7 +10,7 @@ module Payments
 
             attach_invoice if @payment.invoice_document.attached?
 
-            mail(to: @project.client.email, subject: "Your invoice for #{@project.name}")
+            mail(to: @project.owner.email, subject: "Your invoice for #{@project.name}")
           end
 
           private

@@ -30,7 +30,7 @@ RSpec.describe "Comments requests" do
   it "creates a comment as the client workspace" do
     client = find_client_account
     pm = find_pm_account
-    project = Project.create!(client: client, pm: pm, name: "Project Alpha", raw_footage_url: "https://example.com/raw.mov", status: :in_progress)
+    project = Project.create!(owner: client, participant: pm, name: "Project Alpha", raw_footage_url: "https://example.com/raw.mov", status: :in_progress)
 
     expect do
       post project_comments_path(project), params: {
@@ -57,7 +57,7 @@ RSpec.describe "Comments requests" do
   it "creates a comment as the pm workspace" do
     client = find_client_account
     pm = find_pm_account
-    project = Project.create!(client: client, pm: pm, name: "Project Beta", raw_footage_url: "https://example.com/raw.mov", status: :in_progress)
+    project = Project.create!(owner: client, participant: pm, name: "Project Beta", raw_footage_url: "https://example.com/raw.mov", status: :in_progress)
 
     expect do
       post project_comments_path(project), params: {

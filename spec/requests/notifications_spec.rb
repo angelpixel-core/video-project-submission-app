@@ -30,7 +30,7 @@ RSpec.describe "Notifications requests" do
   it "marks a client notification as read" do
     client = find_client_account
     pm = find_pm_account
-    project = Project.create!(client: client, pm: pm, name: "Project Alpha", raw_footage_url: "https://example.com/raw.mov", status: :in_progress)
+    project = Project.create!(owner: client, participant: pm, name: "Project Alpha", raw_footage_url: "https://example.com/raw.mov", status: :in_progress)
     notification = Notification.create!(project: project, client: client, kind: "project_status_changed", body: "Project updated")
 
     patch notification_path(notification)

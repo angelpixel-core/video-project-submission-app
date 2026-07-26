@@ -12,7 +12,7 @@ RSpec.describe "Payment modal validation", type: :system, js: true do
   it "formats and validates card fields" do
     client = find_client_account
     pm = find_pm_account
-    project = Project.create!(client: client, pm: pm, status: :draft)
+    project = Project.create!(owner: client, participant: pm, status: :draft)
 
     visit edit_project_path(project)
 
@@ -38,7 +38,7 @@ RSpec.describe "Payment modal validation", type: :system, js: true do
   it "flags an expired card" do
     client = find_client_account
     pm = find_pm_account
-    project = Project.create!(client: client, pm: pm, status: :draft)
+    project = Project.create!(owner: client, participant: pm, status: :draft)
 
     visit edit_project_path(project)
 

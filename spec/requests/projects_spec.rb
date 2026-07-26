@@ -13,8 +13,8 @@ RSpec.describe "Projects requests" do
   it "shows the client project index" do
     client = find_client_account
     pm = find_pm_account
-    project = Project.create!(client: client, pm: pm, name: "Project Alpha", raw_footage_url: "https://example.com/raw.mov", status: :in_progress)
-    Project.create!(client: client, pm: find_pm_account, status: :draft)
+    project = Project.create!(owner: client, participant: pm, name: "Project Alpha", raw_footage_url: "https://example.com/raw.mov", status: :in_progress)
+    Project.create!(owner: client, participant: find_pm_account, status: :draft)
     Notification.create!(project: project, pm: pm, kind: "project_created", body: "Unread PM notification")
     Notification.create!(project: project, pm: pm, kind: "project_created", body: "Read PM notification", read_at: Time.current)
 
@@ -38,12 +38,12 @@ RSpec.describe "Projects requests" do
     social_cut = VideoType.find_by!(name: "Social Cut")
 
     travel_to 2.days.ago do
-      older_project = Project.create!(client: client, pm: pm, name: "Older Project", raw_footage_url: "https://example.com/older.mov", status: :pending)
+      older_project = Project.create!(owner: client, participant: pm, name: "Older Project", raw_footage_url: "https://example.com/older.mov", status: :pending)
       older_project.video_type_selections.create!(video_type: highlight_reel, quantity: 1)
     end
 
     travel_to 1.day.ago do
-      newer_project = Project.create!(client: client, pm: pm, name: "Newer Project", raw_footage_url: "https://example.com/newer.mov", status: :in_progress)
+      newer_project = Project.create!(owner: client, participant: pm, name: "Newer Project", raw_footage_url: "https://example.com/newer.mov", status: :in_progress)
       newer_project.video_type_selections.create!(video_type: social_cut, quantity: 2)
     end
 
@@ -66,7 +66,7 @@ RSpec.describe "Projects requests" do
     client = find_client_account
     pm = find_pm_account
 
-    Project.create!(client: client, pm: pm, name: "Project Alpha", raw_footage_url: "https://example.com/alpha.mov", status: :pending)
+    Project.create!(owner: client, participant: pm, name: "Project Alpha", raw_footage_url: "https://example.com/alpha.mov", status: :pending)
 
     get projects_path
 
@@ -86,7 +86,7 @@ RSpec.describe "Projects requests" do
     pm = find_pm_account
 
     11.times do |index|
-      Project.create!(client: client, pm: pm, name: "Project #{index + 1}", raw_footage_url: "https://example.com/#{index + 1}.mov", status: :pending)
+      Project.create!(owner: client, participant: pm, name: "Project #{index + 1}", raw_footage_url: "https://example.com/#{index + 1}.mov", status: :pending)
     end
 
     get projects_path(page: 2)
@@ -104,7 +104,7 @@ RSpec.describe "Projects requests" do
 
     11.times do |index|
       travel_to (10 - index).minutes.ago do
-        Project.create!(client: client, pm: pm, name: "Project #{index + 1}", raw_footage_url: "https://example.com/#{index + 1}.mov", status: :pending)
+        Project.create!(owner: client, participant: pm, name: "Project #{index + 1}", raw_footage_url: "https://example.com/#{index + 1}.mov", status: :pending)
       end
     end
 
@@ -127,7 +127,7 @@ RSpec.describe "Projects requests" do
   it "shows a pm project detail page" do
     client = find_client_account
     pm = find_pm_account
-    project = Project.create!(client: client, pm: pm, name: "Project Alpha", raw_footage_url: "https://example.com/raw.mov", status: :pending)
+    project = Project.create!(owner: client, participant: pm, name: "Project Alpha", raw_footage_url: "https://example.com/raw.mov", status: :pending)
 
     get project_path(project)
 
@@ -147,7 +147,7 @@ RSpec.describe "Projects requests" do
   end
 
   it "redirects submitted projects away from the editor" do
-    project = Project.create!(client: find_client_account, pm: find_pm_account, name: "Project Pending", raw_footage_url: "https://example.com/pending.mov", status: :pending)
+    project = Project.create!(owner: find_client_account, participant: find_pm_account, name: "Project Pending", raw_footage_url: "https://example.com/pending.mov", status: :pending)
 
     get edit_project_path(project)
 
@@ -155,7 +155,7 @@ RSpec.describe "Projects requests" do
   end
 
   it "renders the draft editor" do
-    draft = Project.create!(client: find_client_account, pm: find_pm_account, status: :draft)
+    draft = Project.create!(owner: find_client_account, participant: find_pm_account, status: :draft)
 
     get edit_project_path(draft)
 
@@ -165,7 +165,7 @@ RSpec.describe "Projects requests" do
   end
 
   it "autosaves a draft and keeps it in draft status" do
-    draft = Project.create!(client: find_client_account, pm: find_pm_account, status: :draft)
+    draft = Project.create!(owner: find_client_account, participant: find_pm_account, status: :draft)
 
     patch project_path(draft), params: {
       project: {
@@ -189,7 +189,7 @@ RSpec.describe "Projects requests" do
   end
 
   it "finalizes a draft with selections" do
-    draft = Project.create!(client: find_client_account, pm: find_pm_account, status: :draft)
+    draft = Project.create!(owner: find_client_account, participant: find_pm_account, status: :draft)
 
     expect do
       patch project_path(draft), params: {
@@ -208,7 +208,7 @@ RSpec.describe "Projects requests" do
 
     draft.reload
     expect(draft.status).to eq("pending")
-    expect(draft.pm.email).to eq("pm@example.com")
+    expect(draft.participant.email).to eq("pm@example.com")
     expect(draft.video_type_selections.count).to eq(1)
     expect(draft.payments.count).to eq(1)
     expect(draft.active_payment).to be_present
@@ -217,7 +217,7 @@ RSpec.describe "Projects requests" do
   end
 
   it "accepts a pending project as the pm" do
-    project = Project.create!(client: find_client_account, pm: find_pm_account, name: "Project Pending", raw_footage_url: "https://example.com/pending.mov", status: :pending)
+    project = Project.create!(owner: find_client_account, participant: find_pm_account, name: "Project Pending", raw_footage_url: "https://example.com/pending.mov", status: :pending)
 
     patch accept_project_path(project)
 
@@ -228,7 +228,7 @@ RSpec.describe "Projects requests" do
   end
 
   it "accepts a pending project asynchronously" do
-    project = Project.create!(client: find_client_account, pm: find_pm_account, name: "Project Async", raw_footage_url: "https://example.com/async.mov", status: :pending)
+    project = Project.create!(owner: find_client_account, participant: find_pm_account, name: "Project Async", raw_footage_url: "https://example.com/async.mov", status: :pending)
 
     patch accept_project_path(project), headers: { "X-PM-Async-Action" => "1" }
 
@@ -239,7 +239,7 @@ RSpec.describe "Projects requests" do
   end
 
   it "rejects stale asynchronous pm row actions" do
-    project = Project.create!(client: find_client_account, pm: find_pm_account, name: "Project Async Stale", raw_footage_url: "https://example.com/stale.mov", status: :pending)
+    project = Project.create!(owner: find_client_account, participant: find_pm_account, name: "Project Async Stale", raw_footage_url: "https://example.com/stale.mov", status: :pending)
 
     patch accept_project_path(project), headers: { "X-PM-Async-Action" => "1" }
     patch accept_project_path(project), headers: { "X-PM-Async-Action" => "1" }
@@ -249,7 +249,7 @@ RSpec.describe "Projects requests" do
   end
 
   it "completes an in-progress project as the pm" do
-    project = Project.create!(client: find_client_account, pm: find_pm_account, name: "Project Active", raw_footage_url: "https://example.com/active.mov", status: :in_progress)
+    project = Project.create!(owner: find_client_account, participant: find_pm_account, name: "Project Active", raw_footage_url: "https://example.com/active.mov", status: :in_progress)
 
     patch complete_project_path(project)
 
@@ -262,7 +262,7 @@ RSpec.describe "Projects requests" do
   it "creates a client notification when a pending project is accepted" do
     client = find_client_account
     pm = find_pm_account
-    project = Project.create!(client: client, pm: pm, name: "Project Client Update", raw_footage_url: "https://example.com/client-update.mov", status: :pending)
+    project = Project.create!(owner: client, participant: pm, name: "Project Client Update", raw_footage_url: "https://example.com/client-update.mov", status: :pending)
 
     expect do
       patch accept_project_path(project)
@@ -279,7 +279,7 @@ RSpec.describe "Projects requests" do
   it "creates a client notification when an in-progress project is completed" do
     client = find_client_account
     pm = find_pm_account
-    project = Project.create!(client: client, pm: pm, name: "Project Client Complete", raw_footage_url: "https://example.com/client-complete.mov", status: :in_progress)
+    project = Project.create!(owner: client, participant: pm, name: "Project Client Complete", raw_footage_url: "https://example.com/client-complete.mov", status: :in_progress)
 
     expect do
       patch complete_project_path(project)
@@ -294,7 +294,7 @@ RSpec.describe "Projects requests" do
   end
 
   it "completes an in-progress project asynchronously" do
-    project = Project.create!(client: find_client_account, pm: find_pm_account, name: "Project Async Complete", raw_footage_url: "https://example.com/complete.mov", status: :in_progress)
+    project = Project.create!(owner: find_client_account, participant: find_pm_account, name: "Project Async Complete", raw_footage_url: "https://example.com/complete.mov", status: :in_progress)
 
     patch complete_project_path(project), headers: { "X-PM-Async-Action" => "1" }
 
@@ -305,7 +305,7 @@ RSpec.describe "Projects requests" do
   end
 
   it "rejects finalization without selections" do
-    draft = Project.create!(client: find_client_account, pm: find_pm_account, status: :draft)
+    draft = Project.create!(owner: find_client_account, participant: find_pm_account, status: :draft)
 
     patch project_path(draft), params: {
       project: {

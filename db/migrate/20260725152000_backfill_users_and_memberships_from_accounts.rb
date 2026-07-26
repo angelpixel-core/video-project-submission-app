@@ -25,7 +25,7 @@ class BackfillUsersAndMembershipsFromAccounts < ActiveRecord::Migration[8.1]
   private
 
   def validate_preconditions!
-    invalid_accounts = BackfillAccount.where(email: [nil, ""]).or(BackfillAccount.where(role: [nil, ""]))
+    invalid_accounts = BackfillAccount.where(email: [ nil, "" ]).or(BackfillAccount.where(role: [ nil, "" ]))
     return if invalid_accounts.none?
 
     raise "Cannot backfill identity: accounts contain blank email or role values"
@@ -33,8 +33,8 @@ class BackfillUsersAndMembershipsFromAccounts < ActiveRecord::Migration[8.1]
 
   def backfill_users
     user_rows = accounts_grouped_by_email.map do |email, accounts|
-      latest = accounts.max_by { |account| [account.updated_at, account.id] }
-      earliest = accounts.min_by { |account| [account.created_at, account.id] }
+      latest = accounts.max_by { |account| [ account.updated_at, account.id ] }
+      earliest = accounts.min_by { |account| [ account.created_at, account.id ] }
 
       {
         email: normalized_email(email),
