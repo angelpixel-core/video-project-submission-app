@@ -17,7 +17,7 @@ class CommentsController < ApplicationController
   private
 
   def load_project
-    @project = Project.includes(:owner, :participant, comments: :author_account, video_type_selections: :video_type).find(params[:project_id])
+    @project = project_repository.find_for_show(params[:project_id])
   end
 
   def comment_params
@@ -34,5 +34,9 @@ class CommentsController < ApplicationController
     else
       Notification.create!(project: @project, pm: @project.participant, kind: "comment_created", body: "New comment from client on #{@project.name.presence || 'Untitled project'}.")
     end
+  end
+
+  def project_repository
+    @project_repository ||= Projects::Adapters::Persistence::Project::Repository.new
   end
 end

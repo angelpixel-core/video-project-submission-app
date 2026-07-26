@@ -2,15 +2,16 @@ module Projects
   module Application
     module Commands
       class SubmitProject
-        def self.call(project:, participant:, attributes:, selections:)
-          new(project:, participant:, attributes:, selections:).call
+        def self.call(project:, participant:, attributes:, selections:, repository: Projects::Adapters::Persistence::Project::Repository.new)
+          new(project:, participant:, attributes:, selections:, repository:).call
         end
 
-        def initialize(project:, participant:, attributes:, selections:)
+        def initialize(project:, participant:, attributes:, selections:, repository:)
           @project = project
           @participant = participant
           @attributes = attributes
           @selections = selections
+          @repository = repository
         end
 
         def call
@@ -25,7 +26,7 @@ module Projects
               project.assign_attributes(attributes)
               project.participant = participant
               project.submit!
-              sync_project_selections
+              repository.replace_selections(project, selections)
 
               payment_result = Payments::Application::Commands::CreatePayment.(project: project)
               if payment_result.failure?
@@ -50,18 +51,7 @@ module Projects
 
         private
 
-        attr_reader :project, :participant, :attributes, :selections
-
-        def sync_project_selections
-          project.video_type_selections.delete_all
-
-          selections.each do |selection|
-            project.video_type_selections.create!(
-              video_type_id: selection.fetch(:video_type_id),
-              quantity: selection.fetch(:quantity)
-            )
-          end
-        end
+        attr_reader :project, :participant, :attributes, :selections, :repository
 
         def missing_selections_failure
           project.errors.add(:base, "Add at least one video type")

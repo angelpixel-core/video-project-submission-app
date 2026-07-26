@@ -18,7 +18,7 @@ class ProjectsController < ApplicationController
   end
 
   def show
-    @project = Project.includes(:owner, :participant, comments: :author_account, video_type_selections: :video_type).find(params[:id])
+    @project = project_repository.find_for_show(params[:id])
     @payments = @project.payments.includes(:payment_attempts).order(created_at: :desc)
     @comments = @project.comments.chronological.includes(:author_account)
     @comment = Comment.new
@@ -80,7 +80,7 @@ class ProjectsController < ApplicationController
   private
 
   def load_project
-    @project = workspace_for(:client).projects.includes(video_type_selections: :video_type).find(params[:id])
+    @project = project_repository.find_for_edit(workspace_for(:client), params[:id])
   end
 
   def project_attributes
@@ -167,17 +167,6 @@ class ProjectsController < ApplicationController
     request.headers["X-Workspace-Async-Action"] == "1"
   end
 
-  def sync_project_selections(project, selections)
-    project.video_type_selections.delete_all
-
-    selections.each do |selection|
-      project.video_type_selections.create!(
-        video_type_id: selection.fetch(:video_type_id),
-        quantity: selection.fetch(:quantity)
-      )
-    end
-  end
-
   def load_video_types
     @video_types = Catalog::Application::Queries::ListPublicVideoTypes.call(account: workspace_for(:client)).data.fetch(:video_types)
   end
@@ -189,7 +178,11 @@ class ProjectsController < ApplicationController
   end
 
   def load_workspace_project
-    @workspace_project = workspace_for(:pm).projects.find(params[:id])
+    @workspace_project = project_repository.find_for_workspace_action(workspace_for(:pm), params[:id])
+  end
+
+  def project_repository
+    @project_repository ||= Projects::Adapters::Persistence::Project::Repository.new
   end
 
   def workspace_row_action_payload

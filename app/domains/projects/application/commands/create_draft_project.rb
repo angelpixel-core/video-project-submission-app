@@ -2,13 +2,14 @@ module Projects
   module Application
     module Commands
       class CreateDraftProject
-        def self.call(client_workspace:, pm_workspace:)
-          new(client_workspace:, pm_workspace:).call
+        def self.call(client_workspace:, pm_workspace:, repository: Projects::Adapters::Persistence::Project::Repository.new)
+          new(client_workspace:, pm_workspace:, repository:).call
         end
 
-        def initialize(client_workspace:, pm_workspace:)
+        def initialize(client_workspace:, pm_workspace:, repository:)
           @client_workspace = client_workspace
           @pm_workspace = pm_workspace
+          @repository = repository
         end
 
         def call
@@ -17,11 +18,10 @@ module Projects
 
         private
 
-        attr_reader :client_workspace, :pm_workspace
+        attr_reader :client_workspace, :pm_workspace, :repository
 
         def draft_project
-          client_workspace.projects.draft.order(created_at: :desc).first ||
-            client_workspace.projects.create!(participant: pm_workspace, status: :draft)
+          repository.find_or_create_draft_for_owner(client_workspace, pm_workspace)
         end
       end
     end
