@@ -41,7 +41,7 @@ class ProjectsController < ApplicationController
     selections = parsed_selections
 
     if finalize_submission?
-      result = Projects::SubmissionService.call(
+      result = Projects::Application::Commands::SubmitProject.call(
         project: @project,
         participant: workspace_for(:pm),
         attributes: project_attributes,
