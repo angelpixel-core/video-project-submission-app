@@ -21,8 +21,8 @@ title: Application Boundaries and Repositories
 
 ## Goal
 
-- [ ] Modularize the application boundaries so controllers stay thin, business workflows move to use cases/handlers, and local persistence access is isolated behind repositories.
-- [ ] Consolidate the `identity` vocabulary so workspace lookup, `User`, `Account`, and `Role` follow one explicit model instead of overlapping legacy names.
+- [x] Modularize the application boundaries so controllers stay thin, business workflows move to use cases/handlers, and local persistence access is isolated behind repositories.
+- [x] Consolidate the `identity` vocabulary so workspace lookup, `User`, `Account`, and `Role` follow one explicit model instead of overlapping legacy names.
 
 ## Scope
 
@@ -32,7 +32,7 @@ title: Application Boundaries and Repositories
 - Keep repositories focused on `ActiveRecord` access, not external integrations.
 - Remove demo-only flags from domain objects and move them to test/demo tooling.
 - Prepare the codebase for more explicit domain workflows without over-abstracting.
-- Keep `Identity::Application::Queries::ResolveWorkspaceAccounts` as the single workspace lookup entrypoint.
+- Keep `Identity::Application::Queries::ResolveWorkspaceAccount` as the single workspace lookup entrypoint.
 - Redesign the `identity` model so `User` is the identity root, `Account` is the operational workspace profile, and `Role` is an assignable concept that can grow from one role to many.
 - Remove the assumption that a role is encoded only on `Account`; existing `client` and `pm` access should be expressible through `User` role assignments.
 - Keep the current runtime behavior stable while the model is reshaped behind the existing application boundary.
@@ -60,7 +60,7 @@ title: Application Boundaries and Repositories
 
 ### Identity Example
 
-- `Identity::Application::Queries::ResolveWorkspaceAccounts` resolves the active workspace accounts used by the application.
+- `Identity::Application::Queries::ResolveWorkspaceAccount` resolves the active workspace account used by the application.
 - `Identity::Domain::Aggregates::User` owns identity-level data, access state, preferences, memberships, and lifecycle rules.
 - `Identity::Domain::Aggregates::Account` remains the workspace-facing profile used by the app.
 - `Identity::Domain::ValueObjects::Role` models role membership so a user can hold one or many roles.
@@ -124,11 +124,11 @@ ACTIVE RECORD ROOT                ACTIVE RECORD CHILDREN
 
 - [x] Identify the highest-value flows to extract first.
 - [x] Move payment and notification orchestration out of controllers into use cases.
-- [ ] Add repositories for local models only where repeated query/write logic exists.
-- [ ] Keep domain objects free of HTTP/demo concerns.
-- [ ] Define a consistent folder/package structure for application, domain, repository, and service layers.
+- [x] Add repositories for local models only where repeated query/write logic exists.
+- [x] Keep domain objects free of HTTP/demo concerns.
+- [x] Define a consistent folder/package structure for application, domain, repository, and service layers.
 - [x] Add specs around the extracted boundaries.
-- [x] Keep `WorkspaceResolver` on `ResolveWorkspaceAccounts` and document that the defaults are injected implicitly through configuration.
+- [x] Keep `WorkspaceResolver` on `ResolveWorkspaceAccount` and document that the defaults are injected implicitly through configuration.
 - [x] Introduce the `User`/`Role` redesign without breaking the current `Account`-based application flows.
 - [x] Migrate or wrap the current single-role account behavior so client/PM access still resolves correctly.
 - [x] Add specs that document the new identity vocabulary and the transition boundary.
@@ -138,15 +138,15 @@ ACTIVE RECORD ROOT                ACTIVE RECORD CHILDREN
 1. Schema
    - [x] Migration 1: create a new `users` table with `email` (unique, not null), `access_state`, `preferred_locale`, `timezone`, `notification_settings`, and lifecycle timestamps such as `invited_at`, `verified_at`, `suspended_at`, and `deactivated_at`.
    - [x] Migration 2: create a new `memberships` table with `user_id`, `account_id`, `role`, timestamps, a unique index on `[user_id, account_id]`, and lookup indexes for account/role queries.
-   - [ ] Migration 3: add tenant/workspace configuration columns to `accounts` only if we need them during the transition, such as `plan`, `limits`, and `settings`, without dropping the existing columns yet.
-   - [ ] Migration 4: keep the current `accounts.email`, `accounts.role`, and existing relationship columns in place until the later migration/cleanup step proves parity.
+   - [x] Migration 3: add tenant/workspace configuration columns to `accounts` only if we need them during the transition, such as `plan`, `limits`, and `settings`, without dropping the existing columns yet.
+   - [x] Migration 4: keep the current `accounts.email`, `accounts.role`, and existing relationship columns in place until the later migration/cleanup step proves parity.
 2. Domain model
    - [x] Define the `User` aggregate as the canonical identity root with email uniqueness, access state, lifecycle timestamps, and preferences.
-   - [ ] Define the `Account` aggregate as the tenant/workspace surface with plan, limits, feature flags, and workspace settings.
+   - [x] Define the `Account` aggregate as the tenant/workspace surface with plan, limits, feature flags, and workspace settings.
    - [x] Introduce `Membership` as the association object that binds one `User` to one `Account`.
    - [x] Move role assignment onto `Membership` and keep `Role` as the capability-bearing value object or membership attribute.
    - [x] Keep `Account` role-related behavior only as a compatibility bridge until callers move to memberships.
-   - [ ] Add domain invariants that make `User` the source of identity and `Account` the source of tenant/workspace configuration.
+   - [x] Add domain invariants that make `User` the source of identity and `Account` the source of tenant/workspace configuration.
 3. Persistence
    - [x] 1. Add a `User` contract plus repository/adapter pair for user lookups and lifecycle updates.
    - [x] 2. Add a `Membership` contract plus repository/adapter pair for binding users to accounts and resolving roles.
@@ -155,7 +155,7 @@ ACTIVE RECORD ROOT                ACTIVE RECORD CHILDREN
    - [x] 5. Add persistence specs for `User`, `Membership`, and the compatibility behavior in `AccountRepository`.
    - [x] 6. Preserve the existing `Account` lookup APIs until the application boundary switches over.
 4. Application boundary
-    - [x] Keep `ResolveWorkspaceAccounts` stable.
+    - [x] Keep `ResolveWorkspaceAccount` stable.
     - [x] Update `WorkspaceResolver` and workspace helpers to derive behavior from the new identity model.
     - [x] Preserve `Account`-based callsites until the migration is complete.
 5. Migration
@@ -195,19 +195,19 @@ Do not start step N+1 until step N is complete and validated.
 - [ ] Use cases coordinate domain steps and side effects.
 - [ ] Demo/test flags are not part of domain models.
 - [ ] The architecture is easier to extend for invoices, mail, and future payment methods.
-- [x] `ResolveWorkspaceAccounts` is the only workspace lookup query name used by application code.
-- [ ] `User`, `Account`, and `Role` have distinct responsibilities.
-- [ ] Role assignment can evolve beyond a single enum-like field on `Account`.
-- [ ] `User` owns identity and lifecycle while `Account` owns tenant/workspace settings.
-- [ ] `Membership` binds a user to an account and carries the role.
+- [x] `ResolveWorkspaceAccount` is the only workspace lookup query name used by application code.
+- [x] `User`, `Account`, and `Role` have distinct responsibilities.
+- [x] Role assignment can evolve beyond a single enum-like field on `Account`.
+- [x] `User` owns identity and lifecycle while `Account` owns tenant/workspace settings.
+- [x] `Membership` binds a user to an account and carries the role.
 
 ## Validation
 
-- [ ] Specs cover the extracted use cases.
-- [ ] Specs cover repository behavior.
-- [ ] Controllers remain thin and stable.
-- [ ] Specs cover `ResolveWorkspaceAccounts` and its consumers.
-- [ ] Specs cover the `User`/`Account`/`Role` relationship boundary.
+- [x] Specs cover the extracted use cases.
+- [x] Specs cover repository behavior.
+- [x] Controllers remain thin and stable.
+- [x] Specs cover `ResolveWorkspaceAccount` and its consumers.
+- [x] Specs cover the `User`/`Account`/`Role` relationship boundary.
 
 ## Notes
 

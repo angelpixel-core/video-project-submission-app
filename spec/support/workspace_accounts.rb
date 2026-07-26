@@ -40,7 +40,6 @@ module WorkspaceAccounts
   rescue ActiveRecord::RecordNotUnique
     Identity::Domain::Aggregates::User.find_by!(email: normalized_workspace_email(email))
   end
-
 end
 
 RSpec.configure do |config|
