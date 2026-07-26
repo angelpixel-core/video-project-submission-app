@@ -6,8 +6,8 @@ RSpec.describe Payments::Adapters::Inbound::Webhooks::Event::Job do
   it "delegates to the payment event handler when the event exists" do
     payment = Payments::Domain::Aggregates::Payment.create!(
       project: Project.create!(
-        client: client_account(name: "Client"),
-        pm: pm_account(name: "PM"),
+        owner: client_account(name: "Client"),
+        participant: pm_account(name: "PM"),
         name: "Project",
         raw_footage_url: "https://example.com/raw.mov",
         status: :pending
@@ -63,8 +63,8 @@ RSpec.describe Payments::Adapters::Inbound::Webhooks::Event::Job do
   it "retries the demo transient failure and eventually processes the event" do
     payment = Payments::Domain::Aggregates::Payment.create!(
       project: Project.create!(
-        client: client_account(name: "Client"),
-        pm: pm_account(name: "PM"),
+        owner: client_account(name: "Client"),
+        participant: pm_account(name: "PM"),
         name: "Project",
         raw_footage_url: "https://example.com/raw.mov",
         status: :pending
