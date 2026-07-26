@@ -56,10 +56,10 @@
             </colgroup>
             <thead>
               <tr>
-                <th scope="col"><%= pm_table_sort_link("ID", "id", @pm_sort, @pm_direction, @pm_page) %></th>
+                <th scope="col"><%= table_sort_link("ID", "id", @pm_sort, @pm_direction, @pm_page, path: projects_path) %></th>
                 <th scope="col">Project</th>
-                <th scope="col"><%= pm_table_sort_link("Created at", "created_at", @pm_sort, @pm_direction, @pm_page) %></th>
-                <th scope="col"><%= pm_table_sort_link("Total budget", "total_budget", @pm_sort, @pm_direction, @pm_page) %></th>
+                <th scope="col"><%= table_sort_link("Created at", "created_at", @pm_sort, @pm_direction, @pm_page, path: projects_path) %></th>
+                <th scope="col"><%= table_sort_link("Total budget", "total_budget", @pm_sort, @pm_direction, @pm_page, path: projects_path) %></th>
                 <th scope="col">Status</th>
                 <th scope="col" class="text-end">Actions</th>
               </tr>
@@ -83,7 +83,7 @@
                 <% if @pm_page.to_i <= 1 %>
                   <span class="page-link">Prev</span>
                 <% else %>
-                  <%= link_to "Prev", projects_path(pm_table_query_params(page: @pm_page.to_i - 1, sort: @pm_sort, direction: @pm_direction)), class: "page-link" %>
+                  <%= link_to "Prev", projects_path(table_query_params(page: @pm_page.to_i - 1, sort: @pm_sort, direction: @pm_direction)), class: "page-link" %>
                 <% end %>
               </li>
 
@@ -95,7 +95,7 @@
                 <% end %>
 
                 <li class="page-item <%= 'active' if page_number == @pm_page.to_i %>">
-                  <%= link_to page_number, projects_path(pm_table_query_params(page: page_number, sort: @pm_sort, direction: @pm_direction)), class: "page-link" %>
+                  <%= link_to page_number, projects_path(table_query_params(page: page_number, sort: @pm_sort, direction: @pm_direction)), class: "page-link" %>
                 </li>
               <% end %>
 
@@ -103,7 +103,7 @@
                 <% if @pm_page.to_i >= @pm_total_pages.to_i %>
                   <span class="page-link">Next</span>
                 <% else %>
-                  <%= link_to "Next", projects_path(pm_table_query_params(page: @pm_page.to_i + 1, sort: @pm_sort, direction: @pm_direction)), class: "page-link" %>
+                  <%= link_to "Next", projects_path(table_query_params(page: @pm_page.to_i + 1, sort: @pm_sort, direction: @pm_direction)), class: "page-link" %>
                 <% end %>
               </li>
             </ul>

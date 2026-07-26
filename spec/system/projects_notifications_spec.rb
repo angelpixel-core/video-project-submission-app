@@ -137,14 +137,14 @@ RSpec.describe "PM notifications", type: :system, js: true do
     click_link "ID"
 
     expect(page).to have_current_path(projects_path(page: 2, sort: "id", direction: "desc"), ignore_query: false)
-    expect(page).to have_css(".pm-table-sort-link.is-active[aria-current='true']")
-    expect(page).to have_css(".pm-table-sort-link.is-active .pm-table-sort-arrow.is-active", text: "↓")
+    expect(page).to have_css(".table-sort-link.is-active[aria-current='true']")
+    expect(page).to have_css(".table-sort-link.is-active .table-sort-arrow.is-active", text: "↓")
 
     click_link "ID"
 
     expect(page).to have_current_path(projects_path(page: 2, sort: "id", direction: "asc"), ignore_query: false)
-    expect(page).to have_css(".pm-table-sort-link.is-active[aria-current='true']")
-    expect(page).to have_css(".pm-table-sort-link.is-active .pm-table-sort-arrow.is-active", text: "↑")
+    expect(page).to have_css(".table-sort-link.is-active[aria-current='true']")
+    expect(page).to have_css(".table-sort-link.is-active .table-sort-arrow.is-active", text: "↑")
 
     click_link "ID"
 

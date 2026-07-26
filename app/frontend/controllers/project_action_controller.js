@@ -1,5 +1,4 @@
 import { Controller } from "@hotwired/stimulus"
-import { forceRefreshWorkspace } from "../lib/workspace_refresh"
 
 export default class ProjectActionController extends Controller {
   async submit(event) {
@@ -9,7 +8,7 @@ export default class ProjectActionController extends Controller {
     if (submitter) submitter.disabled = true
 
     try {
-      await fetch(this.element.action, {
+      const response = await fetch(this.element.action, {
         method: "POST",
         headers: {
           "X-PM-Async-Action": "1"
@@ -17,10 +16,21 @@ export default class ProjectActionController extends Controller {
         body: new FormData(this.element)
       })
 
-      await new Promise((resolve) => window.setTimeout(resolve, 50))
-      await forceRefreshWorkspace({ role: "pm" })
-      await new Promise((resolve) => window.setTimeout(resolve, 50))
-      await forceRefreshWorkspace({ role: "pm" })
+      if (response.ok) {
+        const data = await response.json()
+        const currentRow = this.element.closest("tr")
+
+        if (currentRow) {
+          const statusBadge = currentRow.querySelector("td:nth-child(5) .badge")
+          if (statusBadge) {
+            statusBadge.textContent = data.status_badge_text
+            statusBadge.className = `badge ${data.status_badge_class} text-white text-uppercase`
+          }
+
+          const actionCell = currentRow.querySelector("td:nth-child(6)")
+          if (actionCell) actionCell.innerHTML = buildPmActionMarkup({ projectId: data.project_id, action: data.action })
+        }
+      }
     } catch {
       // If the async path fails, the next refresh or navigation will restore state.
     } finally {
@@ -28,4 +38,19 @@ export default class ProjectActionController extends Controller {
       if (submitter) submitter.disabled = false
     }
   }
+}
+
+function buildPmActionMarkup({ projectId, action }) {
+  if (action === "complete") {
+    return `
+      <div class="d-inline-flex flex-wrap gap-2 justify-content-end">
+        <form data-controller="project-action" data-action="submit->project-action#submit" class="button_to" method="post" action="/projects/${projectId}/complete">
+          <input type="hidden" name="_method" value="patch" />
+          <button class="btn btn-sm btn-outline-success" type="submit">Marcar como completado</button>
+        </form>
+      </div>
+    `
+  }
+
+  return "<div class=\"d-inline-flex flex-wrap gap-2 justify-content-end\"></div>"
 }

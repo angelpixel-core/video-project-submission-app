@@ -667,7 +667,7 @@ a:hover {
   min-width: 0;
 }
 
-.pm-table-sort-link {
+.table-sort-link {
   display: inline-flex;
   align-items: center;
   justify-content: space-between;
@@ -679,16 +679,16 @@ a:hover {
   transition: color 180ms ease, border-color 180ms ease;
 }
 
-.pm-table-sort-link.is-active {
+.table-sort-link.is-active {
   color: var(--bs-primary);
   border-bottom-color: var(--bs-primary);
 }
 
-.pm-table-sort-label {
+.table-sort-label {
   min-width: 0;
 }
 
-.pm-table-sort-arrows {
+.table-sort-arrows {
   display: inline-flex;
   flex-direction: column;
   align-items: center;
@@ -698,13 +698,13 @@ a:hover {
   color: var(--bs-secondary-color);
 }
 
-.pm-table-sort-arrow {
+.table-sort-arrow {
   font-size: 0.62rem;
   opacity: 0.45;
   transition: color 180ms ease, opacity 180ms ease;
 }
 
-.pm-table-sort-arrow.is-active {
+.table-sort-arrow.is-active {
   color: var(--bs-primary);
   opacity: 1;
 }

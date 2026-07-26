@@ -74,7 +74,7 @@ RSpec.describe "Projects requests" do
     expect(response.body).to include("ID")
     expect(response.body).to include("Created at")
     expect(response.body).to include("Total budget")
-    expect(response.body).to include("pm-table-sort-link is-active")
+    expect(response.body).to include("table-sort-link is-active")
     expect(response.body).to include("sort=id")
     expect(response.body).to include("direction=desc")
     expect(response.body).to include("sort=created_at")
@@ -232,7 +232,13 @@ RSpec.describe "Projects requests" do
 
     patch accept_project_path(project), headers: { "X-PM-Async-Action" => "1" }
 
-    expect(response).to have_http_status(:no_content)
+    expect(response).to have_http_status(:ok)
+    expect(JSON.parse(response.body)).to include(
+      "project_id" => project.id,
+      "status_badge_text" => "En progreso",
+      "status_badge_class" => "text-bg-info",
+      "action" => "complete"
+    )
 
     project.reload
     expect(project.status).to eq("in_progress")
@@ -298,7 +304,13 @@ RSpec.describe "Projects requests" do
 
     patch complete_project_path(project), headers: { "X-PM-Async-Action" => "1" }
 
-    expect(response).to have_http_status(:no_content)
+    expect(response).to have_http_status(:ok)
+    expect(JSON.parse(response.body)).to include(
+      "project_id" => project.id,
+      "status_badge_text" => "Completado",
+      "status_badge_class" => "text-bg-success",
+      "action" => nil
+    )
 
     project.reload
     expect(project.status).to eq("completed")

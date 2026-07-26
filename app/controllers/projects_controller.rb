@@ -145,7 +145,7 @@ class ProjectsController < ApplicationController
 
   def respond_pm_row_action_success(success_notice)
     if pm_async_action_request?
-      head :no_content
+      render json: pm_row_action_payload
     else
       redirect_to projects_path, notice: success_notice
     end
@@ -186,5 +186,14 @@ class ProjectsController < ApplicationController
 
   def load_pm_project
     @pm_project = workspace_for(:pm).projects.find(params[:id])
+  end
+
+  def pm_row_action_payload
+    {
+      project_id: @pm_project.id,
+      status_badge_text: @pm_project.status_badge_text,
+      status_badge_class: @pm_project.status_badge_class,
+      action: @pm_project.pending? ? "complete" : (@pm_project.in_progress? ? "complete" : nil)
+    }
   end
 end
