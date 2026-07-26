@@ -1,11 +1,16 @@
 module WorkspaceAccounts
   def workspace_account(role, email:, name:)
-    account = Identity::Domain::Aggregates::Account.create!(name: name, email: email, role: role)
-    user = Identity::Domain::Aggregates::User.find_or_initialize_by(email: email)
+    account = Identity::Domain::Aggregates::Account.find_by(email: email)
+    unless account
+      account = Identity::Domain::Aggregates::Account.create!(name: name, email: email, role: role)
+    end
+    account.update_columns(name: name) if account.name != name
 
-    user.name = name
-    user.access_state = :active
-    user.save!
+    user = Identity::Domain::Aggregates::User.find_by(email: email)
+    unless user
+      user = Identity::Domain::Aggregates::User.create!(name: name, email: email, access_state: :active, notification_settings: {})
+    end
+    user.update_columns(name: name, access_state: "active", notification_settings: {}) if user.name != name || user.access_state != "active" || user.notification_settings.blank?
 
     Identity::Domain::Aggregates::Membership.find_or_create_by!(user: user, account: account) do |membership|
       membership.role = role

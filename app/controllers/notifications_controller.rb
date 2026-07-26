@@ -9,7 +9,7 @@ class NotificationsController < ApplicationController
   private
 
   def find_notification
-    current_client.notifications.find_by(id: params[:id]) || default_pm.notifications.find_by(id: params[:id]) ||
+    workspace_for(:client).notifications.find_by(id: params[:id]) || workspace_for(:pm).notifications.find_by(id: params[:id]) ||
       raise(ActiveRecord::RecordNotFound)
   end
 end

@@ -3,11 +3,11 @@ require "rails_helper"
 RSpec.describe ApplicationController, type: :controller do
   controller(ApplicationController) do
     def client_workspace
-      render plain: current_client.name
+      render plain: workspace_for(:client).name
     end
 
     def pm_workspace
-      render plain: default_pm.name
+      render plain: workspace_for(:pm).name
     end
   end
 
@@ -18,12 +18,14 @@ RSpec.describe ApplicationController, type: :controller do
     end
   end
 
-  it "keeps current_client and default_pm wired to the workspace resolver" do
+  it "keeps workspace_for wired to the workspace resolver" do
     client = client_account(email: "controller-client@example.com", name: "Controller Client")
     pm = pm_account(email: "controller-pm@example.com", name: "Controller PM")
+    resolver = instance_double(Identity::Application::Services::WorkspaceResolver)
 
-    expect_any_instance_of(Identity::Application::Services::WorkspaceResolver).to receive(:client).and_return(client)
-    expect_any_instance_of(Identity::Application::Services::WorkspaceResolver).to receive(:pm).and_return(pm)
+    allow(resolver).to receive(:workspace_for).with(:client).and_return(client)
+    allow(resolver).to receive(:workspace_for).with(:pm).and_return(pm)
+    allow(controller).to receive(:workspace_resolver).and_return(resolver)
 
     get :client_workspace
     expect(response.body).to eq("Controller Client")

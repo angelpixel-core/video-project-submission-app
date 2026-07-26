@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
-import { forceRefreshPmWorkspace } from "../lib/workspace_refresh"
+import { forceRefreshWorkspace } from "../lib/workspace_refresh"
 
-export default class extends Controller {
+export default class ProjectActionController extends Controller {
   async submit(event) {
     event.preventDefault()
 
@@ -17,7 +17,7 @@ export default class extends Controller {
         body: new FormData(this.element)
       })
 
-      await forceRefreshPmWorkspace()
+      await forceRefreshWorkspace({ role: "pm" })
     } catch {
       // If the async path fails, the next refresh or navigation will restore state.
     } finally {

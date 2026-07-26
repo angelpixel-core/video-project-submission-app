@@ -2,7 +2,7 @@ class ApplicationController < ActionController::Base
   # Only allow modern browsers supporting webp images, web push, badges, CSS nesting, and CSS :has.
   allow_browser versions: :modern
 
-  helper_method :current_client, :default_pm, :unread_notifications, :unread_client_notifications
+  helper_method :workspace_for, :workspace_notifications_for, :workspace_role
 
   private
 
@@ -10,19 +10,16 @@ class ApplicationController < ActionController::Base
     @workspace_resolver ||= Identity::Application::Services::WorkspaceResolver.new
   end
 
-  def current_client
-    @current_client ||= workspace_resolver.client
+  def workspace_for(role)
+    workspace_resolver.workspace_for(role)
   end
 
-  def default_pm
-    @default_pm ||= workspace_resolver.pm
+  def workspace_role
+    @workspace_role ||= cookies[:workspace_role].presence_in(%w[client pm])&.to_sym || :client
   end
 
-  def unread_notifications
-    @unread_notifications ||= default_pm.notifications.unread.includes(project: :client_account).order(created_at: :desc)
-  end
-
-  def unread_client_notifications
-    @unread_client_notifications ||= current_client.notifications.unread.includes(project: :pm_account).order(created_at: :desc)
+  def workspace_notifications_for(role)
+    @workspace_notifications ||= {}
+    @workspace_notifications[role.to_sym] ||= workspace_for(role).notifications.unread.includes(project: role == :pm ? :client_account : :pm_account).order(created_at: :desc)
   end
 end

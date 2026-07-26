@@ -25,7 +25,7 @@ class CommentsController < ApplicationController
   end
 
   def comment_author
-    comment_params[:author_role] == "pm" ? default_pm : current_client
+    comment_params[:author_role] == "pm" ? workspace_for(:pm) : workspace_for(:client)
   end
 
   def create_comment_notification!(comment)

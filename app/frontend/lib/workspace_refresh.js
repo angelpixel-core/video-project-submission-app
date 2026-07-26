@@ -19,14 +19,6 @@ export function refreshWorkspace({ role, suppressToast = false } = {}) {
   return refreshWorkspaceNotifications(config)
 }
 
-export function refreshClientWorkspace(options = {}) {
-  return refreshWorkspace({ role: "client", ...options })
-}
-
-export function refreshPmWorkspace(options = {}) {
-  return refreshWorkspace({ role: "pm", ...options })
-}
-
-export function forceRefreshPmWorkspace(options = {}) {
-  return refreshWorkspace({ role: "pm", ...options, force: true })
+export function forceRefreshWorkspace({ role, suppressToast = false } = {}) {
+  return refreshWorkspace({ role, suppressToast, force: true })
 }

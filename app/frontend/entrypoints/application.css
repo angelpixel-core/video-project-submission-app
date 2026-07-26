@@ -1,5 +1,5 @@
-html[data-role-mode="client"] [data-role-scope="pm"],
-html[data-role-mode="pm"] [data-role-scope="client"] {
+html[data-workspace-role="client"] [data-role-scope="pm"],
+html[data-workspace-role="pm"] [data-role-scope="client"] {
   display: none !important;
 }
 

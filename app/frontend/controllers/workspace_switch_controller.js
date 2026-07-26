@@ -1,9 +1,9 @@
 import { Controller } from "@hotwired/stimulus"
 
-const STORAGE_KEY = "workspace-mode"
+const STORAGE_KEY = "workspace-role"
 const VALID_MODES = new Set(["client", "pm"])
 
-export default class extends Controller {
+export default class WorkspaceSwitchController extends Controller {
   static targets = ["switchAction", "modeLabel"]
 
   connect() {
@@ -27,14 +27,16 @@ export default class extends Controller {
   applyMode(mode) {
     const nextMode = VALID_MODES.has(mode) ? mode : "client"
     this.mode = nextMode
-    this.element.dataset.roleMode = nextMode
-    document.documentElement.dataset.roleMode = nextMode
+    this.element.dataset.workspaceRole = nextMode
+    document.documentElement.dataset.workspaceRole = nextMode
 
     try {
       window.sessionStorage.setItem(STORAGE_KEY, nextMode)
     } catch {
       // Session storage can be blocked in some browsers; the UI still works.
     }
+
+    document.cookie = `workspace_role=${nextMode}; path=/; samesite=lax`
 
     if (this.hasSwitchActionTarget) {
       const nextTargetMode = nextMode === "client" ? "pm" : "client"

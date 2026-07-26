@@ -36,7 +36,7 @@ RSpec.describe "Project status badge realtime", type: :system, js: true do
       visit projects_path
 
       expect(page).to have_css("##{project.status_badge_dom_id}", text: "PENDIENTE")
-      expect(page).to have_css("html[data-role-mode='client']")
+      expect(page).to have_css("html[data-workspace-role='client']")
       expect(page).to have_css("html[data-project-status-connected='true']")
     end
 

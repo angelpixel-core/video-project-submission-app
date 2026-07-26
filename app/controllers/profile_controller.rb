@@ -3,22 +3,25 @@ require "open-uri"
 
 class ProfileController < ApplicationController
   def show
+    client_workspace = workspace_for(:client)
+    pm_workspace = workspace_for(:pm)
+
     @profile_contexts = [
       {
         scope: "client",
         role_label: "Client",
-        record: current_client,
-        name: current_client.name,
-        email: current_client.email,
-        token: demo_token_for(current_client.email, "client")
+        record: client_workspace,
+        name: client_workspace.name,
+        email: client_workspace.email,
+        token: demo_token_for(client_workspace.email, "client")
       },
       {
         scope: "pm",
         role_label: "Project Manager",
-        record: default_pm,
-        name: default_pm.name,
-        email: default_pm.email,
-        token: demo_token_for(default_pm.email, "pm")
+        record: pm_workspace,
+        name: pm_workspace.name,
+        email: pm_workspace.email,
+        token: demo_token_for(pm_workspace.email, "pm")
       }
     ]
   end
@@ -53,9 +56,9 @@ class ProfileController < ApplicationController
   def profile_record_from_params
     case profile_params[:scope]
     when "pm"
-      default_pm
+      workspace_for(:pm)
     else
-      current_client
+      workspace_for(:client)
     end
   end
 

@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe Projects::PMActionService do
+RSpec.describe Projects::ActionService do
   it "accepts a pending project and marks unread pm notifications as read" do
     client = client_account
     pm = pm_account

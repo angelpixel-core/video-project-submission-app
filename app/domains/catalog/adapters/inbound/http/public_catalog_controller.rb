@@ -4,7 +4,7 @@ module Catalog
       module Http
         class PublicCatalogController < ApplicationController
           def index
-            result = Catalog::Application::Queries::ListPublicVideoTypes.call(account: current_client)
+            result = Catalog::Application::Queries::ListPublicVideoTypes.call(account: workspace_for(:client))
             @video_types = result.data.fetch(:video_types)
           end
 

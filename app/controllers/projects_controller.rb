@@ -7,7 +7,7 @@ class ProjectsController < ApplicationController
   def index
     status_order = Arel.sql("CASE status WHEN 'draft' THEN 0 WHEN 'pending' THEN 1 WHEN 'in_progress' THEN 2 WHEN 'completed' THEN 3 ELSE 4 END")
 
-    @projects = current_client.projects.includes(video_type_selections: :video_type).order(status_order, created_at: :desc)
+    @projects = workspace_for(:client).projects.includes(video_type_selections: :video_type).order(status_order, created_at: :desc)
 
     @pm_table_query = ::Projects::ListingQuery.new(params)
     @pm_sort = @pm_table_query.sort.presence || "created_at"
@@ -25,7 +25,9 @@ class ProjectsController < ApplicationController
   end
 
   def new
-    project = current_client.projects.draft.order(created_at: :desc).first || current_client.projects.create!(pm: default_pm, status: :draft)
+    client_workspace = workspace_for(:client)
+    pm_workspace = workspace_for(:pm)
+    project = client_workspace.projects.draft.order(created_at: :desc).first || client_workspace.projects.create!(pm: pm_workspace, status: :draft)
     redirect_to edit_project_path(project)
   end
 
@@ -39,7 +41,7 @@ class ProjectsController < ApplicationController
     if finalize_submission?
       result = Projects::SubmissionService.call(
         project: @project,
-        pm: default_pm,
+        pm: workspace_for(:pm),
         attributes: project_attributes,
         selections: selections
       )
@@ -64,7 +66,7 @@ class ProjectsController < ApplicationController
   private
 
   def load_project
-    @project = current_client.projects.includes(video_type_selections: :video_type).find(params[:id])
+    @project = workspace_for(:client).projects.includes(video_type_selections: :video_type).find(params[:id])
   end
 
   def project_attributes
@@ -103,7 +105,7 @@ class ProjectsController < ApplicationController
   def autosave_project!(selections)
     Project.transaction do
       @project.assign_attributes(project_attributes)
-      @project.pm ||= default_pm
+      @project.pm ||= workspace_for(:pm)
       @project.status = :draft
       @project.save!
       sync_project_selections(@project, selections)
@@ -131,7 +133,7 @@ class ProjectsController < ApplicationController
   private
 
   def process_pm_action(event:, success_notice:, stale_alert:)
-    result = Projects::PMActionService.call(project: @pm_project, event: event)
+    result = Projects::ActionService.call(project: @pm_project, event: event)
 
     if result.success?
       respond_pm_row_action_success(success_notice)
@@ -173,7 +175,7 @@ class ProjectsController < ApplicationController
   end
 
   def load_video_types
-    @video_types = Catalog::Application::Queries::ListPublicVideoTypes.call(account: current_client).data.fetch(:video_types)
+    @video_types = Catalog::Application::Queries::ListPublicVideoTypes.call(account: workspace_for(:client)).data.fetch(:video_types)
   end
 
   def ensure_draft_project
@@ -183,6 +185,6 @@ class ProjectsController < ApplicationController
   end
 
   def load_pm_project
-    @pm_project = default_pm.projects.find(params[:id])
+    @pm_project = workspace_for(:pm).projects.find(params[:id])
   end
 end

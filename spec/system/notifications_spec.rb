@@ -17,7 +17,7 @@ RSpec.describe "Notifications", type: :system, js: true do
 
     visit projects_path
 
-    expect(page).to have_css('html[data-role-mode="client"]')
+    expect(page).to have_css('html[data-workspace-role="client"]')
     expect(page).to have_css('#client-notifications-dropdown .client-notifications-badge', text: "1")
     expect(page).to have_css('#client-notifications-panel .client-notification-toast', text: "Project Alpha")
 
@@ -58,7 +58,7 @@ RSpec.describe "Notifications", type: :system, js: true do
 
     using_session(:client) do
       visit projects_path
-      expect(page).to have_css('html[data-role-mode="client"]')
+      expect(page).to have_css('html[data-workspace-role="client"]')
       expect(page).to have_no_css('#client-notifications-panel .client-notification-toast')
     end
 

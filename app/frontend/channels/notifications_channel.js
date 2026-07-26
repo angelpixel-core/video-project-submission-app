@@ -1,9 +1,9 @@
-import { refreshClientWorkspace, refreshPmWorkspace } from "../lib/workspace_refresh"
+import { refreshWorkspace } from "../lib/workspace_refresh"
 import { shouldSuppressNotificationToast } from "../lib/workspace_notification_refresh"
 
 export function subscribeToNotifications(consumer, { role }) {
-  const connectedKey = role === "pm" ? "pmNotificationsConnected" : "clientNotificationsConnected"
-  const receivedKey = role === "pm" ? "pmNotificationsReceived" : "clientNotificationsReceived"
+  const connectedKey = `${role}WorkspaceNotificationsConnected`
+  const receivedKey = `${role}WorkspaceNotificationsReceived`
 
   return consumer.subscriptions.create({ channel: "NotificationsChannel", role }, {
     connected() {
@@ -15,11 +15,7 @@ export function subscribeToNotifications(consumer, { role }) {
 
       if (data?.type === "notifications_updated") {
         const suppressToast = shouldSuppressNotificationToast(data)
-        if (role === "pm") {
-          await refreshPmWorkspace({ suppressToast })
-        } else {
-          await refreshClientWorkspace({ suppressToast })
-        }
+        await refreshWorkspace({ role, suppressToast })
       }
     }
   })

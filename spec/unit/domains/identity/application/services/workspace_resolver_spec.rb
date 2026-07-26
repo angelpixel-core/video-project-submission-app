@@ -21,28 +21,28 @@ RSpec.describe Identity::Application::Services::WorkspaceResolver do
     end
   end
 
-  it "resolves the workspace client and pm from env vars" do
+  it "resolves workspaces from env vars" do
     ENV["DEFAULT_CLIENT_EMAIL"] = "client@example.com"
     ENV["DEFAULT_PM_EMAIL"] = "pm@example.com"
 
     client = client_account
     pm = pm_account
 
-    expect(described_class.new.client).to eq(client)
-    expect(described_class.new.pm).to eq(pm)
+    expect(described_class.new.workspace_for(:client)).to eq(client)
+    expect(described_class.new.workspace_for(:pm)).to eq(pm)
   end
 
   it "fails explicitly when the client env var is missing" do
     ENV.delete("DEFAULT_CLIENT_EMAIL")
     ENV["DEFAULT_PM_EMAIL"] = "pm@example.com"
 
-    expect { described_class.new.client }.to raise_error(KeyError, /DEFAULT_CLIENT_EMAIL/)
+    expect { described_class.new.workspace_for(:client) }.to raise_error(KeyError, /DEFAULT_CLIENT_EMAIL/)
   end
 
   it "fails explicitly when the pm env var is missing" do
     ENV["DEFAULT_CLIENT_EMAIL"] = "client@example.com"
     ENV.delete("DEFAULT_PM_EMAIL")
 
-    expect { described_class.new.pm }.to raise_error(KeyError, /DEFAULT_PM_EMAIL/)
+    expect { described_class.new.workspace_for(:pm) }.to raise_error(KeyError, /DEFAULT_PM_EMAIL/)
   end
 end

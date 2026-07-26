@@ -201,7 +201,7 @@ RSpec.describe "PM notifications realtime", type: :system, js: true do
       find("#pm-notifications-dropdown button").click
 
       expect(page).to have_css("#pm-notifications-dropdown .dropdown-menu.show", visible: :visible)
-      expect(page).to have_css('html[data-pm-notifications-connected="true"]')
+      expect(page).to have_css('html[data-pm-workspace-notifications-connected="true"]')
       expect(page).to have_no_css(".pm-notification-item")
       expect(page).to have_css("table.pm-projects-table")
       expect(page).to have_css("tbody#pm-projects-table-body tr", text: "No projects yet.")

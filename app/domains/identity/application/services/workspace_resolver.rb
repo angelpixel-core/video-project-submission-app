@@ -12,12 +12,8 @@ module Identity
           @user_repository = user_repository
         end
 
-        def client
-          resolve_accounts.fetch(:client)
-        end
-
-        def pm
-          resolve_accounts.fetch(:pm)
+        def workspace_for(role)
+          resolve_accounts.fetch(role.to_sym)
         end
 
         private

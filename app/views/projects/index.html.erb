@@ -5,7 +5,7 @@
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
       <div>
         <p class="text-uppercase text-body-secondary mb-1">Client workspace</p>
-        <h1 class="h3 mb-0"><%= current_client.name %> projects</h1>
+        <h1 class="h3 mb-0"><%= workspace_for(:client).name %> projects</h1>
       </div>
       <%= link_to "New Order", new_project_path, class: "btn btn-primary" %>
     </div>
@@ -19,7 +19,7 @@
         <div class="card border-0 shadow-sm">
           <div class="card-body p-4">
             <h2 class="h5">No projects yet</h2>
-            <p class="mb-3 text-body-secondary">Start a new order to create the first project for <%= current_client.name %>.</p>
+            <p class="mb-3 text-body-secondary">Start a new order to create the first project for <%= workspace_for(:client).name %>.</p>
             <%= link_to "Create order", new_project_path, class: "btn btn-primary" %>
           </div>
         </div>
@@ -31,7 +31,7 @@
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
       <div>
         <p class="text-uppercase text-body-secondary mb-1">PM workspace</p>
-        <h1 class="h3 mb-0"><%= default_pm.name %> projects</h1>
+        <h1 class="h3 mb-0"><%= workspace_for(:pm).name %> projects</h1>
       </div>
     </div>
 
