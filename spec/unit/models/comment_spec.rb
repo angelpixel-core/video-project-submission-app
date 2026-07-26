@@ -11,8 +11,8 @@ RSpec.describe Comment do
   end
 
   it "broadcasts project comment refreshes after create" do
-    client = client_account(name: "Client")
-    pm = pm_account(name: "PM")
+    client = workspace_account(:client, name: "Client")
+    pm = workspace_account(:pm, name: "PM")
     project = Project.create!(owner: client, participant: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :in_progress)
 
     expect(ActionCable.server).to receive(:broadcast).with(

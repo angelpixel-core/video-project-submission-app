@@ -11,15 +11,15 @@ RSpec.describe "PM notifications", type: :system, js: true do
   before do
     driven_by :selenium_chrome_headless
 
-    client_account(name: "Default Client")
-    pm_account(name: "Default PM")
+    workspace_account(:client, name: "Default Client")
+    workspace_account(:pm, name: "Default PM")
     VideoType.create!(name: "Highlight Reel", description: "Short edit", price_cents: 25_000, output_format: "mp4")
     VideoType.create!(name: "Social Cut", description: "Social edit", price_cents: 15_000, output_format: "mp4")
   end
 
   it "shows unread notifications and lets the pm acknowledge them" do
-    client = find_client_account
-    pm = find_pm_account
+    client = find_workspace_account(:client, email: "client@example.com")
+    pm = find_workspace_account(:pm, email: "pm@example.com")
     project = Project.create!(owner: client, participant: pm, name: "Project Alpha", raw_footage_url: "https://example.com/raw.mov", status: :in_progress)
     notification = Notification.create!(project: project, pm: pm, kind: "project_created", body: "Unread PM notification")
     Notification.create!(project: project, pm: pm, kind: "project_created", body: "Second unread notification")
@@ -62,8 +62,8 @@ RSpec.describe "PM notifications", type: :system, js: true do
   end
 
   it "marks a pm toast as read when the project link is clicked" do
-    client = find_client_account
-    pm = find_pm_account
+    client = find_workspace_account(:client, email: "client@example.com")
+    pm = find_workspace_account(:pm, email: "pm@example.com")
     project = Project.create!(owner: client, participant: pm, name: "Project Toast", raw_footage_url: "https://example.com/toast.mov", status: :in_progress)
     notification = Notification.create!(project: project, pm: pm, kind: "project_created", body: "Unread PM notification")
 
@@ -80,8 +80,8 @@ RSpec.describe "PM notifications", type: :system, js: true do
   end
 
   it "updates pm workspace project actions without a full reload" do
-    client = find_client_account
-    pm = find_pm_account
+    client = find_workspace_account(:client, email: "client@example.com")
+    pm = find_workspace_account(:pm, email: "pm@example.com")
     project = Project.create!(owner: client, participant: pm, name: "Project Beta", raw_footage_url: "https://example.com/beta.mov", status: :pending)
     project.video_type_selections.create!(video_type: VideoType.find_by!(name: "Highlight Reel"), quantity: 2)
 
@@ -96,8 +96,8 @@ RSpec.describe "PM notifications", type: :system, js: true do
     expect(page).to have_no_content("CLIENT WORKSPACE")
     expect(page).to have_content("Created at")
     expect(page).to have_content("Total budget")
-    expect(page).to have_css("table.pm-projects-table")
-    expect(page).to have_css("tbody#pm-projects-table-body tr", text: "Project Beta")
+    expect(page).to have_css("table.workspace-projects-table")
+    expect(page).to have_css("tbody#workspace-projects-table-body tr", text: "Project Beta")
     expect(page).to have_content("$500.00")
     expect(page).to have_button("Aceptar proyecto")
     expect(page).not_to have_button("Marcar como completado")
@@ -106,7 +106,7 @@ RSpec.describe "PM notifications", type: :system, js: true do
 
     expect(page.evaluate_script("window.__pmActionSentinel")).to eq(1)
     expect(page).to have_current_path(projects_path, ignore_query: false)
-    expect(page).to have_css("tbody#pm-projects-table-body tr", text: "Project Beta")
+    expect(page).to have_css("tbody#workspace-projects-table-body tr", text: "Project Beta")
     expect(page).to have_content("EN PROGRESO")
     expect(page).to have_button("Marcar como completado")
 
@@ -114,15 +114,15 @@ RSpec.describe "PM notifications", type: :system, js: true do
 
     expect(page.evaluate_script("window.__pmActionSentinel")).to eq(1)
     expect(page).to have_current_path(projects_path, ignore_query: false)
-    expect(page).to have_css("tbody#pm-projects-table-body tr", text: "Project Beta")
+    expect(page).to have_css("tbody#workspace-projects-table-body tr", text: "Project Beta")
     expect(page).to have_content("COMPLETADO")
     expect(page).not_to have_button("Aceptar proyecto")
     expect(page).not_to have_button("Marcar como completado")
   end
 
   it "keeps the current page when sorting the pm table" do
-    client = find_client_account
-    pm = find_pm_account
+    client = find_workspace_account(:client, email: "client@example.com")
+    pm = find_workspace_account(:pm, email: "pm@example.com")
 
     11.times do |index|
       travel_to (10 - index).minutes.ago do
@@ -152,8 +152,8 @@ RSpec.describe "PM notifications", type: :system, js: true do
   end
 
   it "lets the pm navigate between project pages" do
-    client = find_client_account
-    pm = find_pm_account
+    client = find_workspace_account(:client, email: "client@example.com")
+    pm = find_workspace_account(:pm, email: "pm@example.com")
 
     11.times do |index|
       travel_to (10 - index).minutes.ago do
@@ -165,14 +165,14 @@ RSpec.describe "PM notifications", type: :system, js: true do
 
     switch_workspace_to("PM")
 
-    expect(page).to have_css("nav[aria-label='PM projects pagination']")
+    expect(page).to have_css("nav[aria-label='Workspace projects pagination']")
     expect(page).to have_link("2")
 
     click_link "2"
 
     expect(page).to have_current_path(projects_path(page: 2, sort: "created_at", direction: "desc"), ignore_query: false)
-    expect(page).to have_css("tbody#pm-projects-table-body tr", text: "Project 1")
-    expect(page).to have_no_css("tbody#pm-projects-table-body tr", text: "Project 11")
+    expect(page).to have_css("tbody#workspace-projects-table-body tr", text: "Project 1")
+    expect(page).to have_no_css("tbody#workspace-projects-table-body tr", text: "Project 11")
   end
 end
 
@@ -182,14 +182,14 @@ RSpec.describe "PM notifications realtime", type: :system, js: true do
   before do
     driven_by :selenium_chrome_headless
 
-    client_account(name: "Default Client")
-    pm_account(name: "Default PM")
+    workspace_account(:client, name: "Default Client")
+    workspace_account(:pm, name: "Default PM")
     VideoType.create!(name: "Highlight Reel", description: "Short edit", price_cents: 25_000, output_format: "mp4")
   end
 
   it "refreshes the inbox when a notification is created or acknowledged" do
-    client = find_client_account
-    pm = find_pm_account
+    client = find_workspace_account(:client, email: "client@example.com")
+    pm = find_workspace_account(:pm, email: "pm@example.com")
     project = Project.create!(owner: client, participant: pm, status: :draft)
     notification_body = "Project Gamma submitted for review"
     highlight_reel = VideoType.find_by!(name: "Highlight Reel")
@@ -203,8 +203,8 @@ RSpec.describe "PM notifications realtime", type: :system, js: true do
       expect(page).to have_css("#pm-notifications-dropdown .dropdown-menu.show", visible: :visible)
       expect(page).to have_css('html[data-pm-workspace-notifications-connected="true"]')
       expect(page).to have_no_css(".pm-notification-item")
-      expect(page).to have_css("table.pm-projects-table")
-      expect(page).to have_css("tbody#pm-projects-table-body tr", text: "No projects yet.")
+      expect(page).to have_css("table.workspace-projects-table")
+      expect(page).to have_css("tbody#workspace-projects-table-body tr", text: "No projects yet.")
     end
 
     Thread.new do
@@ -218,7 +218,7 @@ RSpec.describe "PM notifications realtime", type: :system, js: true do
 
     using_session(:pm) do
       expect(page).to have_css(".pm-notification-item", text: notification_body)
-      expect(page).to have_css("tbody#pm-projects-table-body tr", text: "Project Gamma")
+      expect(page).to have_css("tbody#workspace-projects-table-body tr", text: "Project Gamma")
     end
 
     Thread.new do

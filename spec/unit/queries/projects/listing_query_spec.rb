@@ -5,15 +5,15 @@ RSpec.describe Projects::ListingQuery do
   include ActiveSupport::Testing::TimeHelpers
 
   before do
-    client_account(name: "Default Client")
-    pm_account(name: "Default PM")
+    workspace_account(:client, name: "Default Client")
+    workspace_account(:pm, name: "Default PM")
     VideoType.create!(name: "Highlight Reel", description: "Short edit", price_cents: 25_000, output_format: "mp4")
     VideoType.create!(name: "Social Cut", description: "Social edit", price_cents: 15_000, output_format: "mp4")
   end
 
   it "orders by newest first by default" do
-    client = find_client_account
-    pm = find_pm_account
+    client = find_workspace_account(:client, email: "client@example.com")
+    pm = find_workspace_account(:pm, email: "pm@example.com")
 
     travel_to 2.days.ago do
       Project.create!(owner: client, participant: pm, name: "Older Project", raw_footage_url: "https://example.com/older.mov", status: :pending)
@@ -31,8 +31,8 @@ RSpec.describe Projects::ListingQuery do
   end
 
   it "orders created_at ascending when requested" do
-    client = find_client_account
-    pm = find_pm_account
+    client = find_workspace_account(:client, email: "client@example.com")
+    pm = find_workspace_account(:pm, email: "pm@example.com")
 
     travel_to 2.days.ago do
       Project.create!(owner: client, participant: pm, name: "Older Project", raw_footage_url: "https://example.com/older.mov", status: :pending)
@@ -50,8 +50,8 @@ RSpec.describe Projects::ListingQuery do
   end
 
   it "orders by total budget when requested" do
-    client = find_client_account
-    pm = find_pm_account
+    client = find_workspace_account(:client, email: "client@example.com")
+    pm = find_workspace_account(:pm, email: "pm@example.com")
     highlight_reel = VideoType.find_by!(name: "Highlight Reel")
     social_cut = VideoType.find_by!(name: "Social Cut")
 
@@ -67,8 +67,8 @@ RSpec.describe Projects::ListingQuery do
   end
 
   it "paginates ten records per page by default" do
-    client = find_client_account
-    pm = find_pm_account
+    client = find_workspace_account(:client, email: "client@example.com")
+    pm = find_workspace_account(:pm, email: "pm@example.com")
 
     11.times do |index|
       Project.create!(owner: client, participant: pm, name: "Project #{index + 1}", raw_footage_url: "https://example.com/#{index + 1}.mov", status: :pending)

@@ -2,8 +2,8 @@ require "rails_helper"
 
 RSpec.describe Projects::SubmissionService do
   it "submits a draft project, creates a payment, and enqueues notification dispatch" do
-    client = client_account
-    pm = pm_account
+    client = workspace_account(:client, email: "client@example.com", name: "Client")
+    pm = workspace_account(:pm, email: "pm@example.com", name: "PM")
     project = Project.create!(owner: client, participant: pm, name: "Project Draft", raw_footage_url: "https://example.com/draft.mov", status: :draft)
     video_type = VideoType.create!(name: "Highlight Reel", description: "Short edit", price_cents: 25_000, output_format: "mp4")
 
@@ -24,11 +24,11 @@ RSpec.describe Projects::SubmissionService do
   end
 
   it "returns a failure when there are no selections" do
-    project = Project.create!(owner: client_account, participant: pm_account(email: "submission-failure-pm@example.com"), name: "Project Draft", raw_footage_url: "https://example.com/draft.mov", status: :draft)
+    project = Project.create!(owner: workspace_account(:client, email: "client@example.com", name: "Client"), participant: workspace_account(:pm, email: "submission-failure-pm@example.com"), name: "Project Draft", raw_footage_url: "https://example.com/draft.mov", status: :draft)
 
     result = described_class.call(
       project: project,
-      participant: pm_account,
+      participant: workspace_account(:pm, email: "pm@example.com", name: "PM"),
       attributes: { name: "Project Draft", raw_footage_url: "https://example.com/draft.mov" },
       selections: []
     )

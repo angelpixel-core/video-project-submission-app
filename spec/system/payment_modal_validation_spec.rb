@@ -4,14 +4,14 @@ RSpec.describe "Payment modal validation", type: :system, js: true do
   before do
     driven_by :selenium_chrome_headless
 
-    client_account(name: "Default Client")
-    pm_account(name: "Default PM")
+    workspace_account(:client, name: "Default Client")
+    workspace_account(:pm, name: "Default PM")
     VideoType.create!(name: "Highlight Reel", description: "Short edit", price_cents: 25_000, output_format: "mp4")
   end
 
   it "formats and validates card fields" do
-    client = find_client_account
-    pm = find_pm_account
+    client = find_workspace_account(:client, email: "client@example.com")
+    pm = find_workspace_account(:pm, email: "pm@example.com")
     project = Project.create!(owner: client, participant: pm, status: :draft)
 
     visit edit_project_path(project)
@@ -36,8 +36,8 @@ RSpec.describe "Payment modal validation", type: :system, js: true do
   end
 
   it "flags an expired card" do
-    client = find_client_account
-    pm = find_pm_account
+    client = find_workspace_account(:client, email: "client@example.com")
+    pm = find_workspace_account(:pm, email: "pm@example.com")
     project = Project.create!(owner: client, participant: pm, status: :draft)
 
     visit edit_project_path(project)
@@ -50,8 +50,7 @@ RSpec.describe "Payment modal validation", type: :system, js: true do
     find("#payment-name", visible: :all).set("Jane Doe")
     find("#payment-card-number", visible: :all).set("4242424242424242")
     find("#payment-card-expiry", visible: :all).set(Date.current.prev_month.strftime("%m/%y"))
-    click_button "Enter card security code"
-    find("#payment-card-cvc", visible: :all).set("123")
+    find("#payment-card-expiry", visible: :all).send_keys(:tab)
 
     expect(page).to have_css("#payment-card-expiry.is-invalid", visible: :all)
     expect(page).to have_css("#payment-card-error", text: "Card has expired.")

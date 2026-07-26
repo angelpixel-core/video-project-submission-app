@@ -19,8 +19,8 @@ RSpec.describe ApplicationController, type: :controller do
   end
 
   it "keeps workspace_for wired to the workspace resolver" do
-    client = client_account(email: "controller-client@example.com", name: "Controller Client")
-    pm = pm_account(email: "controller-pm@example.com", name: "Controller PM")
+    client = workspace_account(:client, email: "controller-client@example.com", name: "Controller Client")
+    pm = workspace_account(:pm, email: "controller-pm@example.com", name: "Controller PM")
     resolver = instance_double(Identity::Application::Services::WorkspaceResolver)
 
     allow(resolver).to receive(:workspace_for).with(:client).and_return(client)

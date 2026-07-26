@@ -16,8 +16,8 @@ RSpec.describe Notification do
   end
 
   it "uses the account recipient API" do
-    client = client_account(name: "Client")
-    pm = pm_account(name: "PM")
+    client = workspace_account(:client, name: "Client")
+    pm = workspace_account(:pm, name: "PM")
     project = Project.create!(owner: client, participant: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :in_progress)
 
     with_pm_account = described_class.new(project: project, account: pm, kind: "project_created", body: "Project created")
@@ -30,8 +30,8 @@ RSpec.describe Notification do
   end
 
   it "defaults to unread and can be marked as read" do
-    client = client_account(name: "Client")
-    pm = pm_account(name: "PM")
+    client = workspace_account(:client, name: "Client")
+    pm = workspace_account(:pm, name: "PM")
     project = Project.create!(owner: client, participant: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :in_progress)
     notification = described_class.create!(project: project, account: pm, kind: "project_created", body: "Project created")
 
@@ -46,8 +46,8 @@ RSpec.describe Notification do
   end
 
   it "broadcasts refreshes to the recipient stream" do
-    client = client_account(name: "Client")
-    pm = pm_account(name: "PM")
+    client = workspace_account(:client, name: "Client")
+    pm = workspace_account(:pm, name: "PM")
     project = Project.create!(owner: client, participant: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :in_progress)
 
     expect(ActionCable.server).to receive(:broadcast).with(

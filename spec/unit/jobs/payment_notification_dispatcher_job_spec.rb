@@ -3,7 +3,7 @@ require "rails_helper"
 RSpec.describe Payments::Application::Handlers::DispatchPaymentNotificationJob do
   it "dispatches a pending intent and marks it sent" do
     payment = Payments::Domain::Aggregates::Payment.create!(
-      project: Project.create!(owner: client_account, participant: pm_account, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :pending),
+      project: Project.create!(owner: workspace_account(:client, email: "client@example.com", name: "Client"), participant: workspace_account(:pm, email: "pm@example.com", name: "PM"), name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :pending),
       status: :succeeded,
       provider: "fake",
       idempotency_key: SecureRandom.uuid,
@@ -35,7 +35,7 @@ RSpec.describe Payments::Application::Handlers::DispatchPaymentNotificationJob d
 
   it "marks the intent failed when dispatch raises" do
     payment = Payments::Domain::Aggregates::Payment.create!(
-      project: Project.create!(owner: client_account, participant: pm_account, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :pending),
+      project: Project.create!(owner: workspace_account(:client, email: "client@example.com", name: "Client"), participant: workspace_account(:pm, email: "pm@example.com", name: "PM"), name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :pending),
       status: :succeeded,
       provider: "fake",
       idempotency_key: SecureRandom.uuid,
@@ -72,7 +72,7 @@ RSpec.describe Payments::Application::Handlers::DispatchPaymentNotificationJob d
     described_class.perform_now(-1)
 
     payment = Payments::Domain::Aggregates::Payment.create!(
-      project: Project.create!(owner: client_account, participant: pm_account, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :pending),
+      project: Project.create!(owner: workspace_account(:client, email: "client@example.com", name: "Client"), participant: workspace_account(:pm, email: "pm@example.com", name: "PM"), name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :pending),
       status: :succeeded,
       provider: "fake",
       idempotency_key: SecureRandom.uuid,

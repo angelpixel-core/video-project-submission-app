@@ -4,17 +4,17 @@ RSpec.describe "Projects requests" do
   include ActiveSupport::Testing::TimeHelpers
 
   before do
-    client_account(name: "Default Client")
-    pm_account(name: "Default PM")
+    workspace_account(:client, name: "Default Client")
+    workspace_account(:pm, name: "Default PM")
     VideoType.create!(name: "Highlight Reel", description: "Short edit", price_cents: 25_000, output_format: "mp4")
     VideoType.create!(name: "Social Cut", description: "Social edit", price_cents: 15_000, output_format: "mp4")
   end
 
   it "shows the client project index" do
-    client = find_client_account
-    pm = find_pm_account
+    client = find_workspace_account(:client, email: "client@example.com")
+    pm = find_workspace_account(:pm, email: "pm@example.com")
     project = Project.create!(owner: client, participant: pm, name: "Project Alpha", raw_footage_url: "https://example.com/raw.mov", status: :in_progress)
-    Project.create!(owner: client, participant: find_pm_account, status: :draft)
+    Project.create!(owner: client, participant: find_workspace_account(:pm, email: "pm@example.com"), status: :draft)
     Notification.create!(project: project, pm: pm, kind: "project_created", body: "Unread PM notification")
     Notification.create!(project: project, pm: pm, kind: "project_created", body: "Read PM notification", read_at: Time.current)
 
@@ -32,8 +32,8 @@ RSpec.describe "Projects requests" do
   end
 
   it "shows the pm project table sorted by creation date" do
-    client = find_client_account
-    pm = find_pm_account
+    client = find_workspace_account(:client, email: "client@example.com")
+    pm = find_workspace_account(:pm, email: "pm@example.com")
     highlight_reel = VideoType.find_by!(name: "Highlight Reel")
     social_cut = VideoType.find_by!(name: "Social Cut")
 
@@ -49,7 +49,7 @@ RSpec.describe "Projects requests" do
 
     get projects_path
 
-    pm_table_body = response.body[/<tbody id="pm-projects-table-body">.*?<\/tbody>/m]
+    workspace_table_body = response.body[/<tbody id="workspace-projects-table-body">.*?<\/tbody>/m]
 
     expect(response).to have_http_status(:ok)
     expect(response.body).to include("ID")
@@ -57,14 +57,14 @@ RSpec.describe "Projects requests" do
     expect(response.body).to include("Total budget")
     expect(response.body).to include("$250.00")
     expect(response.body).to include("$300.00")
-    expect(pm_table_body.index("Newer Project")).to be < pm_table_body.index("Older Project")
+    expect(workspace_table_body.index("Newer Project")).to be < workspace_table_body.index("Older Project")
   ensure
     travel_back
   end
 
   it "shows pm table sort links" do
-    client = find_client_account
-    pm = find_pm_account
+    client = find_workspace_account(:client, email: "client@example.com")
+    pm = find_workspace_account(:pm, email: "pm@example.com")
 
     Project.create!(owner: client, participant: pm, name: "Project Alpha", raw_footage_url: "https://example.com/alpha.mov", status: :pending)
 
@@ -82,8 +82,8 @@ RSpec.describe "Projects requests" do
   end
 
   it "keeps the page when generating pm table sort links" do
-    client = find_client_account
-    pm = find_pm_account
+    client = find_workspace_account(:client, email: "client@example.com")
+    pm = find_workspace_account(:pm, email: "pm@example.com")
 
     11.times do |index|
       Project.create!(owner: client, participant: pm, name: "Project #{index + 1}", raw_footage_url: "https://example.com/#{index + 1}.mov", status: :pending)
@@ -99,8 +99,8 @@ RSpec.describe "Projects requests" do
   end
 
   it "shows pm pagination links and loads the second page" do
-    client = find_client_account
-    pm = find_pm_account
+    client = find_workspace_account(:client, email: "client@example.com")
+    pm = find_workspace_account(:pm, email: "pm@example.com")
 
     11.times do |index|
       travel_to (10 - index).minutes.ago do
@@ -110,23 +110,23 @@ RSpec.describe "Projects requests" do
 
     get projects_path(page: 2)
 
-    pm_table_body = response.body[/<tbody id="pm-projects-table-body">.*?<\/tbody>/m]
+    workspace_table_body = response.body[/<tbody id="workspace-projects-table-body">.*?<\/tbody>/m]
 
     expect(response).to have_http_status(:ok)
-    expect(response.body).to include("PM projects pagination")
+    expect(response.body).to include("Workspace projects pagination")
     expect(response.body).to include("Prev")
     expect(response.body).to include("1")
     expect(response.body).to include("2")
     expect(response.body).to include("Next")
-    expect(pm_table_body).to include("Project 1")
-    expect(pm_table_body).not_to include("Project 11")
+    expect(workspace_table_body).to include("Project 1")
+    expect(workspace_table_body).not_to include("Project 11")
   ensure
     travel_back
   end
 
   it "shows a pm project detail page" do
-    client = find_client_account
-    pm = find_pm_account
+    client = find_workspace_account(:client, email: "client@example.com")
+    pm = find_workspace_account(:pm, email: "pm@example.com")
     project = Project.create!(owner: client, participant: pm, name: "Project Alpha", raw_footage_url: "https://example.com/raw.mov", status: :pending)
 
     get project_path(project)
@@ -147,7 +147,7 @@ RSpec.describe "Projects requests" do
   end
 
   it "redirects submitted projects away from the editor" do
-    project = Project.create!(owner: find_client_account, participant: find_pm_account, name: "Project Pending", raw_footage_url: "https://example.com/pending.mov", status: :pending)
+    project = Project.create!(owner: find_workspace_account(:client, email: "client@example.com"), participant: find_workspace_account(:pm, email: "pm@example.com"), name: "Project Pending", raw_footage_url: "https://example.com/pending.mov", status: :pending)
 
     get edit_project_path(project)
 
@@ -155,7 +155,7 @@ RSpec.describe "Projects requests" do
   end
 
   it "renders the draft editor" do
-    draft = Project.create!(owner: find_client_account, participant: find_pm_account, status: :draft)
+    draft = Project.create!(owner: find_workspace_account(:client, email: "client@example.com"), participant: find_workspace_account(:pm, email: "pm@example.com"), status: :draft)
 
     get edit_project_path(draft)
 
@@ -165,7 +165,7 @@ RSpec.describe "Projects requests" do
   end
 
   it "autosaves a draft and keeps it in draft status" do
-    draft = Project.create!(owner: find_client_account, participant: find_pm_account, status: :draft)
+    draft = Project.create!(owner: find_workspace_account(:client, email: "client@example.com"), participant: find_workspace_account(:pm, email: "pm@example.com"), status: :draft)
 
     patch project_path(draft), params: {
       project: {
@@ -189,7 +189,7 @@ RSpec.describe "Projects requests" do
   end
 
   it "finalizes a draft with selections" do
-    draft = Project.create!(owner: find_client_account, participant: find_pm_account, status: :draft)
+    draft = Project.create!(owner: find_workspace_account(:client, email: "client@example.com"), participant: find_workspace_account(:pm, email: "pm@example.com"), status: :draft)
 
     expect do
       patch project_path(draft), params: {
@@ -217,7 +217,7 @@ RSpec.describe "Projects requests" do
   end
 
   it "accepts a pending project as the pm" do
-    project = Project.create!(owner: find_client_account, participant: find_pm_account, name: "Project Pending", raw_footage_url: "https://example.com/pending.mov", status: :pending)
+    project = Project.create!(owner: find_workspace_account(:client, email: "client@example.com"), participant: find_workspace_account(:pm, email: "pm@example.com"), name: "Project Pending", raw_footage_url: "https://example.com/pending.mov", status: :pending)
 
     patch accept_project_path(project)
 
@@ -228,9 +228,9 @@ RSpec.describe "Projects requests" do
   end
 
   it "accepts a pending project asynchronously" do
-    project = Project.create!(owner: find_client_account, participant: find_pm_account, name: "Project Async", raw_footage_url: "https://example.com/async.mov", status: :pending)
+    project = Project.create!(owner: find_workspace_account(:client, email: "client@example.com"), participant: find_workspace_account(:pm, email: "pm@example.com"), name: "Project Async", raw_footage_url: "https://example.com/async.mov", status: :pending)
 
-    patch accept_project_path(project), headers: { "X-PM-Async-Action" => "1" }
+    patch accept_project_path(project), headers: { "X-Workspace-Async-Action" => "1" }
 
     expect(response).to have_http_status(:ok)
     expect(JSON.parse(response.body)).to include(
@@ -245,17 +245,17 @@ RSpec.describe "Projects requests" do
   end
 
   it "rejects stale asynchronous pm row actions" do
-    project = Project.create!(owner: find_client_account, participant: find_pm_account, name: "Project Async Stale", raw_footage_url: "https://example.com/stale.mov", status: :pending)
+    project = Project.create!(owner: find_workspace_account(:client, email: "client@example.com"), participant: find_workspace_account(:pm, email: "pm@example.com"), name: "Project Async Stale", raw_footage_url: "https://example.com/stale.mov", status: :pending)
 
-    patch accept_project_path(project), headers: { "X-PM-Async-Action" => "1" }
-    patch accept_project_path(project), headers: { "X-PM-Async-Action" => "1" }
+    patch accept_project_path(project), headers: { "X-Workspace-Async-Action" => "1" }
+    patch accept_project_path(project), headers: { "X-Workspace-Async-Action" => "1" }
 
     expect(response).to have_http_status(:conflict)
     expect(project.reload.status).to eq("in_progress")
   end
 
   it "completes an in-progress project as the pm" do
-    project = Project.create!(owner: find_client_account, participant: find_pm_account, name: "Project Active", raw_footage_url: "https://example.com/active.mov", status: :in_progress)
+    project = Project.create!(owner: find_workspace_account(:client, email: "client@example.com"), participant: find_workspace_account(:pm, email: "pm@example.com"), name: "Project Active", raw_footage_url: "https://example.com/active.mov", status: :in_progress)
 
     patch complete_project_path(project)
 
@@ -266,8 +266,8 @@ RSpec.describe "Projects requests" do
   end
 
   it "creates a client notification when a pending project is accepted" do
-    client = find_client_account
-    pm = find_pm_account
+    client = find_workspace_account(:client, email: "client@example.com")
+    pm = find_workspace_account(:pm, email: "pm@example.com")
     project = Project.create!(owner: client, participant: pm, name: "Project Client Update", raw_footage_url: "https://example.com/client-update.mov", status: :pending)
 
     expect do
@@ -283,8 +283,8 @@ RSpec.describe "Projects requests" do
   end
 
   it "creates a client notification when an in-progress project is completed" do
-    client = find_client_account
-    pm = find_pm_account
+    client = find_workspace_account(:client, email: "client@example.com")
+    pm = find_workspace_account(:pm, email: "pm@example.com")
     project = Project.create!(owner: client, participant: pm, name: "Project Client Complete", raw_footage_url: "https://example.com/client-complete.mov", status: :in_progress)
 
     expect do
@@ -300,9 +300,9 @@ RSpec.describe "Projects requests" do
   end
 
   it "completes an in-progress project asynchronously" do
-    project = Project.create!(owner: find_client_account, participant: find_pm_account, name: "Project Async Complete", raw_footage_url: "https://example.com/complete.mov", status: :in_progress)
+    project = Project.create!(owner: find_workspace_account(:client, email: "client@example.com"), participant: find_workspace_account(:pm, email: "pm@example.com"), name: "Project Async Complete", raw_footage_url: "https://example.com/complete.mov", status: :in_progress)
 
-    patch complete_project_path(project), headers: { "X-PM-Async-Action" => "1" }
+    patch complete_project_path(project), headers: { "X-Workspace-Async-Action" => "1" }
 
     expect(response).to have_http_status(:ok)
     expect(JSON.parse(response.body)).to include(
@@ -317,7 +317,7 @@ RSpec.describe "Projects requests" do
   end
 
   it "rejects finalization without selections" do
-    draft = Project.create!(owner: find_client_account, participant: find_pm_account, status: :draft)
+    draft = Project.create!(owner: find_workspace_account(:client, email: "client@example.com"), participant: find_workspace_account(:pm, email: "pm@example.com"), status: :draft)
 
     patch project_path(draft), params: {
       project: {

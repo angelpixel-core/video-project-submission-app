@@ -9,17 +9,17 @@ RSpec.describe "Project show comments", type: :system, js: true do
   before do
     driven_by :selenium_chrome_headless
 
-    client_account(name: "Default Client")
-    pm_account(name: "Default PM")
+    workspace_account(:client, name: "Default Client")
+    workspace_account(:pm, name: "Default PM")
     VideoType.create!(name: "Highlight Reel", description: "Short edit", price_cents: 25_000, output_format: "mp4")
   end
 
   it "shows a raw footage embed and allows both workspaces to comment" do
-    client = find_client_account
-    pm = find_pm_account
+    client = find_workspace_account(:client, email: "client@example.com")
+    pm = find_workspace_account(:pm, email: "pm@example.com")
     project = Project.create!(
-      client: client,
-      pm: pm,
+      owner: client,
+      participant: pm,
       name: "Project Alpha",
       raw_footage_url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
       status: :in_progress
@@ -48,11 +48,11 @@ RSpec.describe "Project show comments", type: :system, js: true do
   end
 
   it "refreshes comments and notifications across workspaces in realtime" do
-    client = find_client_account
-    pm = find_pm_account
+    client = find_workspace_account(:client, email: "client@example.com")
+    pm = find_workspace_account(:pm, email: "pm@example.com")
     project = Project.create!(
-      client: client,
-      pm: pm,
+      owner: client,
+      participant: pm,
       name: "Project Gamma",
       raw_footage_url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
       status: :in_progress
@@ -81,11 +81,11 @@ RSpec.describe "Project show comments", type: :system, js: true do
   end
 
   it "shows a raw footage preview on the client project card" do
-    client = find_client_account
-    pm = find_pm_account
+    client = find_workspace_account(:client, email: "client@example.com")
+    pm = find_workspace_account(:pm, email: "pm@example.com")
     Project.create!(
-      client: client,
-      pm: pm,
+      owner: client,
+      participant: pm,
       name: "Project Beta",
       raw_footage_url: "https://youtu.be/dQw4w9WgXcQ",
       status: :pending
@@ -105,11 +105,11 @@ RSpec.describe "Project show comments", type: :system, js: true do
   end
 
   it "shows a twitch preview on the project detail page" do
-    client = find_client_account
-    pm = find_pm_account
+    client = find_workspace_account(:client, email: "client@example.com")
+    pm = find_workspace_account(:pm, email: "pm@example.com")
     project = Project.create!(
-      client: client,
-      pm: pm,
+      owner: client,
+      participant: pm,
       name: "Project Twitch",
       raw_footage_url: "https://www.twitch.tv/videos/2820449804",
       status: :in_progress
@@ -123,8 +123,8 @@ RSpec.describe "Project show comments", type: :system, js: true do
   end
 
   it "shows an instagram preview in the draft form" do
-    client = find_client_account
-    pm = find_pm_account
+    client = find_workspace_account(:client, email: "client@example.com")
+    pm = find_workspace_account(:pm, email: "pm@example.com")
     project = Project.create!(owner: client, participant: pm, status: :draft)
 
     visit edit_project_path(project)
@@ -136,11 +136,11 @@ RSpec.describe "Project show comments", type: :system, js: true do
   end
 
   it "shows a tiktok preview on the project detail page" do
-    client = find_client_account
-    pm = find_pm_account
+    client = find_workspace_account(:client, email: "client@example.com")
+    pm = find_workspace_account(:pm, email: "pm@example.com")
     project = Project.create!(
-      client: client,
-      pm: pm,
+      owner: client,
+      participant: pm,
       name: "Project TikTok",
       raw_footage_url: "https://www.tiktok.com/@demmy_061/video/7638191588631514376",
       status: :in_progress

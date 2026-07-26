@@ -7,29 +7,29 @@ end
 
 RSpec.describe "Project show payment history", type: :system, js: true do
   around do |example|
-    original_client = ENV["DEFAULT_CLIENT_EMAIL"]
-    original_pm = ENV["DEFAULT_PM_EMAIL"]
+    original_client = ENV["DEFAULT_CLIENT_WORKSPACE_EMAIL"]
+    original_pm = ENV["DEFAULT_PM_WORKSPACE_EMAIL"]
 
-    ENV["DEFAULT_CLIENT_EMAIL"] = "client@example.com"
-    ENV["DEFAULT_PM_EMAIL"] = "pm@example.com"
+    ENV["DEFAULT_CLIENT_WORKSPACE_EMAIL"] = "client@example.com"
+    ENV["DEFAULT_PM_WORKSPACE_EMAIL"] = "pm@example.com"
 
     example.run
   ensure
-    ENV["DEFAULT_CLIENT_EMAIL"] = original_client
-    ENV["DEFAULT_PM_EMAIL"] = original_pm
+    ENV["DEFAULT_CLIENT_WORKSPACE_EMAIL"] = original_client
+    ENV["DEFAULT_PM_WORKSPACE_EMAIL"] = original_pm
   end
 
   before do
     driven_by :selenium_chrome_headless
 
-    client_account(name: "Default Client")
-    pm_account(name: "Default PM")
+    workspace_account(:client, name: "Default Client")
+    workspace_account(:pm, name: "Default PM")
     VideoType.create!(name: "Highlight Reel", description: "Short edit", price_cents: 25_000, output_format: "mp4")
   end
 
   it "shows payment history to the pm and keeps it hidden from the client workspace" do
-    client = find_client_account
-    pm = find_pm_account
+    client = find_workspace_account(:client, email: "client@example.com")
+    pm = find_workspace_account(:pm, email: "pm@example.com")
     project = Project.create!(owner: client, participant: pm, name: "Project Alpha", raw_footage_url: "https://example.com/raw.mov", status: :pending)
     payment = Payments::Domain::Aggregates::Payment.create!(
       project: project,
@@ -101,8 +101,8 @@ RSpec.describe "Project show payment history", type: :system, js: true do
   end
 
   it "shows confirmed when the payment has been successfully processed" do
-    client = find_client_account
-    pm = find_pm_account
+    client = find_workspace_account(:client, email: "client@example.com")
+    pm = find_workspace_account(:pm, email: "pm@example.com")
     project = Project.create!(owner: client, participant: pm, name: "Project Beta", raw_footage_url: "https://example.com/raw.mov", status: :pending)
     payment = Payments::Domain::Aggregates::Payment.create!(
       project: project,

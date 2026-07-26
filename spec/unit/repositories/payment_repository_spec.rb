@@ -4,8 +4,8 @@ RSpec.describe Payments::Domain::Repositories::PaymentRepository do
   def build_payment(provider_reference: "fake-abc123")
     payment = Payments::Domain::Aggregates::Payment.create!(
       project: Project.create!(
-        owner: client_account(name: "Client"),
-        participant: pm_account(name: "PM"),
+        owner: workspace_account(:client, name: "Client"),
+        participant: workspace_account(:pm, name: "PM"),
         name: "Project",
         raw_footage_url: "https://example.com/raw.mov",
         status: :pending

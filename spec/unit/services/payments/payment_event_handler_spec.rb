@@ -2,8 +2,8 @@ require "rails_helper"
 
 RSpec.describe Payments::Adapters::Inbound::Webhooks::Event::Handler do
   def build_payment(status: :processing)
-    client = client_account(name: "Client")
-    pm = pm_account(name: "PM")
+    client = workspace_account(:client, name: "Client")
+    pm = workspace_account(:pm, name: "PM")
     project = Project.create!(owner: client, participant: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :pending)
 
     payment = Payments::Domain::Aggregates::Payment.create!(

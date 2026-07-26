@@ -3,8 +3,8 @@ require "rails_helper"
 RSpec.describe ProjectNotificationMailer do
   describe "project_created" do
     it "sends a compact text email to the client" do
-      client = client_account(name: "Client")
-      pm = pm_account(name: "PM")
+      client = workspace_account(:client, name: "Client")
+      pm = workspace_account(:pm, name: "PM")
       project = Project.create!(owner: client, participant: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :pending)
 
       mail = described_class.project_created(project, recipient_role: :client)
@@ -17,8 +17,8 @@ RSpec.describe ProjectNotificationMailer do
     end
 
     it "sends a compact text email to the pm" do
-      client = client_account(name: "Client")
-      pm = pm_account(name: "PM")
+      client = workspace_account(:client, name: "Client")
+      pm = workspace_account(:pm, name: "PM")
       project = Project.create!(owner: client, participant: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :in_progress)
 
       mail = described_class.project_created(project, recipient_role: :pm)
@@ -35,8 +35,8 @@ RSpec.describe ProjectNotificationMailer do
 
   describe "project_accepted" do
     it "sends a compact text email to the client" do
-      client = client_account(name: "Client")
-      pm = pm_account(name: "PM")
+      client = workspace_account(:client, name: "Client")
+      pm = workspace_account(:pm, name: "PM")
       project = Project.create!(owner: client, participant: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :in_progress)
 
       mail = described_class.project_accepted(project, recipient_role: :client)
@@ -48,8 +48,8 @@ RSpec.describe ProjectNotificationMailer do
     end
 
     it "sends a compact text email to the pm" do
-      client = client_account(name: "Client")
-      pm = pm_account(name: "PM")
+      client = workspace_account(:client, name: "Client")
+      pm = workspace_account(:pm, name: "PM")
       project = Project.create!(owner: client, participant: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :in_progress)
 
       mail = described_class.project_accepted(project, recipient_role: :pm)
@@ -63,8 +63,8 @@ RSpec.describe ProjectNotificationMailer do
 
   describe "project_rejected" do
     it "sends a compact text email to the client" do
-      client = client_account(name: "Client")
-      pm = pm_account(name: "PM")
+      client = workspace_account(:client, name: "Client")
+      pm = workspace_account(:pm, name: "PM")
       project = Project.create!(owner: client, participant: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :pending)
 
       mail = described_class.project_rejected(project, recipient_role: :client)
@@ -76,8 +76,8 @@ RSpec.describe ProjectNotificationMailer do
     end
 
     it "sends a compact text email to the pm" do
-      client = client_account(name: "Client")
-      pm = pm_account(name: "PM")
+      client = workspace_account(:client, name: "Client")
+      pm = workspace_account(:pm, name: "PM")
       project = Project.create!(owner: client, participant: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :pending)
 
       mail = described_class.project_rejected(project, recipient_role: :pm)

@@ -2,8 +2,8 @@ require "rails_helper"
 
 RSpec.describe Payments::Adapters::Outbound::Gateways::Fake do
   it "returns a success result for a valid payment" do
-    client = client_account(name: "Client")
-    pm = pm_account(name: "PM")
+    client = workspace_account(:client, name: "Client")
+    pm = workspace_account(:pm, name: "PM")
     project = Project.create!(owner: client, participant: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :draft)
     payment = Payments::Domain::Aggregates::Payment.create!(
       project: project,
@@ -27,8 +27,8 @@ RSpec.describe Payments::Adapters::Outbound::Gateways::Fake do
   end
 
   it "returns a failure for a zero amount payment" do
-    client = client_account(name: "Client")
-    pm = pm_account(name: "PM")
+    client = workspace_account(:client, name: "Client")
+    pm = workspace_account(:pm, name: "PM")
     project = Project.create!(owner: client, participant: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :draft)
     payment = Payments::Domain::Aggregates::Payment.create!(
       project: project,

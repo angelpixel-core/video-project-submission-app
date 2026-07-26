@@ -6,8 +6,8 @@ RSpec.describe Payments::Domain::Entities::PaymentAttempt do
   end
 
   it "belongs to a payment and requires unique idempotency keys" do
-    client = client_account(name: "Client")
-    pm = pm_account(name: "PM")
+    client = workspace_account(:client, name: "Client")
+    pm = workspace_account(:pm, name: "PM")
     project = Project.create!(owner: client, participant: pm, status: :draft)
     payment = Payments::Domain::Aggregates::Payment.create!(
       project: project,

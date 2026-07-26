@@ -4,26 +4,26 @@ RSpec.describe "Role switcher", type: :system, js: true do
   before do
     driven_by :selenium_chrome_headless
 
-    client_account(name: "Default Client")
-    pm_account(name: "Default PM")
+    workspace_account(:client, name: "Default Client")
+    workspace_account(:pm, name: "Default PM")
     VideoType.create!(name: "Highlight Reel", description: "Short edit", price_cents: 25_000, output_format: "mp4")
     Project.create!(
-      client: find_client_account,
-      pm: find_pm_account,
+      owner: find_workspace_account(:client),
+      participant: find_workspace_account(:pm),
       name: "Project Alpha",
       raw_footage_url: "https://example.com/raw.mov",
       status: :draft
     )
     Project.create!(
-      client: find_client_account,
-      pm: find_pm_account,
+      owner: find_workspace_account(:client),
+      participant: find_workspace_account(:pm),
       name: "Project Beta",
       raw_footage_url: "https://example.com/beta.mov",
       status: :pending
     )
     Notification.create!(
       project: Project.find_by!(name: "Project Beta"),
-      pm: find_pm_account,
+      pm: find_workspace_account(:pm, email: "pm@example.com"),
       kind: "project_created",
       body: "Unread PM notification"
     )
@@ -42,7 +42,7 @@ RSpec.describe "Role switcher", type: :system, js: true do
     find(".account-menu-trigger").click
     click_button "Switch to PM"
 
-    expect(page.evaluate_script("sessionStorage.getItem('workspace-mode')")).to eq("pm")
+    expect(page.evaluate_script("sessionStorage.getItem('workspace-role')")).to eq("pm")
     expect(page).to have_css('[data-role-scope="pm"]', visible: :visible)
     expect(page).to have_no_content("New Order")
     expect(page).to have_no_content("Project Alpha")
@@ -55,7 +55,7 @@ RSpec.describe "Role switcher", type: :system, js: true do
     find(".account-menu-trigger").click
     click_button "Switch to Client"
 
-    expect(page.evaluate_script("sessionStorage.getItem('workspace-mode')")).to eq("client")
+    expect(page.evaluate_script("sessionStorage.getItem('workspace-role')")).to eq("client")
     expect(page).to have_css('[data-role-scope="client"]', visible: :visible)
     expect(page).to have_no_css('[data-role-scope="pm"]', visible: :visible)
   end

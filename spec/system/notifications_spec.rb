@@ -4,14 +4,14 @@ RSpec.describe "Notifications", type: :system, js: true do
   before do
     driven_by :selenium_chrome_headless
 
-    client_account(name: "Default Client")
-    pm_account(name: "Default PM")
+    workspace_account(:client, name: "Default Client")
+    workspace_account(:pm, name: "Default PM")
     VideoType.create!(name: "Highlight Reel", description: "Short edit", price_cents: 25_000, output_format: "mp4")
   end
 
   it "shows client notifications in the navbar and as floating toasts" do
-    client = find_client_account
-    pm = find_pm_account
+    client = find_workspace_account(:client, email: "client@example.com")
+    pm = find_workspace_account(:pm, email: "pm@example.com")
     project = Project.create!(owner: client, participant: pm, name: "Project Alpha", raw_footage_url: "https://example.com/raw.mov", status: :pending)
     Notification.create!(project: project, client: client, kind: "project_accepted", body: "Your project Project Alpha was accepted and is now in progress.")
 
@@ -35,8 +35,8 @@ RSpec.describe "Notifications", type: :system, js: true do
   end
 
   it "marks a client toast as read when the project link is clicked" do
-    client = find_client_account
-    pm = find_pm_account
+    client = find_workspace_account(:client, email: "client@example.com")
+    pm = find_workspace_account(:pm, email: "pm@example.com")
     project = Project.create!(owner: client, participant: pm, name: "Project Gamma", raw_footage_url: "https://example.com/gamma.mov", status: :pending)
     notification = Notification.create!(project: project, client: client, kind: "project_accepted", body: "Your project Project Gamma was accepted and is now in progress.")
 
@@ -51,8 +51,8 @@ RSpec.describe "Notifications", type: :system, js: true do
   end
 
   it "receives client notifications in realtime after a pm action" do
-    client = find_client_account
-    pm = find_pm_account
+    client = find_workspace_account(:client, email: "client@example.com")
+    pm = find_workspace_account(:pm, email: "pm@example.com")
     project = Project.create!(owner: client, participant: pm, name: "Project Beta", raw_footage_url: "https://example.com/beta.mov", status: :pending)
     project.video_type_selections.create!(video_type: VideoType.find_by!(name: "Highlight Reel"), quantity: 1)
 

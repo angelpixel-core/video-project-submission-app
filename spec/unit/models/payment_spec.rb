@@ -6,8 +6,8 @@ RSpec.describe Payments::Domain::Aggregates::Payment do
   end
 
   it "belongs to a project and keeps historical payments while only one is active" do
-    client = client_account(name: "Client")
-    pm = pm_account(name: "PM")
+    client = workspace_account(:client, name: "Client")
+    pm = workspace_account(:pm, name: "PM")
     project = Project.create!(owner: client, participant: pm, status: :draft)
 
     historical = described_class.create!(
@@ -46,8 +46,8 @@ RSpec.describe Payments::Domain::Aggregates::Payment do
   end
 
   it "rejects duplicate idempotency keys" do
-    client = client_account(name: "Client")
-    pm = pm_account(name: "PM")
+    client = workspace_account(:client, name: "Client")
+    pm = workspace_account(:pm, name: "PM")
     project = Project.create!(owner: client, participant: pm, status: :draft)
 
     described_class.create!(
@@ -73,8 +73,8 @@ RSpec.describe Payments::Domain::Aggregates::Payment do
   end
 
   it "enqueues invoice generation after a payment succeeds" do
-    client = client_account(name: "Client")
-    pm = pm_account(name: "PM")
+    client = workspace_account(:client, name: "Client")
+    pm = workspace_account(:pm, name: "PM")
     project = Project.create!(owner: client, participant: pm, status: :draft)
     payment = described_class.create!(
       project: project,
