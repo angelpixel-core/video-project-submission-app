@@ -191,7 +191,7 @@ Do not start step N+1 until step N is complete and validated.
 ## Checklist
 
 - [ ] Controllers no longer contain business workflow orchestration.
-- [ ] Repositories own repeated local data access.
+- [x] Repositories own repeated local data access.
 - [x] Use cases coordinate domain steps and side effects.
 - [x] Demo/test flags are not part of domain models.
 - [ ] The architecture is easier to extend for invoices, mail, and future payment methods.
