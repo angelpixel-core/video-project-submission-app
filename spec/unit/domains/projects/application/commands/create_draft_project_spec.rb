@@ -1,0 +1,32 @@
+require "rails_helper"
+
+require Rails.root.join("app/domains/projects/application/commands/create_draft_project")
+
+RSpec.describe Projects::Application::Commands::CreateDraftProject do
+  it "returns the existing draft project for the client workspace" do
+    client = workspace_account(:client, email: "client@example.com", name: "Client")
+    pm = workspace_account(:pm, email: "pm@example.com", name: "PM")
+    draft = Project.create!(owner: client, participant: pm, status: :draft)
+
+    result = described_class.call(client_workspace: client, pm_workspace: pm)
+
+    expect(result).to be_success
+    expect(result.data.fetch(:project)).to eq(draft)
+    expect(Project.where(status: :draft).count).to eq(1)
+  end
+
+  it "creates a draft project when none exists" do
+    client = workspace_account(:client, email: "client@example.com", name: "Client")
+    pm = workspace_account(:pm, email: "pm@example.com", name: "PM")
+
+    result = described_class.call(client_workspace: client, pm_workspace: pm)
+
+    project = result.data.fetch(:project)
+
+    expect(result).to be_success
+    expect(project).to be_persisted
+    expect(project.status).to eq("draft")
+    expect(project.owner).to eq(client)
+    expect(project.participant).to eq(pm)
+  end
+end

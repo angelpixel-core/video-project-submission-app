@@ -27,7 +27,9 @@ class ProjectsController < ApplicationController
   def new
     client_workspace = workspace_for(:client)
     pm_workspace = workspace_for(:pm)
-    project = client_workspace.projects.draft.order(created_at: :desc).first || client_workspace.projects.create!(participant: pm_workspace, status: :draft)
+    result = Projects::Application::Commands::CreateDraftProject.call(client_workspace: client_workspace, pm_workspace: pm_workspace)
+    project = result.data.fetch(:project)
+
     redirect_to edit_project_path(project)
   end
 
