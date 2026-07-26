@@ -56,8 +56,20 @@ class ProjectsController < ApplicationController
         render :edit, status: :unprocessable_content
       end
     else
-      autosave_project!(selections)
-      head :no_content
+      result = Projects::Application::Commands::AutosaveDraftProject.call(
+        project: @project,
+        participant: workspace_for(:pm),
+        attributes: project_attributes,
+        selections: selections
+      )
+
+      if result.success?
+        head :no_content
+      else
+        @project.errors.add(:base, result.message) if @project.errors.empty?
+        @selections_json = selections_json_for(@project)
+        render :edit, status: :unprocessable_content
+      end
     end
   rescue ActiveRecord::RecordInvalid, ArgumentError, JSON::ParserError, ActionController::ParameterMissing => e
     @project.errors.add(:base, e.message) if @project.errors.empty?
@@ -102,16 +114,6 @@ class ProjectsController < ApplicationController
 
   def finalize_submission?
     params.dig(:project, :finalize) == "1"
-  end
-
-  def autosave_project!(selections)
-    Project.transaction do
-      @project.assign_attributes(project_attributes)
-      @project.participant ||= workspace_for(:pm)
-      @project.status = :draft
-      @project.save!
-      sync_project_selections(@project, selections)
-    end
   end
 
   public
