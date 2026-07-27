@@ -10,6 +10,7 @@ RSpec.describe Ordering::Application::Commands::ProcessSubmission do
 
     submission = Ordering::Application::DTO::Submission.from_project(project_bridge, fulfillment_account: pm)
     payment = instance_double(Payments::Domain::Aggregates::Payment)
+    allow(payment).to receive(:active?).and_return(true)
     payment_result = Core::Result::Success.(data: { payment: payment })
 
     payment_command = lambda do |project:, provider:, payment_method_type:|
@@ -41,5 +42,26 @@ RSpec.describe Ordering::Application::Commands::ProcessSubmission do
 
     expect(result).to be_failure
     expect(result.message).to eq("Submission requires at least one line item")
+  end
+
+  it "fails when the payment has not reached the checkpoint state" do
+    client = workspace_account(:client, name: "Client")
+    pm = workspace_account(:pm, name: "PM")
+    project = Project.create!(owner: client, participant: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :pending)
+    video_type = VideoType.create!(name: "Highlight Reel", description: "Short edit", price_cents: 25_000, output_format: "mp4")
+    project.video_type_selections.create!(video_type: video_type, quantity: 1)
+
+    submission = Ordering::Application::DTO::Submission.from_project(project, fulfillment_account: pm)
+    payment = instance_double(Payments::Domain::Aggregates::Payment)
+    allow(payment).to receive(:active?).and_return(false)
+    payment_result = Core::Result::Success.(data: { payment: payment })
+
+    result = described_class.call(
+      submission: submission,
+      payment_command: lambda { |_args| payment_result }
+    )
+
+    expect(result).to be_failure
+    expect(result.message).to eq("Payment must be active before success checkpoint")
   end
 end

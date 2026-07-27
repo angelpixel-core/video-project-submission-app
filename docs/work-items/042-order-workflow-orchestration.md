@@ -22,7 +22,7 @@ title: Order Submission Workflow Orchestration
 
 ## Goal
 
-- [ ] Model the order/submission/payment flow as an explicit workflow with clear steps for validation, capture/confirmation, success handling, invoice creation, and follow-up notifications.
+- [x] Model the order/submission/payment flow as an explicit workflow with clear steps for validation, capture/confirmation, success handling, invoice creation, and follow-up notifications.
 
 ## Scope
 
@@ -175,10 +175,10 @@ Failure:
 
 ## Implementation Plan
 
-- [ ] Introduce `Ordering::Application::Commands::ProcessSubmission` as the orchestration entrypoint.
-- [ ] Extract `validate_submission` as a named step that runs before any payment side effects.
-- [ ] Keep payment capture/confirmation inside `Payments::Application::Commands::CreatePayment`.
-- [ ] Add an explicit success checkpoint that runs only after payment reaches the expected state.
+- [x] Introduce `Ordering::Application::Commands::ProcessSubmission` as the orchestration entrypoint.
+- [x] Extract `validate_submission` as a named step that runs before any payment side effects.
+- [x] Keep payment capture/confirmation inside `Payments::Application::Commands::CreatePayment`.
+- [x] Add an explicit success checkpoint that runs only after payment reaches the expected state.
 - [ ] Trigger invoice and notification follow-up work only from the success checkpoint.
 - [ ] Make the workflow boundaries explicit and testable with one spec per stage.
 - [ ] Add specs for success, validation failure, provider failure, and downstream-job failure.
@@ -201,17 +201,17 @@ Failure:
 
 ## Checklist
 
-- [ ] Payment validation happens before capture.
-- [ ] Payment capture/confirmation is a distinct workflow step.
+- [x] Payment validation happens before capture.
+- [x] Payment capture/confirmation is a distinct workflow step.
 - [ ] Downstream mail/invoice steps only run after success.
-- [ ] Workflow steps are explicit and retry-safe.
+- [x] Workflow steps are explicit and retry-safe.
 - [ ] Future payment methods can plug into the same flow.
 
 ## Validation
 
-- [ ] Specs cover the workflow stages and failure points.
+- [x] Specs cover the workflow stages and failure points.
 - [ ] Specs cover downstream handoff after successful payment.
-- [ ] Workflow remains readable and does not collapse back into controller logic.
+- [x] Workflow remains readable and does not collapse back into controller logic.
 
 ## Notes
 

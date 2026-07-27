@@ -64,7 +64,7 @@ title: Order Domain and Project Rename
 ## Implementation Plan
 
 - [ ] Define the final domain vocabulary and map each existing `Project` responsibility to its target domain.
-- [ ] Introduce `Order` as the primary ordering model or aggregate, with compatibility wrappers where needed.
+- [x] Introduce `Order` as the primary ordering model or aggregate, with compatibility wrappers where needed.
 - [ ] Move the operator listing query out of `app/queries/projects` into the ordering domain namespace.
 - [ ] Rename the operator shell routes/controllers/views from `projects` to `orders`.
 - [ ] Keep legacy `projects` routes/controllers temporarily as redirects or adapters.

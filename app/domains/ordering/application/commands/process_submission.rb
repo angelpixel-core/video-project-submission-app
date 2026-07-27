@@ -18,7 +18,8 @@ module Ordering
           payment_result = capture_or_confirm_payment
           return payment_failure(payment_result) if payment_result.failure?
 
-          success_handling(payment_result.data.fetch(:payment))
+          success_checkpoint_result = success_checkpoint(payment_result.data.fetch(:payment))
+          return success_checkpoint_result if success_checkpoint_result.failure?
 
           Core::Result::Success.(data: { submission: submission, order: submission.order, payment: payment_result.data.fetch(:payment) })
         rescue AASM::InvalidTransition, ActiveRecord::RecordInvalid => e
@@ -56,9 +57,10 @@ module Ordering
           )
         end
 
-        def success_handling(payment)
-          submission.order.mark_payment_pending! if submission.order.respond_to?(:mark_payment_pending!)
-          payment
+        def success_checkpoint(payment)
+          return failure("Payment must be active before success checkpoint", :invalid_record) unless payment.active?
+
+          Core::Result::Success.(data: { payment: payment, order: submission.order, submission: submission })
         end
 
         def payment_failure(payment_result)
