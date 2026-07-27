@@ -2,7 +2,7 @@ module Payments
   module Adapters
     module Outbound
       module Gateways
-        class Fake < Payments::Application::Ports::PaymentGateway
+        class Fake < Payments::Application::Ports::Gateway
           def self.call(payment:)
             return Core::Result::Failure.(
               message: "Payment amount must be greater than zero.",
