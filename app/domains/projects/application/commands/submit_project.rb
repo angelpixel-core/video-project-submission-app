@@ -28,7 +28,15 @@ module Projects
               project.submit!
               repository.replace_selections(project, selections)
 
-              payment_result = Payments::Application::Commands::CreatePayment.(project: project)
+              submission = Ordering::Application::DTO::Submission.from_project(
+                project,
+                fulfillment_account: participant,
+                payment_provider: "fake",
+                payment_method_type: "card",
+                metadata: { project_id: project.id }
+              )
+
+              payment_result = Ordering::Application::Commands::ProcessSubmission.call(submission: submission)
               if payment_result.failure?
                 project.errors.add(:base, payment_result.message)
                 payment_failed = true
@@ -43,7 +51,7 @@ module Projects
 
           NotificationJob.perform_later(project.id)
 
-          Core::Result::Success.(data: { project: project, payment: payment })
+          Core::Result::Success.(data: { project: project, payment: payment, submission: payment_result.data.fetch(:submission) })
         rescue AASM::InvalidTransition, ActiveRecord::RecordInvalid => e
           project.errors.add(:base, e.message) if project.errors.empty?
           Core::Result::Failure.(message: e.message, code: :invalid_record, data: { project_id: project.id })

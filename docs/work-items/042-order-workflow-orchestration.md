@@ -103,6 +103,69 @@ Workflow entrypoint
 - `Payments::Application::Handlers::DispatchPaymentNotificationJob` owns payment status email delivery.
 - `Projects::Notifications::Service` and `NotificationJob` own project submission notifications.
 
+### Command Sequence
+
+```text
+Controller / bridge
+  -> Projects::Application::Commands::SubmitProject
+    -> build Ordering::Application::DTO::Submission
+       - order
+       - fulfillment_account
+       - payment_provider
+       - payment_method_type
+       - metadata
+    -> Ordering::Application::Commands::ProcessSubmission.call(submission:)
+      -> validate_submission(submission)
+         - requires order present
+         - requires line items present
+         - requires fulfillment account present
+         - validates submittable order state
+      <- failure? stop and return failure
+
+      -> capture_or_confirm_payment(submission)
+         -> Payments::Application::Commands::CreatePayment.call(
+              project/order: submission.order,
+              provider: submission.payment_provider,
+              payment_method_type: submission.payment_method_type
+            )
+         <- payment_result
+         - if failure: stop and return failure
+
+      -> success_handling(submission, payment)
+         - record the success checkpoint
+         - prepare downstream payloads
+
+      -> enqueue_follow_up_work(submission, payment)
+         -> notification dispatch
+         -> invoice generation/storage
+         -> fulfillment kickoff jobs
+      <- Core::Result::Success(data: { submission:, order:, payment: })
+```
+
+### Failure Paths
+
+- Validation failure stops before any payment side effects.
+- Payment provider failure marks the payment failed and stops downstream work.
+- Downstream enqueue failure should be retry-safe and either return a failure only if it is part of the transactional guarantee, or be deferred to job retries.
+
+### Command Boundary Rules
+
+- Keep `validate_submission` explicit and fast-failing.
+- Keep payment capture/confirmation inside `Payments::Application::Commands::CreatePayment`.
+- Keep `success_handling` limited to checkpointing and payload preparation.
+- Keep `enqueue_follow_up_work` idempotent and retry-friendly.
+- Do not put provider-specific branching, mailer bodies, or transport concerns in the command.
+
+### Return Contract
+
+```ruby
+Success:
+  { submission:, order:, payment: }
+
+Failure:
+  { message:, code:, data: }
+```
+
 ## Operational Note
 
 - This is the business flow layer, not transport code.
