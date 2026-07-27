@@ -22,7 +22,7 @@ title: Order Workflow Orchestration
 
 ## Goal
 
-- [ ] Model the order/payment flow as an explicit workflow with clear steps for payment validation, payment capture, success handling, invoice creation, and follow-up notifications.
+- [ ] Model the order/payment flow as an explicit workflow with clear steps for validation, capture/confirmation, success handling, invoice creation, and follow-up notifications.
 
 ## Scope
 
@@ -33,6 +33,67 @@ title: Order Workflow Orchestration
 - Keep the workflow extensible for future payment methods and fulfillment paths.
 - Avoid coupling the workflow to a single provider or a single notification type.
 
+## Workflow Map
+
+### Current Flow Today
+
+```text
+ProjectsController#update
+  -> Projects::Application::Commands::UpdateProject
+    -> Projects::Application::Commands::SubmitProject (when finalize=1)
+      -> pre-flight validation (selections present)
+      -> Project.transaction / project.with_lock
+      -> project.submit!
+      -> sync selections
+      -> Payments::Application::Commands::CreatePayment
+        -> create or reuse active payment
+        -> provider gateway call
+        -> update payment state to processing / failed
+      -> NotificationJob.perform_later(project.id)
+        -> Projects::Notifications::Service
+          -> create project notification
+          -> Projects::Notifications::Dispatcher
+```
+
+### Target Workflow
+
+```text
+Workflow entrypoint
+  Orders::Application::Commands::ProcessOrderPayment
+    |
+    |-- Step 1: validate_submission
+    |     - requires selections
+    |     - validates order/project attributes
+    |
+    |-- Step 2: capture_or_confirm_payment
+    |     - delegates to Payments::Application::Commands::CreatePayment
+    |     - persists payment attempt and provider state
+    |
+    |-- Step 3: success_handling
+    |     - records success checkpoint
+    |     - hands off to follow-up jobs
+    |
+    |-- Step 4: enqueue_follow_up_work
+          - notification dispatch
+          - invoice generation/storage
+          - provider-agnostic post-confirmation work
+```
+
+### Step Boundaries
+
+- `validate_submission` should fail fast before any side effects.
+- `capture_or_confirm_payment` should own payment state transitions only.
+- `success_handling` should run only after the payment reaches the expected checkpoint.
+- `enqueue_follow_up_work` should be idempotent and safe to retry.
+
+### Current File Mapping
+
+- `Projects::Application::Commands::SubmitProject` owns the current workflow orchestration.
+- `Payments::Application::Commands::CreatePayment` owns payment capture/provider confirmation.
+- `Payments::Application::Handlers::GenerateInvoiceJob` owns invoice generation/storage after success.
+- `Payments::Application::Handlers::DispatchPaymentNotificationJob` owns payment status email delivery.
+- `Projects::Notifications::Service` and `NotificationJob` own project submission notifications.
+
 ## Operational Note
 
 - This is the business flow layer, not transport code.
@@ -42,12 +103,13 @@ title: Order Workflow Orchestration
 
 ## Implementation Plan
 
-- [ ] Define the order workflow entrypoint and the list of stages.
-- [ ] Add a pre-payment validation step before capture.
-- [ ] Add a payment confirmation step that hands off to the outbound notification flow.
-- [ ] Add a post-confirmation step that can trigger invoice generation/storage.
-- [ ] Make the workflow step boundaries explicit and testable.
-- [ ] Add specs for success, validation failure, and downstream-step failure.
+- [ ] Introduce `Orders::Application::Commands::ProcessOrderPayment` as the orchestration entrypoint.
+- [ ] Extract `validate_submission` as a named step that runs before any payment side effects.
+- [ ] Keep payment capture/confirmation inside `Payments::Application::Commands::CreatePayment`.
+- [ ] Add an explicit success checkpoint that runs only after payment reaches the expected state.
+- [ ] Trigger invoice and notification follow-up work only from the success checkpoint.
+- [ ] Make the workflow boundaries explicit and testable with one spec per stage.
+- [ ] Add specs for success, validation failure, provider failure, and downstream-job failure.
 
 ## Affected Docs
 
