@@ -17,13 +17,18 @@ module Projects
         def call
           return missing_selections_failure if selections.empty?
 
+          normalized_attributes = attributes.to_h.symbolize_keys
+          payment_provider = normalized_attributes.delete(:payment_provider).presence || "fake"
+          payment_method_type = normalized_attributes.delete(:payment_method_type).presence || "card"
+          payment_gateway = Payments::Application::Gateways.resolve(payment_provider)
+
           payment_result = nil
           payment = nil
           payment_failed = false
 
           Project.transaction do
             project.with_lock do
-              project.assign_attributes(attributes)
+              project.assign_attributes(normalized_attributes)
               project.participant = participant
               project.submit!
               repository.replace_selections(project, selections)
@@ -31,12 +36,12 @@ module Projects
               submission = Ordering::Application::DTO::Submission.from_project(
                 project,
                 fulfillment_account: participant,
-                payment_provider: "fake",
-                payment_method_type: "card",
+                payment_provider: payment_provider,
+                payment_method_type: payment_method_type,
                 metadata: { project_id: project.id }
               )
 
-              payment_result = Ordering::Application::Commands::ProcessSubmission.call(submission: submission)
+              payment_result = Ordering::Application::Commands::ProcessSubmission.call(submission: submission, payment_gateway: payment_gateway)
               if payment_result.failure?
                 project.errors.add(:base, payment_result.message)
                 payment_failed = true

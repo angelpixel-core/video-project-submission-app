@@ -55,4 +55,19 @@ RSpec.describe Payments::Application::Commands::CreatePayment do
     expect(result.code).to eq(:provider_rejected)
     expect(result.message).to eq("Rejected")
   end
+
+  it "uses the registered gateway for a non-default provider" do
+    client = workspace_account(:client, email: "client@example.com", name: "Client")
+    pm = workspace_account(:pm, email: "pm@example.com", name: "PM")
+    project = Project.create!(owner: client, participant: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :pending)
+    video_type = VideoType.create!(name: "Highlight Reel", description: "Short edit", price_cents: 25_000, output_format: "mp4")
+    project.video_type_selections.create!(video_type: video_type, quantity: 1)
+
+    result = described_class.(project: project, provider: "stripe")
+    payment = result.data.fetch(:payment)
+
+    expect(result).to be_success
+    expect(payment.provider).to eq("stripe")
+    expect(payment.provider_reference).to start_with("stripe-")
+  end
 end

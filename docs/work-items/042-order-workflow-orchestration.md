@@ -205,7 +205,7 @@ Failure:
 - [x] Payment capture/confirmation is a distinct workflow step.
 - [x] Downstream mail/invoice steps only run after success.
 - [x] Workflow steps are explicit and retry-safe.
-- [ ] Future payment methods can plug into the same flow.
+- [x] Future payment methods can plug into the same flow.
 
 ## Validation
 

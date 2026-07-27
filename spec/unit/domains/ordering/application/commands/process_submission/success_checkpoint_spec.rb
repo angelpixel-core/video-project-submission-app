@@ -14,7 +14,7 @@ RSpec.describe Ordering::Application::Commands::ProcessSubmission do
 
     result = described_class.call(
       submission: submission,
-      payment_command: lambda { |_args| payment_result }
+      payment_command: lambda { |**_args| payment_result }
     )
 
     expect(result).to be_failure

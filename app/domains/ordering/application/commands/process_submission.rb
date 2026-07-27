@@ -2,13 +2,14 @@ module Ordering
   module Application
     module Commands
       class ProcessSubmission
-        def self.call(submission:, payment_command: Payments::Application::Commands::CreatePayment)
-          new(submission:, payment_command:).call
+        def self.call(submission:, payment_command: Payments::Application::Commands::CreatePayment, payment_gateway: nil)
+          new(submission:, payment_command:, payment_gateway:).call
         end
 
-        def initialize(submission:, payment_command:)
+        def initialize(submission:, payment_command:, payment_gateway: nil)
           @submission = submission
           @payment_command = payment_command
+          @payment_gateway = payment_gateway
         end
 
         def call
@@ -28,7 +29,7 @@ module Ordering
 
         private
 
-        attr_reader :submission, :payment_command
+        attr_reader :submission, :payment_command, :payment_gateway
 
         def validate_submission
           return failure("Submission requires an order", :invalid_record) if submission.order.nil?
@@ -53,7 +54,8 @@ module Ordering
           payment_command.(
             project: submission.order,
             provider: submission.payment_provider,
-            payment_method_type: submission.payment_method_type
+            payment_method_type: submission.payment_method_type,
+            gateway: payment_gateway
           )
         end
 
