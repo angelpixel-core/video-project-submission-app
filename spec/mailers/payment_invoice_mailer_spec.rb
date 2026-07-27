@@ -1,12 +1,12 @@
 require "rails_helper"
 
-RSpec.describe PaymentInvoiceMailer do
+RSpec.describe Payments::Adapters::Outbound::Email::PaymentInvoiceMailer do
   describe "invoice_ready" do
     it "sends the invoice email with an attachment link" do
-      client = Client.create!(name: "Client", email: "client@example.com")
-      pm = PM.create!(name: "PM", email: "pm@example.com")
-      project = Project.create!(client: client, pm: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :draft)
-      payment = Payment.create!(
+      client = workspace_account(:client, name: "Client")
+      pm = workspace_account(:pm, name: "PM")
+      project = Project.create!(owner: client, participant: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :draft)
+      payment = Payments::Domain::Aggregates::Payment.create!(
         project: project,
         status: :succeeded,
         provider: "fake",
@@ -18,7 +18,7 @@ RSpec.describe PaymentInvoiceMailer do
         invoice_generated_at: Time.current
       )
       payment.invoice_document.attach(io: StringIO.new("invoice html"), filename: "INV-000001.html", content_type: "text/html")
-      intent = PaymentInvoiceDeliveryIntent.create!(payment: payment, status: :pending, scheduled_at: Time.current)
+      intent = Payments::Domain::Entities::PaymentInvoiceDeliveryIntent.create!(payment: payment, status: :pending, scheduled_at: Time.current)
 
       mail = described_class.invoice_ready(intent)
 

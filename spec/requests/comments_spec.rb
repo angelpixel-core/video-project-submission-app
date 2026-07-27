@@ -1,15 +1,36 @@
 require "rails_helper"
 
 RSpec.describe "Comments requests" do
+  around do |example|
+    original_client = ENV["DEFAULT_CLIENT_WORKSPACE_EMAIL"]
+    original_pm = ENV["DEFAULT_PM_WORKSPACE_EMAIL"]
+
+    ENV["DEFAULT_CLIENT_WORKSPACE_EMAIL"] = "client@example.com"
+    ENV["DEFAULT_PM_WORKSPACE_EMAIL"] = "pm@example.com"
+
+    example.run
+
+    restore_env("DEFAULT_CLIENT_WORKSPACE_EMAIL", original_client)
+    restore_env("DEFAULT_PM_WORKSPACE_EMAIL", original_pm)
+  end
+
   before do
-    Client.create!(name: "Default Client", email: "client@example.com")
-    PM.create!(name: "Default PM", email: "pm@example.com")
+    workspace_account(:client, name: "Default Client", email: "client@example.com")
+    workspace_account(:pm, name: "Default PM", email: "pm@example.com")
+  end
+
+  def restore_env(key, value)
+    if value.nil?
+      ENV.delete(key)
+    else
+      ENV[key] = value
+    end
   end
 
   it "creates a comment as the client workspace" do
-    client = Client.find_by!(email: "client@example.com")
-    pm = PM.find_by!(email: "pm@example.com")
-    project = Project.create!(client: client, pm: pm, name: "Project Alpha", raw_footage_url: "https://example.com/raw.mov", status: :in_progress)
+    client = find_workspace_account(:client, email: "client@example.com")
+    pm = find_workspace_account(:pm, email: "pm@example.com")
+    project = Project.create!(owner: client, participant: pm, name: "Project Alpha", raw_footage_url: "https://example.com/raw.mov", status: :in_progress)
 
     expect do
       post project_comments_path(project), params: {
@@ -34,9 +55,9 @@ RSpec.describe "Comments requests" do
   end
 
   it "creates a comment as the pm workspace" do
-    client = Client.find_by!(email: "client@example.com")
-    pm = PM.find_by!(email: "pm@example.com")
-    project = Project.create!(client: client, pm: pm, name: "Project Beta", raw_footage_url: "https://example.com/raw.mov", status: :in_progress)
+    client = find_workspace_account(:client, email: "client@example.com")
+    pm = find_workspace_account(:pm, email: "pm@example.com")
+    project = Project.create!(owner: client, participant: pm, name: "Project Beta", raw_footage_url: "https://example.com/raw.mov", status: :in_progress)
 
     expect do
       post project_comments_path(project), params: {

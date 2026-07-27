@@ -1,13 +1,13 @@
 require "rails_helper"
 
-RSpec.describe Payments::ProcessWebhookEventJob do
+RSpec.describe Payments::Adapters::Inbound::Webhooks::Event::Job do
   include ActiveJob::TestHelper
 
   it "delegates to the payment event handler when the event exists" do
-    payment = Payment.create!(
+    payment = Payments::Domain::Aggregates::Payment.create!(
       project: Project.create!(
-        client: Client.create!(name: "Client", email: "client@example.com"),
-        pm: PM.create!(name: "PM", email: "pm@example.com"),
+        owner: workspace_account(:client, name: "Client"),
+        participant: workspace_account(:pm, name: "PM"),
         name: "Project",
         raw_footage_url: "https://example.com/raw.mov",
         status: :pending
@@ -20,7 +20,7 @@ RSpec.describe Payments::ProcessWebhookEventJob do
       provider_reference: "fake-abc123"
     )
 
-    event = PaymentWebhookEvent.create!(
+    event = Payments::Domain::Entities::PaymentWebhookEvent.create!(
       provider: "fake",
       provider_event_id: "evt_123",
       event_type: "payment.succeeded",
@@ -40,20 +40,20 @@ RSpec.describe Payments::ProcessWebhookEventJob do
       received_at: Time.current
     )
 
-    service = instance_double(Payments::PaymentEventHandler)
-    expect(Payments::PaymentEventHandler).to receive(:call).with(event: event).and_return(service)
+    service = instance_double(Payments::Adapters::Inbound::Webhooks::Event::Handler)
+    expect(Payments::Adapters::Inbound::Webhooks::Event::Handler).to receive(:call).with(event: event).and_return(service)
 
     described_class.perform_now(event.id)
   end
 
   it "does nothing when the event is missing" do
-    expect(Payments::PaymentEventHandler).not_to receive(:call)
+    expect(Payments::Adapters::Inbound::Webhooks::Event::Handler).not_to receive(:call)
 
     described_class.perform_now(-1)
   end
 
   it "retries deadlocks" do
-    allow(PaymentWebhookEvent).to receive(:find_by).and_raise(ActiveRecord::Deadlocked)
+    allow(Payments::Domain::Entities::PaymentWebhookEvent).to receive(:find_by).and_raise(ActiveRecord::Deadlocked)
 
     assert_enqueued_jobs 1 do
       described_class.perform_now(123)
@@ -61,10 +61,10 @@ RSpec.describe Payments::ProcessWebhookEventJob do
   end
 
   it "retries the demo transient failure and eventually processes the event" do
-    payment = Payment.create!(
+    payment = Payments::Domain::Aggregates::Payment.create!(
       project: Project.create!(
-        client: Client.create!(name: "Client", email: "client@example.com"),
-        pm: PM.create!(name: "PM", email: "pm@example.com"),
+        owner: workspace_account(:client, name: "Client"),
+        participant: workspace_account(:pm, name: "PM"),
         name: "Project",
         raw_footage_url: "https://example.com/raw.mov",
         status: :pending
@@ -77,7 +77,7 @@ RSpec.describe Payments::ProcessWebhookEventJob do
       provider_reference: "fake-abc123"
     )
 
-    event = PaymentWebhookEvent.create!(
+    event = Payments::Domain::Entities::PaymentWebhookEvent.create!(
       provider: "fake",
       provider_event_id: "evt_demo_retry",
       event_type: "payment.succeeded",
@@ -106,7 +106,7 @@ RSpec.describe Payments::ProcessWebhookEventJob do
 
     expect(event.status).to eq("processed")
     expect(event.processing_attempts_count).to eq(2)
-    expect(event.last_failure_message).to eq(Payments::PaymentEventHandler::DEMO_FAILURE_MESSAGE)
+    expect(event.last_failure_message).to eq(Payments::Adapters::Inbound::Webhooks::Event::Handler::DEMO_FAILURE_MESSAGE)
     expect(event.processing_attempts.order(:attempt_number).pluck(:status)).to eq(%w[failed succeeded])
     expect(payment.reload.status).to eq("succeeded")
   end

@@ -1,9 +1,9 @@
 require "rails_helper"
 
-RSpec.describe PaymentNotificationDispatcherJob do
+RSpec.describe Payments::Application::Handlers::DispatchPaymentNotificationJob do
   it "dispatches a pending intent and marks it sent" do
-    payment = Payment.create!(
-      project: Project.create!(client: Client.create!(name: "Client", email: "client@example.com"), pm: PM.create!(name: "PM", email: "pm@example.com"), name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :pending),
+    payment = Payments::Domain::Aggregates::Payment.create!(
+      project: Project.create!(owner: workspace_account(:client, email: "client@example.com", name: "Client"), participant: workspace_account(:pm, email: "pm@example.com", name: "PM"), name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :pending),
       status: :succeeded,
       provider: "fake",
       idempotency_key: SecureRandom.uuid,
@@ -12,7 +12,7 @@ RSpec.describe PaymentNotificationDispatcherJob do
       provider_reference: "fake-abc123"
     )
 
-    intent = PaymentNotificationIntent.create!(
+    intent = Payments::Domain::Entities::PaymentNotificationIntent.create!(
       payment: payment,
       project: payment.project,
       event_type: "payment.succeeded",
@@ -23,7 +23,8 @@ RSpec.describe PaymentNotificationDispatcherJob do
       scheduled_at: Time.current
     )
 
-    expect(PaymentNotifications::Dispatcher).to receive(:call).with(intent: intent)
+    expect(Payments::Adapters::Outbound::Email::PaymentNotificationMailer).to receive(:payment_status_changed).with(intent, recipient_role: :client).and_return(instance_double(ActionMailer::MessageDelivery, deliver_now: true))
+    expect(Payments::Adapters::Outbound::Email::PaymentNotificationMailer).to receive(:payment_status_changed).with(intent, recipient_role: :pm).and_return(instance_double(ActionMailer::MessageDelivery, deliver_now: true))
 
     described_class.perform_now(intent.id)
 
@@ -33,8 +34,8 @@ RSpec.describe PaymentNotificationDispatcherJob do
   end
 
   it "marks the intent failed when dispatch raises" do
-    payment = Payment.create!(
-      project: Project.create!(client: Client.create!(name: "Client", email: "client@example.com"), pm: PM.create!(name: "PM", email: "pm@example.com"), name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :pending),
+    payment = Payments::Domain::Aggregates::Payment.create!(
+      project: Project.create!(owner: workspace_account(:client, email: "client@example.com", name: "Client"), participant: workspace_account(:pm, email: "pm@example.com", name: "PM"), name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :pending),
       status: :succeeded,
       provider: "fake",
       idempotency_key: SecureRandom.uuid,
@@ -43,7 +44,7 @@ RSpec.describe PaymentNotificationDispatcherJob do
       provider_reference: "fake-abc123"
     )
 
-    intent = PaymentNotificationIntent.create!(
+    intent = Payments::Domain::Entities::PaymentNotificationIntent.create!(
       payment: payment,
       project: payment.project,
       event_type: "payment.succeeded",
@@ -54,7 +55,7 @@ RSpec.describe PaymentNotificationDispatcherJob do
       scheduled_at: Time.current
     )
 
-    allow(PaymentNotifications::Dispatcher).to receive(:call).and_raise(StandardError, "boom")
+    allow(Payments::Adapters::Outbound::Email::PaymentNotificationMailer).to receive(:payment_status_changed).and_raise(StandardError, "boom")
 
     expect do
       described_class.perform_now(intent.id)
@@ -66,12 +67,12 @@ RSpec.describe PaymentNotificationDispatcherJob do
   end
 
   it "does nothing for missing or already sent intents" do
-    expect(PaymentNotifications::Dispatcher).not_to receive(:call)
+    expect(Payments::Adapters::Outbound::Email::PaymentNotificationMailer).not_to receive(:payment_status_changed)
 
     described_class.perform_now(-1)
 
-    payment = Payment.create!(
-      project: Project.create!(client: Client.create!(name: "Client", email: "client@example.com"), pm: PM.create!(name: "PM", email: "pm@example.com"), name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :pending),
+    payment = Payments::Domain::Aggregates::Payment.create!(
+      project: Project.create!(owner: workspace_account(:client, email: "client@example.com", name: "Client"), participant: workspace_account(:pm, email: "pm@example.com", name: "PM"), name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :pending),
       status: :succeeded,
       provider: "fake",
       idempotency_key: SecureRandom.uuid,
@@ -80,7 +81,7 @@ RSpec.describe PaymentNotificationDispatcherJob do
       provider_reference: "fake-abc123"
     )
 
-    intent = PaymentNotificationIntent.create!(
+    intent = Payments::Domain::Entities::PaymentNotificationIntent.create!(
       payment: payment,
       project: payment.project,
       event_type: "payment.succeeded",
@@ -92,7 +93,7 @@ RSpec.describe PaymentNotificationDispatcherJob do
       processed_at: Time.current
     )
 
-    expect(PaymentNotifications::Dispatcher).not_to receive(:call)
+    expect(Payments::Adapters::Outbound::Email::PaymentNotificationMailer).not_to receive(:payment_status_changed)
 
     described_class.perform_now(intent.id)
   end

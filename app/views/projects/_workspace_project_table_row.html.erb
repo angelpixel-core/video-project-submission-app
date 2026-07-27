@@ -1,0 +1,30 @@
+<tr id="project_<%= project.id %>" data-project-id="<%= project.id %>">
+  <td class="text-body-secondary"><%= project.id %></td>
+
+  <td>
+    <%= link_to project_path(project), class: "workspace-project-name-link text-reset text-decoration-none d-inline-block" do %>
+      <span class="fw-semibold workspace-project-name-link-text"><%= project.name.presence || "Untitled project" %></span>
+    <% end %>
+    <div class="text-body-secondary small"><%= project.owner.name %></div>
+  </td>
+
+  <td><%= project.created_at.to_fs(:short) %></td>
+
+  <td><%= number_to_currency(project.total_budget_cents.to_f / 100) %></td>
+
+  <td>
+    <span class="badge <%= project.status_badge_class %> text-white text-uppercase">
+      <%= project.status_badge_text %>
+    </span>
+  </td>
+
+  <td class="text-end">
+    <div class="d-inline-flex flex-wrap gap-2 justify-content-end">
+      <% if project.pending? %>
+        <%= button_to "Aceptar proyecto", accept_project_path(project), method: :patch, form: { data: { controller: "project-action", action: "submit->project-action#submit" } }, class: "btn btn-sm btn-outline-primary" %>
+      <% elsif project.in_progress? %>
+        <%= button_to "Marcar como completado", complete_project_path(project), method: :patch, form: { data: { controller: "project-action", action: "submit->project-action#submit" } }, class: "btn btn-sm btn-outline-success" %>
+      <% end %>
+    </div>
+  </td>
+</tr>

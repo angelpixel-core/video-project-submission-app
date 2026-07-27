@@ -2,8 +2,8 @@ require "rails_helper"
 
 RSpec.describe "Profile requests" do
   before do
-    Client.create!(name: "Default Client", email: "client@example.com")
-    PM.create!(name: "Default PM", email: "pm@example.com")
+    workspace_account(:client, name: "Default Client")
+    workspace_account(:pm, name: "Default PM")
   end
 
   it "attaches an avatar from a safe https url" do
@@ -22,7 +22,7 @@ RSpec.describe "Profile requests" do
     }
 
     expect(response).to redirect_to(profile_path)
-    expect(Client.find_by!(email: "client@example.com").avatar).to be_attached
+    expect(find_workspace_account(:client, email: "client@example.com").avatar).to be_attached
   end
 
   it "rejects a non-https avatar url" do

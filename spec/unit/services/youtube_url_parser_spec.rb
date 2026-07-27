@@ -1,6 +1,7 @@
 require "rails_helper"
+require Rails.root.join("lib/parsers/youtube_url_parser")
 
-RSpec.describe YoutubeUrlParser do
+RSpec.describe Parsers::YoutubeUrlParser do
   it "extracts a video id from a standard watch url" do
     url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
 

@@ -2,13 +2,14 @@ class Notification < ApplicationRecord
   after_save :broadcast_refresh, if: :should_broadcast_refresh?
 
   belongs_to :project
-  belongs_to :pm, class_name: "PM", optional: true
-  belongs_to :client, optional: true
+  belongs_to :account, class_name: "Identity::Domain::Aggregates::Account", foreign_key: :account_id, optional: true
+
+  before_validation :sync_legacy_recipient_columns
 
   scope :read, -> { where.not(read_at: nil) }
   scope :unread, -> { where(read_at: nil) }
-  scope :for_pm, -> { where.not(pm_id: nil) }
-  scope :for_client, -> { where.not(client_id: nil) }
+  scope :for_pm, -> { joins(:account).where(accounts: { role: "pm" }) }
+  scope :for_client, -> { joins(:account).where(accounts: { role: "client" }) }
 
   validates :kind, presence: true
   validates :body, presence: true
@@ -16,6 +17,34 @@ class Notification < ApplicationRecord
 
   def mark_as_read!
     update!(read_at: Time.current)
+  end
+
+  def recipient
+    account || pm || client
+  end
+
+  def pm
+    return account if account&.pm?
+
+    Identity::Domain::Aggregates::Account.find_by(id: pm_id || account_id, role: "pm")
+  end
+
+  def client
+    return account if account&.client?
+
+    Identity::Domain::Aggregates::Account.find_by(id: client_id || account_id, role: "client")
+  end
+
+  def pm=(value)
+    self.account = value
+    self.pm_id = value&.id
+    self.client_id = nil
+  end
+
+  def client=(value)
+    self.account = value
+    self.client_id = value&.id
+    self.pm_id = nil
   end
 
   def self.broadcast_refresh_for(recipient, notification: nil)
@@ -36,35 +65,34 @@ class Notification < ApplicationRecord
 
   private
 
-  def recipient
-    pm || client
-  end
-
   def self.notification_stream_name(recipient)
-    case recipient
-    when PM
-      "pm_notifications"
-    when Client
-      "client_notifications"
-    end
-  end
+    return "pm_notifications" if recipient.respond_to?(:pm?) && recipient.pm?
+    return "client_notifications" if recipient.respond_to?(:client?) && recipient.client?
 
-  def should_broadcast_refresh?
-    previously_new_record? || saved_change_to_read_at?
+    nil
   end
 
   def broadcast_refresh
     self.class.broadcast_refresh_for(recipient, notification: self)
   end
 
-  def recipient_presence
-    if pm.blank? && client.blank?
-      errors.add(:pm, :blank)
-      errors.add(:client, :blank)
-    end
+  def should_broadcast_refresh?
+    previously_new_record? || saved_change_to_read_at?
+  end
 
-    if pm.present? && client.present?
-      errors.add(:base, "Notification recipient must be exclusive")
+  def recipient_presence
+    if account.blank?
+      errors.add(:account, :blank)
+    end
+  end
+
+  def sync_legacy_recipient_columns
+    return if account.blank?
+
+    if account.pm?
+      self.pm_id ||= account.id
+    elsif account.client?
+      self.client_id ||= account.id
     end
   end
 end

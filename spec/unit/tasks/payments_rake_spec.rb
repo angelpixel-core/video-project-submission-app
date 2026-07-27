@@ -33,7 +33,7 @@ RSpec.describe "payments rake tasks" do
   end
 
   it "defaults to localhost and forwards env vars to the simulator" do
-    expect(Payments::WebhookSimulator).to receive(:call).with(
+    expect(Payments::Adapters::Outbound::Webhooks::WebhookSimulator).to receive(:call).with(
       webhook_url: "http://localhost:3000/payments/webhooks/fake/events",
       provider: "fake",
       event_id: "evt_123",
@@ -41,13 +41,13 @@ RSpec.describe "payments rake tasks" do
       payment_id: "1",
       provider_reference: "fake-abc123",
       amount_cents: "50000"
-    ).and_return(Payments::Result::Success.(data: { status_code: 202, body: "accepted" }))
+    ).and_return(Core::Result::Success.(data: { status_code: 202, body: "accepted" }))
 
     Rake::Task["payments:simulate_webhook"].invoke
   end
 
   it "sends a signed fake webhook with a succeeded default type" do
-    expect(Payments::WebhookSimulator).to receive(:call).with(
+    expect(Payments::Adapters::Outbound::Webhooks::WebhookSimulator).to receive(:call).with(
       webhook_url: "http://localhost:3000/payments/webhooks/fake/events",
       provider: "fake",
       event_id: "evt_123",
@@ -55,16 +55,16 @@ RSpec.describe "payments rake tasks" do
       payment_id: "1",
       provider_reference: "fake-abc123",
       amount_cents: "50000"
-    ).and_return(Payments::Result::Success.(data: { status_code: 202, body: "accepted" }))
+    ).and_return(Core::Result::Success.(data: { status_code: 202, body: "accepted" }))
 
     Rake::Task["payments:send_signed_fake_webhook"].invoke
   end
 
   it "resolves the payment from a project id when provided" do
-    client = Client.create!(name: "Client", email: "project-client@example.com")
-    pm = PM.create!(name: "PM", email: "project-pm@example.com")
-    project = Project.create!(client: client, pm: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :pending)
-    payment = Payment.create!(
+    client = workspace_account(:client, name: "Client", email: "project-client@example.com")
+    pm = workspace_account(:pm, name: "PM", email: "project-pm@example.com")
+     project = Project.create!(owner: client, participant: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :pending)
+    payment = Payments::Domain::Aggregates::Payment.create!(
       project: project,
       status: :processing,
       provider: "fake",
@@ -74,7 +74,7 @@ RSpec.describe "payments rake tasks" do
       provider_reference: "fake-project-ref"
     )
 
-    PaymentAttempt.create!(
+    Payments::Domain::Entities::PaymentAttempt.create!(
       payment: payment,
       status: :submitted,
       provider: payment.provider,
@@ -86,7 +86,7 @@ RSpec.describe "payments rake tasks" do
 
     ENV["PROJECT_ID"] = project.id.to_s
 
-    expect(Payments::WebhookSimulator).to receive(:call).with(
+    expect(Payments::Adapters::Outbound::Webhooks::WebhookSimulator).to receive(:call).with(
       webhook_url: "http://localhost:3000/payments/webhooks/fake/events",
       provider: "fake",
       event_id: "evt_123",
@@ -94,17 +94,17 @@ RSpec.describe "payments rake tasks" do
       payment_id: payment.id,
       provider_reference: "fake-project-ref",
       amount_cents: 77_000
-    ).and_return(Payments::Result::Success.(data: { status_code: 202, body: "accepted" }))
+    ).and_return(Core::Result::Success.(data: { status_code: 202, body: "accepted" }))
 
     Rake::Task["payments:send_signed_fake_webhook"].invoke
   end
 
   it "falls back to the most recent payment when the project has no active payment" do
-    client = Client.create!(name: "Client", email: "fallback-client@example.com")
-    pm = PM.create!(name: "PM", email: "fallback-pm@example.com")
-    project = Project.create!(client: client, pm: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :pending)
+    client = workspace_account(:client, name: "Client", email: "fallback-client@example.com")
+    pm = workspace_account(:pm, name: "PM", email: "fallback-pm@example.com")
+     project = Project.create!(owner: client, participant: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :pending)
 
-    historical_payment = Payment.create!(
+    historical_payment = Payments::Domain::Aggregates::Payment.create!(
       project: project,
       status: :succeeded,
       provider: "fake",
@@ -116,7 +116,7 @@ RSpec.describe "payments rake tasks" do
 
     ENV["PROJECT_ID"] = project.id.to_s
 
-    expect(Payments::WebhookSimulator).to receive(:call).with(
+    expect(Payments::Adapters::Outbound::Webhooks::WebhookSimulator).to receive(:call).with(
       webhook_url: "http://localhost:3000/payments/webhooks/fake/events",
       provider: "fake",
       event_id: "evt_123",
@@ -124,7 +124,7 @@ RSpec.describe "payments rake tasks" do
       payment_id: historical_payment.id,
       provider_reference: "fake-historical-ref",
       amount_cents: 88_000
-    ).and_return(Payments::Result::Success.(data: { status_code: 202, body: "accepted" }))
+    ).and_return(Core::Result::Success.(data: { status_code: 202, body: "accepted" }))
 
     Rake::Task["payments:send_signed_fake_webhook"].invoke
   end
@@ -138,7 +138,7 @@ RSpec.describe "payments rake tasks" do
     ENV["PROVIDER_REFERENCE"] = ""
     ENV["AMOUNT_CENTS"] = ""
 
-    expect(Payments::WebhookSimulator).to receive(:call).with(
+    expect(Payments::Adapters::Outbound::Webhooks::WebhookSimulator).to receive(:call).with(
       webhook_url: "http://localhost:3000/payments/webhooks/fake/events",
       provider: "fake",
       event_id: "evt_123",
@@ -146,7 +146,7 @@ RSpec.describe "payments rake tasks" do
       payment_id: "1",
       provider_reference: "fake-abc123",
       amount_cents: "50000"
-    ).and_return(Payments::Result::Success.(data: { status_code: 202, body: "accepted" }))
+    ).and_return(Core::Result::Success.(data: { status_code: 202, body: "accepted" }))
 
     Rake::Task["payments:simulate_webhook"].invoke
   end
@@ -154,7 +154,7 @@ RSpec.describe "payments rake tasks" do
   it "uses an explicit webhook url when provided" do
     ENV["WEBHOOK_URL"] = "http://example.com/webhooks"
 
-    expect(Payments::WebhookSimulator).to receive(:call).with(
+    expect(Payments::Adapters::Outbound::Webhooks::WebhookSimulator).to receive(:call).with(
       webhook_url: "http://example.com/webhooks",
       provider: "fake",
       event_id: "evt_123",
@@ -162,7 +162,7 @@ RSpec.describe "payments rake tasks" do
       payment_id: "1",
       provider_reference: "fake-abc123",
       amount_cents: "50000"
-    ).and_return(Payments::Result::Success.(data: { status_code: 202, body: "accepted" }))
+    ).and_return(Core::Result::Success.(data: { status_code: 202, body: "accepted" }))
 
     Rake::Task["payments:simulate_webhook"].invoke
   end
@@ -170,7 +170,7 @@ RSpec.describe "payments rake tasks" do
   it "forwards the demo fail-once flag to the webhook simulator" do
     ENV["DEMO_FAIL_ONCE"] = "1"
 
-    expect(Payments::WebhookSimulator).to receive(:call).with(
+    expect(Payments::Adapters::Outbound::Webhooks::WebhookSimulator).to receive(:call).with(
       webhook_url: "http://localhost:3000/payments/webhooks/fake/events",
       provider: "fake",
       event_id: "evt_123",
@@ -179,14 +179,14 @@ RSpec.describe "payments rake tasks" do
       provider_reference: "fake-abc123",
       amount_cents: "50000",
       demo_fail_once: true
-    ).and_return(Payments::Result::Success.(data: { status_code: 202, body: "accepted" }))
+    ).and_return(Core::Result::Success.(data: { status_code: 202, body: "accepted" }))
 
     Rake::Task["payments:send_signed_fake_webhook"].invoke
   end
 
   it "replays a single event by provider event id" do
-    payment = Payment.create!(
-      project: Project.create!(client: Client.create!(name: "Client", email: "replay-client@example.com"), pm: PM.create!(name: "PM", email: "replay-pm@example.com"), name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :pending),
+    payment = Payments::Domain::Aggregates::Payment.create!(
+       project: Project.create!(owner: workspace_account(:client, name: "Client", email: "replay-client@example.com"), participant: workspace_account(:pm, name: "PM", email: "replay-pm@example.com"), name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :pending),
       status: :processing,
       provider: "fake",
       idempotency_key: SecureRandom.uuid,
@@ -195,7 +195,7 @@ RSpec.describe "payments rake tasks" do
       provider_reference: "fake-replay-ref"
     )
 
-    event = PaymentWebhookEvent.create!(
+    event = Payments::Domain::Entities::PaymentWebhookEvent.create!(
       provider: "fake",
       provider_event_id: "evt_replay",
       event_type: "payment.succeeded",
@@ -215,13 +215,13 @@ RSpec.describe "payments rake tasks" do
 
     ENV["EVENT_ID"] = event.provider_event_id
 
-    expect(Payments::ProcessWebhookEventJob).to receive(:perform_later).with(event.id)
+    expect(Payments::Adapters::Inbound::Webhooks::Event::Job).to receive(:perform_later).with(event.id)
 
     Rake::Task["payments:replay_webhook_event"].invoke
   end
 
   it "replays failed or received events" do
-    failed = PaymentWebhookEvent.create!(
+    failed = Payments::Domain::Entities::PaymentWebhookEvent.create!(
       provider: "fake",
       provider_event_id: "evt_failed",
       event_type: "payment.succeeded",
@@ -231,7 +231,7 @@ RSpec.describe "payments rake tasks" do
       error_message: "Transient failure"
     )
 
-    received = PaymentWebhookEvent.create!(
+    received = Payments::Domain::Entities::PaymentWebhookEvent.create!(
       provider: "fake",
       provider_event_id: "evt_received",
       event_type: "payment.succeeded",
@@ -240,8 +240,8 @@ RSpec.describe "payments rake tasks" do
       received_at: Time.current
     )
 
-    expect(Payments::ProcessWebhookEventJob).to receive(:perform_later).with(failed.id).ordered
-    expect(Payments::ProcessWebhookEventJob).to receive(:perform_later).with(received.id).ordered
+    expect(Payments::Adapters::Inbound::Webhooks::Event::Job).to receive(:perform_later).with(failed.id).ordered
+    expect(Payments::Adapters::Inbound::Webhooks::Event::Job).to receive(:perform_later).with(received.id).ordered
 
     Rake::Task["payments:replay_failed_webhook_events"].invoke
   end

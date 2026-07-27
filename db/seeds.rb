@@ -8,12 +8,14 @@
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
 
-default_pm = PM.find_or_create_by!(email: "pm@example.com") do |pm|
+default_pm = Identity::Domain::Aggregates::Account.find_or_create_by!(email: "pm@example.com", role: :pm) do |pm|
   pm.name = "Default PM"
+  pm.role = :pm
 end
 
-default_client = Client.find_or_create_by!(email: "client@example.com") do |client|
+default_client = Identity::Domain::Aggregates::Account.find_or_create_by!(email: "client@example.com", role: :client) do |client|
   client.name = "Default Client"
+  client.role = :client
 end
 
 video_types = [
@@ -29,7 +31,9 @@ video_types.each do |attrs|
   end
 end
 
-Project.find_or_create_by!(client: default_client, pm: default_pm, name: "Seed Project") do |project|
+Project.find_or_create_by!(owner: default_client, participant: default_pm, name: "Seed Project") do |project|
+  project.owner = default_client
+  project.participant = default_pm
   project.raw_footage_url = "https://example.com/raw-footage.mov"
   project.status = :draft
 end

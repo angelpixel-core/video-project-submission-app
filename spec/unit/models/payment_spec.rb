@@ -1,14 +1,14 @@
 require "rails_helper"
 
-RSpec.describe Payment do
+RSpec.describe Payments::Domain::Aggregates::Payment do
   it "is an ActiveRecord model" do
     expect(described_class.superclass).to eq(ApplicationRecord)
   end
 
   it "belongs to a project and keeps historical payments while only one is active" do
-    client = Client.create!(name: "Client", email: "client@example.com")
-    pm = PM.create!(name: "PM", email: "pm@example.com")
-    project = Project.create!(client: client, pm: pm, status: :draft)
+    client = workspace_account(:client, name: "Client")
+    pm = workspace_account(:pm, name: "PM")
+    project = Project.create!(owner: client, participant: pm, status: :draft)
 
     historical = described_class.create!(
       project: project,
@@ -46,9 +46,9 @@ RSpec.describe Payment do
   end
 
   it "rejects duplicate idempotency keys" do
-    client = Client.create!(name: "Client", email: "client@example.com")
-    pm = PM.create!(name: "PM", email: "pm@example.com")
-    project = Project.create!(client: client, pm: pm, status: :draft)
+    client = workspace_account(:client, name: "Client")
+    pm = workspace_account(:pm, name: "PM")
+    project = Project.create!(owner: client, participant: pm, status: :draft)
 
     described_class.create!(
       project: project,
@@ -73,9 +73,9 @@ RSpec.describe Payment do
   end
 
   it "enqueues invoice generation after a payment succeeds" do
-    client = Client.create!(name: "Client", email: "client@example.com")
-    pm = PM.create!(name: "PM", email: "pm@example.com")
-    project = Project.create!(client: client, pm: pm, status: :draft)
+    client = workspace_account(:client, name: "Client")
+    pm = workspace_account(:pm, name: "PM")
+    project = Project.create!(owner: client, participant: pm, status: :draft)
     payment = described_class.create!(
       project: project,
       status: :processing,
@@ -85,7 +85,7 @@ RSpec.describe Payment do
       currency: "usd"
     )
 
-    expect(Payments::GenerateInvoiceJob).to receive(:perform_later).with(payment.id)
+    expect(Payments::Application::Handlers::GenerateInvoiceJob).to receive(:perform_later).with(payment.id)
 
     payment.update!(status: :succeeded, confirmed_at: Time.current)
   end

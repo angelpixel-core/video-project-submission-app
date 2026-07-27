@@ -21,3 +21,4 @@ SKIP_LINT=1 git push
 Use the payments index to get to the operational runbooks and work items:
 
 - [Payments Index](docs/payments.md)
+- delete_me

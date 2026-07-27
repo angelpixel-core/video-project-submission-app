@@ -9,7 +9,7 @@ class CommentsController < ApplicationController
       create_comment_notification!(@comment)
       redirect_to project_path(@project, anchor: "project-comments"), notice: "Comment posted."
     else
-      @comments = @project.comments.chronological.includes(:author)
+      @comments = @project.comments.chronological.includes(:author_account)
       render "projects/show", status: :unprocessable_content
     end
   end
@@ -17,7 +17,7 @@ class CommentsController < ApplicationController
   private
 
   def load_project
-    @project = Project.includes(:client, :pm, comments: :author, video_type_selections: :video_type).find(params[:project_id])
+    @project = project_repository.find_for_show(params[:project_id])
   end
 
   def comment_params
@@ -25,14 +25,18 @@ class CommentsController < ApplicationController
   end
 
   def comment_author
-    comment_params[:author_role] == "pm" ? default_pm : current_client
+    comment_params[:author_role] == "pm" ? workspace_for(:pm) : workspace_for(:client)
   end
 
   def create_comment_notification!(comment)
-    if comment.author.is_a?(PM)
-      Notification.create!(project: @project, client: @project.client, kind: "comment_created", body: "New comment from PM on #{@project.name.presence || 'Untitled project'}.")
+    if comment.author.pm?
+      Notification.create!(project: @project, client: @project.owner, kind: "comment_created", body: "New comment from PM on #{@project.name.presence || 'Untitled project'}.")
     else
-      Notification.create!(project: @project, pm: @project.pm, kind: "comment_created", body: "New comment from client on #{@project.name.presence || 'Untitled project'}.")
+      Notification.create!(project: @project, pm: @project.participant, kind: "comment_created", body: "New comment from client on #{@project.name.presence || 'Untitled project'}.")
     end
+  end
+
+  def project_repository
+    @project_repository ||= Projects::Adapters::Persistence::Project::Repository.new
   end
 end

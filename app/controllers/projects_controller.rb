@@ -1,32 +1,35 @@
 class ProjectsController < ApplicationController
   before_action :load_project, only: %i[edit update]
   before_action :ensure_draft_project, only: %i[edit update]
-  before_action :load_pm_project, only: %i[accept complete]
+  before_action :load_workspace_project, only: %i[accept complete]
   before_action :load_video_types, only: %i[edit update]
 
   def index
     status_order = Arel.sql("CASE status WHEN 'draft' THEN 0 WHEN 'pending' THEN 1 WHEN 'in_progress' THEN 2 WHEN 'completed' THEN 3 ELSE 4 END")
 
-    @projects = current_client.projects.includes(video_type_selections: :video_type).order(status_order, created_at: :desc)
+    @projects = workspace_for(:client).projects.includes(video_type_selections: :video_type).order(status_order, created_at: :desc)
 
-    pm_table_params = ::PMProjectsTableParams.new(params)
-    @pm_sort = pm_table_params.sort.presence || "created_at"
-    @pm_direction = pm_table_params.direction.presence || "desc"
-    @pm_page = pm_table_params.page
-    @pm_table_query = ::PMTableQuery.new(sort: @pm_sort, direction: @pm_direction, page: @pm_page, per_page: 10)
-    @pm_total_pages = @pm_table_query.total_pages
-    @pm_projects = @pm_table_query.call
+    @workspace_table_query = ::Projects::ListingQuery.new(params)
+    @workspace_sort = @workspace_table_query.sort.presence || "created_at"
+    @workspace_direction = @workspace_table_query.direction.presence || "desc"
+    @workspace_page = @workspace_table_query.page
+    @workspace_total_pages = @workspace_table_query.total_pages
+    @workspace_projects = @workspace_table_query.call
   end
 
   def show
-    @project = Project.includes(:client, :pm, comments: :author, video_type_selections: :video_type).find(params[:id])
+    @project = project_repository.find_for_show(params[:id])
     @payments = @project.payments.includes(:payment_attempts).order(created_at: :desc)
-    @comments = @project.comments.chronological.includes(:author)
+    @comments = @project.comments.chronological.includes(:author_account)
     @comment = Comment.new
   end
 
   def new
-    project = current_client.projects.draft.order(created_at: :desc).first || current_client.projects.create!(pm: default_pm, status: :draft)
+    client_workspace = workspace_for(:client)
+    pm_workspace = workspace_for(:pm)
+    result = Projects::Application::Commands::CreateDraftProject.call(client_workspace: client_workspace, pm_workspace: pm_workspace)
+    project = result.data.fetch(:project)
+
     redirect_to edit_project_path(project)
   end
 
@@ -36,14 +39,22 @@ class ProjectsController < ApplicationController
 
   def update
     selections = parsed_selections
+    finalize = finalize_submission?
 
-    if finalize_submission?
-      finalize_project!(selections)
-      NotificationJob.perform_later(@project.id)
-      redirect_to projects_path, notice: "Project submitted for review."
+    result = Projects::Application::Commands::UpdateProject.call(
+      project: @project,
+      participant: workspace_for(:pm),
+      attributes: project_attributes,
+      selections: selections,
+      finalize: finalize
+    )
+
+    if result.success?
+      finalize ? redirect_to(projects_path, notice: "Project submitted for review.") : head(:no_content)
     else
-      autosave_project!(selections)
-      head :no_content
+      @project.errors.add(:base, result.message) if @project.errors.empty?
+      @selections_json = selections_json_for(@project)
+      render :edit, status: :unprocessable_content
     end
   rescue ActiveRecord::RecordInvalid, ArgumentError, JSON::ParserError, ActionController::ParameterMissing => e
     @project.errors.add(:base, e.message) if @project.errors.empty?
@@ -54,7 +65,7 @@ class ProjectsController < ApplicationController
   private
 
   def load_project
-    @project = current_client.projects.includes(video_type_selections: :video_type).find(params[:id])
+    @project = project_repository.find_for_edit(workspace_for(:client), params[:id])
   end
 
   def project_attributes
@@ -90,137 +101,59 @@ class ProjectsController < ApplicationController
     params.dig(:project, :finalize) == "1"
   end
 
-  def autosave_project!(selections)
-    Project.transaction do
-      @project.assign_attributes(project_attributes)
-      @project.pm ||= default_pm
-      @project.status = :draft
-      @project.save!
-      sync_project_selections(@project, selections)
-    end
-  end
-
-  def finalize_project!(selections)
-    if selections.empty?
-      @project.errors.add(:base, "Add at least one video type")
-      raise ActiveRecord::RecordInvalid, @project
-    end
-
-    Project.transaction do
-      @project.assign_attributes(project_attributes)
-      @project.pm = default_pm
-      @project.submit!
-      sync_project_selections(@project, selections)
-
-      payment_result = Payments::CreateOrReuseActivePayment.(project: @project)
-
-      if payment_result.failure?
-        @project.errors.add(:base, payment_result.message)
-        raise ActiveRecord::RecordInvalid, @project
-      end
-    end
-  end
-
   public
 
   def accept
-    success = perform_pm_row_action(
+    process_workspace_action(
       event: :accept,
       success_notice: "Project accepted.",
       stale_alert: "Only pending projects can be accepted."
-    ) do
-      @pm_project.accept!
-      @pm_project.notifications.unread.update_all(read_at: Time.current)
-      create_client_status_notification!(
-        kind: "project_accepted",
-        body: "Your project #{@pm_project.name.presence || 'Untitled project'} was accepted and is now in progress."
-      )
-      ProjectNotifications::Delivery.call(project: @pm_project, event_type: :project_accepted)
-    end
-
-    Notification.broadcast_refresh_for(@pm_project.pm) if success
+    )
   end
 
   def complete
-    perform_pm_row_action(
+    process_workspace_action(
       event: :complete,
       success_notice: "Project completed.",
       stale_alert: "Only in-progress projects can be completed."
-    ) do
-      @pm_project.complete!
-      create_client_status_notification!(
-        kind: "project_completed",
-        body: "Your project #{@pm_project.name.presence || 'Untitled project'} has been completed."
-      )
-    end
+    )
   end
 
   private
 
-  def perform_pm_row_action(event:, success_notice:, stale_alert:)
-    success = false
+  def process_workspace_action(event:, success_notice:, stale_alert:)
+    result = Projects::ActionService.call(project: @workspace_project, event: event)
 
-    @pm_project.with_lock do
-      unless @pm_project.public_send("may_#{event}?")
-        respond_pm_row_action_stale(stale_alert)
-        next
-      end
-
-      yield
-      success = true
+    if result.success?
+      respond_workspace_action_success(success_notice)
+      Notification.broadcast_refresh_for(@workspace_project.participant) if result.data.fetch(:broadcast_refresh, false)
+    else
+      respond_workspace_action_stale(stale_alert)
     end
-
-    return false unless success
-
-    respond_pm_row_action_success(success_notice)
-    true
-  rescue AASM::InvalidTransition, ActiveRecord::RecordInvalid
-    respond_pm_row_action_stale(stale_alert)
-    false
   end
 
-  def respond_pm_row_action_success(success_notice)
-    if pm_async_action_request?
-      head :no_content
+  def respond_workspace_action_success(success_notice)
+    if workspace_async_action_request?
+      render json: workspace_row_action_payload
     else
       redirect_to projects_path, notice: success_notice
     end
   end
 
-  def respond_pm_row_action_stale(stale_alert)
-    if pm_async_action_request?
+  def respond_workspace_action_stale(stale_alert)
+    if workspace_async_action_request?
       head :conflict
     else
       redirect_to projects_path, alert: stale_alert
     end
   end
 
-  def pm_async_action_request?
-    request.headers["X-PM-Async-Action"] == "1"
-  end
-
-  def create_client_status_notification!(kind:, body:)
-    Notification.create!(
-      project: @pm_project,
-      client: @pm_project.client,
-      kind: kind,
-      body: body
-    )
-  end
-
-  def sync_project_selections(project, selections)
-    project.video_type_selections.delete_all
-
-    selections.each do |selection|
-      project.video_type_selections.create!(
-        video_type_id: selection.fetch(:video_type_id),
-        quantity: selection.fetch(:quantity)
-      )
-    end
+  def workspace_async_action_request?
+    request.headers["X-Workspace-Async-Action"] == "1"
   end
 
   def load_video_types
-    @video_types = VideoType.order(:name)
+    @video_types = Catalog::Application::Queries::ListPublicVideoTypes.call(account: workspace_for(:client)).data.fetch(:video_types)
   end
 
   def ensure_draft_project
@@ -229,7 +162,20 @@ class ProjectsController < ApplicationController
     redirect_to projects_path, alert: "Only draft projects can be edited."
   end
 
-  def load_pm_project
-    @pm_project = default_pm.projects.find(params[:id])
+  def load_workspace_project
+    @workspace_project = project_repository.find_for_workspace_action(workspace_for(:pm), params[:id])
+  end
+
+  def project_repository
+    @project_repository ||= Projects::Adapters::Persistence::Project::Repository.new
+  end
+
+  def workspace_row_action_payload
+    {
+      project_id: @workspace_project.id,
+      status_badge_text: @workspace_project.status_badge_text,
+      status_badge_class: @workspace_project.status_badge_class,
+      action: @workspace_project.pending? ? "complete" : (@workspace_project.in_progress? ? "complete" : nil)
+    }
   end
 end

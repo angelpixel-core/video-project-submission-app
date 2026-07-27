@@ -21,7 +21,7 @@ export async function refreshWorkspaceNotifications({ panelSelector, dropdownSel
 
     if (!currentPanel && !currentDropdown && !currentTableBody) return
 
-    const response = await fetch(window.location.href, { headers: { Accept: "text/html" } })
+    const response = await fetch(window.location.href, { headers: { Accept: "text/html" }, cache: "no-store" })
     if (!response.ok) return
 
     const html = await response.text()

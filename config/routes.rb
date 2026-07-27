@@ -16,7 +16,6 @@ Rails.application.routes.draw do
   root "projects#index"
   resource :profile, only: %i[show update], controller: "profile"
 
-  resources :client_notifications, only: %i[update]
   resources :notifications, only: %i[update]
 
   if Rails.env.development?
@@ -24,7 +23,7 @@ Rails.application.routes.draw do
   end
 
   namespace :payments do
-    post "webhooks/:provider/events", to: "webhooks#create", as: :webhook_events
+    post "webhooks/:provider/events", to: "adapters/inbound/webhooks/payment_webhooks#create", as: :webhook_events
   end
 
   resources :projects, only: %i[index show new edit update] do

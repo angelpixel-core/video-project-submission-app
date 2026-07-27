@@ -7,7 +7,7 @@ export default class extends Controller {
     this.observer = new MutationObserver(() => this.syncRole())
     this.observer.observe(document.documentElement, {
       attributes: true,
-      attributeFilter: ["data-role-mode"],
+      attributeFilter: ["data-workspace-role"],
     })
     this.syncRole()
   }
@@ -21,7 +21,7 @@ export default class extends Controller {
   }
 
   syncRole() {
-    const role = document.documentElement.dataset.roleMode === "pm" ? "pm" : "client"
+    const role = document.documentElement.dataset.workspaceRole === "pm" ? "pm" : "client"
 
     if (this.hasAuthorRoleTarget) {
       this.authorRoleTarget.value = role
