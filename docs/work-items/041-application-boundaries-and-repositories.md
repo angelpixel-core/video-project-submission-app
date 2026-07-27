@@ -13,7 +13,7 @@ depends_on:
   - payment-invoice-generation-and-storage
 order: 41
 phase: work-items
-status: draft
+status: done
 title: Application Boundaries and Repositories
 ---
 
