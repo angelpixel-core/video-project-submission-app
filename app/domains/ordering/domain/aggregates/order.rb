@@ -24,7 +24,7 @@ module Ordering
           @id = id && Ordering::Domain::ValueObjects::OrderID.parse(id).to_i
           @uid = build_uid(uid, @id)
           @customer_snapshot = build_customer_snapshot(customer_snapshot)
-          @order_lines = Array(order_lines).map { |line| build_order_line(line) }
+          @order_lines = Array(order_lines).map { |line| build_line_item(line) }
           @source_video = build_source_video(source_video)
           @status = build_order_status(status)
           @payment_status = build_payment_status(payment_status)
@@ -42,7 +42,7 @@ module Ordering
         def add_line(offering_snapshot:, quantity: 1)
           ensure_draft!
 
-          line = Ordering::Domain::Entities::OrderLine.new(offering_snapshot:, quantity:)
+          line = Ordering::Domain::Entities::LineItem.new(offering_snapshot:, quantity:)
           @order_lines << line
           line
         end
@@ -202,10 +202,10 @@ module Ordering
           Ordering::Domain::Entities::CustomerSnapshot.new(**value)
         end
 
-        def build_order_line(value)
-          return value if value.is_a?(Ordering::Domain::Entities::OrderLine)
+        def build_line_item(value)
+          return value if value.is_a?(Ordering::Domain::Entities::LineItem)
 
-          Ordering::Domain::Entities::OrderLine.new(**value)
+          Ordering::Domain::Entities::LineItem.new(**value)
         end
 
         def build_source_video(value)
