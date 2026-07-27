@@ -9,12 +9,8 @@ RSpec.describe Ordering::Application::Commands::ProcessSubmission do
     project_bridge.video_type_selections.create!(video_type: video_type, quantity: 2)
 
     submission = Ordering::Application::DTO::Submission.from_project(project_bridge, fulfillment_account: pm)
-    payment = instance_double(Payments::Domain::Aggregates::Payment, id: 123)
-    allow(payment).to receive(:active?).and_return(true)
+    payment = instance_double(Payments::Domain::Aggregates::Payment, id: 123, active?: true)
     payment_result = Core::Result::Success.(data: { payment: payment })
-
-    expect(Payments::Application::Handlers::GenerateInvoiceJob).to receive(:perform_later).with(payment.id)
-    expect(NotificationJob).to receive(:perform_later).with(project_bridge.id)
 
     payment_command = lambda do |project:, provider:, payment_method_type:|
       expect(project).to eq(project_bridge)
@@ -31,33 +27,15 @@ RSpec.describe Ordering::Application::Commands::ProcessSubmission do
     expect(result.data.fetch(:payment)).to eq(payment)
   end
 
-  it "fails when there are no line items" do
+  it "returns the payment failure when the payment command fails" do
     client = workspace_account(:client, name: "Client")
     pm = workspace_account(:pm, name: "PM")
-    project = Project.create!(owner: client, participant: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :pending)
-
-    submission = Ordering::Application::DTO::Submission.from_project(project, fulfillment_account: pm)
-
-    result = described_class.call(
-      submission: submission,
-      payment_command: lambda { |_args| raise "payment should not be called" }
-    )
-
-    expect(result).to be_failure
-    expect(result.message).to eq("Submission requires at least one line item")
-  end
-
-  it "fails when the payment has not reached the checkpoint state" do
-    client = workspace_account(:client, name: "Client")
-    pm = workspace_account(:pm, name: "PM")
-    project = Project.create!(owner: client, participant: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :pending)
+    project_bridge = Project.create!(owner: client, participant: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :pending)
     video_type = VideoType.create!(name: "Highlight Reel", description: "Short edit", price_cents: 25_000, output_format: "mp4")
-    project.video_type_selections.create!(video_type: video_type, quantity: 1)
+    project_bridge.video_type_selections.create!(video_type: video_type, quantity: 2)
 
-    submission = Ordering::Application::DTO::Submission.from_project(project, fulfillment_account: pm)
-    payment = instance_double(Payments::Domain::Aggregates::Payment, id: 456)
-    allow(payment).to receive(:active?).and_return(false)
-    payment_result = Core::Result::Success.(data: { payment: payment })
+    submission = Ordering::Application::DTO::Submission.from_project(project_bridge, fulfillment_account: pm)
+    payment_result = Core::Result::Failure.(message: "gateway down", code: :provider_error, data: { provider: "fake" })
 
     expect(Payments::Application::Handlers::GenerateInvoiceJob).not_to receive(:perform_later)
     expect(NotificationJob).not_to receive(:perform_later)
@@ -68,6 +46,7 @@ RSpec.describe Ordering::Application::Commands::ProcessSubmission do
     )
 
     expect(result).to be_failure
-    expect(result.message).to eq("Payment must be active before success checkpoint")
+    expect(result.message).to eq("gateway down")
+    expect(result.code).to eq(:provider_error)
   end
 end

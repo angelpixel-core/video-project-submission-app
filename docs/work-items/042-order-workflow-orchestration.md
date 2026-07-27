@@ -180,8 +180,8 @@ Failure:
 - [x] Keep payment capture/confirmation inside `Payments::Application::Commands::CreatePayment`.
 - [x] Add an explicit success checkpoint that runs only after payment reaches the expected state.
 - [x] Trigger invoice and notification follow-up work only from the success checkpoint.
-- [ ] Make the workflow boundaries explicit and testable with one spec per stage.
-- [ ] Add specs for success, validation failure, provider failure, and downstream-job failure.
+- [x] Make the workflow boundaries explicit and testable with one spec per stage.
+- [x] Add specs for success, validation failure, provider failure, and downstream-job failure.
 
 ## Affected Docs
 
