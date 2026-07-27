@@ -194,7 +194,7 @@ Do not start step N+1 until step N is complete and validated.
 - [x] Repositories own repeated local data access.
 - [x] Use cases coordinate domain steps and side effects.
 - [x] Demo/test flags are not part of domain models.
-- [ ] The architecture is easier to extend for invoices, mail, and future payment methods.
+- [x] The architecture is easier to extend for invoices, mail, and future payment methods.
 - [x] `ResolveWorkspaceAccount` is the only workspace lookup query name used by application code.
 - [x] `User`, `Account`, and `Role` have distinct responsibilities.
 - [x] Role assignment can evolve beyond a single enum-like field on `Account`.
