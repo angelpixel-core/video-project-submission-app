@@ -15,14 +15,14 @@ depends_on:
 order: 42
 phase: work-items
 status: draft
-title: Order Workflow Orchestration
+title: Order Submission Workflow Orchestration
 ---
 
-# Order Workflow Orchestration
+# Order Submission Workflow Orchestration
 
 ## Goal
 
-- [ ] Model the order/payment flow as an explicit workflow with clear steps for validation, capture/confirmation, success handling, invoice creation, and follow-up notifications.
+- [ ] Model the order/submission/payment flow as an explicit workflow with clear steps for validation, capture/confirmation, success handling, invoice creation, and follow-up notifications.
 
 ## Scope
 
@@ -32,6 +32,15 @@ title: Order Workflow Orchestration
 - Allow downstream steps to run only after the payment state reaches the expected checkpoint.
 - Keep the workflow extensible for future payment methods and fulfillment paths.
 - Avoid coupling the workflow to a single provider or a single notification type.
+
+## Naming Direction
+
+- `Catalog::Bundle` represents what is sold.
+- `Ordering::Order` represents the customer purchase.
+- `Ordering::LineItem` represents each selected bundle inside the order.
+- `Ordering::Submission` represents the act of sending the order into payment and follow-up processing.
+- `Fulfillment::Project` represents the operational work derived from the order.
+- `Payments::Payment` remains the payment record and should not become the primary workflow root.
 
 ## Workflow Map
 
@@ -59,11 +68,11 @@ ProjectsController#update
 
 ```text
 Workflow entrypoint
-  Orders::Application::Commands::ProcessOrderPayment
+  Ordering::Application::Commands::ProcessSubmission
     |
     |-- Step 1: validate_submission
-    |     - requires selections
-    |     - validates order/project attributes
+    |     - requires line items
+    |     - validates order/submission attributes
     |
     |-- Step 2: capture_or_confirm_payment
     |     - delegates to Payments::Application::Commands::CreatePayment
@@ -88,7 +97,7 @@ Workflow entrypoint
 
 ### Current File Mapping
 
-- `Projects::Application::Commands::SubmitProject` owns the current workflow orchestration.
+- `Projects::Application::Commands::SubmitProject` owns the current workflow orchestration and still acts as the transition bridge.
 - `Payments::Application::Commands::CreatePayment` owns payment capture/provider confirmation.
 - `Payments::Application::Handlers::GenerateInvoiceJob` owns invoice generation/storage after success.
 - `Payments::Application::Handlers::DispatchPaymentNotificationJob` owns payment status email delivery.
@@ -103,7 +112,7 @@ Workflow entrypoint
 
 ## Implementation Plan
 
-- [ ] Introduce `Orders::Application::Commands::ProcessOrderPayment` as the orchestration entrypoint.
+- [ ] Introduce `Ordering::Application::Commands::ProcessSubmission` as the orchestration entrypoint.
 - [ ] Extract `validate_submission` as a named step that runs before any payment side effects.
 - [ ] Keep payment capture/confirmation inside `Payments::Application::Commands::CreatePayment`.
 - [ ] Add an explicit success checkpoint that runs only after payment reaches the expected state.
