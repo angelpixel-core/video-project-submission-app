@@ -39,37 +39,22 @@ class ProjectsController < ApplicationController
 
   def update
     selections = parsed_selections
+    finalize = finalize_submission?
 
-    if finalize_submission?
-      result = Projects::Application::Commands::SubmitProject.call(
-        project: @project,
-        participant: workspace_for(:pm),
-        attributes: project_attributes,
-        selections: selections
-      )
+    result = Projects::Application::Commands::UpdateProject.call(
+      project: @project,
+      participant: workspace_for(:pm),
+      attributes: project_attributes,
+      selections: selections,
+      finalize: finalize
+    )
 
-      if result.success?
-        redirect_to projects_path, notice: "Project submitted for review."
-      else
-        @project.errors.add(:base, result.message) if @project.errors.empty?
-        @selections_json = selections_json_for(@project)
-        render :edit, status: :unprocessable_content
-      end
+    if result.success?
+      finalize ? redirect_to(projects_path, notice: "Project submitted for review.") : head(:no_content)
     else
-      result = Projects::Application::Commands::AutosaveDraftProject.call(
-        project: @project,
-        participant: workspace_for(:pm),
-        attributes: project_attributes,
-        selections: selections
-      )
-
-      if result.success?
-        head :no_content
-      else
-        @project.errors.add(:base, result.message) if @project.errors.empty?
-        @selections_json = selections_json_for(@project)
-        render :edit, status: :unprocessable_content
-      end
+      @project.errors.add(:base, result.message) if @project.errors.empty?
+      @selections_json = selections_json_for(@project)
+      render :edit, status: :unprocessable_content
     end
   rescue ActiveRecord::RecordInvalid, ArgumentError, JSON::ParserError, ActionController::ParameterMissing => e
     @project.errors.add(:base, e.message) if @project.errors.empty?
