@@ -3,7 +3,7 @@ module Ordering
     module Policies
       class OrderPlacementPolicy
         def self.allowed?(order)
-          order.draft? && order.customer_snapshot.present? && order.order_lines.any?
+          order.draft? && order.customer_snapshot.present? && order.line_items.any?
         end
       end
     end

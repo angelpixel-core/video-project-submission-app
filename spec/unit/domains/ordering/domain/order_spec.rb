@@ -32,6 +32,8 @@ RSpec.describe Ordering::Domain::Aggregates::Order do
     order.add_line(offering_snapshot: offering, quantity: 2)
 
     expect(order.total_cents).to eq(50_000)
+    expect(order.line_items.size).to eq(1)
+    expect(order.order_lines.size).to eq(1)
   end
 
   it "supports the core lifecycle transitions" do
