@@ -179,7 +179,7 @@ Failure:
 - [x] Extract `validate_submission` as a named step that runs before any payment side effects.
 - [x] Keep payment capture/confirmation inside `Payments::Application::Commands::CreatePayment`.
 - [x] Add an explicit success checkpoint that runs only after payment reaches the expected state.
-- [ ] Trigger invoice and notification follow-up work only from the success checkpoint.
+- [x] Trigger invoice and notification follow-up work only from the success checkpoint.
 - [ ] Make the workflow boundaries explicit and testable with one spec per stage.
 - [ ] Add specs for success, validation failure, provider failure, and downstream-job failure.
 
@@ -203,14 +203,14 @@ Failure:
 
 - [x] Payment validation happens before capture.
 - [x] Payment capture/confirmation is a distinct workflow step.
-- [ ] Downstream mail/invoice steps only run after success.
+- [x] Downstream mail/invoice steps only run after success.
 - [x] Workflow steps are explicit and retry-safe.
 - [ ] Future payment methods can plug into the same flow.
 
 ## Validation
 
 - [x] Specs cover the workflow stages and failure points.
-- [ ] Specs cover downstream handoff after successful payment.
+- [x] Specs cover downstream handoff after successful payment.
 - [x] Workflow remains readable and does not collapse back into controller logic.
 
 ## Notes

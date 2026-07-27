@@ -9,9 +9,12 @@ RSpec.describe Ordering::Application::Commands::ProcessSubmission do
     project_bridge.video_type_selections.create!(video_type: video_type, quantity: 2)
 
     submission = Ordering::Application::DTO::Submission.from_project(project_bridge, fulfillment_account: pm)
-    payment = instance_double(Payments::Domain::Aggregates::Payment)
+    payment = instance_double(Payments::Domain::Aggregates::Payment, id: 123)
     allow(payment).to receive(:active?).and_return(true)
     payment_result = Core::Result::Success.(data: { payment: payment })
+
+    expect(Payments::Application::Handlers::GenerateInvoiceJob).to receive(:perform_later).with(payment.id)
+    expect(NotificationJob).to receive(:perform_later).with(project_bridge.id)
 
     payment_command = lambda do |project:, provider:, payment_method_type:|
       expect(project).to eq(project_bridge)
@@ -52,9 +55,12 @@ RSpec.describe Ordering::Application::Commands::ProcessSubmission do
     project.video_type_selections.create!(video_type: video_type, quantity: 1)
 
     submission = Ordering::Application::DTO::Submission.from_project(project, fulfillment_account: pm)
-    payment = instance_double(Payments::Domain::Aggregates::Payment)
+    payment = instance_double(Payments::Domain::Aggregates::Payment, id: 456)
     allow(payment).to receive(:active?).and_return(false)
     payment_result = Core::Result::Success.(data: { payment: payment })
+
+    expect(Payments::Application::Handlers::GenerateInvoiceJob).not_to receive(:perform_later)
+    expect(NotificationJob).not_to receive(:perform_later)
 
     result = described_class.call(
       submission: submission,

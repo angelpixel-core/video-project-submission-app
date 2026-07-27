@@ -49,8 +49,6 @@ module Projects
 
           return payment_failure(payment_result) if payment_failed
 
-          NotificationJob.perform_later(project.id)
-
           Core::Result::Success.(data: { project: project, payment: payment, submission: payment_result.data.fetch(:submission) })
         rescue AASM::InvalidTransition, ActiveRecord::RecordInvalid => e
           project.errors.add(:base, e.message) if project.errors.empty?
