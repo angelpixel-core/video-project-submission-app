@@ -31,7 +31,7 @@ module WorkspaceProjectShell
   def new
     client_workspace = workspace_for(:client)
     pm_workspace = workspace_for(:pm)
-    result = Fulfillment::Application::Commands::CreateDraftProject.call(client_workspace: client_workspace, pm_workspace: pm_workspace)
+    result = Fulfillment::Application::Commands::CreateDraftProject.call(client_workspace: client_workspace, pm_workspace: pm_workspace, repository: project_repository)
     project = result.data.fetch(:project)
 
     redirect_to edit_order_path(project)
@@ -50,7 +50,8 @@ module WorkspaceProjectShell
       participant: workspace_for(:pm),
       attributes: project_attributes,
       selections: selections,
-      finalize: finalize
+      finalize: finalize,
+      repository: project_repository
     )
 
     if result.success?

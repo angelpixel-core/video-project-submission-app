@@ -9,6 +9,7 @@ RSpec.describe Fulfillment::Application::Commands::AutosaveDraftProject do
     project = Project.create!(owner: client, participant: pm, status: :draft)
     highlight_reel = VideoType.create!(name: "Highlight Reel", description: "Short edit", price_cents: 25_000, output_format: "mp4")
     social_cut = VideoType.create!(name: "Social Cut", description: "Social edit", price_cents: 15_000, output_format: "mp4")
+    repository = Fulfillment::Adapters::Persistence::Project::Repository.new
 
     result = described_class.call(
       project: project,
@@ -17,7 +18,8 @@ RSpec.describe Fulfillment::Application::Commands::AutosaveDraftProject do
       selections: [
         { video_type_id: highlight_reel.id, quantity: 2 },
         { video_type_id: social_cut.id, quantity: 1 }
-      ]
+      ],
+      repository: repository
     )
 
     expect(result).to be_success
@@ -31,6 +33,7 @@ RSpec.describe Fulfillment::Application::Commands::AutosaveDraftProject do
     client = workspace_account(:client, email: "client@example.com", name: "Client")
     pm = workspace_account(:pm, email: "pm@example.com", name: "PM")
     project = Project.create!(owner: client, participant: pm, status: :draft)
+    repository = Fulfillment::Adapters::Persistence::Project::Repository.new
 
     allow(project).to receive(:save!).and_raise(ActiveRecord::RecordInvalid.new(project))
 
@@ -38,7 +41,8 @@ RSpec.describe Fulfillment::Application::Commands::AutosaveDraftProject do
       project: project,
       participant: pm,
       attributes: { name: "Project Beta", raw_footage_url: "https://example.com/beta.mov" },
-      selections: []
+      selections: [],
+      repository: repository
     )
 
     expect(result).to be_failure

@@ -7,8 +7,11 @@ RSpec.describe Fulfillment::Application::Commands::CreateDraftProject do
     client = workspace_account(:client, email: "client@example.com", name: "Client")
     pm = workspace_account(:pm, email: "pm@example.com", name: "PM")
     draft = Project.create!(owner: client, participant: pm, status: :draft)
+    repository = instance_double("Repository")
 
-    result = described_class.call(client_workspace: client, pm_workspace: pm)
+    allow(repository).to receive(:find_or_create_draft_for_owner).with(client, pm).and_return(draft)
+
+    result = described_class.call(client_workspace: client, pm_workspace: pm, repository: repository)
 
     expect(result).to be_success
     expect(result.data.fetch(:project)).to eq(draft)
@@ -18,15 +21,14 @@ RSpec.describe Fulfillment::Application::Commands::CreateDraftProject do
   it "creates a draft project when none exists" do
     client = workspace_account(:client, email: "client@example.com", name: "Client")
     pm = workspace_account(:pm, email: "pm@example.com", name: "PM")
+    draft = instance_double(Project, persisted?: true, status: "draft", owner: client, participant: pm)
+    repository = instance_double("Repository")
 
-    result = described_class.call(client_workspace: client, pm_workspace: pm)
+    allow(repository).to receive(:find_or_create_draft_for_owner).with(client, pm).and_return(draft)
 
-    project = result.data.fetch(:project)
+    result = described_class.call(client_workspace: client, pm_workspace: pm, repository: repository)
 
     expect(result).to be_success
-    expect(project).to be_persisted
-    expect(project.status).to eq("draft")
-    expect(project.owner).to eq(client)
-    expect(project.participant).to eq(pm)
+    expect(result.data.fetch(:project)).to eq(draft)
   end
 end

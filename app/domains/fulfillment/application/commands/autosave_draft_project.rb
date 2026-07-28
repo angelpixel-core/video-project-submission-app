@@ -2,7 +2,7 @@ module Fulfillment
   module Application
     module Commands
       class AutosaveDraftProject
-        def self.call(project:, participant:, attributes:, selections:, repository: Fulfillment::Adapters::Persistence::Project::Repository.new)
+        def self.call(project:, participant:, attributes:, selections:, repository:)
           new(project:, participant:, attributes:, selections:, repository:).call
         end
 
@@ -15,7 +15,7 @@ module Fulfillment
         end
 
         def call
-          Project.transaction do
+          project.class.transaction do
             project.with_lock do
               project.assign_attributes(attributes)
               project.participant ||= participant

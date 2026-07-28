@@ -2,7 +2,7 @@ module Fulfillment
   module Application
     module Commands
       class CreateDraftProject
-        def self.call(client_workspace:, pm_workspace:, repository: Fulfillment::Adapters::Persistence::Project::Repository.new)
+        def self.call(client_workspace:, pm_workspace:, repository:)
           new(client_workspace:, pm_workspace:, repository:).call
         end
 

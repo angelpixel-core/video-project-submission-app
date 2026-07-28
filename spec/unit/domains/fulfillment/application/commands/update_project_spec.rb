@@ -8,12 +8,13 @@ RSpec.describe Fulfillment::Application::Commands::UpdateProject do
     participant = instance_double(Identity::Domain::Aggregates::Account)
     attributes = { name: "Draft" }
     selections = []
+    repository = instance_double("Repository")
     result = Core::Result::Success.(data: { project: project })
 
-    expect(Fulfillment::Application::Commands::AutosaveDraftProject).to receive(:call).with(project: project, participant: participant, attributes: attributes, selections: selections).and_return(result)
+    expect(Fulfillment::Application::Commands::AutosaveDraftProject).to receive(:call).with(project: project, participant: participant, attributes: attributes, selections: selections, repository: repository).and_return(result)
 
     expect(
-      described_class.call(project: project, participant: participant, attributes: attributes, selections: selections, finalize: false)
+      described_class.call(project: project, participant: participant, attributes: attributes, selections: selections, finalize: false, repository: repository)
     ).to eq(result)
   end
 
@@ -22,12 +23,13 @@ RSpec.describe Fulfillment::Application::Commands::UpdateProject do
     participant = instance_double(Identity::Domain::Aggregates::Account)
     attributes = { name: "Final" }
     selections = []
+    repository = instance_double("Repository")
     result = Core::Result::Failure.(message: "nope", code: :invalid_record)
 
-    expect(Fulfillment::Application::Commands::SubmitProject).to receive(:call).with(project: project, participant: participant, attributes: attributes, selections: selections).and_return(result)
+    expect(Fulfillment::Application::Commands::SubmitProject).to receive(:call).with(project: project, participant: participant, attributes: attributes, selections: selections, repository: repository).and_return(result)
 
     expect(
-      described_class.call(project: project, participant: participant, attributes: attributes, selections: selections, finalize: true)
+      described_class.call(project: project, participant: participant, attributes: attributes, selections: selections, finalize: true, repository: repository)
     ).to eq(result)
   end
 end
