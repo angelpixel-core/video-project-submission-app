@@ -34,7 +34,7 @@ RSpec.describe "Notifications", type: :system, js: true do
     expect(page).to have_no_css('#client-notifications-panel .client-notification-toast', text: "Project Alpha")
   end
 
-  it "marks a client toast as read when the project link is clicked" do
+  it "marks a client toast as read when the order link is clicked" do
     client = find_workspace_account(:client, email: "client@example.com")
     pm = find_workspace_account(:pm, email: "pm@example.com")
     project = Project.create!(owner: client, participant: pm, name: "Project Gamma", raw_footage_url: "https://example.com/gamma.mov", status: :pending)

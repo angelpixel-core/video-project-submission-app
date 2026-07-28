@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe Orders::ActionService do
-  it "accepts a pending project, marks unread pm notifications as read, and creates a client notification" do
+  it "accepts a pending order, marks unread pm notifications as read, and creates a client notification" do
     client = workspace_account(:client, email: "client@example.com", name: "Client")
     pm = workspace_account(:pm, email: "pm@example.com", name: "PM")
     project = Project.create!(owner: client, participant: pm, name: "Project Pending", raw_footage_url: "https://example.com/pending.mov", status: :pending)
@@ -21,7 +21,7 @@ RSpec.describe Orders::ActionService do
     expect(Notification.where(project: project, kind: "project_accepted")).to exist
   end
 
-  it "completes an in-progress project and creates a client notification" do
+  it "completes an in-progress order and creates a client notification" do
     client = workspace_account(:client, email: "client@example.com", name: "Client")
     pm = workspace_account(:pm, email: "pm@example.com", name: "PM")
     project = Project.create!(owner: client, participant: pm, name: "Project Active", raw_footage_url: "https://example.com/active.mov", status: :in_progress)

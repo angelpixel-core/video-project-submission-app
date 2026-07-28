@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe Payments::Application::Handlers::GenerateInvoiceJob do
-  it "attaches an invoice and creates a delivery intent once" do
+  it "attaches an invoice and creates a payment invoice delivery intent once" do
     client = workspace_account(:client, name: "Client")
     pm = workspace_account(:pm, name: "PM")
     project = Project.create!(owner: client, participant: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :draft)

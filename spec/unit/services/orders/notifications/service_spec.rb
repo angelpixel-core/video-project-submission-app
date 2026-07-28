@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe Orders::Notifications::Service do
-  it "creates a project_created notification and delivers emails to client and pm" do
+  it "creates a notification and delivers emails to client and pm" do
     client = workspace_account(:client, name: "Client")
     pm = workspace_account(:pm, name: "PM")
     project = Project.create!(owner: client, participant: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :in_progress)

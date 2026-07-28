@@ -39,7 +39,7 @@ RSpec.describe "Orders requests" do
     expect(draft.status).to eq("draft")
   end
 
-  it "redirects submitted projects away from the editor" do
+  it "redirects submitted orders away from the editor" do
     project = Project.create!(owner: find_workspace_account(:client, email: "client@example.com"), participant: find_workspace_account(:pm, email: "pm@example.com"), name: "Project Pending", raw_footage_url: "https://example.com/pending.mov", status: :pending)
 
     get edit_order_path(project)
@@ -71,7 +71,7 @@ RSpec.describe "Orders requests" do
     expect(response.body).to include("Aceptar orden")
   end
 
-  it "accepts a pending project as the pm" do
+  it "accepts a pending order as the pm" do
     project = Project.create!(owner: find_workspace_account(:client, email: "client@example.com"), participant: find_workspace_account(:pm, email: "pm@example.com"), name: "Project Pending", raw_footage_url: "https://example.com/pending.mov", status: :pending)
 
     patch accept_order_path(project)
@@ -82,7 +82,7 @@ RSpec.describe "Orders requests" do
     expect(project.status).to eq("in_progress")
   end
 
-  it "completes an in-progress project as the pm" do
+  it "completes an in-progress order as the pm" do
     project = Project.create!(owner: find_workspace_account(:client, email: "client@example.com"), participant: find_workspace_account(:pm, email: "pm@example.com"), name: "Project Active", raw_footage_url: "https://example.com/active.mov", status: :in_progress)
 
     patch complete_order_path(project)
