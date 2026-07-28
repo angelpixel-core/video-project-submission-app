@@ -7,11 +7,6 @@
 # bin/packwerk update-todo
 ---
 ".":
-  "::Core::Result::Success":
-    violations:
-    - dependency
-    files:
-    - app/domains/identity/application/queries/resolve_workspace_account.rb
   "::Identity::Adapters::Persistence::Account::AccountRecord":
     violations:
     - dependency

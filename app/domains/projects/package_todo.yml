@@ -7,19 +7,6 @@
 # bin/packwerk update-todo
 ---
 ".":
-  "::Core::Result::Failure":
-    violations:
-    - dependency
-    files:
-    - app/domains/projects/application/commands/autosave_draft_project.rb
-    - app/domains/projects/application/commands/submit_project.rb
-  "::Core::Result::Success":
-    violations:
-    - dependency
-    files:
-    - app/domains/projects/application/commands/autosave_draft_project.rb
-    - app/domains/projects/application/commands/create_draft_project.rb
-    - app/domains/projects/application/commands/submit_project.rb
   "::Project":
     violations:
     - dependency

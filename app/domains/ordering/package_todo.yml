@@ -7,23 +7,13 @@
 # bin/packwerk update-todo
 ---
 ".":
-  "::Project":
-    violations:
-    - dependency
-    files:
-    - app/domains/ordering/application/queries/listing_query.rb
-  "::Core::Result::Failure":
-    violations:
-    - dependency
-    files:
-    - app/domains/ordering/application/commands/process_submission.rb
-  "::Core::Result::Success":
-    violations:
-    - dependency
-    files:
-    - app/domains/ordering/application/commands/process_submission.rb
   "::NotificationJob":
     violations:
     - dependency
     files:
     - app/domains/ordering/application/commands/process_submission.rb
+  "::Project":
+    violations:
+    - dependency
+    files:
+    - app/domains/ordering/application/queries/listing_query.rb
