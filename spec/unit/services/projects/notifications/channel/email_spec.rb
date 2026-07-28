@@ -8,6 +8,6 @@ RSpec.describe Delivery::Application::Notifications::Channel::Email do
     expect(first).to receive(:call)
     expect(second).to receive(:call)
 
-    described_class.new([first, second]).call
+    described_class.new([ first, second ]).call
   end
 end

@@ -8,7 +8,6 @@ RSpec.describe Delivery::Application::Notifications::Dispatcher do
     expect(first).to receive(:call)
     expect(second).to receive(:call)
 
-    described_class.call(channels: [first, second])
+    described_class.call(channels: [ first, second ])
   end
-
 end
