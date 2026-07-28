@@ -59,6 +59,7 @@ RSpec.describe "Notifications", type: :system, js: true do
     using_session(:client) do
       visit orders_path
       expect(page).to have_css('html[data-workspace-role="client"]')
+      expect(page).to have_css('html[data-client-workspace-notifications-connected="true"]')
       expect(page).to have_no_css('#client-notifications-panel .client-notification-toast')
     end
 
@@ -70,6 +71,7 @@ RSpec.describe "Notifications", type: :system, js: true do
     end
 
     using_session(:client) do
+      expect(page).to have_css('html[data-client-workspace-notifications-received="notifications_updated"]')
       expect(page).to have_css('#client-notifications-panel .client-notification-toast', text: "Project Beta")
       expect(page).to have_css('#client-notifications-dropdown .client-notifications-badge', text: "1")
     end
