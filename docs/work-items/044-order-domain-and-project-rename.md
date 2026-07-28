@@ -45,14 +45,14 @@ title: Order Domain and Project Rename
 - `Bundle` should represent what the customer chooses from the catalog.
 - `LineItem` should represent each selected bundle inside the order.
 - `Project` should represent fulfillment work derived from the order.
-- `Delivery` should represent the final artifact returned to the customer.
+- `Delivery` should represent the final artifact returned to the customer plus closure/confirmation notifications.
 
 ## Final Vocabulary
 
 - `Order`: the customer's request and selection set.
 - `Submission`: the workflow event that sends an order into payment and downstream processing.
 - `Project`: the internal fulfillment work item derived from a submission.
-- `Delivery`: the final artifact returned to the customer.
+- `Delivery`: the final artifact returned to the customer, plus closure and confirmation notifications.
 - `Bundle`: the sellable catalog choice the customer adds to an order.
 - `LineItem`: a chosen bundle inside an order, with quantity.
 

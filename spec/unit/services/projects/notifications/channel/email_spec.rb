@@ -1,19 +1,13 @@
 require "rails_helper"
 
-RSpec.describe Projects::Notifications::Channel::Email do
-  it "delivers the project status emails to client and pm" do
-    client = workspace_account(:client, name: "Client")
-    pm = workspace_account(:pm, name: "PM")
-    project = Project.create!(owner: client, participant: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :in_progress)
+RSpec.describe Delivery::Application::Notifications::Channel::Email do
+  it "calls each delivery" do
+    first = double("Delivery")
+    second = double("Delivery")
 
-    client_mail = instance_double(ActionMailer::MessageDelivery)
-    pm_mail = instance_double(ActionMailer::MessageDelivery)
+    expect(first).to receive(:call)
+    expect(second).to receive(:call)
 
-    expect(ProjectNotificationMailer).to receive(:project_created).with(project, recipient_role: :client).and_return(client_mail)
-    expect(ProjectNotificationMailer).to receive(:project_created).with(project, recipient_role: :pm).and_return(pm_mail)
-    expect(client_mail).to receive(:deliver_now)
-    expect(pm_mail).to receive(:deliver_now)
-
-    described_class.new(project, :project_created).call
+    described_class.new([first, second]).call
   end
 end

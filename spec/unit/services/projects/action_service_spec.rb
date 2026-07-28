@@ -1,13 +1,16 @@
 require "rails_helper"
 
 RSpec.describe Projects::ActionService do
-  it "accepts a pending project and marks unread pm notifications as read" do
+  it "accepts a pending project, marks unread pm notifications as read, and creates a client notification" do
     client = workspace_account(:client, email: "client@example.com", name: "Client")
     pm = workspace_account(:pm, email: "pm@example.com", name: "PM")
     project = Project.create!(owner: client, participant: pm, name: "Project Pending", raw_footage_url: "https://example.com/pending.mov", status: :pending)
     unread_notification = Notification.create!(project: project, pm: pm, kind: "project_created", body: "Unread PM notification")
 
-    expect(Projects::Notifications::Dispatcher).to receive(:call).with(project: project, event_type: :project_accepted)
+    client_mail = instance_double(ActionMailer::MessageDelivery, deliver_now: true)
+    pm_mail = instance_double(ActionMailer::MessageDelivery, deliver_now: true)
+    expect(ProjectNotificationMailer).to receive(:project_accepted).with(project, recipient_role: :client).and_return(client_mail)
+    expect(ProjectNotificationMailer).to receive(:project_accepted).with(project, recipient_role: :pm).and_return(pm_mail)
 
     result = described_class.call(project: project, event: :accept)
 
@@ -18,10 +21,15 @@ RSpec.describe Projects::ActionService do
     expect(Notification.where(project: project, kind: "project_accepted")).to exist
   end
 
-  it "completes an in-progress project without requesting a broadcast refresh" do
+  it "completes an in-progress project and creates a client notification" do
     client = workspace_account(:client, email: "client@example.com", name: "Client")
     pm = workspace_account(:pm, email: "pm@example.com", name: "PM")
     project = Project.create!(owner: client, participant: pm, name: "Project Active", raw_footage_url: "https://example.com/active.mov", status: :in_progress)
+
+    client_mail = instance_double(ActionMailer::MessageDelivery, deliver_now: true)
+    pm_mail = instance_double(ActionMailer::MessageDelivery, deliver_now: true)
+    expect(ProjectNotificationMailer).to receive(:project_completed).with(project, recipient_role: :client).and_return(client_mail)
+    expect(ProjectNotificationMailer).to receive(:project_completed).with(project, recipient_role: :pm).and_return(pm_mail)
 
     result = described_class.call(project: project, event: :complete)
 

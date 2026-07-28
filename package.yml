@@ -5,5 +5,7 @@ dependencies:
   - app/domains/catalog
   - app/domains/capacity
   - app/domains/ordering
+  - app/domains/fulfillment
+  - app/domains/delivery
   - app/domains/payments
   - app/domains/projects

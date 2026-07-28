@@ -1,33 +1,79 @@
 module Projects
   module Notifications
     class Service
-      def initialize(project_id)
-        @project_id = project_id
+      def self.call(project:, event_type:)
+        new(project:, event_type:).call
+      end
+
+      def initialize(project:, event_type:)
+        @project = project
+        @event_type = event_type.to_sym
       end
 
       def call
-        project = load_project
+        project.notifications.unread.update_all(read_at: Time.current) if event_type == :project_accepted
 
-        create_notification(project)
-        Projects::Notifications::Dispatcher.call(project: project, event_type: :project_created)
+        delivery_service.call(
+          notification_writer: -> { create_notification! },
+          channels: channels
+        )
       end
 
       private
 
-      attr_reader :project_id
+      attr_reader :project, :event_type
 
-      def load_project
-        Project.includes(:participant).find(project_id)
+      def create_notification!
+        Notification.create!(
+          project: project,
+          **recipient_attributes,
+          kind: event_type.to_s,
+          body: body_for_event
+        )
       end
 
-        def create_notification(project)
-          Notification.create!(
-            project: project,
-            pm: project.participant,
-            kind: "project_created",
-            body: "Project #{project.name} submitted for review"
-          )
+      def recipient_attributes
+        if event_type == :project_created
+          { pm: project.participant }
+        else
+          { client: project.owner }
         end
+      end
+
+      def body_for_event
+        case event_type
+        when :project_created
+          "Your project #{project.name.presence || 'Untitled project'} was submitted for review."
+        when :project_accepted
+          "Your project #{project.name.presence || 'Untitled project'} was accepted and is now in progress."
+        when :project_completed
+          "Your project #{project.name.presence || 'Untitled project'} has been completed."
+        else
+          "Your project #{project.name.presence || 'Untitled project'} was updated."
+        end
+      end
+
+      def channels
+        [
+          Delivery::Application::Notifications::Channel::Email.new(email_deliveries),
+          Delivery::Application::Notifications::Channel::Logger.new(logger_message, logger: Rails.logger)
+        ]
+      end
+
+      def email_deliveries
+        [
+          -> { ProjectNotificationMailer.public_send(event_type, project, recipient_role: :client).deliver_now },
+          -> { ProjectNotificationMailer.public_send(event_type, project, recipient_role: :pm).deliver_now }
+        ]
+      end
+
+      def logger_message
+        "Notification for project #{project.id}: #{event_type}"
+      end
+
+      def delivery_service
+        Delivery::Application::Notifications::Service
+      end
     end
   end
 end
