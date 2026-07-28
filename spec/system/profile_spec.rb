@@ -10,7 +10,7 @@ RSpec.describe "Profile page", type: :system, js: true do
   end
 
   it "renders the current client profile and token controls" do
-    visit projects_path
+    visit orders_path
 
     find(".account-menu-trigger").click
     click_link "Profile"
@@ -53,7 +53,7 @@ RSpec.describe "Profile page", type: :system, js: true do
   end
 
   it "renders the pm profile when workspace mode is pm" do
-    visit projects_path
+    visit orders_path
 
     find(".account-menu-trigger").click
     click_button "Switch to PM"

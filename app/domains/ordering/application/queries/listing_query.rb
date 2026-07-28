@@ -3,8 +3,8 @@ module Ordering
     module Queries
       class ListingQuery
         SORTS = {
-          "id" => "projects.id",
-          "created_at" => "projects.created_at",
+          "id" => "orders.id",
+          "created_at" => "orders.created_at",
           "total_budget" => "total_budget_cents"
         }.freeze
         VALID_SORTS = SORTS.keys.freeze
@@ -28,7 +28,7 @@ module Ordering
         end
 
         def total_count
-          Project.where.not(status: :draft).count
+          Ordering::Adapters::Persistence::Order::OrderRecord.where.not(status: :draft).count
         end
 
         def sort
@@ -53,7 +53,18 @@ module Ordering
         end
 
         def relation
-          Project.for_budget_summary.where.not(status: :draft).includes(:owner)
+          order_scope.includes(:owner, :participant)
+        end
+
+        def order_scope
+          Ordering::Adapters::Persistence::Order::OrderRecord
+            .left_outer_joins(:order_line_records)
+            .select(<<~SQL.squish)
+              orders.*,
+              COALESCE(SUM(order_lines.line_total_cents), 0) AS total_budget_cents
+            SQL
+            .group("orders.id")
+            .where.not(status: :draft)
         end
 
         def order_column

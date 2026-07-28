@@ -11,6 +11,7 @@ class Project < ApplicationRecord
   has_many :comments, dependent: :destroy
 
   before_validation :sync_raw_footage_metadata
+  after_save :sync_order_listing!
   after_update_commit :broadcast_status_badge
 
   scope :for_budget_summary, lambda {
@@ -115,10 +116,89 @@ class Project < ApplicationRecord
     ActionView::RecordIdentifier.dom_id(self, :status_badge)
   end
 
+  def sync_order_listing!
+    order = Ordering::Adapters::Persistence::Order::OrderRecord.find_or_initialize_by(id: id)
+    order.owner_account_id = owner_account_id
+    order.participant_account_id = participant_account_id
+    order.name = name
+    order.raw_footage_url = raw_footage_url
+    order.raw_footage_metadata = raw_footage_metadata_hash
+    order.customer_snapshot = {
+      account_id: owner.id,
+      account_uid: owner.try(:uid),
+      name: owner.name,
+      email: owner.email,
+      role: owner.role
+    }
+    order.uid = id.to_s
+    order.status = order_status_for_listing
+    order.payment_status = payment_status_for_listing
+    order.production_status = production_status_for_listing
+    order.delivery_status = delivery_status_for_listing
+    order.created_at ||= created_at
+    order.updated_at = updated_at
+    order.save!
+
+    order.order_line_records.delete_all
+    video_type_selections.includes(:video_type).each do |selection|
+      order.order_line_records.create!(
+        offering_snapshot: {
+          offering_id: selection.video_type_id,
+          offering_uid: selection.video_type.try(:uid),
+          name: selection.video_type.name,
+          description: selection.video_type.description,
+          price_cents: selection.video_type.price_cents,
+          output_format: selection.video_type.output_format
+        },
+        quantity: selection.quantity,
+        line_total_cents: selection.quantity * selection.video_type.price_cents,
+        created_at: created_at,
+        updated_at: updated_at
+      )
+    end
+
+    if raw_footage_url.present?
+      source_video = order.source_video_record || order.build_source_video_record
+      source_video.source_url = raw_footage_url
+      source_video.editing_instructions = nil
+      source_video.created_at ||= created_at
+      source_video.updated_at = updated_at
+      source_video.save!
+    else
+      order.source_video_record&.destroy!
+    end
+  end
+
   private
 
   def sync_raw_footage_metadata
     self.raw_footage_metadata = Parsers::RawFootageUrlParser.metadata(raw_footage_url)
+  end
+
+  def order_status_for_listing
+    return "draft" if draft?
+    return "placed" if pending?
+    return "confirmed" if in_progress?
+
+    "completed"
+  end
+
+  def payment_status_for_listing
+    active_payment&.status.presence || (draft? ? "unpaid" : "pending")
+  end
+
+  def production_status_for_listing
+    return "not_started" if draft? || pending?
+    return "in_progress" if in_progress?
+
+    "completed"
+  end
+
+  def delivery_status_for_listing
+    return "not_ready" if draft? || pending?
+    return "ready" if in_progress?
+
+    "delivered"
   end
 
   def broadcast_status_badge

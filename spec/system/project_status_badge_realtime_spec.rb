@@ -33,11 +33,11 @@ RSpec.describe "Project status badge realtime", type: :system, js: true do
     project = Project.create!(owner: client, participant: pm, name: "Project Alpha", raw_footage_url: "https://example.com/raw.mov", status: :pending)
 
     using_session(:client) do
-      visit projects_path
+      visit orders_path
 
       expect(page).to have_css("##{project.status_badge_dom_id}", text: "PENDIENTE")
       expect(page).to have_css("html[data-workspace-role='client']")
-      expect(page).to have_css("html[data-project-status-connected='true']")
+      expect(page).to have_css("html[data-order-status-connected='true']")
     end
 
     using_session(:pm) do

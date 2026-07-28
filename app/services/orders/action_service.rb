@@ -4,6 +4,7 @@ module Orders
       result = Fulfillment::Application::Commands::ProcessProjectAction.call(project:, event:)
 
       if result.success?
+        project.sync_order_listing!
         Orders::Notifications::Service.call(project:, event_type: notification_event_type_for(event))
       end
 

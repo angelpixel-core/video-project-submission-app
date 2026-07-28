@@ -22,6 +22,7 @@ module Fulfillment
               project.status = :draft
               project.save!
               repository.replace_selections(project, selections)
+              project.sync_order_listing!
             end
           end
 

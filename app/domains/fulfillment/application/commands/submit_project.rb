@@ -32,6 +32,7 @@ module Fulfillment
               project.participant = participant
               project.submit!
               repository.replace_selections(project, selections)
+              project.sync_order_listing!
 
               submission = Ordering::Application::DTO::Submission.from_project(
                 project,

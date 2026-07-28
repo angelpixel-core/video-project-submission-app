@@ -25,7 +25,7 @@ RSpec.describe "PM notifications", type: :system, js: true do
     Notification.create!(project: project, pm: pm, kind: "project_created", body: "Second unread notification")
     Notification.create!(project: project, pm: pm, kind: "project_created", body: "Third unread notification")
 
-    visit projects_path
+    visit orders_path
 
     switch_workspace_to("PM")
     find("#pm-notifications-dropdown button").click
@@ -40,10 +40,10 @@ RSpec.describe "PM notifications", type: :system, js: true do
     end
 
     expect(page).to have_current_path(order_path(project))
-    expect(page).to have_content("PROJECT DETAIL")
+    expect(page).to have_content("ORDER DETAIL")
     expect(notification.reload.read_at).to be_present
 
-    visit projects_path
+    visit orders_path
 
     find("#pm-notifications-dropdown button").click
 
@@ -56,7 +56,7 @@ RSpec.describe "PM notifications", type: :system, js: true do
     expect(page).to have_no_css(".pm-notification-row", text: "Second unread notification")
     expect(page).to have_css(".pm-notification-row", text: "Third unread notification")
 
-    expect(page).to have_current_path(projects_path)
+    expect(page).to have_current_path(orders_path)
     expect(page).to have_no_content("Unread PM notification")
     expect(notification.reload.read_at).to be_present
   end
@@ -67,7 +67,7 @@ RSpec.describe "PM notifications", type: :system, js: true do
     project = Project.create!(owner: client, participant: pm, name: "Project Toast", raw_footage_url: "https://example.com/toast.mov", status: :in_progress)
     notification = Notification.create!(project: project, pm: pm, kind: "project_created", body: "Unread PM notification")
 
-    visit projects_path
+    visit orders_path
 
     switch_workspace_to("PM")
 
@@ -85,14 +85,14 @@ RSpec.describe "PM notifications", type: :system, js: true do
     project = Project.create!(owner: client, participant: pm, name: "Project Beta", raw_footage_url: "https://example.com/beta.mov", status: :pending)
     project.video_type_selections.create!(video_type: VideoType.find_by!(name: "Highlight Reel"), quantity: 2)
 
-    visit projects_path
+    visit orders_path
 
     switch_workspace_to("PM")
 
     page.execute_script("window.__pmActionSentinel = 1")
 
     expect(page).to have_content("PM WORKSPACE")
-    expect(page).to have_content("Default PM projects")
+    expect(page).to have_content("Default PM orders")
     expect(page).to have_no_content("CLIENT WORKSPACE")
     expect(page).to have_content("Created at")
     expect(page).to have_content("Total budget")
@@ -105,7 +105,7 @@ RSpec.describe "PM notifications", type: :system, js: true do
     click_button "Aceptar orden"
 
     expect(page.evaluate_script("window.__pmActionSentinel")).to eq(1)
-    expect(page).to have_current_path(projects_path, ignore_query: false)
+    expect(page).to have_current_path(orders_path, ignore_query: false)
     expect(page).to have_css("tbody#workspace-orders-table-body tr", text: "Project Beta")
     expect(page).to have_content("EN PROGRESO")
     expect(page).to have_button("Marcar como completado")
@@ -113,7 +113,7 @@ RSpec.describe "PM notifications", type: :system, js: true do
     click_button "Marcar como completado"
 
     expect(page.evaluate_script("window.__pmActionSentinel")).to eq(1)
-    expect(page).to have_current_path(projects_path, ignore_query: false)
+    expect(page).to have_current_path(orders_path, ignore_query: false)
     expect(page).to have_css("tbody#workspace-orders-table-body tr", text: "Project Beta")
     expect(page).to have_content("COMPLETADO")
     expect(page).not_to have_button("Aceptar orden")
@@ -161,7 +161,7 @@ RSpec.describe "PM notifications", type: :system, js: true do
       end
     end
 
-    visit projects_path
+    visit orders_path
 
     switch_workspace_to("PM")
 
@@ -195,7 +195,7 @@ RSpec.describe "PM notifications realtime", type: :system, js: true do
     highlight_reel = VideoType.find_by!(name: "Highlight Reel")
 
     using_session(:pm) do
-      visit projects_path
+    visit orders_path
       switch_workspace_to("PM")
 
       find("#pm-notifications-dropdown button").click

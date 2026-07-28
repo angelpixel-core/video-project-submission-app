@@ -161,7 +161,7 @@ RSpec.describe "Orders requests (detailed)" do
   end
 
   it "creates a draft and redirects to edit" do
-    get new_project_path
+    get new_order_path
 
     draft = Project.order(:created_at).last
 

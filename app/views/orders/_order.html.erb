@@ -30,7 +30,7 @@
         <p class="text-uppercase small text-body-secondary mb-2">Video types</p>
         <% if project.video_types.any? %>
           <ul class="list-unstyled mb-0">
-            <% project.video_type_selections.includes(:video_type).each do |selection| %>
+            <% project.video_type_selections.each do |selection| %>
               <li class="d-flex justify-content-between gap-3 py-1">
                 <span><%= selection.video_type.name %></span>
                 <span class="text-body-secondary">Qty <%= selection.quantity %></span>

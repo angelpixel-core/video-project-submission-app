@@ -91,7 +91,7 @@ RSpec.describe "Project show comments", type: :system, js: true do
       status: :pending
     )
 
-    visit projects_path
+    visit orders_path
 
     expect(page).to have_css(".client-order-card .youtube-preview img[src*='img.youtube.com/vi/dQw4w9WgXcQ/hqdefault.jpg']")
     expect(page).to have_link("Project Beta", href: order_path(Project.find_by!(name: "Project Beta")))
@@ -100,7 +100,7 @@ RSpec.describe "Project show comments", type: :system, js: true do
     click_link "Project Beta"
 
     expect(page).to have_current_path(order_path(Project.find_by!(name: "Project Beta")))
-    expect(page).to have_content("PROJECT DETAIL")
+    expect(page).to have_content("ORDER DETAIL")
     expect(page).to have_content("Comments")
   end
 

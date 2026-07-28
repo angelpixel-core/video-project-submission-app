@@ -4,15 +4,20 @@ RSpec.describe Ordering::Application::Queries::ListingQuery do
   include ActiveSupport::Testing::TimeHelpers
 
   before do
-    workspace_account(:client, name: "Default Client")
-    workspace_account(:pm, name: "Default PM")
-    VideoType.create!(name: "Highlight Reel", description: "Short edit", price_cents: 25_000, output_format: "mp4")
-    VideoType.create!(name: "Social Cut", description: "Social edit", price_cents: 15_000, output_format: "mp4")
+    @client_email = "client-#{SecureRandom.hex(4)}@example.com"
+    @pm_email = "pm-#{SecureRandom.hex(4)}@example.com"
+    @highlight_name = "Highlight Reel #{SecureRandom.hex(4)}"
+    @social_name = "Social Cut #{SecureRandom.hex(4)}"
+
+    workspace_account(:client, email: @client_email, name: "Default Client")
+    workspace_account(:pm, email: @pm_email, name: "Default PM")
+    VideoType.create!(name: @highlight_name, description: "Short edit", price_cents: 25_000, output_format: "mp4")
+    VideoType.create!(name: @social_name, description: "Social edit", price_cents: 15_000, output_format: "mp4")
   end
 
   it "orders by newest first by default" do
-    client = find_workspace_account(:client, email: "client@example.com")
-    pm = find_workspace_account(:pm, email: "pm@example.com")
+    client = find_workspace_account(:client, email: @client_email)
+    pm = find_workspace_account(:pm, email: @pm_email)
 
     travel_to 2.days.ago do
       Project.create!(owner: client, participant: pm, name: "Older Project", raw_footage_url: "https://example.com/older.mov", status: :pending)
@@ -30,8 +35,8 @@ RSpec.describe Ordering::Application::Queries::ListingQuery do
   end
 
   it "orders created_at ascending when requested" do
-    client = find_workspace_account(:client, email: "client@example.com")
-    pm = find_workspace_account(:pm, email: "pm@example.com")
+    client = find_workspace_account(:client, email: @client_email)
+    pm = find_workspace_account(:pm, email: @pm_email)
 
     travel_to 2.days.ago do
       Project.create!(owner: client, participant: pm, name: "Older Project", raw_footage_url: "https://example.com/older.mov", status: :pending)
@@ -49,10 +54,10 @@ RSpec.describe Ordering::Application::Queries::ListingQuery do
   end
 
   it "orders by total budget when requested" do
-    client = find_workspace_account(:client, email: "client@example.com")
-    pm = find_workspace_account(:pm, email: "pm@example.com")
-    highlight_reel = VideoType.find_by!(name: "Highlight Reel")
-    social_cut = VideoType.find_by!(name: "Social Cut")
+    client = find_workspace_account(:client, email: @client_email)
+    pm = find_workspace_account(:pm, email: @pm_email)
+    highlight_reel = VideoType.find_by!(name: @highlight_name)
+    social_cut = VideoType.find_by!(name: @social_name)
 
     low_budget = Project.create!(owner: client, participant: pm, name: "Low Budget", raw_footage_url: "https://example.com/low.mov", status: :pending)
     low_budget.video_type_selections.create!(video_type: social_cut, quantity: 1)
@@ -66,8 +71,8 @@ RSpec.describe Ordering::Application::Queries::ListingQuery do
   end
 
   it "paginates ten records per page by default" do
-    client = find_workspace_account(:client, email: "client@example.com")
-    pm = find_workspace_account(:pm, email: "pm@example.com")
+    client = find_workspace_account(:client, email: @client_email)
+    pm = find_workspace_account(:pm, email: @pm_email)
 
     11.times do |index|
       Project.create!(owner: client, participant: pm, name: "Project #{index + 1}", raw_footage_url: "https://example.com/#{index + 1}.mov", status: :pending)
