@@ -1,6 +1,6 @@
 import { Controller } from "@hotwired/stimulus"
 
-export default class ProjectActionController extends Controller {
+export default class OrderActionController extends Controller {
   async submit(event) {
     event.preventDefault()
 
@@ -28,7 +28,7 @@ export default class ProjectActionController extends Controller {
           }
 
           const actionCell = currentRow.querySelector("td:nth-child(6)")
-          if (actionCell) actionCell.innerHTML = buildActionMarkup({ projectId: data.project_id, action: data.action })
+        if (actionCell) actionCell.innerHTML = buildActionMarkup({ orderId: data.project_id, action: data.action })
         }
       }
     } catch {
@@ -40,11 +40,11 @@ export default class ProjectActionController extends Controller {
   }
 }
 
-function buildActionMarkup({ projectId, action }) {
+function buildActionMarkup({ orderId, action }) {
   if (action === "complete") {
     return `
       <div class="d-inline-flex flex-wrap gap-2 justify-content-end">
-        <form data-controller="project-action" data-action="submit->project-action#submit" class="button_to" method="post" action="/projects/${projectId}/complete">
+        <form data-controller="order-action" data-action="submit->order-action#submit" class="button_to" method="post" action="/orders/${orderId}/complete">
           <input type="hidden" name="_method" value="patch" />
           <button class="btn btn-sm btn-outline-success" type="submit">Marcar como completado</button>
         </form>

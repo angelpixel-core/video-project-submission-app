@@ -96,8 +96,8 @@ RSpec.describe "PM notifications", type: :system, js: true do
     expect(page).to have_no_content("CLIENT WORKSPACE")
     expect(page).to have_content("Created at")
     expect(page).to have_content("Total budget")
-    expect(page).to have_css("table.workspace-projects-table")
-    expect(page).to have_css("tbody#workspace-projects-table-body tr", text: "Project Beta")
+    expect(page).to have_css("table.workspace-orders-table")
+    expect(page).to have_css("tbody#workspace-orders-table-body tr", text: "Project Beta")
     expect(page).to have_content("$500.00")
     expect(page).to have_button("Aceptar orden")
     expect(page).not_to have_button("Marcar como completado")
@@ -106,7 +106,7 @@ RSpec.describe "PM notifications", type: :system, js: true do
 
     expect(page.evaluate_script("window.__pmActionSentinel")).to eq(1)
     expect(page).to have_current_path(projects_path, ignore_query: false)
-    expect(page).to have_css("tbody#workspace-projects-table-body tr", text: "Project Beta")
+    expect(page).to have_css("tbody#workspace-orders-table-body tr", text: "Project Beta")
     expect(page).to have_content("EN PROGRESO")
     expect(page).to have_button("Marcar como completado")
 
@@ -114,7 +114,7 @@ RSpec.describe "PM notifications", type: :system, js: true do
 
     expect(page.evaluate_script("window.__pmActionSentinel")).to eq(1)
     expect(page).to have_current_path(projects_path, ignore_query: false)
-    expect(page).to have_css("tbody#workspace-projects-table-body tr", text: "Project Beta")
+    expect(page).to have_css("tbody#workspace-orders-table-body tr", text: "Project Beta")
     expect(page).to have_content("COMPLETADO")
     expect(page).not_to have_button("Aceptar orden")
     expect(page).not_to have_button("Marcar como completado")
@@ -171,8 +171,8 @@ RSpec.describe "PM notifications", type: :system, js: true do
     click_link "2"
 
     expect(page).to have_current_path(orders_path(page: 2, sort: "created_at", direction: "desc"), ignore_query: false)
-    expect(page).to have_css("tbody#workspace-projects-table-body tr", text: "Project 1")
-    expect(page).to have_no_css("tbody#workspace-projects-table-body tr", text: "Project 11")
+    expect(page).to have_css("tbody#workspace-orders-table-body tr", text: "Project 1")
+    expect(page).to have_no_css("tbody#workspace-orders-table-body tr", text: "Project 11")
   end
 end
 
@@ -203,8 +203,8 @@ RSpec.describe "PM notifications realtime", type: :system, js: true do
       expect(page).to have_css("#pm-notifications-dropdown .dropdown-menu.show", visible: :visible)
       expect(page).to have_css('html[data-pm-workspace-notifications-connected="true"]')
       expect(page).to have_no_css(".pm-notification-item")
-      expect(page).to have_css("table.workspace-projects-table")
-      expect(page).to have_css("tbody#workspace-projects-table-body tr", text: "No projects yet.")
+      expect(page).to have_css("table.workspace-orders-table")
+      expect(page).to have_css("tbody#workspace-orders-table-body tr", text: "No orders yet.")
     end
 
     Thread.new do
@@ -218,7 +218,7 @@ RSpec.describe "PM notifications realtime", type: :system, js: true do
 
     using_session(:pm) do
       expect(page).to have_css(".pm-notification-item", text: notification_body)
-      expect(page).to have_css("tbody#workspace-projects-table-body tr", text: "Project Gamma")
+      expect(page).to have_css("tbody#workspace-orders-table-body tr", text: "Project Gamma")
     end
 
     Thread.new do

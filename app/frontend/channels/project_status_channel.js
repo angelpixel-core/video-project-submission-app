@@ -4,8 +4,8 @@ export function subscribeToProjectStatus(consumer) {
   if (!projectBadgeNodes.length) return null
 
   return Array.from(projectBadgeNodes).map((badgeNode) => {
-    const projectContainer = badgeNode.closest("[data-project-id]")
-    const projectId = projectContainer?.dataset.projectId
+    const projectContainer = badgeNode.closest("[data-order-id]")
+    const projectId = projectContainer?.dataset.orderId
 
     if (!projectId) return null
 

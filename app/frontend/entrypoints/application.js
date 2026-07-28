@@ -7,7 +7,7 @@ import { subscribeToClientNotifications, subscribeToPMNotifications } from "../c
 import { subscribeToProjectComments } from "../channels/project_comments_channel"
 import { subscribeToProjectStatus } from "../channels/project_status_channel"
 import "./application.css"
-import ProjectActionController from "../controllers/project_action_controller"
+import OrderActionController from "../controllers/project_action_controller"
 import WorkspaceSwitchController from "../controllers/workspace_switch_controller"
 import NotificationActionController from "../controllers/notification_action_controller"
 import CommentFormController from "../controllers/comment_form_controller"
@@ -22,7 +22,7 @@ application.register("order-form", OrderFormController)
 application.register("workspace-switch", WorkspaceSwitchController)
 application.register("notification-action", NotificationActionController)
 application.register("comment-form", CommentFormController)
-application.register("project-action", ProjectActionController)
+application.register("order-action", OrderActionController)
 application.register("secret-reveal", SecretRevealController)
 
 subscribeToPMNotifications(consumer)

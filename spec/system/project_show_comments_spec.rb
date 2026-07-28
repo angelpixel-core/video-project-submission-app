@@ -93,7 +93,7 @@ RSpec.describe "Project show comments", type: :system, js: true do
 
     visit projects_path
 
-    expect(page).to have_css(".client-project-card .youtube-preview img[src*='img.youtube.com/vi/dQw4w9WgXcQ/hqdefault.jpg']")
+    expect(page).to have_css(".client-order-card .youtube-preview img[src*='img.youtube.com/vi/dQw4w9WgXcQ/hqdefault.jpg']")
     expect(page).to have_link("Project Beta", href: order_path(Project.find_by!(name: "Project Beta")))
     expect(page).to have_link("Play preview", href: order_path(Project.find_by!(name: "Project Beta")))
 

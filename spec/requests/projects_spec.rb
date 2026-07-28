@@ -72,7 +72,7 @@ RSpec.describe "Orders requests (detailed)" do
 
     get orders_path
 
-    workspace_table_body = response.body[/<tbody id="workspace-projects-table-body">.*?<\/tbody>/m]
+    workspace_table_body = response.body[/<tbody id="workspace-orders-table-body">.*?<\/tbody>/m]
 
     expect(response).to have_http_status(:ok)
     expect(response.body).to include("ID")
@@ -133,7 +133,7 @@ RSpec.describe "Orders requests (detailed)" do
 
     get orders_path(page: 2)
 
-    workspace_table_body = response.body[/<tbody id="workspace-projects-table-body">.*?<\/tbody>/m]
+    workspace_table_body = response.body[/<tbody id="workspace-orders-table-body">.*?<\/tbody>/m]
 
     expect(response).to have_http_status(:ok)
     expect(response.body).to include("Workspace orders pagination")

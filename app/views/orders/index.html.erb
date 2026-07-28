@@ -45,14 +45,14 @@
         </div>
 
         <div class="table-responsive">
-          <table class="table table-hover align-middle mb-0 workspace-projects-table">
+          <table class="table table-hover align-middle mb-0 workspace-orders-table">
             <colgroup>
-              <col class="workspace-projects-col-id">
-              <col class="workspace-projects-col-project">
-              <col class="workspace-projects-col-created">
-              <col class="workspace-projects-col-budget">
-              <col class="workspace-projects-col-status">
-              <col class="workspace-projects-col-actions">
+              <col class="workspace-orders-col-id">
+              <col class="workspace-orders-col-order">
+              <col class="workspace-orders-col-created">
+              <col class="workspace-orders-col-budget">
+              <col class="workspace-orders-col-status">
+              <col class="workspace-orders-col-actions">
             </colgroup>
             <thead>
               <tr>
@@ -64,7 +64,7 @@
                 <th scope="col" class="text-end">Actions</th>
               </tr>
             </thead>
-            <tbody id="workspace-projects-table-body">
+            <tbody id="workspace-orders-table-body">
               <% if @workspace_projects.any? %>
                 <%= render partial: "workspace_project_table_row", collection: @workspace_projects, as: :project %>
               <% else %>
@@ -78,7 +78,7 @@
 
         <% if @workspace_total_pages.to_i > 1 %>
           <nav aria-label="Workspace orders pagination" class="mt-4">
-            <ul class="pagination justify-content-center flex-wrap gap-2 mb-0 workspace-projects-pagination">
+            <ul class="pagination justify-content-center flex-wrap gap-2 mb-0 workspace-orders-pagination">
               <li class="page-item <%= @workspace_page.to_i <= 1 ? 'disabled' : '' %>">
                 <% if @workspace_page.to_i <= 1 %>
                   <span class="page-link">Prev</span>

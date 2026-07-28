@@ -1,8 +1,8 @@
 import { insertProjectComment } from "../lib/project_comments_refresh"
 
 export function subscribeToProjectComments(consumer) {
-  const projectCommentsHost = document.querySelector("#project-comments")
-  const projectId = projectCommentsHost?.closest("[data-project-id]")?.dataset.projectId
+  const projectCommentsHost = document.querySelector("#order-comments")
+  const projectId = projectCommentsHost?.closest("[data-order-id]")?.dataset.orderId
 
   if (!projectId || !projectCommentsHost) return null
 

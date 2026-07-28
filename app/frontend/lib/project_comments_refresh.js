@@ -1,7 +1,7 @@
 export function insertProjectComment(data) {
-  const commentsList = document.querySelector("#project-comments-list")
-  const commentsEmptyState = document.querySelector("#project-comments-empty")
-  const commentsCount = document.querySelector("#project-comments-count")
+  const commentsList = document.querySelector("#order-comments-list")
+  const commentsEmptyState = document.querySelector("#order-comments-empty")
+  const commentsCount = document.querySelector("#order-comments-count")
 
   if (!commentsList || !data?.comment_html) return
 

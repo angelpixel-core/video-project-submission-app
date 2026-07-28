@@ -1,12 +1,12 @@
-<div class="col-12 col-lg-6" data-project-id="<%= project.id %>">
-  <div class="card h-100 shadow-sm border-0 client-project-card">
+<div class="col-12 col-lg-6" data-order-id="<%= project.id %>">
+  <div class="card h-100 shadow-sm border-0 client-order-card">
     <div class="card-body">
       <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
         <% details_path = project.draft? ? edit_order_path(project) : order_path(project) %>
         <% show_raw_footage_url = !project.raw_footage_previewable? %>
         <div>
           <h2 class="h5 mb-1">
-            <%= link_to details_path, class: "client-project-title-link text-reset text-decoration-none", data: { role_scope: "client" } do %>
+            <%= link_to details_path, class: "client-order-title-link text-reset text-decoration-none", data: { role_scope: "client" } do %>
               <%= project.name.presence || "Untitled order" %>
             <% end %>
           </h2>
