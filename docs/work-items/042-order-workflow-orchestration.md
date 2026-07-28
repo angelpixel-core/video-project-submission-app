@@ -14,7 +14,7 @@ depends_on:
   - payment-invoice-generation-and-storage
 order: 42
 phase: work-items
-status: draft
+status: done
 title: Order Submission Workflow Orchestration
 ---
 
