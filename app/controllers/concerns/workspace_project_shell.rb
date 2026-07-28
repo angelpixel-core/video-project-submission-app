@@ -31,7 +31,7 @@ module WorkspaceProjectShell
   def new
     client_workspace = workspace_for(:client)
     pm_workspace = workspace_for(:pm)
-    result = Projects::Application::Commands::CreateDraftProject.call(client_workspace: client_workspace, pm_workspace: pm_workspace)
+    result = Fulfillment::Application::Commands::CreateDraftProject.call(client_workspace: client_workspace, pm_workspace: pm_workspace)
     project = result.data.fetch(:project)
 
     redirect_to edit_order_path(project)
@@ -45,7 +45,7 @@ module WorkspaceProjectShell
     selections = parsed_selections
     finalize = finalize_submission?
 
-    result = Projects::Application::Commands::UpdateProject.call(
+    result = Fulfillment::Application::Commands::UpdateProject.call(
       project: @project,
       participant: workspace_for(:pm),
       attributes: project_attributes,
@@ -122,7 +122,7 @@ module WorkspaceProjectShell
   end
 
   def process_workspace_action(event:, success_notice:, stale_alert:)
-    result = Projects::ActionService.call(project: @workspace_project, event: event)
+    result = Orders::ActionService.call(project: @workspace_project, event: event)
 
     if result.success?
       respond_workspace_action_success(success_notice)
@@ -167,7 +167,7 @@ module WorkspaceProjectShell
   end
 
   def project_repository
-    @project_repository ||= Projects::Adapters::Persistence::Project::Repository.new
+    @project_repository ||= Fulfillment::Adapters::Persistence::Project::Repository.new
   end
 
   def workspace_row_action_payload

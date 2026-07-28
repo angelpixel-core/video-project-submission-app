@@ -125,11 +125,11 @@ class Project < ApplicationRecord
     return unless previous_changes.key?("status")
 
     ActionCable.server.broadcast(
-      "project_status_#{id}",
+      "order_status_#{id}",
       {
         type: "status_updated",
         project_id: id,
-        status_badge_html: ApplicationController.render(partial: "projects/status_badge", locals: { project: self })
+        status_badge_html: ApplicationController.render(partial: "orders/status_badge", locals: { project: self })
       }
     )
   end

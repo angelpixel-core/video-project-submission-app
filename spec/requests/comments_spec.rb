@@ -33,7 +33,7 @@ RSpec.describe "Comments requests" do
     project = Project.create!(owner: client, participant: pm, name: "Project Alpha", raw_footage_url: "https://example.com/raw.mov", status: :in_progress)
 
     expect do
-      post project_comments_path(project), params: {
+      post order_comments_path(project), params: {
         comment: {
           body: "Client note",
           author_role: "client"
@@ -60,7 +60,7 @@ RSpec.describe "Comments requests" do
     project = Project.create!(owner: client, participant: pm, name: "Project Beta", raw_footage_url: "https://example.com/raw.mov", status: :in_progress)
 
     expect do
-      post project_comments_path(project), params: {
+      post order_comments_path(project), params: {
         comment: {
           body: "PM note",
           author_role: "pm"

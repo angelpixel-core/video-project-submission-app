@@ -31,5 +31,7 @@ Rails.application.routes.draw do
       patch :accept
       patch :complete
     end
+
+    resources :comments, only: :create, controller: "comments"
   end
 end

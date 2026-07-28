@@ -28,10 +28,10 @@ class Comment < ApplicationRecord
     return unless comment.present?
 
     ActionCable.server.broadcast(
-      "project_comments_#{project.id}",
+      "order_comments_#{project.id}",
       {
         type: "comments_updated",
-        comment_html: ApplicationController.render(partial: "projects/comment", locals: { comment: comment }),
+        comment_html: ApplicationController.render(partial: "orders/comment", locals: { comment: comment }),
         comment_count: project.comments.count
       }
     )

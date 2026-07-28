@@ -8,4 +8,3 @@ dependencies:
   - app/domains/fulfillment
   - app/domains/delivery
   - app/domains/payments
-  - app/domains/projects

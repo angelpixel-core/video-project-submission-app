@@ -10,8 +10,8 @@ RSpec.describe NotificationJob do
       status: :in_progress
     )
 
-    service = instance_double(Projects::Notifications::Service)
-    expect(Projects::Notifications::Service).to receive(:call).with(project: project, event_type: :project_created).and_return(service)
+    service = instance_double(Orders::Notifications::Service)
+    expect(Orders::Notifications::Service).to receive(:call).with(project: project, event_type: :project_created).and_return(service)
 
     described_class.perform_now(project.id)
   end

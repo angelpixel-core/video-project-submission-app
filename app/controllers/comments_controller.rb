@@ -17,7 +17,7 @@ class CommentsController < ApplicationController
   private
 
   def load_project
-    @project = project_repository.find_for_show(params[:project_id])
+    @project = project_repository.find_for_show(params[:order_id])
   end
 
   def comment_params
@@ -37,6 +37,6 @@ class CommentsController < ApplicationController
   end
 
   def project_repository
-    @project_repository ||= Projects::Adapters::Persistence::Project::Repository.new
+    @project_repository ||= Fulfillment::Adapters::Persistence::Project::Repository.new
   end
 end
