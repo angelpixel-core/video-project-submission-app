@@ -21,7 +21,7 @@ title: Order Domain and Project Rename
 
 ## Goal
 
-- [ ] Recenter the product around `order` as the primary domain concept, keeping `project` only as a temporary compatibility surface during migration.
+- [x] Recenter the product around `order` as the primary domain concept, keeping `project` only as a temporary compatibility surface during migration.
 - [ ] Split the current `project` responsibilities into explicit domains: `catalog` for what is sold, `ordering` for the customer request, `fulfillment` for internal work, and `delivery` for the final artifact.
 
 ## Scope
@@ -41,11 +41,20 @@ title: Order Domain and Project Rename
 
 - `Project` is legacy vocabulary, not the target domain name.
 - `Order` should be the root business concept for the customer request lifecycle.
+- `Submission` should be the explicit act of sending an order into payment and follow-up processing.
 - `Bundle` should represent what the customer chooses from the catalog.
 - `LineItem` should represent each selected bundle inside the order.
-- `Submission` should represent the act of sending the order into payment and follow-up processing.
 - `Project` should represent fulfillment work derived from the order.
 - `Delivery` should represent the final artifact returned to the customer.
+
+## Final Vocabulary
+
+- `Order`: the customer's request and selection set.
+- `Submission`: the workflow event that sends an order into payment and downstream processing.
+- `Project`: the internal fulfillment work item derived from a submission.
+- `Delivery`: the final artifact returned to the customer.
+- `Bundle`: the sellable catalog choice the customer adds to an order.
+- `LineItem`: a chosen bundle inside an order, with quantity.
 
 ## Proposed Naming
 
@@ -63,17 +72,17 @@ title: Order Domain and Project Rename
 
 ## Implementation Plan
 
-- [ ] Define the final domain vocabulary and map each existing `Project` responsibility to its target domain.
+- [x] Define the final domain vocabulary and map each existing `Project` responsibility to its target domain.
 - [x] Introduce `Order` as the primary ordering model or aggregate, with compatibility wrappers where needed.
 - [x] Move the operator listing query out of `app/queries/projects` into the ordering domain namespace.
 - [x] Rename the operator shell routes/controllers/views from `projects` to `orders`.
 - [x] Keep legacy `projects` routes/controllers temporarily as redirects or adapters.
 - [x] Update specs to document the new order vocabulary and migration boundary.
-- [ ] Remove `Project` from the visible UI once the ordering shell is complete.
+- [x] Remove `Project` from the visible UI once the ordering shell is complete.
 
 ## Checklist
 
-- [ ] The customer request lifecycle is named `order` instead of `project`.
+- [x] The customer request lifecycle is named `order` instead of `project`.
 - [x] The operator shell uses `orders` terminology.
 - [ ] `catalog`, `ordering`, `fulfillment`, and `delivery` have distinct responsibilities.
 - [ ] `project` only exists as transitional compatibility.
@@ -84,7 +93,7 @@ title: Order Domain and Project Rename
 
 - [x] Specs cover the new order vocabulary.
 - [x] Specs cover compatibility from legacy `project` callsites.
-- [ ] Operator-facing pages no longer depend on project terminology in the target path.
+- [x] Operator-facing pages no longer depend on project terminology in the target path.
 - [ ] The rename does not break existing customer-facing behavior during transition.
 
 ## Notes
