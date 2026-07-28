@@ -53,8 +53,21 @@ RSpec.describe "Orders requests" do
     get edit_order_path(draft)
 
     expect(response).to have_http_status(:ok)
+    expect(response.body).to include("Back to orders")
     expect(response.body).to include("Resume draft")
+    expect(response.body).to include("Review and pay")
     expect(response.body).to include("Highlight Reel")
+  end
+
+  it "renders the order detail page" do
+    project = Project.create!(owner: find_workspace_account(:client, email: "client@example.com"), participant: find_workspace_account(:pm, email: "pm@example.com"), name: "Project Detail", raw_footage_url: "https://example.com/detail.mov", status: :pending)
+
+    get order_path(project)
+
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include("Order detail")
+    expect(response.body).to include("Back to orders")
+    expect(response.body).to include("Aceptar orden")
   end
 
   it "accepts a pending project as the pm" do

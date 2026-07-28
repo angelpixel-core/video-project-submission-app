@@ -82,7 +82,7 @@ title: Order Domain and Project Rename
 
 ## Validation
 
-- [ ] Specs cover the new order vocabulary.
+- [x] Specs cover the new order vocabulary.
 - [x] Specs cover compatibility from legacy `project` callsites.
 - [ ] Operator-facing pages no longer depend on project terminology in the target path.
 - [ ] The rename does not break existing customer-facing behavior during transition.
