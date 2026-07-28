@@ -32,13 +32,4 @@ Rails.application.routes.draw do
       patch :complete
     end
   end
-
-  resources :projects, only: %i[index show new edit update] do
-    member do
-      patch :accept
-      patch :complete
-    end
-
-    resources :comments, only: %i[create]
-  end
 end

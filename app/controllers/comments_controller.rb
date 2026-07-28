@@ -7,10 +7,10 @@ class CommentsController < ApplicationController
 
     if @comment.save
       create_comment_notification!(@comment)
-      redirect_to project_path(@project, anchor: "project-comments"), notice: "Comment posted."
+      redirect_to order_path(@project, anchor: "order-comments"), notice: "Comment posted."
     else
       @comments = @project.comments.chronological.includes(:author_account)
-      render "projects/show", status: :unprocessable_content
+      render "orders/show", status: :unprocessable_content
     end
   end
 

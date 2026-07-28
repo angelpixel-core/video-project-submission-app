@@ -45,21 +45,21 @@
 
   <%= render "payment_history", payments: @payments if @payments.any? %>
 
-  <div id="project-comments" class="card shadow-sm border-0">
+  <div id="order-comments" class="card shadow-sm border-0">
     <div class="card-body p-4">
       <div class="d-flex justify-content-between align-items-center gap-3 mb-3">
         <div>
           <p class="text-uppercase text-body-secondary small mb-1">Conversation</p>
           <h2 class="h5 mb-0">Comments</h2>
         </div>
-        <span id="project-comments-count" class="badge text-bg-dark"><%= @comments.size %></span>
+        <span id="order-comments-count" class="badge text-bg-dark"><%= @comments.size %></span>
       </div>
 
-      <div id="project-comments-list" class="vstack gap-3 mb-4">
+      <div id="order-comments-list" class="vstack gap-3 mb-4">
         <% if @comments.any? %>
           <%= render partial: "comment", collection: @comments, as: :comment %>
         <% else %>
-          <p id="project-comments-empty" class="text-body-secondary mb-4">No comments yet.</p>
+          <p id="order-comments-empty" class="text-body-secondary mb-4">No comments yet.</p>
         <% end %>
       </div>
 

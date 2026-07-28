@@ -46,7 +46,7 @@ RSpec.describe "Notifications", type: :system, js: true do
       click_link "Project Gamma"
     end
 
-    expect(page).to have_current_path(project_path(project))
+    expect(page).to have_current_path(order_path(project))
     expect(notification.reload.read_at).to be_present
   end
 

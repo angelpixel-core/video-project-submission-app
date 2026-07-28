@@ -39,7 +39,7 @@ RSpec.describe "PM notifications", type: :system, js: true do
       click_link "Project Alpha"
     end
 
-    expect(page).to have_current_path(project_path(project))
+    expect(page).to have_current_path(order_path(project))
     expect(page).to have_content("PROJECT DETAIL")
     expect(notification.reload.read_at).to be_present
 
@@ -75,7 +75,7 @@ RSpec.describe "PM notifications", type: :system, js: true do
       click_link "Project Toast"
     end
 
-    expect(page).to have_current_path(project_path(project))
+    expect(page).to have_current_path(order_path(project))
     expect(notification.reload.read_at).to be_present
   end
 
@@ -130,25 +130,25 @@ RSpec.describe "PM notifications", type: :system, js: true do
       end
     end
 
-    visit projects_path(page: 2)
+    visit orders_path(page: 2)
 
     switch_workspace_to("PM")
 
     click_link "ID"
 
-    expect(page).to have_current_path(projects_path(page: 2, sort: "id", direction: "desc"), ignore_query: false)
+    expect(page).to have_current_path(orders_path(page: 2, sort: "id", direction: "desc"), ignore_query: false)
     expect(page).to have_css(".table-sort-link.is-active[aria-current='true']")
     expect(page).to have_css(".table-sort-link.is-active .table-sort-arrow.is-active", text: "↓")
 
     click_link "ID"
 
-    expect(page).to have_current_path(projects_path(page: 2, sort: "id", direction: "asc"), ignore_query: false)
+    expect(page).to have_current_path(orders_path(page: 2, sort: "id", direction: "asc"), ignore_query: false)
     expect(page).to have_css(".table-sort-link.is-active[aria-current='true']")
     expect(page).to have_css(".table-sort-link.is-active .table-sort-arrow.is-active", text: "↑")
 
     click_link "ID"
 
-    expect(page).to have_current_path(projects_path(page: 2), ignore_query: false)
+    expect(page).to have_current_path(orders_path(page: 2), ignore_query: false)
   end
 
   it "lets the pm navigate between project pages" do
@@ -170,7 +170,7 @@ RSpec.describe "PM notifications", type: :system, js: true do
 
     click_link "2"
 
-    expect(page).to have_current_path(projects_path(page: 2, sort: "created_at", direction: "desc"), ignore_query: false)
+    expect(page).to have_current_path(orders_path(page: 2, sort: "created_at", direction: "desc"), ignore_query: false)
     expect(page).to have_css("tbody#workspace-projects-table-body tr", text: "Project 1")
     expect(page).to have_no_css("tbody#workspace-projects-table-body tr", text: "Project 11")
   end

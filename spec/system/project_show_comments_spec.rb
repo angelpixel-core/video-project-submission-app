@@ -25,7 +25,7 @@ RSpec.describe "Project show comments", type: :system, js: true do
       status: :in_progress
     )
 
-    visit project_path(project)
+    visit order_path(project)
 
     expect(page).to have_css("iframe[src*='youtube-nocookie.com/embed/dQw4w9WgXcQ']")
     expect(page).to have_content("No comments yet.")
@@ -34,17 +34,17 @@ RSpec.describe "Project show comments", type: :system, js: true do
     click_button "Post comment"
 
     expect(page).to have_content("Comment posted.")
-    expect(page).to have_css("#project-comments", text: "Client note")
-    expect(page).to have_css("#project-comments .badge", text: "CLIENT")
+    expect(page).to have_css("#order-comments", text: "Client note")
+    expect(page).to have_css("#order-comments .badge", text: "CLIENT")
 
     switch_workspace_to("PM")
-    visit project_path(project)
+    visit order_path(project)
 
     fill_in "Message", with: "PM reply"
     click_button "Post comment"
 
-    expect(page).to have_css("#project-comments", text: "PM reply")
-    expect(page).to have_css("#project-comments .badge", text: "PM")
+    expect(page).to have_css("#order-comments", text: "PM reply")
+    expect(page).to have_css("#order-comments .badge", text: "PM")
   end
 
   it "refreshes comments and notifications across workspaces in realtime" do
@@ -59,7 +59,7 @@ RSpec.describe "Project show comments", type: :system, js: true do
     )
 
     using_session(:pm) do
-      visit project_path(project)
+      visit order_path(project)
       switch_workspace_to("PM")
 
       expect(page).to have_content("No comments yet.")
@@ -67,14 +67,14 @@ RSpec.describe "Project show comments", type: :system, js: true do
     end
 
     using_session(:client) do
-      visit project_path(project)
+      visit order_path(project)
       fill_in "Message", with: "Client realtime note"
       click_button "Post comment"
       expect(page).to have_content("Comment posted.")
     end
 
     using_session(:pm) do
-      expect(page).to have_css("#project-comments", text: "Client realtime note")
+      expect(page).to have_css("#order-comments", text: "Client realtime note")
       expect(page).to have_css('#pm-notifications-dropdown .pm-notifications-badge', text: "1")
       expect(page).to have_no_css('#pm-notifications-panel .pm-notification-toast', text: "Client realtime note")
     end
@@ -94,12 +94,12 @@ RSpec.describe "Project show comments", type: :system, js: true do
     visit projects_path
 
     expect(page).to have_css(".client-project-card .youtube-preview img[src*='img.youtube.com/vi/dQw4w9WgXcQ/hqdefault.jpg']")
-    expect(page).to have_link("Project Beta", href: project_path(Project.find_by!(name: "Project Beta")))
-    expect(page).to have_link("Play preview", href: project_path(Project.find_by!(name: "Project Beta")))
+    expect(page).to have_link("Project Beta", href: order_path(Project.find_by!(name: "Project Beta")))
+    expect(page).to have_link("Play preview", href: order_path(Project.find_by!(name: "Project Beta")))
 
     click_link "Project Beta"
 
-    expect(page).to have_current_path(project_path(Project.find_by!(name: "Project Beta")))
+    expect(page).to have_current_path(order_path(Project.find_by!(name: "Project Beta")))
     expect(page).to have_content("PROJECT DETAIL")
     expect(page).to have_content("Comments")
   end
@@ -115,7 +115,7 @@ RSpec.describe "Project show comments", type: :system, js: true do
       status: :in_progress
     )
 
-    visit project_path(project)
+    visit order_path(project)
 
     expect(page).to have_css("iframe[src*='player.twitch.tv']")
     expect(page).to have_css("iframe[src*='video=v2820449804']")
@@ -127,7 +127,7 @@ RSpec.describe "Project show comments", type: :system, js: true do
     pm = find_workspace_account(:pm, email: "pm@example.com")
     project = Project.create!(owner: client, participant: pm, status: :draft)
 
-    visit edit_project_path(project)
+    visit edit_order_path(project)
 
     fill_in "Name", with: "Project Instagram"
     fill_in "Raw footage URL", with: "https://www.instagram.com/p/DbBvSsRtfuB"
@@ -146,7 +146,7 @@ RSpec.describe "Project show comments", type: :system, js: true do
       status: :in_progress
     )
 
-    visit project_path(project)
+    visit order_path(project)
 
     expect(page).to have_css("blockquote.tiktok-embed")
     expect(page).to have_css("script[src*='tiktok.com/embed.js']", visible: :all)

@@ -101,3 +101,6 @@ title: Order Domain and Project Rename
 - Prefer a full vocabulary shift over partial renames to avoid confusion.
 - If the order root needs a more explicit name than `Order`, consider `SubmissionOrder`, but only if `Order` would be ambiguous in the codebase.
 - Keep the migration layered: vocabulary first, compatibility second, cleanup last.
+- Legacy model/service names remain only as internal compatibility; the public `/projects` shell is gone.
+- `/projects` was removed as a public route and the legacy `projects` view tree was deleted in favor of `orders`.
+- Comment anchors now use `order-comments` to match the new surface.

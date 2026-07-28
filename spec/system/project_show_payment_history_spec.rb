@@ -82,7 +82,7 @@ RSpec.describe "Project show payment history", type: :system, js: true do
       finished_at: Time.current
     )
 
-    visit project_path(project)
+    visit order_path(project)
 
     expect(page).to have_no_css("#payment-history", visible: :visible)
 
@@ -146,7 +146,7 @@ RSpec.describe "Project show payment history", type: :system, js: true do
 
     Payments::Adapters::Inbound::Webhooks::Event::Job.perform_now(event.id)
 
-    visit project_path(project)
+    visit order_path(project)
 
     switch_workspace_to("PM")
 

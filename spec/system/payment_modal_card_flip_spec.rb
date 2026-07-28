@@ -14,7 +14,7 @@ RSpec.describe "Payment modal card flip", type: :system, js: true do
     pm = find_workspace_account(:pm, email: "pm@example.com")
     project = Project.create!(owner: client, participant: pm, status: :draft)
 
-    visit edit_project_path(project)
+    visit edit_order_path(project)
 
     fill_in "Name", with: "Project Card"
     fill_in "Raw footage URL", with: "https://example.com/raw.mov"

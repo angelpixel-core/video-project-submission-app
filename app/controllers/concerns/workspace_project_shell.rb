@@ -34,7 +34,7 @@ module WorkspaceProjectShell
     result = Projects::Application::Commands::CreateDraftProject.call(client_workspace: client_workspace, pm_workspace: pm_workspace)
     project = result.data.fetch(:project)
 
-    redirect_to edit_project_path(project)
+    redirect_to edit_order_path(project)
   end
 
   def edit
@@ -54,7 +54,7 @@ module WorkspaceProjectShell
     )
 
     if result.success?
-      finalize ? redirect_to(projects_path, notice: "Project submitted for review.") : head(:no_content)
+      finalize ? redirect_to(orders_path, notice: "Project submitted for review.") : head(:no_content)
     else
       @project.errors.add(:base, result.message) if @project.errors.empty?
       @selections_json = selections_json_for(@project)
@@ -136,7 +136,7 @@ module WorkspaceProjectShell
     if workspace_async_action_request?
       render json: workspace_row_action_payload
     else
-      redirect_to projects_path, notice: success_notice
+      redirect_to orders_path, notice: success_notice
     end
   end
 
@@ -144,7 +144,7 @@ module WorkspaceProjectShell
     if workspace_async_action_request?
       head :conflict
     else
-      redirect_to projects_path, alert: stale_alert
+      redirect_to orders_path, alert: stale_alert
     end
   end
 
@@ -159,7 +159,7 @@ module WorkspaceProjectShell
   def ensure_draft_project
     return if @project.draft?
 
-    redirect_to projects_path, alert: "Only draft projects can be edited."
+    redirect_to orders_path, alert: "Only draft projects can be edited."
   end
 
   def load_workspace_project
