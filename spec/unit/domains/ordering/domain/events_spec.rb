@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe "Ordering events" do
   it "builds the event inheritance chain" do
-    expect(Ordering::Domain::Events::OrderEvent.superclass).to eq(Shared::Domain::Events::DomainEvent)
+    expect(Ordering::Domain::Events::OrderEvent.superclass).to eq(::Domain::Events::DomainEvent)
     expect(Ordering::Domain::Events::OrderDraftedEvent.superclass).to eq(Ordering::Domain::Events::OrderEvent)
     expect(Ordering::Domain::Events::OrderPlacedEvent.superclass).to eq(Ordering::Domain::Events::OrderEvent)
     expect(Ordering::Domain::Events::OrderConfirmedEvent.superclass).to eq(Ordering::Domain::Events::OrderEvent)

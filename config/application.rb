@@ -28,6 +28,10 @@ module VideoProjectSubmissionApp
     # Common ones are `templates`, `generators`, or `middleware`, for example.
     config.autoload_lib(ignore: %w[assets tasks])
 
+    shared_domain_root = Rails.root.join("app/domains/shared")
+    config.autoload_paths << shared_domain_root
+    config.eager_load_paths << shared_domain_root
+
     # Configuration for the application, engines, and railties goes here.
     #
     # These settings can be overridden in specific environments using the files
