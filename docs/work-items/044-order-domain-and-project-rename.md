@@ -13,7 +13,7 @@ depends_on:
   - order-workflow-orchestration
 order: 44
 phase: work-items
-status: draft
+status: development
 title: Order Domain and Project Rename
 ---
 
