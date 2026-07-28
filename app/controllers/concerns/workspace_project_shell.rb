@@ -54,7 +54,7 @@ module WorkspaceProjectShell
     )
 
     if result.success?
-      finalize ? redirect_to(orders_path, notice: "Project submitted for review.") : head(:no_content)
+      finalize ? redirect_to(orders_path, notice: "Order submitted for review.") : head(:no_content)
     else
       @project.errors.add(:base, result.message) if @project.errors.empty?
       @selections_json = selections_json_for(@project)
@@ -69,16 +69,16 @@ module WorkspaceProjectShell
   def accept
     process_workspace_action(
       event: :accept,
-      success_notice: "Project accepted.",
-      stale_alert: "Only pending projects can be accepted."
+      success_notice: "Order accepted.",
+      stale_alert: "Only pending orders can be accepted."
     )
   end
 
   def complete
     process_workspace_action(
       event: :complete,
-      success_notice: "Project completed.",
-      stale_alert: "Only in-progress projects can be completed."
+      success_notice: "Order completed.",
+      stale_alert: "Only in-progress orders can be completed."
     )
   end
 
@@ -159,7 +159,7 @@ module WorkspaceProjectShell
   def ensure_draft_project
     return if @project.draft?
 
-    redirect_to orders_path, alert: "Only draft projects can be edited."
+    redirect_to orders_path, alert: "Only draft orders can be edited."
   end
 
   def load_workspace_project

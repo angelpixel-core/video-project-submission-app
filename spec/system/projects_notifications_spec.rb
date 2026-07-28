@@ -99,10 +99,10 @@ RSpec.describe "PM notifications", type: :system, js: true do
     expect(page).to have_css("table.workspace-projects-table")
     expect(page).to have_css("tbody#workspace-projects-table-body tr", text: "Project Beta")
     expect(page).to have_content("$500.00")
-    expect(page).to have_button("Aceptar proyecto")
+    expect(page).to have_button("Aceptar orden")
     expect(page).not_to have_button("Marcar como completado")
 
-    click_button "Aceptar proyecto"
+    click_button "Aceptar orden"
 
     expect(page.evaluate_script("window.__pmActionSentinel")).to eq(1)
     expect(page).to have_current_path(projects_path, ignore_query: false)
@@ -116,7 +116,7 @@ RSpec.describe "PM notifications", type: :system, js: true do
     expect(page).to have_current_path(projects_path, ignore_query: false)
     expect(page).to have_css("tbody#workspace-projects-table-body tr", text: "Project Beta")
     expect(page).to have_content("COMPLETADO")
-    expect(page).not_to have_button("Aceptar proyecto")
+    expect(page).not_to have_button("Aceptar orden")
     expect(page).not_to have_button("Marcar como completado")
   end
 
@@ -165,7 +165,7 @@ RSpec.describe "PM notifications", type: :system, js: true do
 
     switch_workspace_to("PM")
 
-    expect(page).to have_css("nav[aria-label='Workspace projects pagination']")
+    expect(page).to have_css("nav[aria-label='Workspace orders pagination']")
     expect(page).to have_link("2")
 
     click_link "2"

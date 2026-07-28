@@ -13,7 +13,7 @@ RSpec.describe "Notifications", type: :system, js: true do
     client = find_workspace_account(:client, email: "client@example.com")
     pm = find_workspace_account(:pm, email: "pm@example.com")
     project = Project.create!(owner: client, participant: pm, name: "Project Alpha", raw_footage_url: "https://example.com/raw.mov", status: :pending)
-    Notification.create!(project: project, client: client, kind: "project_accepted", body: "Your project Project Alpha was accepted and is now in progress.")
+    Notification.create!(project: project, client: client, kind: "project_accepted", body: "Your order Project Alpha was accepted and is now in progress.")
 
     visit projects_path
 
@@ -38,7 +38,7 @@ RSpec.describe "Notifications", type: :system, js: true do
     client = find_workspace_account(:client, email: "client@example.com")
     pm = find_workspace_account(:pm, email: "pm@example.com")
     project = Project.create!(owner: client, participant: pm, name: "Project Gamma", raw_footage_url: "https://example.com/gamma.mov", status: :pending)
-    notification = Notification.create!(project: project, client: client, kind: "project_accepted", body: "Your project Project Gamma was accepted and is now in progress.")
+    notification = Notification.create!(project: project, client: client, kind: "project_accepted", body: "Your order Project Gamma was accepted and is now in progress.")
 
     visit projects_path
 
@@ -66,7 +66,7 @@ RSpec.describe "Notifications", type: :system, js: true do
       visit projects_path
       find(".account-menu-trigger").click
       click_button "Switch to PM"
-      click_button "Aceptar proyecto"
+      click_button "Aceptar orden"
     end
 
     using_session(:client) do

@@ -8,7 +8,7 @@ RSpec.describe ProjectNotificationSubject do
 
     subject = described_class.call(project: project, recipient_role: :pm, event_type: :project_accepted)
 
-    expect(subject).to eq("Project accepted: Project")
+    expect(subject).to eq("Order accepted: Project")
   end
 
   it "builds the client subject for completed projects" do
@@ -18,6 +18,6 @@ RSpec.describe ProjectNotificationSubject do
 
     subject = described_class.call(project: project, recipient_role: :client, event_type: :project_completed)
 
-    expect(subject).to eq("Your project Project has been completed")
+    expect(subject).to eq("Your order Project has been completed")
   end
 end

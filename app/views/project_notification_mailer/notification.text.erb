@@ -2,46 +2,46 @@
 when "pm"
   case @event_type
   when "project_created"
-    "New project created"
+    "New order created"
   when "project_accepted"
-    "Project accepted"
+    "Order accepted"
   when "project_rejected"
-    "Project rejected"
+    "Order rejected"
   else
-    "Project update"
+    "Order update"
   end
 else
   case @event_type
   when "project_created"
-    "Your project was created"
+    "Your order was created"
   when "project_accepted"
-    "Your project was accepted"
+    "Your order was accepted"
   when "project_rejected"
-    "Your project needs attention"
+    "Your order needs attention"
   else
-    "Project update"
+    "Order update"
   end
 end %>
 
-Project: <%= @project.name %>
+Order: <%= @project.name %>
 Client: <%= @project.owner.name %>
 Status: <%= @project.status.humanize %>
 Budget: <%= number_to_currency(@project.total_budget_cents.to_f / 100, unit: (@project.payments.first&.currency || "USD") + " ") %>
 
 <% if @recipient_role == "pm" %>
 <% if @event_type == "project_created" %>
-This project is ready for review and next-step planning.
+This order is ready for review and next-step planning.
 <% elsif @event_type == "project_accepted" %>
-The client has been notified and the project is moving forward.
+The client has been notified and the order is moving forward.
 <% elsif @event_type == "project_rejected" %>
 The client should be notified of the requested changes.
 <% end %>
 <% else %>
 <% if @event_type == "project_created" %>
-Next step: Your PM will review the project and move it forward.
+Next step: Your PM will review the order and move it forward.
 <% elsif @event_type == "project_accepted" %>
-Next step: Your PM has accepted the project and work is in progress.
+Next step: Your PM has accepted the order and work is in progress.
 <% elsif @event_type == "project_rejected" %>
-Next step: Your PM needs changes before the project can move forward.
+Next step: Your PM needs changes before the order can move forward.
 <% end %>
 <% end %>

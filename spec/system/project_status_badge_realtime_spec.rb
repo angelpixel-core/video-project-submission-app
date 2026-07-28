@@ -43,7 +43,7 @@ RSpec.describe "Project status badge realtime", type: :system, js: true do
     using_session(:pm) do
       visit order_path(project)
       switch_workspace_to("PM")
-      click_button "Aceptar proyecto"
+      click_button "Aceptar orden"
     end
 
     using_session(:client) do

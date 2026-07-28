@@ -43,13 +43,13 @@ module Projects
       def body_for_event
         case event_type
         when :project_created
-          "Your project #{project.name.presence || 'Untitled project'} was submitted for review."
+          "Your order #{project.name.presence || 'Untitled order'} was submitted for review."
         when :project_accepted
-          "Your project #{project.name.presence || 'Untitled project'} was accepted and is now in progress."
+          "Your order #{project.name.presence || 'Untitled order'} was accepted and is now in progress."
         when :project_completed
-          "Your project #{project.name.presence || 'Untitled project'} has been completed."
+          "Your order #{project.name.presence || 'Untitled order'} has been completed."
         else
-          "Your project #{project.name.presence || 'Untitled project'} was updated."
+          "Your order #{project.name.presence || 'Untitled order'} was updated."
         end
       end
 

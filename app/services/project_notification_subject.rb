@@ -25,30 +25,30 @@ class ProjectNotificationSubject
   def pm_subject
     case event_type
     when "project_created"
-      "New project created: #{project.name}"
+      "New order created: #{project.name}"
     when "project_accepted"
-      "Project accepted: #{project.name}"
+      "Order accepted: #{project.name}"
     when "project_rejected"
-      "Project rejected: #{project.name}"
+      "Order rejected: #{project.name}"
     when "project_completed"
-      "Project completed: #{project.name}"
+      "Order completed: #{project.name}"
     else
-      "Project update: #{project.name}"
+      "Order update: #{project.name}"
     end
   end
 
   def client_subject
     case event_type
     when "project_created"
-      "Your project #{project.name} was created"
+      "Your order #{project.name} was created"
     when "project_accepted"
-      "Your project #{project.name} was accepted"
+      "Your order #{project.name} was accepted"
     when "project_rejected"
-      "Your project #{project.name} needs attention"
+      "Your order #{project.name} needs attention"
     when "project_completed"
-      "Your project #{project.name} has been completed"
+      "Your order #{project.name} has been completed"
     else
-      "Project update for #{project.name}"
+      "Order update for #{project.name}"
     end
   end
 end
