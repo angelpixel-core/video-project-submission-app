@@ -1,0 +1,46 @@
+# This file contains a list of dependencies that are not part of the long term plan for the
+# 'app/domains/identity' package.
+# We should generally work to reduce this list over time.
+#
+# You can regenerate this file using the following command:
+#
+# bin/packwerk update-todo
+---
+".":
+  "::Core::Result::Success":
+    violations:
+    - dependency
+    files:
+    - app/domains/identity/application/queries/resolve_workspace_account.rb
+  "::Identity::Adapters::Persistence::Account::AccountRecord":
+    violations:
+    - dependency
+    files:
+    - app/domains/identity/domain/aggregates/account.rb
+  "::Identity::Adapters::Persistence::Account::Repository":
+    violations:
+    - dependency
+    files:
+    - app/domains/identity/application/queries/resolve_workspace_account.rb
+    - app/domains/identity/application/services/workspace_resolver.rb
+    - app/domains/identity/domain/repositories/account_repository.rb
+  "::Identity::Adapters::Persistence::Membership::MembershipRecord":
+    violations:
+    - dependency
+    files:
+    - app/domains/identity/domain/aggregates/membership.rb
+  "::Identity::Adapters::Persistence::Membership::Repository":
+    violations:
+    - dependency
+    files:
+    - app/domains/identity/domain/repositories/membership_repository.rb
+  "::Identity::Adapters::Persistence::User::Repository":
+    violations:
+    - dependency
+    files:
+    - app/domains/identity/domain/repositories/user_repository.rb
+  "::Identity::Adapters::Persistence::User::UserRecord":
+    violations:
+    - dependency
+    files:
+    - app/domains/identity/domain/aggregates/user.rb
