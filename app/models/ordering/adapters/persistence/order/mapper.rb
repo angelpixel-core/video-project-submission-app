@@ -8,7 +8,7 @@ module Ordering
               id: record.id,
               uid: record.uid,
               customer_snapshot: record.customer_snapshot,
-              order_lines: record.order_line_records.map do |line_record|
+              line_items: record.order_line_records.map do |line_record|
                 {
                   offering_snapshot: line_record.offering_snapshot,
                   quantity: line_record.quantity
@@ -44,7 +44,7 @@ module Ordering
 
           def sync_order_lines!(order, record)
             record.order_line_records.destroy_all
-            order.order_lines.each do |line|
+            order.line_items.each do |line|
               record.order_line_records.create!(
                 offering_snapshot: line.offering_snapshot.to_h,
                 quantity: line.quantity,

@@ -92,8 +92,12 @@ lint/security/bundler-audit:
 lint/zeitwerk:
 	@bin/rails zeitwerk:check
 
+.PHONY: lint/packwerk
+lint/packwerk:
+	@bundle exec packwerk check
+
 .PHONY: lint
-lint: lint/rubocop lint/security/brakeman lint/security/bundler-audit lint/zeitwerk
+lint: lint/rubocop lint/security/brakeman lint/security/bundler-audit lint/zeitwerk lint/packwerk
 
 .PHONY: lint/fix/rubocop
 lint/fix/rubocop:

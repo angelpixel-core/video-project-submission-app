@@ -1,0 +1,9 @@
+enforce_dependencies: true
+dependencies:
+  - app/domains/shared
+  - app/domains/identity
+  - app/domains/catalog
+  - app/domains/capacity
+  - app/domains/ordering
+  - app/domains/payments
+  - app/domains/projects

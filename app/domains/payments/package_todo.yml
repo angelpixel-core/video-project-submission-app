@@ -1,0 +1,90 @@
+# This file contains a list of dependencies that are not part of the long term plan for the
+# 'app/domains/payments' package.
+# We should generally work to reduce this list over time.
+#
+# You can regenerate this file using the following command:
+#
+# bin/packwerk update-todo
+---
+".":
+  "::AppContainer":
+    violations:
+    - dependency
+    files:
+    - app/domains/payments/application/gateways.rb
+  "::ApplicationController":
+    violations:
+    - dependency
+    files:
+    - app/domains/payments/adapters/inbound/webhooks/payment_webhooks_controller.rb
+  "::ApplicationJob":
+    violations:
+    - dependency
+    files:
+    - app/domains/payments/adapters/inbound/webhooks/event/job.rb
+    - app/domains/payments/application/handlers/dispatch_invoice_job.rb
+    - app/domains/payments/application/handlers/dispatch_payment_notification_job.rb
+    - app/domains/payments/application/handlers/generate_invoice_job.rb
+  "::ApplicationMailer":
+    violations:
+    - dependency
+    files:
+    - app/domains/payments/adapters/outbound/email/payment_invoice_mailer.rb
+    - app/domains/payments/adapters/outbound/email/payment_notification_mailer.rb
+  "::ApplicationRecord":
+    violations:
+    - dependency
+    files:
+    - app/domains/payments/domain/aggregates/payment.rb
+    - app/domains/payments/domain/entities/payment_attempt.rb
+    - app/domains/payments/domain/entities/payment_invoice_delivery_intent.rb
+    - app/domains/payments/domain/entities/payment_method_reference.rb
+    - app/domains/payments/domain/entities/payment_notification_intent.rb
+    - app/domains/payments/domain/entities/payment_webhook_event.rb
+    - app/domains/payments/domain/entities/payment_webhook_event_attempt.rb
+    - app/domains/payments/domain/entities/refund.rb
+  "::Core::Result::Failure":
+    violations:
+    - dependency
+    files:
+    - app/domains/payments/adapters/inbound/webhooks/event/handler.rb
+    - app/domains/payments/adapters/inbound/webhooks/event/handler/failed.rb
+    - app/domains/payments/adapters/inbound/webhooks/event/handler/succeeded.rb
+    - app/domains/payments/adapters/inbound/webhooks/event/ingest.rb
+    - app/domains/payments/adapters/outbound/gateways/fake.rb
+    - app/domains/payments/adapters/outbound/webhooks/webhook_simulator.rb
+    - app/domains/payments/application/commands/authorize_payment.rb
+    - app/domains/payments/application/commands/capture_payment.rb
+    - app/domains/payments/application/commands/create_payment.rb
+    - app/domains/payments/application/commands/refund_payment.rb
+    - app/domains/payments/application/queries/find_payment.rb
+  "::Core::Result::Success":
+    violations:
+    - dependency
+    files:
+    - app/domains/payments/adapters/inbound/webhooks/event/handler.rb
+    - app/domains/payments/adapters/inbound/webhooks/event/handler/base.rb
+    - app/domains/payments/adapters/inbound/webhooks/event/handler/failed.rb
+    - app/domains/payments/adapters/inbound/webhooks/event/handler/succeeded.rb
+    - app/domains/payments/adapters/inbound/webhooks/event/ingest.rb
+    - app/domains/payments/adapters/outbound/gateways/fake.rb
+    - app/domains/payments/adapters/outbound/gateways/mercado_pago.rb
+    - app/domains/payments/adapters/outbound/gateways/stripe.rb
+    - app/domains/payments/adapters/outbound/webhooks/webhook_simulator.rb
+    - app/domains/payments/application/commands/authorize_payment.rb
+    - app/domains/payments/application/commands/capture_payment.rb
+    - app/domains/payments/application/commands/create_payment.rb
+    - app/domains/payments/application/commands/refund_payment.rb
+    - app/domains/payments/application/queries/find_payment.rb
+  "::Core::Services::Provider":
+    violations:
+    - dependency
+    files:
+    - app/domains/payments/application/ports/gateway.rb
+  "::Project":
+    violations:
+    - dependency
+    files:
+    - app/domains/payments/domain/aggregates/payment.rb
+    - app/domains/payments/domain/entities/payment_notification_intent.rb
+    - app/domains/payments/domain/entities/payment_webhook_event.rb

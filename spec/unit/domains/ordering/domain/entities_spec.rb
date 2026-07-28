@@ -15,9 +15,9 @@ RSpec.describe "Ordering entities" do
     expect(source_video.to_h).to eq({})
   end
 
-  it "calculates an order line total" do
+  it "calculates a line item total" do
     offering = Ordering::Domain::Entities::OfferingSnapshot.new(offering_id: 7, name: "Highlight Reel", description: "Short edit", price_cents: 25_000, output_format: "mp4")
-    line = Ordering::Domain::Entities::OrderLine.new(offering_snapshot: offering, quantity: 2)
+    line = Ordering::Domain::Entities::LineItem.new(offering_snapshot: offering, quantity: 2)
 
     expect(line.line_total_cents).to eq(50_000)
     expect(line.line_total.to_i).to eq(50_000)

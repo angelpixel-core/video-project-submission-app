@@ -2,9 +2,9 @@ module Payments
   module Adapters
     module Outbound
       module Gateways
-        class MercadoPagoPaymentGateway < Payments::Application::Ports::PaymentGateway
+        class Stripe < Payments::Application::Ports::Gateway
           def self.call(payment:)
-            fake_result(payment:, provider: "mercadopago")
+            fake_result(payment:, provider: "stripe")
           end
 
           def self.fake_result(payment:, provider:)

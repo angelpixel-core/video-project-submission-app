@@ -1,0 +1,64 @@
+# This file contains a list of dependencies that are not part of the long term plan for the
+# 'app/domains/catalog' package.
+# We should generally work to reduce this list over time.
+#
+# You can regenerate this file using the following command:
+#
+# bin/packwerk update-todo
+---
+".":
+  "::ApplicationController":
+    violations:
+    - dependency
+    files:
+    - app/domains/catalog/adapters/inbound/http/admin_video_types_controller.rb
+    - app/domains/catalog/adapters/inbound/http/public_catalog_controller.rb
+  "::ApplicationRecord":
+    violations:
+    - dependency
+    files:
+    - app/domains/catalog/domain/aggregates/offer.rb
+  "::Core::Result::Failure":
+    violations:
+    - dependency
+    files:
+    - app/domains/catalog/application/commands/create_video_type.rb
+    - app/domains/catalog/application/commands/update_video_type.rb
+    - app/domains/catalog/application/queries/find_video_type.rb
+  "::Core::Result::Success":
+    violations:
+    - dependency
+    files:
+    - app/domains/catalog/application/commands/create_video_type.rb
+    - app/domains/catalog/application/commands/publish_video_type.rb
+    - app/domains/catalog/application/commands/retire_video_type.rb
+    - app/domains/catalog/application/commands/update_video_type.rb
+    - app/domains/catalog/application/queries/find_video_type.rb
+    - app/domains/catalog/application/queries/list_admin_video_types.rb
+    - app/domains/catalog/application/queries/list_public_video_types.rb
+  "::Core::Services::Provider":
+    violations:
+    - dependency
+    files:
+    - app/domains/catalog/application/ports/capacity_gateway.rb
+  "::Project":
+    violations:
+    - dependency
+    files:
+    - app/domains/catalog/domain/aggregates/offer.rb
+  "::VideoTypeSelection":
+    violations:
+    - dependency
+    files:
+    - app/domains/catalog/domain/aggregates/offer.rb
+app/domains/capacity:
+  "::Capacity::Application::Queries::CheckCapacity":
+    violations:
+    - dependency
+    files:
+    - app/domains/catalog/adapters/outbound/capacity/capacity_client.rb
+  "::Capacity::Domain::Policies::CapacityCalculationPolicy":
+    violations:
+    - dependency
+    files:
+    - app/domains/catalog/domain/policies/availability_policy.rb

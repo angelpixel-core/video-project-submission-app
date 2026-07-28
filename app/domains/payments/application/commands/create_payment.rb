@@ -2,14 +2,15 @@ module Payments
   module Application
     module Commands
       class CreatePayment
-        def self.call(project:, provider: "fake", payment_method_type: "card")
-          new(project:, provider:, payment_method_type:).call
+        def self.call(project:, provider: "fake", payment_method_type: "card", gateway: nil)
+          new(project:, provider:, payment_method_type:, gateway:).call
         end
 
-        def initialize(project:, provider: "fake", payment_method_type: "card")
+        def initialize(project:, provider: "fake", payment_method_type: "card", gateway: nil)
           @project = project
           @provider = provider.to_s.strip.presence || "fake"
           @payment_method_type = payment_method_type.to_s.strip.presence || "card"
+          @gateway = gateway
         end
 
         def call
@@ -98,17 +99,10 @@ module Payments
         end
 
         def payment_gateway_for(payment)
-          case payment.provider
-          when "stripe"
-            Payments::Adapters::Outbound::Gateways::StripePaymentGateway
-          when "mercadopago"
-            Payments::Adapters::Outbound::Gateways::MercadoPagoPaymentGateway
-          else
-            Payments::Adapters::Outbound::Gateways::Fake
-          end
+          gateway || Payments::Application::Gateways.resolve(payment.provider)
         end
 
-        attr_reader :provider, :payment_method_type
+        attr_reader :provider, :payment_method_type, :gateway
       end
     end
   end

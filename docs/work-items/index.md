@@ -210,7 +210,7 @@ Payments docs are centralized at [Payments Index](../payments.md).
 
 ## 42
 
-- [ ] [Order Workflow Orchestration](./042-order-workflow-orchestration.md)
+- [x] [Order Workflow Orchestration](./042-order-workflow-orchestration.md)
 
 ## 43
 
