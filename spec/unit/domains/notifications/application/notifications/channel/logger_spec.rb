@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe Delivery::Application::Notifications::Channel::Logger do
+RSpec.describe Notifications::Application::Notifications::Channel::Logger do
   it "logs the provided message" do
     logger = instance_double(Logger)
 

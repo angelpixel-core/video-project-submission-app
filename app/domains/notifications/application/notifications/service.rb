@@ -1,4 +1,4 @@
-module Delivery
+module Notifications
   module Application
     module Notifications
       class Service

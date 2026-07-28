@@ -13,7 +13,7 @@ module Orders
       def call
         project.notifications.unread.update_all(read_at: Time.current) if event_type == :project_accepted
 
-        delivery_service.call(
+        notifications_service.call(
           notification_writer: -> { create_notification! },
           channels: channels
         )
@@ -55,8 +55,8 @@ module Orders
 
       def channels
         [
-          Delivery::Application::Notifications::Channel::Email.new(email_deliveries),
-          Delivery::Application::Notifications::Channel::Logger.new(logger_message, logger: Rails.logger)
+          ::Notifications::Application::Notifications::Channel::Email.new(email_deliveries),
+          ::Notifications::Application::Notifications::Channel::Logger.new(logger_message, logger: Rails.logger)
         ]
       end
 
@@ -71,8 +71,8 @@ module Orders
         "Notification for project #{project.id}: #{event_type}"
       end
 
-      def delivery_service
-        Delivery::Application::Notifications::Service
+      def notifications_service
+        ::Notifications::Application::Notifications::Service
       end
     end
   end

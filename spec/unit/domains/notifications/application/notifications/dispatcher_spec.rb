@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe Delivery::Application::Notifications::Dispatcher do
+RSpec.describe Notifications::Application::Notifications::Dispatcher do
   it "calls every channel" do
     first = instance_double("Channel", call: true)
     second = instance_double("Channel", call: true)
