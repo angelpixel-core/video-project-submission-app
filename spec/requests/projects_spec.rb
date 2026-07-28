@@ -31,6 +31,29 @@ RSpec.describe "Projects requests" do
     expect(response.body).not_to include("Read PM notification")
   end
 
+  it "keeps the customer-facing project flow intact during the order rename" do
+    client = find_workspace_account(:client, email: "client@example.com")
+    pm = find_workspace_account(:pm, email: "pm@example.com")
+    project = Project.create!(owner: client, participant: pm, name: "Project Alpha", raw_footage_url: "https://example.com/raw.mov", status: :draft)
+
+    get projects_path
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include("Default Client projects")
+    expect(response.body).to include("New Order")
+
+    get new_project_path
+    expect(response).to redirect_to(edit_project_path(Project.order(:created_at).last))
+
+    get edit_project_path(project)
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include("Resume draft")
+
+    get project_path(project)
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include("Project detail")
+    expect(response.body).to include("Project Alpha")
+  end
+
   it "shows the pm project table sorted by creation date" do
     client = find_workspace_account(:client, email: "client@example.com")
     pm = find_workspace_account(:pm, email: "pm@example.com")
