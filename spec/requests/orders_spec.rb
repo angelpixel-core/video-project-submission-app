@@ -26,6 +26,7 @@ RSpec.describe "Orders requests" do
     expect(response.body).to include("PM workspace")
     expect(response.body).to include("Unread notifications")
     expect(response.body).to include("Order update")
+    expect(response.body).not_to include("Project update")
     expect(response.body).to include("Unread PM notification")
     expect(response.body).not_to include("Read PM notification")
   end
@@ -56,6 +57,7 @@ RSpec.describe "Orders requests" do
     expect(response.body).to include("Back to orders")
     expect(response.body).to include("Resume draft")
     expect(response.body).to include("Review and pay")
+    expect(response.body).not_to include("Project detail")
     expect(response.body).to include("Highlight Reel")
   end
 
