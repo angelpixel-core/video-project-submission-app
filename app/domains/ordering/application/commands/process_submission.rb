@@ -52,7 +52,7 @@ module Ordering
 
         def capture_or_confirm_payment
           payment_command.(
-            project: submission.order,
+            order: submission.order,
             provider: submission.payment_provider,
             payment_method_type: submission.payment_method_type,
             gateway: payment_gateway

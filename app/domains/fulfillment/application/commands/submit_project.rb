@@ -34,7 +34,7 @@ module Fulfillment
               repository.replace_selections(project, selections)
               project.sync_order_listing!
 
-              submission = Ordering::Application::DTO::Submission.from_project(
+              submission = Ordering::Application::DTO::Submission.from_order(
                 project,
                 fulfillment_account: participant,
                 payment_provider: payment_provider,

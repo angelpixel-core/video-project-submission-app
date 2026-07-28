@@ -2,20 +2,20 @@ module Payments
   module Application
     module Commands
       class CreatePayment
-        def self.call(project:, provider: "fake", payment_method_type: "card", gateway: nil)
-          new(project:, provider:, payment_method_type:, gateway:).call
+        def self.call(order: nil, project: nil, provider: "fake", payment_method_type: "card", gateway: nil)
+          new(order: order || project, provider:, payment_method_type:, gateway:).call
         end
 
-        def initialize(project:, provider: "fake", payment_method_type: "card", gateway: nil)
-          @project = project
+        def initialize(order:, provider: "fake", payment_method_type: "card", gateway: nil)
+          @order = order
           @provider = provider.to_s.strip.presence || "fake"
           @payment_method_type = payment_method_type.to_s.strip.presence || "card"
           @gateway = gateway
         end
 
         def call
-          project.with_lock do
-            payment = Payments::Domain::Repositories::PaymentRepository.find_active_by_project(project)
+          order.with_lock do
+            payment = Payments::Domain::Repositories::PaymentRepository.find_active_by_project(order)
             return Core::Result::Success.(data: { payment: payment, attempt: payment.payment_attempts.order(created_at: :desc).first }) if payment.present?
 
             create_payment_flow!
@@ -24,14 +24,14 @@ module Payments
 
         private
 
-        attr_reader :project
+        attr_reader :order
 
         def create_payment_flow!
-          payment = project.payments.create!(
+          payment = order.payments.create!(
             status: :pending,
             provider: provider_name,
             idempotency_key: SecureRandom.uuid,
-            amount_cents: project.total_budget_cents,
+            amount_cents: order.total_budget_cents,
             currency: "USD"
           )
 

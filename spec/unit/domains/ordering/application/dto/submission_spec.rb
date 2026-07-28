@@ -8,7 +8,7 @@ RSpec.describe Ordering::Application::DTO::Submission do
     video_type = VideoType.create!(name: "Highlight Reel", description: "Short edit", price_cents: 25_000, output_format: "mp4")
     project.video_type_selections.create!(video_type: video_type, quantity: 2)
 
-    submission = described_class.from_project(project, fulfillment_account: pm)
+    submission = described_class.from_order(project, fulfillment_account: pm)
 
     expect(submission.order).to eq(project)
     expect(submission.fulfillment_account).to eq(pm)
