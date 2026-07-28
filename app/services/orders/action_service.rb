@@ -1,7 +1,7 @@
 module Orders
   class ActionService
     def self.call(project:, event:)
-      result = Fulfillment::Application::Commands::ProcessProjectAction.call(project:, event:)
+      result = Fulfillment::Application::Commands::ProcessOrderAction.call(order: project, event: event)
 
       if result.success?
         project.sync_order_listing!
