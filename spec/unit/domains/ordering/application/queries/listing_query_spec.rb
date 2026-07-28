@@ -1,7 +1,6 @@
 require "rails_helper"
-require Rails.root.join("app/queries/projects/listing_query")
 
-RSpec.describe Projects::ListingQuery do
+RSpec.describe Ordering::Application::Queries::ListingQuery do
   include ActiveSupport::Testing::TimeHelpers
 
   before do

@@ -9,7 +9,7 @@ class ProjectsController < ApplicationController
 
     @projects = workspace_for(:client).projects.includes(video_type_selections: :video_type).order(status_order, created_at: :desc)
 
-    @workspace_table_query = ::Projects::ListingQuery.new(params)
+    @workspace_table_query = ::Ordering::Application::Queries::ListingQuery.new(params)
     @workspace_sort = @workspace_table_query.sort.presence || "created_at"
     @workspace_direction = @workspace_table_query.direction.presence || "desc"
     @workspace_page = @workspace_table_query.page

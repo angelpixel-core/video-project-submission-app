@@ -7,6 +7,11 @@
 # bin/packwerk update-todo
 ---
 ".":
+  "::Project":
+    violations:
+    - dependency
+    files:
+    - app/domains/ordering/application/queries/listing_query.rb
   "::Core::Result::Failure":
     violations:
     - dependency
