@@ -1,5 +1,2 @@
-class ProjectsController < ApplicationController
-  include WorkspaceProjectShell
-
-  prepend_view_path Rails.root.join("app/views/projects")
+class ProjectsController < OrdersController
 end

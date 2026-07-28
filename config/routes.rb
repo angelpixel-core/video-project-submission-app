@@ -13,7 +13,7 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   # root "posts#index"
   mount ActionCable.server => "/cable"
-  root "projects#index"
+  root "orders#index"
   resource :profile, only: %i[show update], controller: "profile"
 
   resources :notifications, only: %i[update]

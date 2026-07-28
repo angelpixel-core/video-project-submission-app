@@ -85,7 +85,7 @@ title: Order Domain and Project Rename
 - [x] The customer request lifecycle is named `order` instead of `project`.
 - [x] The operator shell uses `orders` terminology.
 - [x] `catalog`, `ordering`, `fulfillment`, and `delivery` have distinct responsibilities.
-- [ ] `project` only exists as transitional compatibility.
+- [x] `project` only exists as transitional compatibility.
 - [x] The listing/query layer lives under the ordering domain.
 - [x] The migration path is explicit and test-covered.
 

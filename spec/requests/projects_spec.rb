@@ -42,7 +42,7 @@ RSpec.describe "Projects requests" do
     expect(response.body).to include("New Order")
 
     get new_project_path
-    expect(response).to redirect_to(edit_project_path(Project.order(:created_at).last))
+    expect(response).to redirect_to(edit_order_path(Project.order(:created_at).last))
 
     get edit_project_path(project)
     expect(response).to have_http_status(:ok)
@@ -165,7 +165,7 @@ RSpec.describe "Projects requests" do
 
     draft = Project.order(:created_at).last
 
-    expect(response).to redirect_to(edit_project_path(draft))
+    expect(response).to redirect_to(edit_order_path(draft))
     expect(draft.status).to eq("draft")
   end
 
@@ -174,7 +174,7 @@ RSpec.describe "Projects requests" do
 
     get edit_project_path(project)
 
-    expect(response).to redirect_to(projects_path)
+    expect(response).to redirect_to(orders_path)
   end
 
   it "renders the draft editor" do
@@ -227,7 +227,7 @@ RSpec.describe "Projects requests" do
       }
     end.to have_enqueued_job(NotificationJob).with(draft.id)
 
-    expect(response).to redirect_to(projects_path)
+    expect(response).to redirect_to(orders_path)
 
     draft.reload
     expect(draft.status).to eq("pending")
@@ -244,7 +244,7 @@ RSpec.describe "Projects requests" do
 
     patch accept_project_path(project)
 
-    expect(response).to redirect_to(projects_path)
+    expect(response).to redirect_to(orders_path)
 
     project.reload
     expect(project.status).to eq("in_progress")
@@ -282,7 +282,7 @@ RSpec.describe "Projects requests" do
 
     patch complete_project_path(project)
 
-    expect(response).to redirect_to(projects_path)
+    expect(response).to redirect_to(orders_path)
 
     project.reload
     expect(project.status).to eq("completed")
