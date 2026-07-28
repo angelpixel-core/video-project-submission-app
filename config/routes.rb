@@ -26,6 +26,13 @@ Rails.application.routes.draw do
     post "webhooks/:provider/events", to: "adapters/inbound/webhooks/payment_webhooks#create", as: :webhook_events
   end
 
+  resources :orders, only: %i[index show new edit update] do
+    member do
+      patch :accept
+      patch :complete
+    end
+  end
+
   resources :projects, only: %i[index show new edit update] do
     member do
       patch :accept
