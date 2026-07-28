@@ -1,4 +1,6 @@
-class OrdersController < ProjectsController
+class OrdersController < ApplicationController
+  include WorkspaceProjectShell
+
   prepend_view_path Rails.root.join("app/views/orders")
 
   helper_method :projects_path, :project_path, :new_project_path, :edit_project_path, :accept_project_path, :complete_project_path
