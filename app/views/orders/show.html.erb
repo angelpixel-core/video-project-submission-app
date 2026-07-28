@@ -1,0 +1,69 @@
+<% content_for :title, @project.name.presence || "Order details" %>
+
+<div class="container py-4" data-project-id="<%= @project.id %>">
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+    <div>
+      <p class="text-uppercase text-body-secondary mb-1">Order detail</p>
+      <h1 class="h3 mb-0"><%= @project.name.presence || "Untitled order" %></h1>
+    </div>
+    <%= link_to "Back to orders", orders_path, class: "btn btn-outline-secondary" %>
+  </div>
+
+  <div class="card shadow-sm border-0 mb-4">
+    <div class="card-body p-4">
+      <%= render "raw_footage_preview", project: @project, parent_host: request.host, preview_mode: :show %>
+
+      <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-start gap-3 mb-4">
+        <div>
+          <p class="text-uppercase text-body-secondary small mb-1">Status</p>
+          <div id="<%= @project.status_badge_dom_id %>">
+            <%= render "status_badge", project: @project %>
+          </div>
+        </div>
+
+        <div class="d-flex flex-wrap gap-2" data-role-scope="pm">
+          <% if @project.pending? %>
+            <%= button_to "Aceptar orden", accept_order_path(@project), method: :patch, class: "btn btn-outline-primary" %>
+          <% elsif @project.in_progress? %>
+            <%= button_to "Marcar como completado", complete_order_path(@project), method: :patch, class: "btn btn-outline-success" %>
+          <% end %>
+        </div>
+      </div>
+
+      <dl class="row mb-0">
+        <dt class="col-sm-3 text-body-secondary">Client</dt>
+        <dd class="col-sm-9"><%= @project.owner.name %></dd>
+
+        <dt class="col-sm-3 text-body-secondary">PM</dt>
+        <dd class="col-sm-9"><%= @project.participant.name %></dd>
+
+        <dt class="col-sm-3 text-body-secondary">Raw footage</dt>
+        <dd class="col-sm-9"><%= @project.raw_footage_url.presence || "No footage URL yet" %></dd>
+      </dl>
+    </div>
+  </div>
+
+  <%= render "payment_history", payments: @payments if @payments.any? %>
+
+  <div id="project-comments" class="card shadow-sm border-0">
+    <div class="card-body p-4">
+      <div class="d-flex justify-content-between align-items-center gap-3 mb-3">
+        <div>
+          <p class="text-uppercase text-body-secondary small mb-1">Conversation</p>
+          <h2 class="h5 mb-0">Comments</h2>
+        </div>
+        <span id="project-comments-count" class="badge text-bg-dark"><%= @comments.size %></span>
+      </div>
+
+      <div id="project-comments-list" class="vstack gap-3 mb-4">
+        <% if @comments.any? %>
+          <%= render partial: "comment", collection: @comments, as: :comment %>
+        <% else %>
+          <p id="project-comments-empty" class="text-body-secondary mb-4">No comments yet.</p>
+        <% end %>
+      </div>
+
+      <%= render "comment_form", project: @project, comment: @comment %>
+    </div>
+  </div>
+</div>

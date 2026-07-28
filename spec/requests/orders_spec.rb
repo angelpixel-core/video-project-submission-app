@@ -20,11 +20,12 @@ RSpec.describe "Orders requests" do
     get orders_path
 
     expect(response).to have_http_status(:ok)
-    expect(response.body).to include("Default Client projects")
+    expect(response.body).to include("Default Client orders")
     expect(response.body).to include("Project Alpha")
     expect(response.body).to include("/orders")
     expect(response.body).to include("PM workspace")
     expect(response.body).to include("Unread notifications")
+    expect(response.body).to include("Order update")
     expect(response.body).to include("Unread PM notification")
     expect(response.body).not_to include("Read PM notification")
   end
