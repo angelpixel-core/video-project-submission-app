@@ -28,6 +28,7 @@ class Project < ApplicationRecord
     state :pending
     state :in_progress
     state :completed
+    state :cancelled
 
     event :submit do
       transitions from: :draft, to: :pending
@@ -39,6 +40,10 @@ class Project < ApplicationRecord
 
     event :complete do
       transitions from: :in_progress, to: :completed
+    end
+
+    event :cancel do
+      transitions from: :pending, to: :cancelled
     end
   end
 
@@ -54,11 +59,51 @@ class Project < ApplicationRecord
   end
 
   def submitted?
-    pending? || in_progress? || completed?
+    pending? || in_progress? || completed? || cancelled?
   end
 
   def active_payment
     payments.active.order(created_at: :desc).first
+  end
+
+  def latest_payment
+    payments.order(created_at: :desc).first
+  end
+
+  def latest_succeeded_payment
+    payments.where(status: "succeeded").order(created_at: :desc).first
+  end
+
+  def payment_paid?
+    latest_succeeded_payment.present?
+  end
+
+  def refund_request_pending?
+    payments.joins(:refunds).merge(Payments::Domain::Entities::Refund.pending).exists?
+  end
+
+  def refund_request_processed?
+    payments.joins(:refunds).merge(Payments::Domain::Entities::Refund.processed).exists?
+  end
+
+  def refund_request_failed?
+    payments.joins(:refunds).merge(Payments::Domain::Entities::Refund.failed).exists?
+  end
+
+  def payment_flow_blocked?
+    refund_request_pending? || refund_request_processed?
+  end
+
+  def can_accept_order?
+    pending? && payment_paid? && !payment_flow_blocked?
+  end
+
+  def can_cancel_order?
+    pending? && !payment_paid? && !payment_flow_blocked?
+  end
+
+  def can_request_refund?
+    (pending? || in_progress?) && payment_paid? && !refund_request_pending? && !refund_request_processed?
   end
 
   def raw_footage_metadata_hash
@@ -100,6 +145,7 @@ class Project < ApplicationRecord
     return "Borrador" if draft?
     return "Pendiente" if pending?
     return "En progreso" if in_progress?
+    return "Cancelado" if cancelled?
 
     "Completado"
   end
@@ -108,6 +154,7 @@ class Project < ApplicationRecord
     return "text-bg-warning" if draft?
     return "text-bg-secondary" if pending?
     return "text-bg-info" if in_progress?
+    return "text-bg-danger" if cancelled?
 
     "text-bg-success"
   end
@@ -179,13 +226,60 @@ class Project < ApplicationRecord
     return "draft" if draft?
     return "placed" if pending?
     return "confirmed" if in_progress?
+    return "cancelled" if cancelled?
 
     "completed"
   end
 
+  public
+
   def payment_status_for_listing
-    active_payment&.status.presence || (draft? ? "unpaid" : "pending")
+    latest_payment&.status.presence || (draft? ? "unpaid" : "pending")
   end
+
+  def payment_badge_text
+    return "Solicitud de reembolso" if refund_request_pending?
+    return "Reembolsado" if refund_request_processed?
+    return "Reembolso rechazado" if refund_request_failed?
+
+    case payment_status_for_listing
+    when "unpaid"
+      "Sin pago"
+    when "pending"
+      "Pago pendiente"
+    when "processing"
+      "Pago en proceso"
+    when "succeeded"
+      "Pagado"
+    when "failed"
+      "Pago fallido"
+    when "canceled"
+      "Pago cancelado"
+    when "refunded"
+      "Reembolsado"
+    else
+      payment_status_for_listing.to_s.humanize
+    end
+  end
+
+  def payment_badge_class
+    return "text-bg-warning" if refund_request_pending?
+
+    case payment_status_for_listing
+    when "unpaid", "pending"
+      "text-bg-secondary"
+    when "processing"
+      "text-bg-info"
+    when "succeeded", "refunded"
+      "text-bg-success"
+    when "failed", "canceled"
+      "text-bg-danger"
+    else
+      "text-bg-secondary"
+    end
+  end
+
+  private
 
   def production_status_for_listing
     return "not_started" if draft? || pending?

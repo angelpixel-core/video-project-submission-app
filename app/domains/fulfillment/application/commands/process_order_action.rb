@@ -15,7 +15,7 @@ module Fulfillment
           return unsupported_event_failure unless allowed_events.include?(event)
 
           order.with_lock do
-            return stale_failure unless order.public_send("may_#{event}?")
+            return stale_failure unless allowed_for_order?
 
             perform_action!
 
@@ -30,7 +30,7 @@ module Fulfillment
         attr_reader :order, :event
 
         def allowed_events
-          %i[accept complete]
+          %i[accept complete cancel]
         end
 
         def broadcast_refresh?
@@ -39,6 +39,19 @@ module Fulfillment
 
         def perform_action!
           order.public_send("#{event}!")
+        end
+
+        def allowed_for_order?
+          case event
+          when :accept
+            order.public_send("may_#{event}?") && Ordering::Domain::Policies::OrderAcceptancePolicy.allowed?(order)
+          when :complete
+            order.public_send("may_#{event}?") && !order.payment_flow_blocked?
+          when :cancel
+            order.public_send("may_#{event}?") && Ordering::Domain::Policies::OrderCancellationPolicy.allowed?(order)
+          else
+            false
+          end
         end
 
         def unsupported_event_failure

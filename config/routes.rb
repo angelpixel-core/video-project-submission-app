@@ -29,7 +29,11 @@ Rails.application.routes.draw do
   resources :orders, only: %i[index show new edit update] do
     member do
       patch :accept
+      patch :cancel
       patch :complete
+      patch :request_refund
+      patch :approve_refund_request
+      patch :reject_refund_request
     end
 
     resources :comments, only: :create, controller: "comments"

@@ -68,11 +68,56 @@ RSpec.describe "Orders requests" do
     expect(response).to have_http_status(:ok)
     expect(response.body).to include("Order detail")
     expect(response.body).to include("Back to orders")
-    expect(response.body).to include("Aceptar orden")
+    expect(response.body).to include("Cancelar orden")
+    expect(response.body).not_to include("Aceptar orden")
   end
 
-  it "accepts a pending order as the pm" do
+  it "hides cancel once the payment succeeded and shows refund request when enabled" do
+    allow(ENV).to receive(:fetch).with("CLIENT_REFUND_REQUEST_ENABLED", "false").and_return("true")
+    project = Project.create!(owner: find_workspace_account(:client, email: "client@example.com"), participant: find_workspace_account(:pm, email: "pm@example.com"), name: "Project Paid", raw_footage_url: "https://example.com/paid.mov", status: :pending)
+    video_type = VideoType.find_by!(name: "Highlight Reel")
+    project.video_type_selections.create!(video_type: video_type, quantity: 1)
+    payment = Payments::Application::Commands::CreatePayment.call(project: project).data.fetch(:payment)
+    payment.update!(status: :succeeded)
+
+    get order_path(project)
+
+    expect(response.body).not_to include("Cancelar orden")
+    expect(response.body).to include("Solicitar reembolso")
+  end
+
+  it "treats a cancel request as stale after payment succeeded" do
+    project = Project.create!(owner: find_workspace_account(:client, email: "client@example.com"), participant: find_workspace_account(:pm, email: "pm@example.com"), name: "Project Paid", raw_footage_url: "https://example.com/paid.mov", status: :pending)
+    video_type = VideoType.find_by!(name: "Highlight Reel")
+    project.video_type_selections.create!(video_type: video_type, quantity: 1)
+    payment = Payments::Application::Commands::CreatePayment.call(project: project).data.fetch(:payment)
+    payment.update!(status: :succeeded)
+
+    patch cancel_order_path(project)
+
+    expect(response).to redirect_to(orders_path)
+    expect(project.reload.status).to eq("pending")
+  end
+
+  it "shows the client refund request button when the feature flag is enabled" do
+    allow(ENV).to receive(:fetch).with("CLIENT_REFUND_REQUEST_ENABLED", "false").and_return("true")
+    project = Project.create!(owner: find_workspace_account(:client, email: "client@example.com"), participant: find_workspace_account(:pm, email: "pm@example.com"), name: "Project Refund", raw_footage_url: "https://example.com/refund.mov", status: :pending)
+    video_type = VideoType.find_by!(name: "Highlight Reel")
+    project.video_type_selections.create!(video_type: video_type, quantity: 1)
+    payment = Payments::Application::Commands::CreatePayment.call(project: project).data.fetch(:payment)
+    payment.update!(status: :succeeded)
+
+    get order_path(project)
+
+    expect(response.body).to include("Solicitar reembolso")
+  end
+
+  it "accepts a paid pending order as the pm" do
     project = Project.create!(owner: find_workspace_account(:client, email: "client@example.com"), participant: find_workspace_account(:pm, email: "pm@example.com"), name: "Project Pending", raw_footage_url: "https://example.com/pending.mov", status: :pending)
+    video_type = VideoType.find_by!(name: "Highlight Reel")
+    project.video_type_selections.create!(video_type: video_type, quantity: 1)
+    payment = Payments::Application::Commands::CreatePayment.call(project: project).data.fetch(:payment)
+    payment.update!(status: :succeeded)
 
     patch accept_order_path(project)
 
@@ -80,6 +125,49 @@ RSpec.describe "Orders requests" do
 
     project.reload
     expect(project.status).to eq("in_progress")
+  end
+
+  it "creates a refund request for a paid order" do
+    project = Project.create!(owner: find_workspace_account(:client, email: "client@example.com"), participant: find_workspace_account(:pm, email: "pm@example.com"), name: "Project Refund", raw_footage_url: "https://example.com/refund.mov", status: :pending)
+    video_type = VideoType.find_by!(name: "Highlight Reel")
+    project.video_type_selections.create!(video_type: video_type, quantity: 1)
+    payment = Payments::Application::Commands::CreatePayment.call(project: project).data.fetch(:payment)
+    payment.update!(status: :succeeded)
+
+    patch request_refund_order_path(project)
+
+    expect(response).to redirect_to(orders_path)
+
+    project.reload
+    expect(project.refund_request_pending?).to be(true)
+  end
+
+  it "approves a pending refund request as the pm" do
+    project = Project.create!(owner: find_workspace_account(:client, email: "client@example.com"), participant: find_workspace_account(:pm, email: "pm@example.com"), name: "Project Refund", raw_footage_url: "https://example.com/refund.mov", status: :pending)
+    video_type = VideoType.find_by!(name: "Highlight Reel")
+    project.video_type_selections.create!(video_type: video_type, quantity: 1)
+    payment = Payments::Application::Commands::CreatePayment.call(project: project).data.fetch(:payment)
+    payment.update!(status: :succeeded)
+    Payments::Application::Commands::RequestRefund.call(payment: payment, amount_cents: payment.amount_cents)
+
+    patch approve_refund_request_order_path(project)
+
+    expect(response).to redirect_to(orders_path)
+    expect(project.reload.refund_request_processed?).to be(true)
+  end
+
+  it "rejects a pending refund request as the pm" do
+    project = Project.create!(owner: find_workspace_account(:client, email: "client@example.com"), participant: find_workspace_account(:pm, email: "pm@example.com"), name: "Project Refund", raw_footage_url: "https://example.com/refund.mov", status: :pending)
+    video_type = VideoType.find_by!(name: "Highlight Reel")
+    project.video_type_selections.create!(video_type: video_type, quantity: 1)
+    payment = Payments::Application::Commands::CreatePayment.call(project: project).data.fetch(:payment)
+    payment.update!(status: :succeeded)
+    Payments::Application::Commands::RequestRefund.call(payment: payment, amount_cents: payment.amount_cents)
+
+    patch reject_refund_request_order_path(project)
+
+    expect(response).to redirect_to(orders_path)
+    expect(project.reload.refund_request_failed?).to be(true)
   end
 
   it "completes an in-progress order as the pm" do

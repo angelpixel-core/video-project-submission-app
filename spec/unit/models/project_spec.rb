@@ -97,4 +97,31 @@ RSpec.describe Project do
 
     expect { project.accept! }.to raise_error(AASM::InvalidTransition)
   end
+
+  it "exposes the latest payment state and refund request flags" do
+    client = workspace_account(:client, name: "Client")
+    pm = workspace_account(:pm, name: "PM")
+    project = described_class.create!(owner: client, participant: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :pending)
+
+    video_type = VideoType.create!(name: "Highlight Reel", description: "Short edit", price_cents: 25_000, output_format: "mp4")
+    project.video_type_selections.create!(video_type: video_type, quantity: 1)
+
+    payment = Payments::Application::Commands::CreatePayment.call(project: project).data.fetch(:payment)
+
+    expect(project.payment_status_for_listing).to eq("processing")
+    expect(project.payment_badge_text).to eq("Pago en proceso")
+    expect(project.can_accept_order?).to be(false)
+
+    payment.update!(status: :succeeded)
+
+    expect(project.reload.payment_status_for_listing).to eq("succeeded")
+    expect(project.payment_badge_text).to eq("Pagado")
+    expect(project.can_accept_order?).to be(true)
+
+    payment.refunds.create!(payment_method_reference: payment.payment_method_reference, provider: payment.provider, provider_reference: "refund-123", status: :pending, amount_cents: payment.amount_cents)
+
+    expect(project.reload.refund_request_pending?).to be(true)
+    expect(project.can_accept_order?).to be(false)
+    expect(project.payment_badge_text).to eq("Solicitud de reembolso")
+  end
 end

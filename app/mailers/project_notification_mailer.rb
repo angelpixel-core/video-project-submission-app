@@ -11,6 +11,22 @@ class ProjectNotificationMailer < ApplicationMailer
     notify(project, recipient_role, :project_rejected)
   end
 
+  def project_cancelled(project, recipient_role:)
+    notify(project, recipient_role, :project_cancelled)
+  end
+
+  def project_refund_requested(project, recipient_role:)
+    notify(project, recipient_role, :project_refund_requested)
+  end
+
+  def project_refund_approved(project, recipient_role:)
+    notify(project, recipient_role, :project_refund_approved)
+  end
+
+  def project_refund_rejected(project, recipient_role:)
+    notify(project, recipient_role, :project_refund_rejected)
+  end
+
   def project_completed(project, recipient_role:)
     notify(project, recipient_role, :project_completed)
   end

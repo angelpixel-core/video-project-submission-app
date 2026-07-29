@@ -7,6 +7,10 @@ module Payments
 
         STATUSES = %w[pending processed failed].freeze
 
+        scope :pending, -> { where(status: "pending") }
+        scope :processed, -> { where(status: "processed") }
+        scope :failed, -> { where(status: "failed") }
+
         before_validation :normalize_provider
         before_validation :normalize_status
 

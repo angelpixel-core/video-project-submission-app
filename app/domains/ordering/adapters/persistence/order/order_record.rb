@@ -8,6 +8,7 @@ module Ordering
           belongs_to :owner, class_name: "Identity::Domain::Aggregates::Account", foreign_key: :owner_account_id
           belongs_to :participant, class_name: "Identity::Domain::Aggregates::Account", foreign_key: :participant_account_id
           has_many :order_line_records, class_name: "Ordering::Adapters::Persistence::Order::OrderLineRecord", foreign_key: :order_id, dependent: :destroy, inverse_of: :order_record
+          has_many :payments, class_name: "Payments::Domain::Aggregates::Payment", foreign_key: :project_id, primary_key: :id, dependent: :destroy
           has_one :source_video_record, class_name: "Ordering::Adapters::Persistence::Order::SourceVideoRecord", foreign_key: :order_id, dependent: :destroy, inverse_of: :order_record
 
           def video_type_selections
@@ -38,6 +39,54 @@ module Ordering
             status == "completed"
           end
 
+          def cancelled?
+            status == "cancelled"
+          end
+
+          def active_payment
+            payments.active.order(created_at: :desc).first
+          end
+
+          def latest_payment
+            payments.order(created_at: :desc).first
+          end
+
+          def latest_succeeded_payment
+            payments.where(status: "succeeded").order(created_at: :desc).first
+          end
+
+          def payment_paid?
+            latest_succeeded_payment.present?
+          end
+
+          def refund_request_pending?
+            payments.joins(:refunds).merge(Payments::Domain::Entities::Refund.pending).exists?
+          end
+
+          def refund_request_processed?
+            payments.joins(:refunds).merge(Payments::Domain::Entities::Refund.processed).exists?
+          end
+
+          def refund_request_failed?
+            payments.joins(:refunds).merge(Payments::Domain::Entities::Refund.failed).exists?
+          end
+
+          def payment_flow_blocked?
+            refund_request_pending? || refund_request_processed?
+          end
+
+          def can_accept_order?
+            pending? && payment_paid? && !payment_flow_blocked?
+          end
+
+          def can_cancel_order?
+            pending? && !payment_paid? && !payment_flow_blocked?
+          end
+
+          def can_request_refund?
+            (pending? || in_progress?) && payment_paid? && !refund_request_pending? && !refund_request_processed?
+          end
+
           def pending?
             placed?
           end
@@ -50,6 +99,7 @@ module Ordering
             return "Borrador" if draft?
             return "Pendiente" if placed?
             return "En progreso" if confirmed?
+            return "Cancelado" if cancelled?
 
             "Completado"
           end
@@ -58,12 +108,59 @@ module Ordering
             return "text-bg-warning" if draft?
             return "text-bg-secondary" if placed?
             return "text-bg-info" if confirmed?
+            return "text-bg-danger" if cancelled?
 
             "text-bg-success"
           end
 
           def status_badge_dom_id
             ActionView::RecordIdentifier.dom_id(self, :status_badge)
+          end
+
+          def payment_status_for_listing
+            latest_payment&.status.presence || (draft? ? "unpaid" : "pending")
+          end
+
+          def payment_badge_text
+            return "Solicitud de reembolso" if refund_request_pending?
+            return "Reembolsado" if refund_request_processed?
+            return "Reembolso rechazado" if refund_request_failed?
+
+            case payment_status_for_listing
+            when "unpaid"
+              "Sin pago"
+            when "pending"
+              "Pago pendiente"
+            when "processing"
+              "Pago en proceso"
+            when "succeeded"
+              "Pagado"
+            when "failed"
+              "Pago fallido"
+            when "canceled"
+              "Pago cancelado"
+            when "refunded"
+              "Reembolsado"
+            else
+              payment_status_for_listing.to_s.humanize
+            end
+          end
+
+          def payment_badge_class
+            return "text-bg-warning" if refund_request_pending?
+
+            case payment_status_for_listing
+            when "unpaid", "pending"
+              "text-bg-secondary"
+            when "processing"
+              "text-bg-info"
+            when "succeeded", "refunded"
+              "text-bg-success"
+            when "failed", "canceled"
+              "text-bg-danger"
+            else
+              "text-bg-secondary"
+            end
           end
 
           def raw_footage_metadata_hash

@@ -70,4 +70,21 @@ RSpec.describe Payments::Application::Commands::CreatePayment do
     expect(payment.provider).to eq("stripe")
     expect(payment.provider_reference).to start_with("stripe-")
   end
+
+  it "refuses to create a new payment when a refund request is pending" do
+    client = workspace_account(:client, email: "client@example.com", name: "Client")
+    pm = workspace_account(:pm, email: "pm@example.com", name: "PM")
+    project = Project.create!(owner: client, participant: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :pending)
+    video_type = VideoType.create!(name: "Highlight Reel", description: "Short edit", price_cents: 25_000, output_format: "mp4")
+    project.video_type_selections.create!(video_type: video_type, quantity: 1)
+
+    payment = described_class.(project: project).data.fetch(:payment)
+    payment.update!(status: :succeeded)
+    payment.refunds.create!(payment_method_reference: payment.payment_method_reference, provider: payment.provider, provider_reference: "refund-request-123", status: :pending, amount_cents: payment.amount_cents)
+
+    result = described_class.(project: project)
+
+    expect(result).to be_failure
+    expect(result.code).to eq(:refund_request_pending)
+  end
 end

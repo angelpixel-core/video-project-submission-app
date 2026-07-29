@@ -21,14 +21,20 @@ export default class OrderActionController extends Controller {
         const currentRow = this.element.closest("tr")
 
         if (currentRow) {
-          const statusBadge = currentRow.querySelector("td:nth-child(5) .badge")
+          const paymentBadge = currentRow.querySelector("[data-order-payment-cell] .badge")
+          if (paymentBadge) {
+            paymentBadge.textContent = data.payment_badge_text
+            paymentBadge.className = `badge ${data.payment_badge_class} text-white text-uppercase`
+          }
+
+          const statusBadge = currentRow.querySelector("[data-order-status-cell] .badge")
           if (statusBadge) {
             statusBadge.textContent = data.status_badge_text
             statusBadge.className = `badge ${data.status_badge_class} text-white text-uppercase`
           }
 
-          const actionCell = currentRow.querySelector("td:nth-child(6)")
-          if (actionCell) actionCell.innerHTML = buildActionMarkup({ orderId: data.project_id, action: data.action })
+          const actionCell = currentRow.querySelector("[data-order-actions-cell]")
+          if (actionCell) actionCell.innerHTML = data.action_cell_html || ""
         }
       }
     } catch {
@@ -38,19 +44,4 @@ export default class OrderActionController extends Controller {
       if (submitter) submitter.disabled = false
     }
   }
-}
-
-function buildActionMarkup({ orderId, action }) {
-  if (action === "complete") {
-    return `
-      <div class="d-inline-flex flex-wrap gap-2 justify-content-end">
-        <form data-controller="order-action" data-action="submit->order-action#submit" class="button_to" method="post" action="/orders/${orderId}/complete">
-          <input type="hidden" name="_method" value="patch" />
-          <button class="btn btn-sm btn-outline-success" type="submit">Marcar como completado</button>
-        </form>
-      </div>
-    `
-  }
-
-  return "<div class=\"d-inline-flex flex-wrap gap-2 justify-content-end\"></div>"
 }

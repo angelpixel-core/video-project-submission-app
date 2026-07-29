@@ -1,9 +1,9 @@
 module Ordering
   module Domain
     module Policies
-      class OrderCompletionPolicy
+      class OrderAcceptancePolicy
         def self.allowed?(order)
-          order.in_progress? && !order.payment_flow_blocked?
+          order.pending? && order.payment_paid? && !order.payment_flow_blocked?
         end
       end
     end

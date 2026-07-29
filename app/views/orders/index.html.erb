@@ -51,6 +51,7 @@
               <col class="workspace-orders-col-order">
               <col class="workspace-orders-col-created">
               <col class="workspace-orders-col-budget">
+              <col class="workspace-orders-col-payment">
               <col class="workspace-orders-col-status">
               <col class="workspace-orders-col-actions">
             </colgroup>
@@ -60,6 +61,7 @@
                 <th scope="col">Order</th>
                 <th scope="col"><%= table_sort_link("Created at", "created_at", @workspace_sort, @workspace_direction, @workspace_page, path: orders_path) %></th>
                 <th scope="col"><%= table_sort_link("Total budget", "total_budget", @workspace_sort, @workspace_direction, @workspace_page, path: orders_path) %></th>
+                <th scope="col">Payment</th>
                 <th scope="col">Status</th>
                 <th scope="col" class="text-end">Actions</th>
               </tr>
@@ -69,7 +71,7 @@
                 <%= render partial: "workspace_order_table_row", collection: @workspace_projects, as: :project %>
               <% else %>
                 <tr>
-                  <td colspan="6" class="text-body-secondary py-4">No orders yet.</td>
+                  <td colspan="7" class="text-body-secondary py-4">No orders yet.</td>
                 </tr>
               <% end %>
             </tbody>

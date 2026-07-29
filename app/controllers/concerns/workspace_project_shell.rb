@@ -4,7 +4,7 @@ module WorkspaceProjectShell
   included do
     before_action :load_project, only: %i[edit update]
     before_action :ensure_draft_project, only: %i[edit update]
-    before_action :load_workspace_project, only: %i[accept complete]
+    before_action :load_workspace_project, only: %i[accept complete cancel request_refund approve_refund_request reject_refund_request]
     before_action :load_video_types, only: %i[edit update]
   end
 
@@ -23,7 +23,7 @@ module WorkspaceProjectShell
 
   def show
     @project = project_repository.find_for_show(params[:id])
-    @payments = @project.payments.includes(:payment_attempts).order(created_at: :desc)
+    @payments = @project.payments.includes(:payment_attempts, :refunds).order(created_at: :desc)
     @comments = @project.comments.chronological.includes(:author_account)
     @comment = Comment.new
   end
@@ -71,7 +71,39 @@ module WorkspaceProjectShell
     process_workspace_action(
       event: :accept,
       success_notice: "Order accepted.",
-      stale_alert: "Only pending orders can be accepted."
+      stale_alert: "The order must be paid before it can be accepted."
+    )
+  end
+
+  def cancel
+    process_workspace_action(
+      event: :cancel,
+      success_notice: "Order cancelled.",
+      stale_alert: "Only unpaid pending orders can be cancelled."
+    )
+  end
+
+  def request_refund
+    process_workspace_action(
+      event: :request_refund,
+      success_notice: "Refund requested.",
+      stale_alert: "Only paid orders can request a refund."
+    )
+  end
+
+  def approve_refund_request
+    process_workspace_action(
+      event: :approve_refund_request,
+      success_notice: "Refund approved.",
+      stale_alert: "Only pending refund requests can be approved."
+    )
+  end
+
+  def reject_refund_request
+    process_workspace_action(
+      event: :reject_refund_request,
+      success_notice: "Refund rejected.",
+      stale_alert: "Only pending refund requests can be rejected."
     )
   end
 
@@ -164,7 +196,7 @@ module WorkspaceProjectShell
   end
 
   def load_workspace_project
-    @workspace_project = project_repository.find_for_workspace_action(workspace_for(:pm), params[:id])
+    @workspace_project = project_repository.find_for_workspace_action(workspace_for(:pm), params[:id]) || project_repository.find_for_show(params[:id])
   end
 
   def project_repository
@@ -176,7 +208,9 @@ module WorkspaceProjectShell
       project_id: @workspace_project.id,
       status_badge_text: @workspace_project.status_badge_text,
       status_badge_class: @workspace_project.status_badge_class,
-      action: @workspace_project.pending? ? "complete" : (@workspace_project.in_progress? ? "complete" : nil)
+      payment_badge_text: @workspace_project.payment_badge_text,
+      payment_badge_class: @workspace_project.payment_badge_class,
+      action_cell_html: ApplicationController.render(partial: "orders/workspace_order_actions", locals: { project: @workspace_project })
     }
   end
 end
