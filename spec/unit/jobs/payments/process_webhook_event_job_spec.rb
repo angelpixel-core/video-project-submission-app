@@ -3,6 +3,36 @@ require "rails_helper"
 RSpec.describe Payments::Adapters::Inbound::Webhooks::Event::Job do
   include ActiveJob::TestHelper
 
+  it "uses the shared bounded retry policy" do
+    expect(described_class::MAX_RETRY_ATTEMPTS).to eq(Payments::Domain::Policies::RetryPolicy::MAX_ATTEMPTS)
+  end
+
+  it "delegates exhausted retries to the final failure handler" do
+    error = Payments::Domain::Errors::DemoTransientFailure.new("boom")
+
+    expect(Payments::Adapters::Inbound::Webhooks::Event::FinalFailureHandler).to receive(:call).with(
+      payment_webhook_event_id: 123,
+      error: error
+    )
+
+    described_class.handle_retry_exhaustion(payment_webhook_event_id: 123, error: error)
+  end
+
+  it "keeps the retry exhaustion hook wired to the final failure handler" do
+    error = Payments::Domain::Errors::DemoTransientFailure.new("boom")
+
+    job = described_class.new(123)
+    job.executions = described_class::MAX_RETRY_ATTEMPTS
+    expect(job.executions).to eq(described_class::MAX_RETRY_ATTEMPTS)
+
+    expect(Payments::Adapters::Inbound::Webhooks::Event::FinalFailureHandler).to receive(:call).with(
+      payment_webhook_event_id: 123,
+      error: error
+    )
+
+    described_class.handle_retry_exhaustion(payment_webhook_event_id: job.arguments.first, error: error)
+  end
+
   it "delegates to the payment event handler when the event exists" do
     payment = Payments::Domain::Aggregates::Payment.create!(
       project: Project.create!(

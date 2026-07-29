@@ -15,6 +15,9 @@ end %></h1>
 <% if @recipient_role == "client" %>
   <% if @intent.to_status == "failed" %>
     <p>We could not confirm this payment. Please try again or contact the PM.</p>
+    <% if @intent.event_type == "payment.failed_final" %>
+      <p><strong>Failure reason:</strong> <%= @intent.payload["failure_reason_code"].presence || "unknown_error" %></p>
+    <% end %>
   <% else %>
     <p>Your payment was confirmed and the project can continue.</p>
   <% end %>
@@ -24,6 +27,9 @@ end %></h1>
   <p><strong>Project status:</strong> <%= @intent.to_status.humanize %></p>
   <% if @intent.to_status == "failed" %>
     <p>The payment attempt failed and the client should be nudged to retry.</p>
+    <% if @intent.event_type == "payment.failed_final" %>
+      <p><strong>Failure reason:</strong> <%= @intent.payload["failure_reason_code"].presence || "unknown_error" %></p>
+    <% end %>
   <% else %>
     <p>The payment was confirmed and the client can be moved forward.</p>
   <% end %>

@@ -182,7 +182,7 @@ Payments docs are centralized at [Payments Index](../payments.md).
 
 ## 35
 
-- [ ] [Payment Retry and Observability](./035-payment-retry-and-observability.md)
+- [x] [Payment Retry and Observability](./035-payment-retry-and-observability.md)
 
 ## 36
 
@@ -198,15 +198,15 @@ Payments docs are centralized at [Payments Index](../payments.md).
 
 ## 39
 
-- [ ] [Payment Outbound Notifications](./039-payment-outbound-notifications.md)
+- [x] [Payment Outbound Notifications](./039-payment-outbound-notifications.md)
 
 ## 40
 
-- [ ] [Payment Invoice Generation and Storage](./040-payment-invoice-generation-and-storage.md)
+- [x] [Payment Invoice Generation and Storage](./040-payment-invoice-generation-and-storage.md)
 
 ## 41
 
-- [ ] [Application Boundaries and Repositories](./041-application-boundaries-and-repositories.md)
+- [x] [Application Boundaries and Repositories](./041-application-boundaries-and-repositories.md)
 
 ## 42
 
@@ -214,12 +214,12 @@ Payments docs are centralized at [Payments Index](../payments.md).
 
 ## 43
 
-- [ ] [Payment Final Failure Notifications](./043-payment-final-failure-notifications.md)
+- [x] [Payment Final Failure Notifications](./043-payment-final-failure-notifications.md)
 
 ## 44
 
-- [ ] [Order Domain and Project Rename](./044-order-domain-and-project-rename.md)
+- [x] [Order Domain and Project Rename](./044-order-domain-and-project-rename.md)
 
 ## 45
 
-- [ ] [Capacity Reservation Workflow](./045-capacity-reservation-workflow.md)
+- [x] [Capacity Reservation Workflow](./045-capacity-reservation-workflow.md)

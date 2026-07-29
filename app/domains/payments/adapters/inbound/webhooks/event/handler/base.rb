@@ -30,11 +30,11 @@ module Payments
                 )
               end
 
-              def record_notification_intent!(from_status:, to_status:)
+              def record_notification_intent!(from_status:, to_status:, event_type: nil, payload: {})
                 Payments::Domain::Entities::PaymentNotificationIntent.create!(
                   payment: payment,
                   project: payment.project,
-                  event_type: "payment.#{to_status}",
+                  event_type: event_type.presence || "payment.#{to_status}",
                   from_status: from_status,
                   to_status: to_status,
                   payload: {
@@ -43,7 +43,7 @@ module Payments
                     provider_event_id: event.provider_event_id,
                     webhook_event_id: event.id,
                     payment_status: to_status
-                  },
+                  }.merge(payload),
                   status: :pending,
                   scheduled_at: Time.current
                 )
