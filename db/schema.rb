@@ -50,11 +50,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_29_100000) do
   end
 
   create_table "capacity_reservations", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.bigint "order_id", null: false
     t.datetime "committed_at"
     t.datetime "created_at", null: false
     t.datetime "expired_at"
     t.datetime "expires_at"
+    t.bigint "order_id", null: false
     t.datetime "released_at"
     t.string "status", default: "reserved", null: false
     t.integer "units", null: false
