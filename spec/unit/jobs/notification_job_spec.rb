@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe NotificationJob do
-  it "delegates to the project notification service" do
+  it "delegates to the order notification service" do
     project = Project.create!(
       owner: workspace_account(:client, name: "Client"),
       participant: workspace_account(:pm, name: "PM"),

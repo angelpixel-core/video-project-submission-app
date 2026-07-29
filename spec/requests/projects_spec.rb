@@ -10,7 +10,7 @@ RSpec.describe "Orders requests (detailed)" do
     VideoType.create!(name: "Social Cut", description: "Social edit", price_cents: 15_000, output_format: "mp4")
   end
 
-  it "shows the client project index" do
+  it "shows the client order index" do
     client = find_workspace_account(:client, email: "client@example.com")
     pm = find_workspace_account(:pm, email: "pm@example.com")
     project = Project.create!(owner: client, participant: pm, name: "Project Alpha", raw_footage_url: "https://example.com/raw.mov", status: :in_progress)
@@ -31,7 +31,7 @@ RSpec.describe "Orders requests (detailed)" do
     expect(response.body).not_to include("Read PM notification")
   end
 
-  it "keeps the customer-facing project flow intact during the order rename" do
+  it "keeps the customer-facing order flow intact during the order rename" do
     client = find_workspace_account(:client, email: "client@example.com")
     pm = find_workspace_account(:pm, email: "pm@example.com")
     project = Project.create!(owner: client, participant: pm, name: "Project Alpha", raw_footage_url: "https://example.com/raw.mov", status: :draft)
@@ -54,7 +54,7 @@ RSpec.describe "Orders requests (detailed)" do
     expect(response.body).to include("Project Alpha")
   end
 
-  it "shows the pm project table sorted by creation date" do
+  it "shows the pm order table sorted by creation date" do
     client = find_workspace_account(:client, email: "client@example.com")
     pm = find_workspace_account(:pm, email: "pm@example.com")
     highlight_reel = VideoType.find_by!(name: "Highlight Reel")
@@ -147,7 +147,7 @@ RSpec.describe "Orders requests (detailed)" do
     travel_back
   end
 
-  it "shows a pm project detail page" do
+  it "shows a pm order detail page" do
     client = find_workspace_account(:client, email: "client@example.com")
     pm = find_workspace_account(:pm, email: "pm@example.com")
     project = Project.create!(owner: client, participant: pm, name: "Project Alpha", raw_footage_url: "https://example.com/raw.mov", status: :pending)
@@ -169,7 +169,7 @@ RSpec.describe "Orders requests (detailed)" do
     expect(draft.status).to eq("draft")
   end
 
-  it "redirects submitted projects away from the editor" do
+  it "redirects submitted orders away from the editor" do
     project = Project.create!(owner: find_workspace_account(:client, email: "client@example.com"), participant: find_workspace_account(:pm, email: "pm@example.com"), name: "Project Pending", raw_footage_url: "https://example.com/pending.mov", status: :pending)
 
     get edit_order_path(project)
@@ -239,7 +239,7 @@ RSpec.describe "Orders requests (detailed)" do
     expect(draft.active_payment.payment_attempts.count).to eq(1)
   end
 
-  it "accepts a pending project as the pm" do
+  it "accepts a pending order as the pm" do
     project = Project.create!(owner: find_workspace_account(:client, email: "client@example.com"), participant: find_workspace_account(:pm, email: "pm@example.com"), name: "Project Pending", raw_footage_url: "https://example.com/pending.mov", status: :pending)
 
     patch accept_order_path(project)
@@ -250,7 +250,7 @@ RSpec.describe "Orders requests (detailed)" do
     expect(project.status).to eq("in_progress")
   end
 
-  it "accepts a pending project asynchronously" do
+  it "accepts a pending order asynchronously" do
     project = Project.create!(owner: find_workspace_account(:client, email: "client@example.com"), participant: find_workspace_account(:pm, email: "pm@example.com"), name: "Project Async", raw_footage_url: "https://example.com/async.mov", status: :pending)
 
     patch accept_order_path(project), headers: { "X-Workspace-Async-Action" => "1" }
@@ -277,7 +277,7 @@ RSpec.describe "Orders requests (detailed)" do
     expect(project.reload.status).to eq("in_progress")
   end
 
-  it "completes an in-progress project as the pm" do
+  it "completes an in-progress order as the pm" do
     project = Project.create!(owner: find_workspace_account(:client, email: "client@example.com"), participant: find_workspace_account(:pm, email: "pm@example.com"), name: "Project Active", raw_footage_url: "https://example.com/active.mov", status: :in_progress)
 
     patch complete_order_path(project)
@@ -288,7 +288,7 @@ RSpec.describe "Orders requests (detailed)" do
     expect(project.status).to eq("completed")
   end
 
-  it "creates a client notification when a pending project is accepted" do
+  it "creates a client notification when a pending order is accepted" do
     client = find_workspace_account(:client, email: "client@example.com")
     pm = find_workspace_account(:pm, email: "pm@example.com")
     project = Project.create!(owner: client, participant: pm, name: "Project Client Update", raw_footage_url: "https://example.com/client-update.mov", status: :pending)
@@ -305,7 +305,7 @@ RSpec.describe "Orders requests (detailed)" do
     expect(notification.body).to include("accepted and is now in progress")
   end
 
-  it "creates a client notification when an in-progress project is completed" do
+  it "creates a client notification when an in-progress order is completed" do
     client = find_workspace_account(:client, email: "client@example.com")
     pm = find_workspace_account(:pm, email: "pm@example.com")
     project = Project.create!(owner: client, participant: pm, name: "Project Client Complete", raw_footage_url: "https://example.com/client-complete.mov", status: :in_progress)
@@ -322,7 +322,7 @@ RSpec.describe "Orders requests (detailed)" do
     expect(notification.body).to include("has been completed")
   end
 
-  it "completes an in-progress project asynchronously" do
+  it "completes an in-progress order asynchronously" do
     project = Project.create!(owner: find_workspace_account(:client, email: "client@example.com"), participant: find_workspace_account(:pm, email: "pm@example.com"), name: "Project Async Complete", raw_footage_url: "https://example.com/complete.mov", status: :in_progress)
 
     patch complete_order_path(project), headers: { "X-Workspace-Async-Action" => "1" }

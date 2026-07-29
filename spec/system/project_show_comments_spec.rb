@@ -5,7 +5,7 @@ def switch_workspace_to(mode)
   click_button "Switch to #{mode}"
 end
 
-RSpec.describe "Project show comments", type: :system, js: true do
+RSpec.describe "Order show comments", type: :system, js: true do
   before do
     driven_by :selenium_chrome_headless
 
@@ -80,7 +80,7 @@ RSpec.describe "Project show comments", type: :system, js: true do
     end
   end
 
-  it "shows a raw footage preview on the client project card" do
+  it "shows a raw footage preview on the client order card" do
     client = find_workspace_account(:client, email: "client@example.com")
     pm = find_workspace_account(:pm, email: "pm@example.com")
     Project.create!(
@@ -104,7 +104,7 @@ RSpec.describe "Project show comments", type: :system, js: true do
     expect(page).to have_content("Comments")
   end
 
-  it "shows a twitch preview on the project detail page" do
+  it "shows a twitch preview on the order detail page" do
     client = find_workspace_account(:client, email: "client@example.com")
     pm = find_workspace_account(:pm, email: "pm@example.com")
     project = Project.create!(
@@ -135,7 +135,7 @@ RSpec.describe "Project show comments", type: :system, js: true do
     expect(page).to have_css("blockquote.instagram-media")
   end
 
-  it "shows a tiktok preview on the project detail page" do
+  it "shows a tiktok preview on the order detail page" do
     client = find_workspace_account(:client, email: "client@example.com")
     pm = find_workspace_account(:pm, email: "pm@example.com")
     project = Project.create!(

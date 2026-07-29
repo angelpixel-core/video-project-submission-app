@@ -61,7 +61,7 @@ RSpec.describe "PM notifications", type: :system, js: true do
     expect(notification.reload.read_at).to be_present
   end
 
-  it "marks a pm toast as read when the project link is clicked" do
+  it "marks a pm toast as read when the order link is clicked" do
     client = find_workspace_account(:client, email: "client@example.com")
     pm = find_workspace_account(:pm, email: "pm@example.com")
     project = Project.create!(owner: client, participant: pm, name: "Project Toast", raw_footage_url: "https://example.com/toast.mov", status: :in_progress)
@@ -79,7 +79,7 @@ RSpec.describe "PM notifications", type: :system, js: true do
     expect(notification.reload.read_at).to be_present
   end
 
-  it "updates pm workspace project actions without a full reload" do
+  it "updates pm workspace order actions without a full reload" do
     client = find_workspace_account(:client, email: "client@example.com")
     pm = find_workspace_account(:pm, email: "pm@example.com")
     project = Project.create!(owner: client, participant: pm, name: "Project Beta", raw_footage_url: "https://example.com/beta.mov", status: :pending)
@@ -151,7 +151,7 @@ RSpec.describe "PM notifications", type: :system, js: true do
     expect(page).to have_current_path(orders_path(page: 2), ignore_query: false)
   end
 
-  it "lets the pm navigate between project pages" do
+  it "lets the pm navigate between order pages" do
     client = find_workspace_account(:client, email: "client@example.com")
     pm = find_workspace_account(:pm, email: "pm@example.com")
 
