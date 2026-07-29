@@ -223,3 +223,7 @@ Payments docs are centralized at [Payments Index](../payments.md).
 ## 45
 
 - [x] [Capacity Reservation Workflow](./045-capacity-reservation-workflow.md)
+
+## 46
+
+- [ ] [Data Bootstrap Migrations](./046-data-bootstrap-migrations.md)
