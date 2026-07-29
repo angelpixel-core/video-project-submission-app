@@ -29,7 +29,7 @@ tags:
 
 - A project with at least one payment.
 - The web app and worker running.
-- `DEFAULT_CLIENT_EMAIL` and `DEFAULT_PM_EMAIL` set in the environment.
+- `DEFAULT_CLIENT_WORKSPACE_EMAIL` and `DEFAULT_PM_WORKSPACE_EMAIL` set in the environment.
 
 ## Local Dev
 
