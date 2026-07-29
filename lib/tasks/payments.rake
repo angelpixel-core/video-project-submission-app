@@ -34,6 +34,7 @@ def deliver_signed_webhook(default_type:)
   }
 
   simulator_args[:demo_fail_once] = true if ENV["DEMO_FAIL_ONCE"].present?
+  simulator_args[:demo_fail_always] = true if ENV["DEMO_FAIL_ALWAYS"].present?
 
   result = Payments::Adapters::Outbound::Webhooks::WebhookSimulator.(**simulator_args)
 

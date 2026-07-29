@@ -17,7 +17,8 @@ RSpec.describe "payments rake tasks" do
       "PAYMENT_ID" => ENV["PAYMENT_ID"],
       "PROVIDER_REFERENCE" => ENV["PROVIDER_REFERENCE"],
       "AMOUNT_CENTS" => ENV["AMOUNT_CENTS"],
-      "DEMO_FAIL_ONCE" => ENV["DEMO_FAIL_ONCE"]
+      "DEMO_FAIL_ONCE" => ENV["DEMO_FAIL_ONCE"],
+      "DEMO_FAIL_ALWAYS" => ENV["DEMO_FAIL_ALWAYS"]
     }
 
     example.run
@@ -179,6 +180,23 @@ RSpec.describe "payments rake tasks" do
       provider_reference: "fake-abc123",
       amount_cents: "50000",
       demo_fail_once: true
+    ).and_return(Core::Result::Success.(data: { status_code: 202, body: "accepted" }))
+
+    Rake::Task["payments:send_signed_fake_webhook"].invoke
+  end
+
+  it "forwards the demo fail-always flag to the webhook simulator" do
+    ENV["DEMO_FAIL_ALWAYS"] = "1"
+
+    expect(Payments::Adapters::Outbound::Webhooks::WebhookSimulator).to receive(:call).with(
+      webhook_url: "http://localhost:3000/payments/webhooks/fake/events",
+      provider: "fake",
+      event_id: "evt_123",
+      type: "payment.succeeded",
+      payment_id: "1",
+      provider_reference: "fake-abc123",
+      amount_cents: "50000",
+      demo_fail_always: true
     ).and_return(Core::Result::Success.(data: { status_code: 202, body: "accepted" }))
 
     Rake::Task["payments:send_signed_fake_webhook"].invoke

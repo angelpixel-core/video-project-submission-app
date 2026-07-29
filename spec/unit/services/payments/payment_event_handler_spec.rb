@@ -38,7 +38,7 @@ RSpec.describe Payments::Adapters::Inbound::Webhooks::Event::Handler do
     payment
   end
 
-  def build_event(payment:, event_type: "payment.succeeded", event_id: "evt_123", demo_fail_once: false)
+  def build_event(payment:, event_type: "payment.succeeded", event_id: "evt_123", demo_fail_once: false, demo_fail_always: false)
     Payments::Domain::Entities::PaymentWebhookEvent.create!(
       provider: "fake",
       provider_event_id: event_id,
@@ -52,7 +52,8 @@ RSpec.describe Payments::Adapters::Inbound::Webhooks::Event::Handler do
           "payment_id" => payment.id,
           "provider_reference" => payment.provider_reference,
           "amount_cents" => payment.amount_cents,
-          "demo_fail_once" => demo_fail_once
+          "demo_fail_once" => demo_fail_once,
+          "demo_fail_always" => demo_fail_always
         }
       },
       signature: "signature",
@@ -138,6 +139,23 @@ RSpec.describe Payments::Adapters::Inbound::Webhooks::Event::Handler do
     expect(event.processing_attempts.order(:attempt_number).pluck(:status)).to eq(%w[failed succeeded])
     expect(payment.payment_notification_intents.count).to eq(1)
     expect(payment.reload.status).to eq("succeeded")
+  end
+
+  it "fails on every attempt for the demo always-fail flag" do
+    payment = build_payment
+    event = build_event(payment: payment, demo_fail_always: true)
+
+    expect { described_class.(event: event) }.to raise_error(Payments::Domain::Errors::DemoTransientFailure, Payments::Adapters::Inbound::Webhooks::Event::Handler::DEMO_FAILURE_MESSAGE)
+    expect(event.reload.status).to eq("failed")
+    expect(event.processing_attempts_count).to eq(1)
+    expect(event.last_failure_message).to eq(Payments::Adapters::Inbound::Webhooks::Event::Handler::DEMO_FAILURE_MESSAGE)
+
+    expect { described_class.(event: event.reload) }.to raise_error(Payments::Domain::Errors::DemoTransientFailure, Payments::Adapters::Inbound::Webhooks::Event::Handler::DEMO_FAILURE_MESSAGE)
+    expect(event.reload.status).to eq("failed")
+    expect(event.processing_attempts_count).to eq(2)
+    expect(event.processing_attempts.order(:attempt_number).pluck(:status)).to eq(%w[failed failed])
+    expect(payment.payment_notification_intents.count).to eq(0)
+    expect(payment.reload.status).to eq("processing")
   end
 
   it "ignores an out-of-order failure after success" do

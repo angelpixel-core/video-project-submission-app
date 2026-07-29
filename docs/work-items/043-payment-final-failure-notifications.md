@@ -39,7 +39,7 @@ title: Payment Final Failure Notifications
 - Retry behavior is currently hardcoded in the job and does not yet use `Payments::Domain::Policies::RetryPolicy`.
 - The payment notification pipeline already exists via `PaymentNotificationIntent`, `DispatchPaymentNotificationJob`, and `PaymentNotificationMailer`.
 - `PaymentWebhookEvent` already stores raw failure fields, but it does not yet expose a stable normalized failure-code column.
-- Demo support currently covers `DEMO_FAIL_ONCE` only.
+- Demo support now covers both `DEMO_FAIL_ONCE` and `DEMO_FAIL_ALWAYS`.
 
 ## Exact Flow
 
@@ -111,7 +111,7 @@ DEMO_FAIL_ALWAYS=1 make payments/send_signed_fake_webhook PROJECT_ID=<project_id
 - [x] Normalize payment failure reasons into stable codes with a raw fallback.
 - [x] Create `payment.failed_final` notification intents on final failure.
 - [x] Send role-specific client and PM emails for final failure.
-- [ ] Extend the webhook simulator/task to support a deterministic always-fail demo.
+- [x] Extend the webhook simulator/task to support a deterministic always-fail demo.
 - [ ] Add specs for the final-failure path, including retry exhaustion and email delivery.
 
 ## Expected Result

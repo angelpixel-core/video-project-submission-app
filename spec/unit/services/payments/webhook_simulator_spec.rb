@@ -52,6 +52,31 @@ RSpec.describe Payments::Adapters::Outbound::Webhooks::WebhookSimulator do
     expect(request["Content-Type"]).to eq("application/json")
   end
 
+  it "includes the always-fail flag in the payload when requested" do
+    response = instance_double(Net::HTTPResponse, code: "202", body: "accepted")
+    http = instance_double(Net::HTTP)
+
+    allow(Net::HTTP).to receive(:start).and_yield(http)
+    allow(http).to receive(:request).and_return(response)
+
+    result = described_class.(
+      webhook_url: webhook_url,
+      provider: "fake",
+      event_id: "evt_456",
+      type: "payment.succeeded",
+      payment_id: 1,
+      provider_reference: "fake-abc123",
+      amount_cents: 50_000,
+      demo_fail_always: true
+    )
+
+    expect(result).to be_success
+    expect(result.data[:request_payload]).to include(
+      id: "evt_456",
+      data: hash_including(demo_fail_always: true)
+    )
+  end
+
   it "returns a failure on a non-success response" do
     response = instance_double(Net::HTTPResponse, code: "403", body: "forbidden")
     http = instance_double(Net::HTTP)

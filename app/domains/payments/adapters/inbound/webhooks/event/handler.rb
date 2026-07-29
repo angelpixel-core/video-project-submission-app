@@ -86,9 +86,18 @@ module Payments
             end
 
             def maybe_fail_demo_once!(attempt)
+              return raise_demo_transient_failure! if demo_fail_always?
               return unless demo_fail_once?
               return unless attempt.present? && attempt.attempt_number == 1
 
+              raise_demo_transient_failure!
+            end
+
+            def demo_fail_always?
+              ActiveModel::Type::Boolean.new.cast(event_payload["data"].to_h["demo_fail_always"])
+            end
+
+            def raise_demo_transient_failure!
               raise Payments::Domain::Errors::DemoTransientFailure, DEMO_FAILURE_MESSAGE
             end
 
