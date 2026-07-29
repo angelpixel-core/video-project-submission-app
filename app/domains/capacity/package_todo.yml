@@ -13,8 +13,3 @@
     files:
     - app/domains/capacity/application/ports/clock.rb
     - app/domains/capacity/application/ports/workload_source.rb
-  "::Project":
-    violations:
-    - dependency
-    files:
-    - app/domains/capacity/domain/policies/capacity_calculation_policy.rb
