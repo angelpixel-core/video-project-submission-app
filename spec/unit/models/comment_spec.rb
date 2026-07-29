@@ -16,7 +16,7 @@ RSpec.describe Comment do
     project = Project.create!(owner: client, participant: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :in_progress)
 
     expect(ActionCable.server).to receive(:broadcast).with(
-      "project_comments_#{project.id}",
+      "order_comments_#{project.id}",
       hash_including(
         type: "comments_updated",
         comment_count: 1,
