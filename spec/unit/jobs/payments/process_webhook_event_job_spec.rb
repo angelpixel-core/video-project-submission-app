@@ -18,6 +18,21 @@ RSpec.describe Payments::Adapters::Inbound::Webhooks::Event::Job do
     described_class.handle_retry_exhaustion(payment_webhook_event_id: 123, error: error)
   end
 
+  it "keeps the retry exhaustion hook wired to the final failure handler" do
+    error = Payments::Domain::Errors::DemoTransientFailure.new("boom")
+
+    job = described_class.new(123)
+    job.executions = described_class::MAX_RETRY_ATTEMPTS
+    expect(job.executions).to eq(described_class::MAX_RETRY_ATTEMPTS)
+
+    expect(Payments::Adapters::Inbound::Webhooks::Event::FinalFailureHandler).to receive(:call).with(
+      payment_webhook_event_id: 123,
+      error: error
+    )
+
+    described_class.handle_retry_exhaustion(payment_webhook_event_id: job.arguments.first, error: error)
+  end
+
   it "delegates to the payment event handler when the event exists" do
     payment = Payments::Domain::Aggregates::Payment.create!(
       project: Project.create!(

@@ -112,7 +112,7 @@ DEMO_FAIL_ALWAYS=1 make payments/send_signed_fake_webhook PROJECT_ID=<project_id
 - [x] Create `payment.failed_final` notification intents on final failure.
 - [x] Send role-specific client and PM emails for final failure.
 - [x] Extend the webhook simulator/task to support a deterministic always-fail demo.
-- [ ] Add specs for the final-failure path, including retry exhaustion and email delivery.
+- [x] Add specs for the final-failure path, including retry exhaustion and email delivery.
 
 ## Expected Result
 
