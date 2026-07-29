@@ -226,4 +226,4 @@ Payments docs are centralized at [Payments Index](../payments.md).
 
 ## 46
 
-- [ ] [Data Bootstrap Migrations](./046-data-bootstrap-migrations.md)
+- [x] [Data Bootstrap Migrations](./046-data-bootstrap-migrations.md)

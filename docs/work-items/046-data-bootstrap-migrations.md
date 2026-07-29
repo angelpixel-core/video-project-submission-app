@@ -14,7 +14,7 @@ depends_on:
   - order-domain-and-project-rename
 order: 46
 phase: work-items
-status: draft
+status: done
 title: Data Bootstrap Migrations
 ---
 
@@ -22,7 +22,7 @@ title: Data Bootstrap Migrations
 
 ## Goal
 
-- [ ] Introduce a data bootstrap layer for minimum required records so fresh installs can start from an empty schema without relying on demo seeds.
+- [x] Introduce a data bootstrap layer for minimum required records so fresh installs can start from an empty schema without relying on demo seeds.
 
 ## Scope
 
@@ -34,7 +34,8 @@ title: Data Bootstrap Migrations
 
 ## Current Codebase
 
-- `db/seeds.rb` currently creates the default client and PM accounts plus a seed project.
+- `db/data/20260729203959_bootstrap_identity_records.rb` now creates the required identity bootstrap records.
+- `db/seeds.rb` now keeps only optional demo data such as the seed project and video types.
 - `Identity::Application::Services::WorkspaceResolver` already depends on default workspace email environment variables.
 - `Identity::Domain::Aggregates::User`, `Account`, and `Membership` already exist and are linked through persistence repositories.
 - Environment templates now expose `DEFAULT_CLIENT_WORKSPACE_EMAIL` and `DEFAULT_PM_WORKSPACE_EMAIL`.
@@ -61,10 +62,10 @@ schema migrate
 ## Implementation Plan
 
 - [x] Define the data migration location and execution path for minimum bootstrap data.
-- [ ] Move required identity bootstrap records out of `db/seeds.rb` into data migrations.
-- [ ] Keep optional demo data in `db/seeds.rb`.
-- [ ] Make bootstrap values configurable through environment variables where needed.
-- [ ] Add specs or smoke checks for the bootstrap path.
+- [x] Move required identity bootstrap records out of `db/seeds.rb` into data migrations.
+- [x] Keep optional demo data in `db/seeds.rb`.
+- [x] Make bootstrap values configurable through environment variables where needed.
+- [x] Add specs or smoke checks for the bootstrap path.
 
 ## Expected Result
 
@@ -89,16 +90,16 @@ schema migrate
 
 ## Checklist
 
-- [ ] Bootstrap data is separated from demo seeds.
-- [ ] Minimum identity data is created through data migrations.
-- [ ] Workspace defaults are environment-driven.
-- [ ] Fresh installs can start without manual bootstrap steps.
+- [x] Bootstrap data is separated from demo seeds.
+- [x] Minimum identity data is created through data migrations.
+- [x] Workspace defaults are environment-driven.
+- [x] Fresh installs can start without manual bootstrap steps.
 
 ## Validation
 
-- [ ] Specs or smoke checks cover the bootstrap flow.
-- [ ] Seeds remain deterministic and optional.
-- [ ] No environment-specific values are hardcoded into bootstrap data.
+- [x] Specs or smoke checks cover the bootstrap flow.
+- [x] Seeds remain deterministic and optional.
+- [x] No environment-specific values are hardcoded into bootstrap data.
 
 ## Notes
 
