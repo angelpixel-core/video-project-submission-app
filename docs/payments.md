@@ -22,14 +22,14 @@ Use this page as the single entry point for payment-related docs.
 
 ## Implementation Docs
 
-- [Payment Retry and Observability](./work-items/035-payment-retry-and-observability.md)
-- [Payment History on Project Show](./work-items/037-payment-history-on-project-show.md)
-- [Signed Fake Payment Webhook Trigger](./work-items/038-signed-fake-payment-webhook-trigger.md)
-- [Payment Outbound Notifications](./work-items/039-payment-outbound-notifications.md)
-- [Payment Invoice Generation and Storage](./work-items/040-payment-invoice-generation-and-storage.md)
-- [Application Boundaries and Repositories](./work-items/041-application-boundaries-and-repositories.md)
-- [Order Workflow Orchestration](./work-items/042-order-workflow-orchestration.md)
-- [Payment Final Failure Notifications](./work-items/043-payment-final-failure-notifications.md)
+- [x] [Payment Retry and Observability](./work-items/035-payment-retry-and-observability.md)
+- [x] [Payment History on Project Show](./work-items/037-payment-history-on-project-show.md)
+- [x] [Signed Fake Payment Webhook Trigger](./work-items/038-signed-fake-payment-webhook-trigger.md)
+- [x] [Payment Outbound Notifications](./work-items/039-payment-outbound-notifications.md)
+- [x] [Payment Invoice Generation and Storage](./work-items/040-payment-invoice-generation-and-storage.md)
+- [x] [Application Boundaries and Repositories](./work-items/041-application-boundaries-and-repositories.md)
+- [x] [Order Workflow Orchestration](./work-items/042-order-workflow-orchestration.md)
+- [x] [Payment Final Failure Notifications](./work-items/043-payment-final-failure-notifications.md)
 
 ## Related Entry Points
 
