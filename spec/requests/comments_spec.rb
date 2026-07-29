@@ -33,7 +33,7 @@ RSpec.describe "Comments requests" do
     project = Project.create!(owner: client, participant: pm, name: "Project Alpha", raw_footage_url: "https://example.com/raw.mov", status: :in_progress)
 
     expect do
-      post project_comments_path(project), params: {
+      post order_comments_path(project), params: {
         comment: {
           body: "Client note",
           author_role: "client"
@@ -43,7 +43,7 @@ RSpec.describe "Comments requests" do
 
     comment = Comment.order(:created_at).last
 
-    expect(response).to redirect_to(project_path(project, anchor: "project-comments"))
+    expect(response).to redirect_to(order_path(project, anchor: "order-comments"))
     expect(comment.project).to eq(project)
     expect(comment.author).to eq(client)
     expect(comment.body).to eq("Client note")
@@ -60,7 +60,7 @@ RSpec.describe "Comments requests" do
     project = Project.create!(owner: client, participant: pm, name: "Project Beta", raw_footage_url: "https://example.com/raw.mov", status: :in_progress)
 
     expect do
-      post project_comments_path(project), params: {
+      post order_comments_path(project), params: {
         comment: {
           body: "PM note",
           author_role: "pm"
@@ -70,7 +70,7 @@ RSpec.describe "Comments requests" do
 
     comment = Comment.order(:created_at).last
 
-    expect(response).to redirect_to(project_path(project, anchor: "project-comments"))
+    expect(response).to redirect_to(order_path(project, anchor: "order-comments"))
     expect(comment.project).to eq(project)
     expect(comment.author).to eq(pm)
     expect(comment.body).to eq("PM note")

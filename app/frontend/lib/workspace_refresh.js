@@ -7,7 +7,7 @@ export function refreshWorkspace({ role, suppressToast = false } = {}) {
         dropdownSelector: "#pm-notifications-dropdown",
         badgeSelector: ".pm-notifications-badge",
         menuListSelector: "#pm-notifications-menu-list",
-        tableBodySelector: "#workspace-projects-table-body"
+        tableBodySelector: "#workspace-orders-table-body"
       }
     : {
         panelSelector: suppressToast ? null : "#client-notifications-panel",

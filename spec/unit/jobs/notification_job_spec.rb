@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe NotificationJob do
-  it "delegates to the notification service" do
+  it "delegates to the order notification service" do
     project = Project.create!(
       owner: workspace_account(:client, name: "Client"),
       participant: workspace_account(:pm, name: "PM"),
@@ -10,9 +10,8 @@ RSpec.describe NotificationJob do
       status: :in_progress
     )
 
-    service = instance_double(Projects::Notifications::Service)
-    expect(Projects::Notifications::Service).to receive(:new).with(project.id).and_return(service)
-    expect(service).to receive(:call)
+    service = instance_double(Orders::Notifications::Service)
+    expect(Orders::Notifications::Service).to receive(:call).with(project: project, event_type: :project_created).and_return(service)
 
     described_class.perform_now(project.id)
   end

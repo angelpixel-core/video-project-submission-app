@@ -47,9 +47,9 @@ title: Order Submission Workflow Orchestration
 ### Current Flow Today
 
 ```text
-ProjectsController#update
-  -> Projects::Application::Commands::UpdateProject
-    -> Projects::Application::Commands::SubmitProject (when finalize=1)
+OrdersController#update
+  -> Fulfillment::Application::Commands::UpdateProject
+    -> Fulfillment::Application::Commands::SubmitProject (when finalize=1)
       -> pre-flight validation (selections present)
       -> Project.transaction / project.with_lock
       -> project.submit!
@@ -59,9 +59,9 @@ ProjectsController#update
         -> provider gateway call
         -> update payment state to processing / failed
       -> NotificationJob.perform_later(project.id)
-        -> Projects::Notifications::Service
+        -> Orders::Notifications::Service
           -> create project notification
-          -> Projects::Notifications::Dispatcher
+          -> notification delivery
 ```
 
 ### Target Workflow
@@ -97,17 +97,17 @@ Workflow entrypoint
 
 ### Current File Mapping
 
-- `Projects::Application::Commands::SubmitProject` owns the current workflow orchestration and still acts as the transition bridge.
+- `Fulfillment::Application::Commands::SubmitProject` owns the current workflow orchestration and still acts as the transition bridge.
 - `Payments::Application::Commands::CreatePayment` owns payment capture/provider confirmation.
 - `Payments::Application::Handlers::GenerateInvoiceJob` owns invoice generation/storage after success.
 - `Payments::Application::Handlers::DispatchPaymentNotificationJob` owns payment status email delivery.
-- `Projects::Notifications::Service` and `NotificationJob` own project submission notifications.
+- `Orders::Notifications::Service` and `NotificationJob` own project submission notifications.
 
 ### Command Sequence
 
 ```text
 Controller / bridge
-  -> Projects::Application::Commands::SubmitProject
+  -> Fulfillment::Application::Commands::SubmitProject
     -> build Ordering::Application::DTO::Submission
        - order
        - fulfillment_account

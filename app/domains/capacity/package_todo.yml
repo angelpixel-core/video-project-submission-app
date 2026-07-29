@@ -7,19 +7,9 @@
 # bin/packwerk update-todo
 ---
 ".":
-  "::Core::Result::Success":
-    violations:
-    - dependency
-    files:
-    - app/domains/capacity/application/queries/check_capacity.rb
   "::Core::Services::Provider":
     violations:
     - dependency
     files:
     - app/domains/capacity/application/ports/clock.rb
     - app/domains/capacity/application/ports/workload_source.rb
-  "::Project":
-    violations:
-    - dependency
-    files:
-    - app/domains/capacity/domain/policies/capacity_calculation_policy.rb

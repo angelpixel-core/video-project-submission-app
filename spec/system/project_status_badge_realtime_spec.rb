@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "Project status badge realtime", type: :system, js: true do
+RSpec.describe "Order status badge realtime", type: :system, js: true do
   def switch_workspace_to(mode)
     find(".account-menu-trigger").click
     click_button "Switch to #{mode}"
@@ -27,23 +27,23 @@ RSpec.describe "Project status badge realtime", type: :system, js: true do
     VideoType.create!(name: "Highlight Reel", description: "Short edit", price_cents: 25_000, output_format: "mp4")
   end
 
-  it "updates the client project badge when the pm changes the status" do
+  it "updates the client order badge when the pm changes the status" do
     client = find_workspace_account(:client, email: "client@example.com")
     pm = find_workspace_account(:pm, email: "pm@example.com")
     project = Project.create!(owner: client, participant: pm, name: "Project Alpha", raw_footage_url: "https://example.com/raw.mov", status: :pending)
 
     using_session(:client) do
-      visit projects_path
+      visit orders_path
 
       expect(page).to have_css("##{project.status_badge_dom_id}", text: "PENDIENTE")
       expect(page).to have_css("html[data-workspace-role='client']")
-      expect(page).to have_css("html[data-project-status-connected='true']")
+      expect(page).to have_css("html[data-order-status-connected='true']")
     end
 
     using_session(:pm) do
-      visit project_path(project)
+      visit order_path(project)
       switch_workspace_to("PM")
-      click_button "Aceptar proyecto"
+      click_button "Aceptar orden"
     end
 
     using_session(:client) do

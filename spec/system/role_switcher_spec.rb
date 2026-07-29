@@ -30,7 +30,7 @@ RSpec.describe "Role switcher", type: :system, js: true do
   end
 
   it "persists the selected workspace mode in session storage and swaps the visible UI" do
-    visit projects_path
+    visit orders_path
 
     expect(page).to have_css('.account-menu-trigger')
     nav_controls = page.all(".ms-lg-auto > .dropdown", visible: :all)
@@ -47,7 +47,7 @@ RSpec.describe "Role switcher", type: :system, js: true do
     expect(page).to have_no_content("New Order")
     expect(page).to have_no_content("Project Alpha")
 
-    visit new_project_path
+    visit new_order_path
 
     expect(page).to have_css('.account-menu-trigger')
     expect(page).to have_no_css('[data-role-scope="client"]', visible: :visible)

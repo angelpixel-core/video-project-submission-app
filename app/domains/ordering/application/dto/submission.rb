@@ -4,16 +4,6 @@ module Ordering
       class Submission
         attr_reader :order, :fulfillment_account, :payment_provider, :payment_method_type, :metadata
 
-        def self.from_project(project, fulfillment_account:, payment_provider: "fake", payment_method_type: "card", metadata: {})
-          new(
-            order: project,
-            fulfillment_account: fulfillment_account,
-            payment_provider: payment_provider,
-            payment_method_type: payment_method_type,
-            metadata: metadata
-          )
-        end
-
         def self.from_order(order, fulfillment_account:, payment_provider: "fake", payment_method_type: "card", metadata: {})
           new(
             order: order,

@@ -3,7 +3,7 @@ let refreshPromise = null
 export function shouldSuppressNotificationToast(data) {
   if (data?.kind !== "comment_created") return false
 
-  const currentProjectId = document.querySelector("[data-project-id]")?.dataset.projectId
+  const currentProjectId = document.querySelector("[data-order-id]")?.dataset.orderId
   return Boolean(currentProjectId && String(data.project_id) === String(currentProjectId))
 }
 

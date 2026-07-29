@@ -219,6 +219,6 @@ Do not start step N+1 until step N is complete and validated.
 - Identity decision: `User` is identity, `Account` is tenant, `Membership` binds them, and `Role` grants capabilities.
 - Neutral workspace access now flows through `workspace_for(:client)` / `workspace_for(:pm)` instead of `current_client` / `default_pm`.
 - Workspace shell selection is driven by the `workspace_role` cookie and the `workspace-switch` UI controller.
-- PM accept/complete orchestration now lives in `Projects::ActionService` instead of `ProjectsController`.
-- Next controller extraction to tackle: move the draft submission/payment flow out of `ProjectsController#update`.
-- Draft submission and payment orchestration now lives in `Projects::SubmissionService`.
+- PM accept/complete orchestration now lives in `Orders::ActionService` instead of `OrdersController`.
+- Next controller extraction to tackle: move the draft submission/payment flow out of `OrdersController#update`.
+- Draft submission and payment orchestration now lives in `Fulfillment::Application::Commands::SubmitProject`.

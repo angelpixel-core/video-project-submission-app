@@ -13,7 +13,7 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   # root "posts#index"
   mount ActionCable.server => "/cable"
-  root "projects#index"
+  root "orders#index"
   resource :profile, only: %i[show update], controller: "profile"
 
   resources :notifications, only: %i[update]
@@ -26,12 +26,12 @@ Rails.application.routes.draw do
     post "webhooks/:provider/events", to: "adapters/inbound/webhooks/payment_webhooks#create", as: :webhook_events
   end
 
-  resources :projects, only: %i[index show new edit update] do
+  resources :orders, only: %i[index show new edit update] do
     member do
       patch :accept
       patch :complete
     end
 
-    resources :comments, only: %i[create]
+    resources :comments, only: :create, controller: "comments"
   end
 end

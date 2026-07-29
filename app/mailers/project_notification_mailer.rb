@@ -11,6 +11,10 @@ class ProjectNotificationMailer < ApplicationMailer
     notify(project, recipient_role, :project_rejected)
   end
 
+  def project_completed(project, recipient_role:)
+    notify(project, recipient_role, :project_completed)
+  end
+
   private
 
   def notify(project, recipient_role, event_type)
@@ -20,39 +24,12 @@ class ProjectNotificationMailer < ApplicationMailer
 
     mail(
       to: recipient_email(project, recipient_role),
-      subject: subject_for(project, recipient_role, event_type),
+      subject: ProjectNotificationSubject.call(project:, recipient_role:, event_type:),
       template_name: "notification"
     )
   end
 
   def recipient_email(project, recipient_role)
     recipient_role.to_s == "pm" ? project.participant.email : project.owner.email
-  end
-
-  def subject_for(project, recipient_role, event_type)
-    case recipient_role.to_s
-    when "pm"
-      case event_type.to_s
-      when "project_created"
-        "New project created: #{project.name}"
-      when "project_accepted"
-        "Project accepted: #{project.name}"
-      when "project_rejected"
-        "Project rejected: #{project.name}"
-      else
-        "Project update: #{project.name}"
-      end
-    else
-      case event_type.to_s
-      when "project_created"
-        "Your project #{project.name} was created"
-      when "project_accepted"
-        "Your project #{project.name} was accepted"
-      when "project_rejected"
-        "Your project #{project.name} needs attention"
-      else
-        "Project update for #{project.name}"
-      end
-    end
   end
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_26_100000) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_28_153000) do
   create_table "accounts", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "email", null: false
@@ -99,6 +99,36 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_26_100000) do
     t.index ["pm_id"], name: "index_notifications_on_pm_id"
     t.index ["project_id"], name: "index_notifications_on_project_id"
     t.check_constraint "((`pm_id` is not null) and (`client_id` is null)) or ((`pm_id` is null) and (`client_id` is not null))", name: "notifications_single_recipient"
+  end
+
+  create_table "order_lines", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.integer "line_total_cents", default: 0, null: false
+    t.json "offering_snapshot", null: false
+    t.bigint "order_id", null: false
+    t.integer "quantity", default: 1, null: false
+    t.datetime "updated_at", null: false
+    t.index ["order_id"], name: "index_order_lines_on_order_id"
+  end
+
+  create_table "orders", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.json "customer_snapshot"
+    t.string "delivery_status", default: "not_ready", null: false
+    t.string "name"
+    t.bigint "owner_account_id", null: false
+    t.bigint "participant_account_id", null: false
+    t.string "payment_status", default: "unpaid", null: false
+    t.string "production_status", default: "not_started", null: false
+    t.json "raw_footage_metadata"
+    t.string "raw_footage_url"
+    t.string "status", default: "draft", null: false
+    t.string "uid"
+    t.datetime "updated_at", null: false
+    t.index ["owner_account_id"], name: "index_orders_on_owner_account_id"
+    t.index ["participant_account_id"], name: "index_orders_on_participant_account_id"
+    t.index ["status"], name: "index_orders_on_status"
+    t.index ["uid"], name: "index_orders_on_uid", unique: true
   end
 
   create_table "payment_attempts", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
@@ -266,6 +296,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_26_100000) do
     t.index ["provider_reference"], name: "index_refunds_on_provider_reference", unique: true
   end
 
+  create_table "source_videos", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.text "editing_instructions"
+    t.bigint "order_id", null: false
+    t.string "source_url"
+    t.datetime "updated_at", null: false
+    t.index ["order_id"], name: "index_source_videos_on_order_id"
+  end
+
   create_table "users", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "access_state", default: "active", null: false
     t.datetime "created_at", null: false
@@ -314,6 +353,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_26_100000) do
   add_foreign_key "notifications", "accounts", column: "client_id"
   add_foreign_key "notifications", "accounts", column: "pm_id"
   add_foreign_key "notifications", "projects"
+  add_foreign_key "order_lines", "orders"
+  add_foreign_key "orders", "accounts", column: "owner_account_id"
+  add_foreign_key "orders", "accounts", column: "participant_account_id"
   add_foreign_key "payment_attempts", "payments"
   add_foreign_key "payment_invoice_delivery_intents", "payments"
   add_foreign_key "payment_method_references", "payments"
@@ -327,6 +369,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_26_100000) do
   add_foreign_key "projects", "accounts", column: "participant_account_id"
   add_foreign_key "refunds", "payment_method_references"
   add_foreign_key "refunds", "payments"
+  add_foreign_key "source_videos", "orders"
   add_foreign_key "video_type_selections", "projects"
   add_foreign_key "video_type_selections", "video_types"
 end

@@ -24,7 +24,7 @@ RSpec.describe Notification do
     expect(with_pm_account).to be_valid
     expect(with_pm_account.recipient).to eq(pm)
 
-    with_client_account = described_class.new(project: project, account: client, kind: "project_status_changed", body: "Project updated")
+    with_client_account = described_class.new(project: project, account: client, kind: "project_status_changed", body: "Order updated")
     expect(with_client_account).to be_valid
     expect(with_client_account.recipient).to eq(client)
   end
@@ -54,6 +54,6 @@ RSpec.describe Notification do
       "client_notifications",
       hash_including(type: "notifications_updated", project_id: project.id, kind: "project_status_changed")
     )
-    described_class.create!(project: project, account: client, kind: "project_status_changed", body: "Project updated")
+    described_class.create!(project: project, account: client, kind: "project_status_changed", body: "Order updated")
   end
 end

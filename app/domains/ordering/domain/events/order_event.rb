@@ -1,7 +1,7 @@
 module Ordering
   module Domain
     module Events
-      class OrderEvent < Shared::Domain::Events::DomainEvent
+      class OrderEvent < ::Domain::Events::DomainEvent
         attr_reader :order
 
         def initialize(order:, payload: {}, occurred_at: Time.current, metadata: {}, event_id: SecureRandom.uuid)

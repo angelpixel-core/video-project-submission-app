@@ -7,17 +7,17 @@ class CommentsController < ApplicationController
 
     if @comment.save
       create_comment_notification!(@comment)
-      redirect_to project_path(@project, anchor: "project-comments"), notice: "Comment posted."
+      redirect_to order_path(@project, anchor: "order-comments"), notice: "Comment posted."
     else
       @comments = @project.comments.chronological.includes(:author_account)
-      render "projects/show", status: :unprocessable_content
+      render "orders/show", status: :unprocessable_content
     end
   end
 
   private
 
   def load_project
-    @project = project_repository.find_for_show(params[:project_id])
+    @project = project_repository.find_for_show(params[:order_id])
   end
 
   def comment_params
@@ -37,6 +37,6 @@ class CommentsController < ApplicationController
   end
 
   def project_repository
-    @project_repository ||= Projects::Adapters::Persistence::Project::Repository.new
+    @project_repository ||= Fulfillment::Adapters::Persistence::Order::Repository.new
   end
 end

@@ -31,7 +31,7 @@ RSpec.describe "Notifications requests" do
     client = find_workspace_account(:client, email: "client@example.com")
     pm = find_workspace_account(:pm, email: "pm@example.com")
     project = Project.create!(owner: client, participant: pm, name: "Project Alpha", raw_footage_url: "https://example.com/raw.mov", status: :in_progress)
-    notification = Notification.create!(project: project, client: client, kind: "project_status_changed", body: "Project updated")
+    notification = Notification.create!(project: project, client: client, kind: "project_status_changed", body: "Order updated")
 
     patch notification_path(notification)
 

@@ -10,8 +10,8 @@ RSpec.describe ProjectNotificationMailer do
       mail = described_class.project_created(project, recipient_role: :client)
 
       expect(mail.to).to eq([ "client@example.com" ])
-      expect(mail.subject).to eq("Your project Project was created")
-      expect(mail.body.encoded).to include("Your project was created")
+      expect(mail.subject).to eq("Your order Project was created")
+      expect(mail.body.encoded).to include("Your order was created")
       expect(mail.body.encoded).to include("Project: Project")
       expect(mail.body.encoded).to include("Status: Pending")
     end
@@ -24,8 +24,8 @@ RSpec.describe ProjectNotificationMailer do
       mail = described_class.project_created(project, recipient_role: :pm)
 
       expect(mail.to).to eq([ "pm@example.com" ])
-      expect(mail.subject).to eq("New project created: Project")
-      expect(mail.body.encoded).to include("New project created")
+      expect(mail.subject).to eq("New order created: Project")
+      expect(mail.body.encoded).to include("New order created")
       expect(mail.body.encoded).to include("Project: Project")
       expect(mail.body.encoded).to include("Client: Client")
       expect(mail.body.encoded).to include("Status: In progress")
@@ -42,8 +42,8 @@ RSpec.describe ProjectNotificationMailer do
       mail = described_class.project_accepted(project, recipient_role: :client)
 
       expect(mail.to).to eq([ "client@example.com" ])
-      expect(mail.subject).to eq("Your project Project was accepted")
-      expect(mail.body.encoded).to include("Your project was accepted")
+      expect(mail.subject).to eq("Your order Project was accepted")
+      expect(mail.body.encoded).to include("Your order was accepted")
       expect(mail.body.encoded).to include("Next step: Your PM has accepted the project")
     end
 
@@ -55,8 +55,8 @@ RSpec.describe ProjectNotificationMailer do
       mail = described_class.project_accepted(project, recipient_role: :pm)
 
       expect(mail.to).to eq([ "pm@example.com" ])
-      expect(mail.subject).to eq("Project accepted: Project")
-      expect(mail.body.encoded).to include("Project accepted")
+      expect(mail.subject).to eq("Order accepted: Project")
+      expect(mail.body.encoded).to include("Order accepted")
       expect(mail.body.encoded).to include("The client has been notified")
     end
   end
@@ -70,8 +70,8 @@ RSpec.describe ProjectNotificationMailer do
       mail = described_class.project_rejected(project, recipient_role: :client)
 
       expect(mail.to).to eq([ "client@example.com" ])
-      expect(mail.subject).to eq("Your project Project needs attention")
-      expect(mail.body.encoded).to include("Your project needs attention")
+      expect(mail.subject).to eq("Your order Project needs attention")
+      expect(mail.body.encoded).to include("Your order needs attention")
       expect(mail.body.encoded).to include("Next step: Your PM needs changes")
     end
 
