@@ -38,6 +38,7 @@ title: Data Bootstrap Migrations
 - `Identity::Application::Services::WorkspaceResolver` already depends on default workspace email environment variables.
 - `Identity::Domain::Aggregates::User`, `Account`, and `Membership` already exist and are linked through persistence repositories.
 - Environment templates now expose `DEFAULT_CLIENT_WORKSPACE_EMAIL` and `DEFAULT_PM_WORKSPACE_EMAIL`.
+- `db/data/` is the bootstrap migration location, and `db:data:migrate` is the explicit runtime entrypoint.
 
 ## Design Notes
 
@@ -59,7 +60,7 @@ schema migrate
 
 ## Implementation Plan
 
-- [ ] Define the data migration location and execution path for minimum bootstrap data.
+- [x] Define the data migration location and execution path for minimum bootstrap data.
 - [ ] Move required identity bootstrap records out of `db/seeds.rb` into data migrations.
 - [ ] Keep optional demo data in `db/seeds.rb`.
 - [ ] Make bootstrap values configurable through environment variables where needed.
@@ -81,7 +82,7 @@ schema migrate
 
 - `db/migrate/`
 - `db/seeds.rb`
-- `db/data_migrate/` or equivalent data migration path
+- `db/data/`
 - `env/*/app/core.env`
 - `spec/unit/`
 - `spec/requests/`

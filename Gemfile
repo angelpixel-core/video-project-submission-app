@@ -27,6 +27,7 @@ gem "tzinfo-data", platforms: %i[ windows jruby ]
 # Use the database-backed adapters for Rails.cache, Active Job, and Action Cable
 gem "aasm", "~> 6.0"
 gem "dry-system", "~> 1.2"
+gem "data_migrate", "~> 11.3.1"
 gem "packwerk", "~> 3.3"
 gem "solid_cache"
 gem "solid_queue"
