@@ -14,7 +14,7 @@ depends_on:
   - payment-webhook-ingestion
 order: 43
 phase: work-items
-status: draft
+status: done
 title: Payment Final Failure Notifications
 ---
 
@@ -22,7 +22,7 @@ title: Payment Final Failure Notifications
 
 ## Goal
 
-- [ ] Notify client and PM when a payment fails after all technical retries are exhausted, and provide a reproducible make-based demo for that final-failure path.
+- [x] Notify client and PM when a payment fails after all technical retries are exhausted, and provide a reproducible make-based demo for that final-failure path.
 
 ## Scope
 
