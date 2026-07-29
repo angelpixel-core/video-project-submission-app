@@ -24,6 +24,7 @@ module Payments
 
                 from_status = payment.status
                 failure_message = error.message.presence || event.last_failure_message.presence || "Payment webhook processing failed after retries."
+                failure_reason_code = Payments::Domain::Policies::FailureReasonNormalizer.call(error:, event:)
                 current_attempt = event.processing_attempts.order(:attempt_number).last
 
                 payment.update!(
@@ -34,7 +35,7 @@ module Payments
                 )
 
                 update_payment_attempt!(payment:, event:, error_message: failure_message)
-                event.mark_failed!(failure_message, attempt: current_attempt)
+                event.mark_failed!(failure_message, attempt: current_attempt, failure_reason_code: failure_reason_code)
 
                 Payments::Domain::Entities::PaymentNotificationIntent.create!(
                   payment: payment,
@@ -48,6 +49,7 @@ module Payments
                     provider_event_id: event.provider_event_id,
                     webhook_event_id: event.id,
                     payment_status: "failed",
+                    failure_reason_code: failure_reason_code,
                     failure_message: failure_message,
                     failure_class: error.class.name
                   },

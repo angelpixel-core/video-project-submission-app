@@ -226,6 +226,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_29_100000) do
     t.datetime "created_at", null: false
     t.text "error_message"
     t.string "event_type", null: false
+    t.string "failure_reason_code"
     t.datetime "last_attempted_at"
     t.datetime "last_failure_at"
     t.text "last_failure_message"
@@ -240,6 +241,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_29_100000) do
     t.string "signature"
     t.string "status", default: "received", null: false
     t.datetime "updated_at", null: false
+    t.index ["failure_reason_code"], name: "index_payment_webhook_events_on_failure_reason_code"
     t.index ["payment_id", "provider_event_id"], name: "index_payment_webhook_events_on_payment_and_provider_event_id", unique: true
     t.index ["payment_id"], name: "index_payment_webhook_events_on_payment_id"
     t.index ["project_id", "status"], name: "index_payment_webhook_events_on_project_id_and_status"

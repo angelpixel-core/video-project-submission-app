@@ -81,6 +81,7 @@ RSpec.describe Payments::Adapters::Inbound::Webhooks::Event::FinalFailureHandler
     expect(event.status).to eq("failed")
     expect(event.error_message).to eq("Demo transient webhook failure.")
     expect(event.last_failure_message).to eq("Demo transient webhook failure.")
+    expect(event.failure_reason_code).to eq("demo_transient_failure")
     expect(event.processing_attempts_count).to eq(1)
     expect(event.processing_attempts.first.status).to eq("failed")
 
@@ -91,6 +92,7 @@ RSpec.describe Payments::Adapters::Inbound::Webhooks::Event::FinalFailureHandler
     expect(intent.to_status).to eq("failed")
     expect(intent.payload["failure_message"]).to eq("Demo transient webhook failure.")
     expect(intent.payload["failure_class"]).to eq("Payments::Domain::Errors::DemoTransientFailure")
+    expect(intent.payload["failure_reason_code"]).to eq("demo_transient_failure")
 
     expect do
       described_class.call(payment_webhook_event_id: event.id, error: Payments::Domain::Errors::DemoTransientFailure.new("Demo transient webhook failure."))

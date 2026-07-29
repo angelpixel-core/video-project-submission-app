@@ -41,13 +41,14 @@ module Payments
           attempt
         end
 
-        def mark_failed!(message, attempt: nil)
+        def mark_failed!(message, attempt: nil, failure_reason_code: nil)
           attempt&.fail!(message)
           update!(
             status: :failed,
             error_message: message,
             last_failure_at: Time.current,
-            last_failure_message: message
+            last_failure_message: message,
+            failure_reason_code: failure_reason_code.presence || self.failure_reason_code
           )
         end
 
