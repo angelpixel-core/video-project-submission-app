@@ -4,7 +4,8 @@ module Capacity
       class CheckCapacity
         def self.call(offer:, quantity: 1)
           available_units = Capacity::Domain::Policies::CapacityCalculationPolicy.available_units_for(offer)
-          available = quantity.to_i <= available_units
+          requested_units = quantity.to_i
+          available = requested_units.positive? && requested_units <= available_units
 
           Core::Result::Success.(data: { available: available, available_units: available_units })
         end
