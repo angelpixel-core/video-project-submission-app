@@ -14,7 +14,7 @@ depends_on:
   - order-domain-and-project-rename
 order: 45
 phase: work-items
-status: draft
+status: done
 title: Capacity Reservation Workflow
 ---
 
@@ -22,7 +22,7 @@ title: Capacity Reservation Workflow
 
 ## Goal
 
-- [ ] Model the production capacity lifecycle so orders can reserve, commit, release, and expire capacity with explicit application commands and tests.
+- [x] Model the production capacity lifecycle so orders can reserve, commit, release, and expire capacity with explicit application commands and tests.
 
 ## Scope
 
@@ -89,11 +89,11 @@ flowchart LR
 
 ## Implementation Plan
 
-- [ ] Add reservation commands and their domain/application boundaries.
-- [ ] Model reserve/commit/release/expire transitions on the capacity aggregate.
-- [ ] Persist reservation lifecycle changes in the capacity repository.
-- [ ] Wire the ordering integration to call the new write-side commands.
-- [ ] Add specs for availability, reservation lifecycle, and expiration behavior.
+- [x] Add reservation commands and their domain/application boundaries.
+- [x] Model reserve/commit/release/expire transitions on the capacity aggregate.
+- [x] Persist reservation lifecycle changes in the capacity repository.
+- [x] Wire the ordering integration to call the new write-side commands.
+- [x] Add specs for availability, reservation lifecycle, and expiration behavior.
 
 ## Expected Result
 
@@ -118,17 +118,17 @@ flowchart LR
 
 ## Checklist
 
-- [ ] Capacity has an explicit reservation workflow.
-- [ ] Query-side availability remains isolated from write-side reservation logic.
-- [ ] Reservation expiry is modeled as a first-class domain action.
-- [ ] Ordering integration uses the capacity application layer, not direct persistence.
+- [x] Capacity has an explicit reservation workflow.
+- [x] Query-side availability remains isolated from write-side reservation logic.
+- [x] Reservation expiry is modeled as a first-class domain action.
+- [x] Ordering integration uses the capacity application layer, not direct persistence.
 
 ## Validation
 
-- [ ] Specs cover capacity availability.
-- [ ] Specs cover reservation transitions.
-- [ ] Specs cover commit/release/expire behavior.
-- [ ] No new package dependency violations are introduced.
+- [x] Specs cover capacity availability.
+- [x] Specs cover reservation transitions.
+- [x] Specs cover commit/release/expire behavior.
+- [x] No new package dependency violations are introduced.
 
 ## Notes
 
