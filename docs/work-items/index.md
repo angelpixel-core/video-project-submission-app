@@ -219,3 +219,7 @@ Payments docs are centralized at [Payments Index](../payments.md).
 ## 44
 
 - [ ] [Order Domain and Project Rename](./044-order-domain-and-project-rename.md)
+
+## 45
+
+- [ ] [Capacity Reservation Workflow](./045-capacity-reservation-workflow.md)
