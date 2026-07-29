@@ -13,7 +13,7 @@ depends_on:
   - order-workflow-orchestration
 order: 44
 phase: work-items
-status: development
+status: done
 title: Order Domain and Project Rename
 ---
 
@@ -22,7 +22,7 @@ title: Order Domain and Project Rename
 ## Goal
 
 - [x] Recenter the product around `order` as the primary domain concept, keeping `project` only as a temporary compatibility surface during migration.
-- [ ] Split the current `project` responsibilities into explicit domains: `catalog` for what is sold, `ordering` for the customer request, `fulfillment` for internal work, and `delivery` for the final artifact.
+- [x] Split the current `project` responsibilities into explicit domains: `catalog` for what is sold, `ordering` for the customer request, `fulfillment` for internal work, and `notifications` for the final artifact/dispatch layer.
 
 ## Scope
 
