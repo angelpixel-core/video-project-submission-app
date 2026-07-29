@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_28_153000) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_29_100000) do
   create_table "accounts", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "email", null: false
@@ -47,6 +47,21 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_28_153000) do
     t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "capacity_reservations", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.bigint "order_id", null: false
+    t.datetime "committed_at"
+    t.datetime "created_at", null: false
+    t.datetime "expired_at"
+    t.datetime "expires_at"
+    t.datetime "released_at"
+    t.string "status", default: "reserved", null: false
+    t.integer "units", null: false
+    t.datetime "updated_at", null: false
+    t.index ["expires_at"], name: "index_capacity_reservations_on_expires_at"
+    t.index ["order_id"], name: "index_capacity_reservations_on_order_id", unique: true
+    t.index ["status"], name: "index_capacity_reservations_on_status"
   end
 
   create_table "clients", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
@@ -345,6 +360,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_28_153000) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "capacity_reservations", "orders"
   add_foreign_key "comments", "accounts", column: "author_account_id"
   add_foreign_key "comments", "projects"
   add_foreign_key "memberships", "accounts"
