@@ -107,7 +107,7 @@ DEMO_FAIL_ALWAYS=1 make payments/send_signed_fake_webhook PROJECT_ID=<project_id
 ## Implementation Plan
 
 - [x] Add a bounded retry strategy for `Payments::Adapters::Inbound::Webhooks::Event::Job`.
-- [ ] Add a final failure handler that runs when retries are exhausted.
+- [x] Add a final failure handler that runs when retries are exhausted.
 - [ ] Normalize payment failure reasons into stable codes with a raw fallback.
 - [ ] Create `payment.failed_final` notification intents on final failure.
 - [ ] Send role-specific client and PM emails for final failure.
