@@ -1,2 +1,2 @@
-class VideoType < Catalog::Domain::Entities::VideoType
+class VideoType < OfferingVariant
 end

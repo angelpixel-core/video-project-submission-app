@@ -1,10 +1,7 @@
 module Catalog
   module Domain
     module Entities
-      class VideoType < Catalog::Domain::Aggregates::Offer
-        def available?
-          Catalog::Domain::Policies::AvailabilityPolicy.available?(self)
-        end
+      class VideoType < OfferingVariant
       end
     end
   end
