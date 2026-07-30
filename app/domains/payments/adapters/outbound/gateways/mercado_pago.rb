@@ -20,7 +20,7 @@ module Payments
                 provider_status: "accepted",
                 request_payload: {
                   payment_id: payment.id,
-                  project_id: payment.project_id,
+                  order_id: payment.project_id,
                   amount_cents: payment.amount_cents,
                   currency: payment.currency,
                   idempotency_key: payment.idempotency_key
@@ -42,7 +42,7 @@ module Payments
                 provider_status: "accepted",
                 request_payload: {
                   payment_id: payment.id,
-                  project_id: payment.project_id,
+                  order_id: payment.project_id,
                   refund_id: refund.id,
                   amount_cents: refund.amount_cents,
                   reason: refund.reason

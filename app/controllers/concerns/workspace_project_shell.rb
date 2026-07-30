@@ -32,7 +32,7 @@ module WorkspaceProjectShell
     client_workspace = workspace_for(:client)
     pm_workspace = workspace_for(:pm)
     result = Fulfillment::Application::Commands::CreateDraftOrder.call(client_workspace: client_workspace, pm_workspace: pm_workspace, repository: project_repository)
-    project = result.data.fetch(:project)
+    project = result.data.fetch(:order)
 
     redirect_to edit_order_path(project)
   end

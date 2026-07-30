@@ -18,7 +18,7 @@ export function subscribeToOrderStatus(consumer) {
         received(data) {
           document.documentElement.dataset.orderStatusReceived = data?.type || "unknown"
 
-          if (data?.type === "status_updated" && data.project_id?.toString() === orderId) {
+          if (data?.type === "status_updated" && data.order_id?.toString() === orderId) {
             const statusCell = orderContainer.querySelector("[data-order-status-cell]")
             const statusBadge = orderContainer.querySelector("[id^='status_badge_']")
             const paymentCell = orderContainer.querySelector("[data-order-payment-cell]")

@@ -44,10 +44,10 @@ module Orders
     def self.request_refund(project)
       project = project.reload if project.respond_to?(:reload)
       project_id = project&.id
-      return Core::Result::Failure.(message: "Refund can only be requested for active orders.", code: :invalid_transition, data: { project_id: project_id }) unless project.respond_to?(:can_request_refund?) && project.can_request_refund?
+      return Core::Result::Failure.(message: "Refund can only be requested for active orders.", code: :invalid_transition, data: { order_id: project_id }) unless project.respond_to?(:can_request_refund?) && project.can_request_refund?
 
       payment = project.latest_succeeded_payment
-      return Core::Result::Failure.(message: "Payment cannot be refunded.", code: :not_refundable, data: { project_id: project_id }) unless payment.present?
+      return Core::Result::Failure.(message: "Payment cannot be refunded.", code: :not_refundable, data: { order_id: project_id }) unless payment.present?
 
       result = Payments::Application::Commands::RequestRefund.call(
         payment: payment,
@@ -65,7 +65,7 @@ module Orders
 
     def self.review_refund_request(project, approved:)
       payment = project.latest_succeeded_payment
-      return Core::Result::Failure.(message: "Refund request not found.", code: :not_found, data: { project_id: project&.id }) unless payment.present?
+      return Core::Result::Failure.(message: "Refund request not found.", code: :not_found, data: { order_id: project&.id }) unless payment.present?
 
       result = Payments::Application::Commands::ReviewRefundRequest.call(
         payment: payment,
@@ -83,7 +83,7 @@ module Orders
 
     def self.reopen_order(project)
       project = project.reload if project.respond_to?(:reload)
-      return Core::Result::Failure.(message: "Only cancelled orders can be reopened.", code: :invalid_transition, data: { project_id: project&.id }) unless project.respond_to?(:can_reopen_order?) && project.can_reopen_order?
+      return Core::Result::Failure.(message: "Only cancelled orders can be reopened.", code: :invalid_transition, data: { order_id: project&.id }) unless project.respond_to?(:can_reopen_order?) && project.can_reopen_order?
 
       result = Fulfillment::Application::Commands::ProcessOrderAction.call(order: project, event: :reopen)
       return result if result.failure?
@@ -91,7 +91,7 @@ module Orders
       project.sync_order_listing!
       Orders::Notifications::Service.call(project:, event_type: :project_reopened)
 
-      Core::Result::Success.(data: { project: project, broadcast_refresh: false })
+      Core::Result::Success.(data: { order: project, broadcast_refresh: false })
     end
   end
 end

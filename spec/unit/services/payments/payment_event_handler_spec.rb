@@ -24,7 +24,7 @@ RSpec.describe Payments::Adapters::Inbound::Webhooks::Event::Handler do
       provider_reference: payment.provider_reference,
       request_payload: {
         payment_id: payment.id,
-        project_id: payment.project_id,
+        order_id: payment.project_id,
         amount_cents: payment.amount_cents,
         currency: payment.currency,
         idempotency_key: payment.idempotency_key

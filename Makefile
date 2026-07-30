@@ -23,9 +23,9 @@ repo/create:
 db/seeds:
 	@STACK_ENV="$(STACK_ENV)" sh $(DB_SCRIPT) seeds
 
-.PHONY: maintenance/reset_project_data
-maintenance/reset_project_data:
-	@STACK_ENV="$(STACK_ENV)" CONFIRM="$(CONFIRM)" DRY_RUN="$(DRY_RUN)" sh $(DB_SCRIPT) maintenance/reset_project_data
+.PHONY: maintenance/reset_order_data
+maintenance/reset_order_data:
+	@STACK_ENV="$(STACK_ENV)" CONFIRM="$(CONFIRM)" DRY_RUN="$(DRY_RUN)" sh $(DB_SCRIPT) maintenance/reset_order_data
 
 .PHONY: web/console
 web/console:

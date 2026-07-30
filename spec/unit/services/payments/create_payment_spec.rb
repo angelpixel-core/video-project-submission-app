@@ -18,6 +18,7 @@ RSpec.describe Payments::Application::Commands::CreatePayment do
     expect(payment.payment_attempts.count).to eq(1)
     expect(payment.payment_attempts.first.idempotency_key).to eq(payment.idempotency_key)
     expect(payment.payment_attempts.first.status).to eq("submitted")
+    expect(payment.payment_attempts.first.request_payload["order_id"]).to eq(project.id)
   end
 
   it "reuses the existing active payment instead of creating a duplicate" do

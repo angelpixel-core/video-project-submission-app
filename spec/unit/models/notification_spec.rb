@@ -52,7 +52,7 @@ RSpec.describe Notification do
 
     expect(ActionCable.server).to receive(:broadcast).with(
       "client_notifications",
-      hash_including(type: "notifications_updated", project_id: project.id, kind: "project_status_changed")
+      hash_including(type: "notifications_updated", order_id: project.id, kind: "project_status_changed")
     )
     described_class.create!(project: project, account: client, kind: "project_status_changed", body: "Order updated")
   end

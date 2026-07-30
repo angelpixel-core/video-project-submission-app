@@ -15,7 +15,7 @@ module Payments
 
         def call
           order.with_lock do
-            return Core::Result::Failure.(message: "Payment request pending review.", code: :refund_request_pending, data: { project_id: order.id }) if order.respond_to?(:payment_flow_blocked?) && order.payment_flow_blocked?
+            return Core::Result::Failure.(message: "Payment request pending review.", code: :refund_request_pending, data: { order_id: order.id }) if order.respond_to?(:payment_flow_blocked?) && order.payment_flow_blocked?
 
             payment = Payments::Domain::Repositories::PaymentRepository.find_active_by_project(order)
             return Core::Result::Success.(data: { payment: payment, attempt: payment.payment_attempts.order(created_at: :desc).first }) if payment.present?
@@ -89,7 +89,7 @@ module Payments
 
         def payment_request_payload(payment)
           {
-            project_id: payment.project_id,
+            order_id: payment.project_id,
             amount_cents: payment.amount_cents,
             currency: payment.currency,
             status: payment.status

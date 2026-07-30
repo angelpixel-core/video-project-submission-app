@@ -61,11 +61,11 @@ class Notification < ApplicationRecord
     stream_name = notification_stream_name(recipient)
     return unless stream_name.present?
 
-    ActionCable.server.broadcast(
+      ActionCable.server.broadcast(
       stream_name,
       {
         type: "notifications_updated",
-        project_id: notification&.project_id,
+        order_id: notification&.project_id,
         kind: notification&.kind
       }
     )

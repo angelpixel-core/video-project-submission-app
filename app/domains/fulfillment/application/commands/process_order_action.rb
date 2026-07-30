@@ -22,7 +22,7 @@ module Fulfillment
             Core::Result::Success.(data: { broadcast_refresh: broadcast_refresh? })
           end
         rescue AASM::InvalidTransition, ActiveRecord::RecordInvalid => e
-          Core::Result::Failure.(message: e.message, code: :invalid_transition, data: { project_id: order.id })
+          Core::Result::Failure.(message: e.message, code: :invalid_transition, data: { order_id: order.id })
         end
 
         private
@@ -57,11 +57,11 @@ module Fulfillment
         end
 
         def unsupported_event_failure
-          Core::Result::Failure.(message: "Unsupported fulfillment action.", code: :invalid_action, data: { project_id: order.id })
+          Core::Result::Failure.(message: "Unsupported fulfillment action.", code: :invalid_action, data: { order_id: order.id })
         end
 
         def stale_failure
-          Core::Result::Failure.(message: "Fulfillment action is stale.", code: :invalid_transition, data: { project_id: order.id })
+          Core::Result::Failure.(message: "Fulfillment action is stale.", code: :invalid_transition, data: { order_id: order.id })
         end
       end
     end

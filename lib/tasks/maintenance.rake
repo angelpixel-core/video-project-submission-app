@@ -1,11 +1,11 @@
 namespace :maintenance do
-  desc "Reset project-owned data while keeping clients, PMs, and video types"
-  task reset_project_data: :environment do
-    reset_project_data!
+  desc "Reset order-owned data while keeping clients, PMs, and video types"
+  task reset_order_data: :environment do
+    reset_order_data!
   end
 end
 
-def reset_project_data!
+def reset_order_data!
   dry_run = ActiveModel::Type::Boolean.new.cast(ENV["DRY_RUN"])
   confirm = ENV["CONFIRM"].to_s.upcase == "YES"
 
@@ -21,7 +21,7 @@ def reset_project_data!
     [ "projects", Project ]
   ]
 
-  puts "Project data reset plan:"
+  puts "Order data reset plan:"
   tables.each do |table_name, model|
     puts "- #{table_name}: #{model.unscoped.count} rows"
   end
@@ -44,5 +44,5 @@ def reset_project_data!
     end
   end
 
-  puts "Project data reset complete. Clients, PMs, and video types were preserved."
+  puts "Order data reset complete. Clients, PMs, and video types were preserved."
 end

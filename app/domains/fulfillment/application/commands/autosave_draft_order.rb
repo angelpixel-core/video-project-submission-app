@@ -26,9 +26,9 @@ module Fulfillment
             end
           end
 
-          Core::Result::Success.(data: { project: order })
+          Core::Result::Success.(data: { order: order })
         rescue ActiveRecord::RecordInvalid, ArgumentError => e
-          Core::Result::Failure.(message: e.message, code: :invalid_record, data: { project_id: order.id })
+          Core::Result::Failure.(message: e.message, code: :invalid_record, data: { order_id: order.id })
         end
 
         private

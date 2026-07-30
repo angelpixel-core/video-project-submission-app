@@ -341,7 +341,7 @@ class Order < ApplicationRecord
       "order_status_#{id}",
       {
         type: "status_updated",
-        project_id: id,
+        order_id: id,
         status_badge_html: ApplicationController.render(partial: "orders/status_badge", locals: { project: current_project }),
         payment_badge_html: ApplicationController.render(partial: "orders/workspace_order_payment_badge", locals: { project: current_project }),
         payment_history_html: current_project.payment_history_html

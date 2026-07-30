@@ -39,7 +39,7 @@ module Payments
                   to_status: to_status,
                   payload: {
                     payment_id: payment.id,
-                    project_id: payment.project_id,
+                    order_id: payment.project_id,
                     provider_event_id: event.provider_event_id,
                     webhook_event_id: event.id,
                     payment_status: to_status
