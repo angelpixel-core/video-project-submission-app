@@ -12,7 +12,7 @@ module Billing
           intent.payment.with_lock do
             return if intent.payment.invoice_emailed_at.present?
 
-            Billing::Adapters::Outbound::Email::PaymentInvoiceMailer.invoice_ready(intent).deliver_now
+            Billing::Adapters::Outbound::Email::InvoiceMailer.invoice_ready(intent).deliver_now
             intent.payment.update!(invoice_emailed_at: Time.current)
             intent.mark_sent!
           end
