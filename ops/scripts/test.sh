@@ -90,16 +90,16 @@ case "${1:-}" in
   verify)
     ensure_database
     build_image
-    run_in_image 'bundle exec rails db:prepare && bundle exec ruby -e "require \"./config/environment\"; puts Rails.env"'
+    run_in_image 'bundle exec rails db:prepare:with_data && bundle exec ruby -e "require \"./config/environment\"; puts Rails.env"'
     ;;
   rspec)
     shift
     ensure_database
     build_image
     if [ -n "${TEST_ARGS:-}" ]; then
-      run_in_image "bundle exec rails db:prepare && bundle exec rspec ${TEST_ARGS}" "$@"
+      run_in_image "bundle exec rails db:prepare:with_data && bundle exec rspec ${TEST_ARGS}" "$@"
     else
-      run_in_image 'bundle exec rails db:prepare && bundle exec rspec "$@"' "$@"
+      run_in_image 'bundle exec rails db:prepare:with_data && bundle exec rspec "$@"' "$@"
     fi
     ;;
   cucumber)
@@ -107,9 +107,9 @@ case "${1:-}" in
     ensure_database
     build_image
     if [ -n "${TEST_ARGS:-}" ]; then
-      run_in_image "bundle exec rails db:prepare && bundle exec cucumber spec/acceptance/features --require spec/acceptance/support --require spec/acceptance/step_definitions ${TEST_ARGS}" "$@"
+      run_in_image "bundle exec rails db:prepare:with_data && bundle exec cucumber spec/acceptance/features --require spec/acceptance/support --require spec/acceptance/step_definitions ${TEST_ARGS}" "$@"
     else
-      run_in_image 'bundle exec rails db:prepare && bundle exec cucumber spec/acceptance/features --require spec/acceptance/support --require spec/acceptance/step_definitions "$@"' "$@"
+      run_in_image 'bundle exec rails db:prepare:with_data && bundle exec cucumber spec/acceptance/features --require spec/acceptance/support --require spec/acceptance/step_definitions "$@"' "$@"
     fi
     ;;
   *)
