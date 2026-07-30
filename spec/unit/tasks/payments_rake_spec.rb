@@ -28,7 +28,6 @@ RSpec.describe "payments rake tasks" do
     end
 
     Rake::Task["payments:simulate_webhook"].reenable
-    Rake::Task["payments:send_signed_fake_webhook"].reenable
     Rake::Task["payments:replay_webhook_event"].reenable
     Rake::Task["payments:replay_failed_webhook_events"].reenable
   end
@@ -58,7 +57,7 @@ RSpec.describe "payments rake tasks" do
       amount_cents: "50000"
     ).and_return(Core::Result::Success.(data: { status_code: 202, body: "accepted" }))
 
-    Rake::Task["payments:send_signed_fake_webhook"].invoke
+    Rake::Task["payments:simulate_webhook"].invoke
   end
 
   it "resolves the payment from a project id when provided" do
@@ -97,7 +96,7 @@ RSpec.describe "payments rake tasks" do
       amount_cents: 77_000
     ).and_return(Core::Result::Success.(data: { status_code: 202, body: "accepted" }))
 
-    Rake::Task["payments:send_signed_fake_webhook"].invoke
+    Rake::Task["payments:simulate_webhook"].invoke
   end
 
   it "falls back to the most recent payment when the project has no active payment" do
@@ -127,7 +126,7 @@ RSpec.describe "payments rake tasks" do
       amount_cents: 88_000
     ).and_return(Core::Result::Success.(data: { status_code: 202, body: "accepted" }))
 
-    Rake::Task["payments:send_signed_fake_webhook"].invoke
+    Rake::Task["payments:simulate_webhook"].invoke
   end
 
   it "treats blank env vars like unset values" do
@@ -182,7 +181,7 @@ RSpec.describe "payments rake tasks" do
       demo_fail_once: true
     ).and_return(Core::Result::Success.(data: { status_code: 202, body: "accepted" }))
 
-    Rake::Task["payments:send_signed_fake_webhook"].invoke
+    Rake::Task["payments:simulate_webhook"].invoke
   end
 
   it "forwards the demo fail-always flag to the webhook simulator" do
@@ -199,7 +198,7 @@ RSpec.describe "payments rake tasks" do
       demo_fail_always: true
     ).and_return(Core::Result::Success.(data: { status_code: 202, body: "accepted" }))
 
-    Rake::Task["payments:send_signed_fake_webhook"].invoke
+    Rake::Task["payments:simulate_webhook"].invoke
   end
 
   it "replays a single event by provider event id" do
