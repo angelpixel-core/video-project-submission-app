@@ -5,4 +5,6 @@ namespace :db do
       Rake::Task["data:migrate"].invoke
     end
   end
+
+  Rake::Task["db:seed"].enhance([ "db:data:migrate" ])
 end
