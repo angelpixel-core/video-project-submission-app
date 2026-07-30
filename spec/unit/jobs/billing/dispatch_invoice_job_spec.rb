@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe Payments::Application::Handlers::DispatchInvoiceJob do
+RSpec.describe Billing::Application::Handlers::DispatchInvoiceJob do
   it "delivers the invoice email and marks the intent sent" do
     client = workspace_account(:client, name: "Client")
     pm = workspace_account(:pm, name: "PM")

@@ -42,7 +42,7 @@ RSpec.describe Payments::Domain::Aggregates::Payment do
     )
 
     expect(duplicate_active).not_to be_valid
-    expect(duplicate_active.errors[:base]).to include("Project already has an active payment")
+    expect(duplicate_active.errors[:base]).to include("Order already has an active payment")
   end
 
   it "rejects duplicate idempotency keys" do
@@ -85,7 +85,7 @@ RSpec.describe Payments::Domain::Aggregates::Payment do
       currency: "usd"
     )
 
-    expect(Payments::Application::Handlers::GenerateInvoiceJob).to receive(:perform_later).with(payment.id)
+    expect(Billing::Application::Handlers::GenerateInvoiceJob).to receive(:perform_later).with(payment.id)
 
     payment.update!(status: :succeeded, confirmed_at: Time.current)
   end

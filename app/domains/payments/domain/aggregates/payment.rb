@@ -81,7 +81,7 @@ module Payments
         def enqueue_invoice_generation_job
           return unless saved_change_to_status? && succeeded?
 
-          Payments::Application::Handlers::GenerateInvoiceJob.perform_later(id)
+          Billing::Application::Handlers::GenerateInvoiceJob.perform_later(id)
         end
 
         def broadcast_project_payment_state

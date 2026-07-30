@@ -23,7 +23,7 @@ RSpec.describe Ordering::Application::Commands::ProcessSubmission do
     expect(payment_command).to receive(:call).and_return(payment_result)
     expect(commit_command).to receive(:call).with(order_id: project.id).and_return(commit_result)
     expect(release_command).not_to receive(:call)
-    expect(Payments::Application::Handlers::GenerateInvoiceJob).to receive(:perform_later).with(payment.id)
+    expect(Billing::Application::Handlers::GenerateInvoiceJob).to receive(:perform_later).with(payment.id)
     expect(NotificationJob).to receive(:perform_later).with(project.id)
 
     result = described_class.call(
@@ -58,7 +58,7 @@ RSpec.describe Ordering::Application::Commands::ProcessSubmission do
     expect(payment_command).to receive(:call).and_return(payment_result)
     expect(commit_command).not_to receive(:call)
     expect(release_command).to receive(:call).with(order_id: project.id)
-    expect(Payments::Application::Handlers::GenerateInvoiceJob).not_to receive(:perform_later)
+    expect(Billing::Application::Handlers::GenerateInvoiceJob).not_to receive(:perform_later)
     expect(NotificationJob).not_to receive(:perform_later)
 
     result = described_class.call(

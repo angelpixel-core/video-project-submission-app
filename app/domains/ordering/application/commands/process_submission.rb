@@ -114,7 +114,7 @@ module Ordering
         end
 
         def enqueue_follow_up_work(payment)
-          Payments::Application::Handlers::GenerateInvoiceJob.perform_later(payment.id)
+          Billing::Application::Handlers::GenerateInvoiceJob.perform_later(payment.id)
           NotificationJob.perform_later(submission.order.id)
         end
 
