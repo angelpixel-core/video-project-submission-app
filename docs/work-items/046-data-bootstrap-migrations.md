@@ -106,3 +106,11 @@ schema migrate
 - The goal is not to seed everything, only the minimum the app cannot function without.
 - If a record is editable by users, it usually does not belong in bootstrap data unless it is also a hard dependency.
 - `data migrations` should capture required product invariants; `seeds` should capture convenience/demo data.
+
+## Follow-up Plan
+
+- Introduce `Tenant` as the technical boundary and `Organization` as the business-facing root, both bootstrapped from environment variables.
+- Replace the legacy `Project` naming with `Order` in the public domain and UI.
+- Keep the existing catalog base, but formalize `Offering` / `OfferingVariant` naming over the current video-type structure.
+- Treat `Fulfillment` as the internal execution process for an `Order`, not as the customer-facing purchase object.
+- Use a data migrate to materialize the initial tenant/organization pair and associate existing records to it before removing legacy compatibility.

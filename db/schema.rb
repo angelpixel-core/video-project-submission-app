@@ -10,14 +10,16 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_29_100000) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_30_000001) do
   create_table "accounts", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "email", null: false
     t.string "name", null: false
+    t.bigint "organization_id"
     t.string "role", null: false
     t.datetime "updated_at", null: false
     t.index ["email", "role"], name: "index_accounts_on_email_and_role", unique: true
+    t.index ["organization_id"], name: "index_accounts_on_organization_id"
     t.index ["role"], name: "index_accounts_on_role"
   end
 
@@ -85,6 +87,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_29_100000) do
     t.index ["project_id"], name: "index_comments_on_project_id"
   end
 
+  create_table "data_migrations", primary_key: "version", id: :string, charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+  end
+
   create_table "memberships", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "account_id", null: false
     t.datetime "created_at", null: false
@@ -146,6 +151,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_29_100000) do
     t.index ["uid"], name: "index_orders_on_uid", unique: true
   end
 
+  create_table "organizations", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "name", null: false
+    t.string "slug", null: false
+    t.bigint "tenant_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["tenant_id", "slug"], name: "index_organizations_on_tenant_id_and_slug", unique: true
+    t.index ["tenant_id"], name: "index_organizations_on_tenant_id"
+  end
+
   create_table "payment_attempts", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.text "error_message"
@@ -183,7 +198,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_29_100000) do
     t.string "provider", default: "fake", null: false
     t.string "reference", null: false
     t.datetime "updated_at", null: false
-    t.index ["payment_id"], name: "index_payment_method_references_on_payment_id", unique: true
+    t.index ["payment_id"], name: "index_payment_method_references_on_payment_id"
     t.index ["provider", "method_type"], name: "index_payment_method_references_on_provider_and_method_type"
     t.index ["reference"], name: "index_payment_method_references_on_reference", unique: true
   end
@@ -322,6 +337,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_29_100000) do
     t.index ["order_id"], name: "index_source_videos_on_order_id"
   end
 
+  create_table "tenants", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "name", null: false
+    t.string "slug", null: false
+    t.datetime "updated_at", null: false
+    t.index ["slug"], name: "index_tenants_on_slug", unique: true
+  end
+
   create_table "users", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "access_state", default: "active", null: false
     t.datetime "created_at", null: false
@@ -360,6 +383,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_29_100000) do
     t.index ["name"], name: "index_video_types_on_name", unique: true
   end
 
+  add_foreign_key "accounts", "organizations"
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "capacity_reservations", "orders"
@@ -374,6 +398,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_29_100000) do
   add_foreign_key "order_lines", "orders"
   add_foreign_key "orders", "accounts", column: "owner_account_id"
   add_foreign_key "orders", "accounts", column: "participant_account_id"
+  add_foreign_key "organizations", "tenants"
   add_foreign_key "payment_attempts", "payments"
   add_foreign_key "payment_invoice_delivery_intents", "payments"
   add_foreign_key "payment_method_references", "payments"

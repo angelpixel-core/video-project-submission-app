@@ -7,6 +7,8 @@ module Identity
 
           has_one_attached :avatar
 
+          belongs_to :organization, class_name: "Identity::Domain::Aggregates::Organization", optional: true
+          has_one :tenant, through: :organization
           has_many :owner_projects, class_name: "Project", foreign_key: :owner_account_id, dependent: :restrict_with_error
           has_many :participant_projects, class_name: "Project", foreign_key: :participant_account_id, dependent: :restrict_with_error
           has_many :notifications, class_name: "Notification", foreign_key: :account_id, dependent: :destroy
