@@ -15,11 +15,11 @@ tags:
 
 ## What
 
-- `Submission` and `SubmissionPolicy` are legacy placeholders and are no longer used by the active Sprint 0 project flow.
+- `Submission` and `SubmissionPolicy` are legacy placeholders and are no longer used by the active Sprint 0 order flow.
 
 ## Why
 
-- The project workflow now uses database-backed drafts and `Project` as the source of truth.
+- The order workflow now uses database-backed drafts and `Order` as the source of truth.
 - Keeping the submission layer around without a live caller risks confusion and duplicated domain concepts.
 
 ## Impacted Files

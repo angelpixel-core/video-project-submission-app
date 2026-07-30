@@ -13,9 +13,9 @@ tags:
 
 ## In Scope
 
-- [x] Client-facing project list.
+- [x] Client-facing order list.
 - [x] Order flow for selecting video types.
-- [x] Simulated checkout and project creation.
+- [x] Simulated checkout and order creation.
 - [x] Default PM assignment.
 - [x] Background notification creation.
 

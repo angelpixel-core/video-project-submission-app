@@ -90,4 +90,4 @@ title: In-App PM Notifications
 ## Notes
 
 - Prefer a notification list plus a minimal toast over a detail screen.
-- Keep the payload compact: project name, client name, and a short message are enough.
+- Keep the payload compact: order name, client name, and a short message are enough.

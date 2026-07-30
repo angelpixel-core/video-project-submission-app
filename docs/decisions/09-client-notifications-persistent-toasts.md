@@ -22,7 +22,7 @@ Add persistent client notifications with a campana/dropdown and floating toast c
 
 ## Context
 
-The app already persists PM notifications, renders unread counts, and refreshes the PM workspace over Action Cable. The client needs the same class of feedback when the PM changes project state and for future comment/message events. The notification layer should remain persistent and role-aware instead of introducing a separate ephemeral alert system.
+The app already persists PM notifications, renders unread counts, and refreshes the PM workspace over Action Cable. The client needs the same class of feedback when the PM changes order state and for future comment/message events. The notification layer should remain persistent and role-aware instead of introducing a separate ephemeral alert system.
 
 ## Rationale
 
@@ -39,7 +39,7 @@ The app already persists PM notifications, renders unread counts, and refreshes 
 - Add a client inbox in the navbar with unread badge, dropdown history, and mark-as-read actions.
 - Add client floating toasts in the workspace, mirroring the PM toast behavior.
 - Broadcast refresh events to the correct recipient channel whenever notifications are created or acknowledged.
-- Create notifications for project status changes and future comment/message events at the domain service layer.
+- Create notifications for order status changes and future comment/message events at the domain service layer.
 
 ## Not Chosen
 
@@ -50,7 +50,7 @@ The app already persists PM notifications, renders unread counts, and refreshes 
 ## Data Flow
 
 ```text
-PM changes project state / adds comment
+PM changes order state / adds comment
   -> domain service creates Notification for client
   -> Notification persists with unread state
   -> after-save broadcast to client notification channel

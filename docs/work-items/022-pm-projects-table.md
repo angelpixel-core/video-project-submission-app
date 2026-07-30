@@ -13,25 +13,25 @@ depends_on:
 order: 22
 phase: work-items
 status: done
-title: PM Projects Table
+title: PM Orders Table
 ---
 
-# PM Projects Table
+# PM Orders Table
 
 ## Goal
 
-- [x] Show PM projects as a table with realtime updates, sorted by creation date.
+- [x] Show PM orders as a table with realtime updates, sorted by creation date.
 
 ## Scope
 
-- Render the PM project list as a table only in PM mode.
+- Render the PM order list as a table only in PM mode.
 - Keep the client view unchanged.
-- Show project ID, project name, created date, total budget, status, and actions.
-- Sort PM projects by `created_at DESC`.
+- Show order ID, order name, created date, total budget, status, and actions.
+- Sort PM orders by `created_at DESC`.
 - Do not show video type details in the table.
 - Reserve video type breakdown for `projects#show`.
 - Compute total budget from `video_type.price_cents * quantity` across project selections.
-- Append newly created projects into the PM table in realtime when the client submits a project.
+- Append newly created orders into the PM table in realtime when the client submits an order.
 - Keep the PM notification flow working alongside the table updates.
 
 ## Operational Note
@@ -43,7 +43,7 @@ title: PM Projects Table
 ## Implementation Plan
 
 - [x] `app/views/projects/index.html.erb` - replace the PM grid with a table view in PM mode.
-- [x] `app/controllers/projects_controller.rb` - ensure PM projects are loaded sorted by `created_at DESC` and expose any data needed for the budget column.
+- [x] `app/controllers/projects_controller.rb` - ensure PM orders are loaded sorted by `created_at DESC` and expose any data needed for the budget column.
 - [x] `app/models/project.rb` or a presenter/helper - compute total budget from selections.
 - [x] `app/views/projects/_pm_project_table_row.html.erb` or similar - render a single PM table row.
 - [x] `app/frontend/channels/pm_notification_channel.js` - update the PM table in realtime when a new project is submitted.
@@ -69,11 +69,11 @@ title: PM Projects Table
 ## Checklist
 
 - [x] PM mode shows a table instead of cards.
-- [x] The table includes ID, project name, created date, total budget, status, and actions.
-- [x] The PM table is sorted by newest project first.
+- [x] The table includes ID, order name, created date, total budget, status, and actions.
+- [x] The PM table is sorted by newest order first.
 - [x] Video type details are not shown in the table.
 - [x] Total budget matches the sum of selected video types and quantities.
-- [x] New client-created projects appear in the PM table in realtime.
+- [x] New client-created orders appear in the PM table in realtime.
 - [x] Client mode remains unchanged.
 - [x] The PM table card header keeps only the `Assigned projects` title.
 

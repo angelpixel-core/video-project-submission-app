@@ -25,7 +25,7 @@ title: Payment Event Handler Pipeline
 
 - Build a handler/dispatcher that consumes stored webhook events.
 - Map provider event types to payment state transitions.
-- Update the related `Project` only when the payment reaches a confirmed terminal state.
+- Update the related `Order` only when the payment reaches a confirmed terminal state.
 - Keep business logic out of the webhook controller.
 
 ## Operational Note
@@ -38,7 +38,7 @@ title: Payment Event Handler Pipeline
 - [x] Add a `PaymentEventHandler` dispatcher that loads stored webhook events and routes them by event type.
 - [x] Enqueue async processing through a `ProcessWebhookEventJob` after ingestion.
 - [x] Apply payment state transitions only after idempotency and ordering checks succeed.
-- [x] Update project submission state or downstream notifications when payment confirmation is received.
+- [x] Update order submission state or downstream notifications when payment confirmation is received.
 - [x] Add tests for success, duplicate, and out-of-order event handling.
 
 ## Affected Docs
@@ -58,7 +58,7 @@ title: Payment Event Handler Pipeline
 
 - [x] Stored webhook events can be dispatched to a dedicated handler.
 - [x] Confirmed payment events update payment state exactly once.
-- [x] Project state changes happen only after the payment pipeline confirms success.
+- [x] Order state changes happen only after the payment pipeline confirms success.
 
 ## Validation
 

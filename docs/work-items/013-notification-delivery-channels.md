@@ -66,7 +66,7 @@ title: Notification Delivery Channels
 
 ## Checklist
 
-- [x] `NotificationService` still orchestrates delivery from a project ID.
+- [x] `NotificationService` still orchestrates delivery from an order ID.
 - [x] The logger channel still emits the PM notification log line.
 - [x] The PM mailer sends the compact notification email.
 - [x] `NotificationJob` still only delegates to `NotificationService`.

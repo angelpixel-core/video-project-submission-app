@@ -26,7 +26,7 @@ title: Client Notifications and Toasts
 
 ## Scope
 
-- Show client notifications when the PM changes project state.
+- Show client notifications when the PM changes order state.
 - Keep notifications persistent and unread/read aware.
 - Show floating toast cards for new notifications.
 - Add a client campana/dropdown with a badge and history list.

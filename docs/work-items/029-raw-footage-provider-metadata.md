@@ -27,11 +27,11 @@ title: Raw Footage Provider Metadata
 ## Scope
 
 - Keep `raw_footage_url` as the single visible input for the client.
-- Detect supported providers from the entered URL and persist derived metadata on the project.
+- Detect supported providers from the entered URL and persist derived metadata on the order.
 - Render enriched previews only when the URL is recognized.
 - Support YouTube, Vimeo, Twitch, Instagram, and TikTok video URLs.
 - Keep the metadata portable across MySQL and PostgreSQL by storing it as `json`.
-- Preserve the existing project submission and comment flows.
+- Preserve the existing order submission and comment flows.
 
 ## Operational Note
 
@@ -45,7 +45,7 @@ title: Raw Footage Provider Metadata
 - [x] Derive provider metadata from `raw_footage_url` on the server.
 - [x] Remove the separate `youtube_url` field from the client form.
 - [x] Add live preview handling in the order form controller.
-- [x] Render provider-aware previews on the client card and project detail pages.
+- [x] Render provider-aware previews on the client card and order detail pages.
 - [x] Add focused unit and system coverage for the new flow.
 
 ## Affected Docs
@@ -72,7 +72,7 @@ title: Raw Footage Provider Metadata
 
 ## Checklist
 
-- [x] The project stores raw footage metadata in a portable JSON column.
+- [x] The order stores raw footage metadata in a portable JSON column.
 - [x] The client only sees `raw_footage_url`.
 - [x] Recognized providers show a richer preview.
 - [x] Unrecognized URLs fall back to the generic raw footage field.
@@ -80,7 +80,7 @@ title: Raw Footage Provider Metadata
 ## Validation
 
 - [x] Unit specs cover metadata derivation.
-- [x] System specs cover the updated project show/client card flow.
+- [x] System specs cover the updated order show/client card flow.
 
 ## Notes
 

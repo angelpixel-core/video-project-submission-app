@@ -79,7 +79,7 @@ title: Floating PM Notifications
 ## Validation
 
 - [x] System spec verifies a toast appears while the page stays scrolled in place.
-- [x] System spec verifies the notification click opens the project show page.
+- [x] System spec verifies the notification click opens the order show page.
 - [x] System spec verifies `Mark as read` updates state without navigation.
 - [x] Realtime updates still work when multiple notifications arrive in sequence.
 

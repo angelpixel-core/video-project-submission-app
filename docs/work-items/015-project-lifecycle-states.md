@@ -13,37 +13,37 @@ depends_on:
 order: 15
 phase: work-items
 status: done
-title: Project Lifecycle States
+title: Order Lifecycle States
 ---
 
-# Project Lifecycle States
+# Order Lifecycle States
 
 ## Goal
 
-- [x] Update the project workflow to reflect the PM review and completion lifecycle.
+- [x] Update the order workflow to reflect the PM review and completion lifecycle.
 
 ## Scope
 
 - Keep `draft` as the client editing state.
 - Introduce `pending` as the initial post-submit state.
-- Move the project to `in_progress` when the PM accepts it.
+- Move the order to `in_progress` when the PM accepts it.
 - Keep `completed` as the final state after fulfillment.
 - Gate client editing and PM actions according to the current state.
 - Express the transitions with AASM on the existing `status` column.
 
 ## Operational Note
 
-- This item is the workflow source of truth for project status transitions.
+- This item is the workflow source of truth for order status transitions.
 - The client should no longer land on `in_progress` immediately after submit.
 
 ## Implementation Plan
 
 - [x] Add or adjust the status state machine with AASM.
-- [x] Update the submit flow to create `pending` projects.
-- [x] Add the PM accept action that moves projects to `in_progress`.
-- [x] Add the completion action that moves projects to `completed`.
-- [x] Update the project list labels and buttons to match the new states.
-- [x] Keep client editing limited to `draft` projects.
+- [x] Update the submit flow to create `pending` orders.
+- [x] Add the PM accept action that moves orders to `in_progress`.
+- [x] Add the completion action that moves orders to `completed`.
+- [x] Update the order list labels and buttons to match the new states.
+- [x] Keep client editing limited to `draft` orders.
 
 ## Affected Docs
 
@@ -63,7 +63,7 @@ title: Project Lifecycle States
 ## Checklist
 
 - [x] New projects start as `pending`.
-- [x] PM acceptance moves a project to `in_progress`.
+- [x] PM acceptance moves an order to `in_progress`.
 - [x] Completion is only available in `in_progress`.
 - [x] Client editing is only available in `draft`.
 
