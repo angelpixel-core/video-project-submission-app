@@ -88,7 +88,7 @@ module Payments
         def stamp_received_at
           self.received_at ||= Time.current
         end
-      end
+        end
     end
   end
 end

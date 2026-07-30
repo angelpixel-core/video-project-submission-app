@@ -67,7 +67,7 @@ module Billing
         end
 
         def format_money(amount_cents)
-          format('%.2f', amount_cents.to_f / 100)
+          format("%.2f", amount_cents.to_f / 100)
         end
       end
     end
