@@ -4,7 +4,7 @@ module Fulfillment
       module Order
         class Repository < Fulfillment::Domain::Repositories::Order::Contract
           def find_for_show(id)
-            ::Project.includes(:owner, :participant, comments: :author_account, video_type_selections: :video_type).find(id)
+            ::Order.includes(:owner, :participant, comments: :author_account, video_type_selections: :video_type).find(id)
           end
 
           def find_for_edit(owner, id)

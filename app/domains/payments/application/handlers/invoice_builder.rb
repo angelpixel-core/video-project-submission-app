@@ -34,7 +34,7 @@ module Payments
             <html>
               <body>
                 <h1>Invoice #{invoice_number}</h1>
-                <p>Project: #{payment.project.name}</p>
+                <p>Order: #{payment.project.name}</p>
                 <p>Owner: #{payment.project.owner.name}</p>
                 <p>Payment ID: #{payment.id}</p>
                 <p>Provider reference: #{payment.provider_reference}</p>

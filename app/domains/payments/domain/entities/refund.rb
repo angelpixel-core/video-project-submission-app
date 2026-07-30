@@ -32,7 +32,11 @@ module Payments
         end
 
         def normalize_status
-          self.status = status.to_s.strip.downcase.presence || "refund_pending"
+          normalized = status.to_s.strip.downcase.presence || "refund_pending"
+          normalized = "refund_pending" if normalized == "pending"
+          normalized = "refunded" if normalized == "processed"
+
+          self.status = normalized
         end
 
         def payment_method_reference_belongs_to_payment

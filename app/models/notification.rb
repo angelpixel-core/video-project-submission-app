@@ -1,7 +1,7 @@
 class Notification < ApplicationRecord
   after_save :broadcast_refresh, if: :should_broadcast_refresh?
 
-  belongs_to :project
+  belongs_to :project, class_name: "Order", foreign_key: :project_id
   belongs_to :account, class_name: "Identity::Domain::Aggregates::Account", foreign_key: :account_id, optional: true
 
   before_validation :sync_legacy_recipient_columns
@@ -21,6 +21,14 @@ class Notification < ApplicationRecord
 
   def recipient
     account || pm || client
+  end
+
+  def order
+    project
+  end
+
+  def order=(value)
+    self.project = value
   end
 
   def pm

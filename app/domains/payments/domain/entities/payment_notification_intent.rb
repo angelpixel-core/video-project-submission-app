@@ -5,7 +5,7 @@ module Payments
         STATUSES = %w[pending sent failed].freeze
 
         belongs_to :payment, class_name: "Payments::Domain::Aggregates::Payment"
-        belongs_to :project
+        belongs_to :project, class_name: "Order", foreign_key: :project_id
 
         after_commit :enqueue_dispatch_job, on: :create
 
@@ -54,6 +54,14 @@ module Payments
 
         def normalize_payload
           self.payload = (payload || {}).to_h
+        end
+
+        def order
+          project
+        end
+
+        def order=(value)
+          self.project = value
         end
 
         def stamp_scheduled_at
