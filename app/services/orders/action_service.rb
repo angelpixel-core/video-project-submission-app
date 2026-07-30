@@ -8,6 +8,8 @@ module Orders
         return review_refund_request(project, approved: true)
       when :reject_refund_request
         return review_refund_request(project, approved: false)
+      when :reopen
+        return reopen_order(project)
       end
 
       result = Fulfillment::Application::Commands::ProcessOrderAction.call(order: project, event: event)
@@ -26,6 +28,8 @@ module Orders
         :project_accepted
       when :cancel
         :project_cancelled
+      when :reopen
+        :project_reopened
       when :complete
         :project_completed
       when :request_refund
@@ -75,6 +79,19 @@ module Orders
       Orders::Notifications::Service.call(project:, event_type: approved ? :project_refund_approved : :project_refund_rejected)
 
       Core::Result::Success.(data: { payment: payment, refund: result.data.fetch(:refund), broadcast_refresh: false })
+    end
+
+    def self.reopen_order(project)
+      project = project.reload if project.respond_to?(:reload)
+      return Core::Result::Failure.(message: "Only cancelled orders can be reopened.", code: :invalid_transition, data: { project_id: project&.id }) unless project.respond_to?(:can_reopen_order?) && project.can_reopen_order?
+
+      result = Fulfillment::Application::Commands::ProcessOrderAction.call(order: project, event: :reopen)
+      return result if result.failure?
+
+      project.sync_order_listing!
+      Orders::Notifications::Service.call(project:, event_type: :project_reopened)
+
+      Core::Result::Success.(data: { project: project, broadcast_refresh: false })
     end
   end
 end

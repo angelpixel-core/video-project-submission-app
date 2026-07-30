@@ -1,5 +1,7 @@
 <div class="d-flex flex-wrap gap-2">
-  <% if project.can_cancel_order? %>
+  <% if project.can_reopen_order? %>
+    <%= button_to "Retomar orden", reopen_order_path(project), method: :patch, class: "btn btn-outline-primary" %>
+  <% elsif project.can_cancel_order? %>
     <%= button_to "Cancelar orden", cancel_order_path(project), method: :patch, class: "btn btn-outline-danger" %>
   <% end %>
 

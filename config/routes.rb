@@ -31,6 +31,7 @@ Rails.application.routes.draw do
       patch :accept
       patch :cancel
       patch :complete
+      patch :reopen
       patch :request_refund
       patch :approve_refund_request
       patch :reject_refund_request

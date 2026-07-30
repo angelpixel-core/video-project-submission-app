@@ -42,6 +42,23 @@ RSpec.describe Orders::ActionService do
     expect(Notification.where(project: project, kind: "project_cancelled")).to exist
   end
 
+  it "reopens a cancelled order back to draft and notifies the pm" do
+    client = workspace_account(:client, email: "client@example.com", name: "Client")
+    pm = workspace_account(:pm, email: "pm@example.com", name: "PM")
+    project = Project.create!(owner: client, participant: pm, name: "Project Cancelled", raw_footage_url: "https://example.com/cancelled.mov", status: :cancelled)
+
+    client_mail = instance_double(ActionMailer::MessageDelivery, deliver_now: true)
+    pm_mail = instance_double(ActionMailer::MessageDelivery, deliver_now: true)
+    expect(ProjectNotificationMailer).to receive(:project_reopened).with(project, recipient_role: :client).and_return(client_mail)
+    expect(ProjectNotificationMailer).to receive(:project_reopened).with(project, recipient_role: :pm).and_return(pm_mail)
+
+    result = described_class.call(project: project, event: :reopen)
+
+    expect(result).to be_success
+    expect(project.reload.status).to eq("draft")
+    expect(Notification.where(project: project, kind: "project_reopened")).to exist
+  end
+
   it "completes an in-progress order and creates a client notification" do
     client = workspace_account(:client, email: "client@example.com", name: "Client")
     pm = workspace_account(:pm, email: "pm@example.com", name: "PM")

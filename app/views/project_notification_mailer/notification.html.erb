@@ -13,6 +13,8 @@ when "pm"
     "Refund approved"
   when "project_refund_rejected"
     "Refund rejected"
+  when "project_reopened"
+    "Order reopened"
   when "project_rejected"
     "Order rejected"
   else
@@ -32,6 +34,8 @@ else
     "Your refund request was approved"
   when "project_refund_rejected"
     "Your refund request was rejected"
+  when "project_reopened"
+    "Your order was reopened"
   when "project_rejected"
     "Your order needs attention"
   else
@@ -57,6 +61,8 @@ end %></h1>
     <p>The refund request has been approved and the refund is being processed.</p>
   <% elsif @event_type == "project_refund_rejected" %>
     <p>The refund request has been rejected.</p>
+  <% elsif @event_type == "project_reopened" %>
+    <p>The client reopened the order so work can continue.</p>
   <% elsif @event_type == "project_rejected" %>
     <p>The client should be notified of the requested changes.</p>
   <% end %>
@@ -73,6 +79,8 @@ end %></h1>
     <p>Next step: The refund was approved by the operator.</p>
   <% elsif @event_type == "project_refund_rejected" %>
     <p>Next step: The refund request was rejected by the operator.</p>
+  <% elsif @event_type == "project_reopened" %>
+    <p>Next step: The client reopened the order for editing.</p>
   <% elsif @event_type == "project_rejected" %>
     <p>Next step: Your PM needs changes before the order can move forward.</p>
   <% end %>

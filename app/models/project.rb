@@ -45,6 +45,10 @@ class Project < ApplicationRecord
     event :cancel do
       transitions from: :pending, to: :cancelled
     end
+
+    event :reopen do
+      transitions from: :cancelled, to: :draft
+    end
   end
 
   validates :name, presence: true, if: :submitted?
@@ -104,6 +108,10 @@ class Project < ApplicationRecord
 
   def can_request_refund?
     (pending? || in_progress?) && payment_paid? && !refund_request_pending? && !refund_request_processed?
+  end
+
+  def can_reopen_order?
+    cancelled?
   end
 
   def raw_footage_metadata_hash

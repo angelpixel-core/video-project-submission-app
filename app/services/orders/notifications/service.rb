@@ -37,6 +37,8 @@ module Orders
           { pm: project.participant }
         elsif event_type == :project_refund_requested
           { pm: project.participant }
+        elsif event_type == :project_reopened
+          { pm: project.participant }
         else
           { client: project.owner }
         end
@@ -56,6 +58,8 @@ module Orders
           "Your refund request for #{project.name.presence || 'Untitled order'} was approved."
         when :project_refund_rejected
           "Your refund request for #{project.name.presence || 'Untitled order'} was rejected."
+        when :project_reopened
+          "Your order #{project.name.presence || 'Untitled order'} was reopened by the client."
         when :project_completed
           "Your order #{project.name.presence || 'Untitled order'} has been completed."
         else

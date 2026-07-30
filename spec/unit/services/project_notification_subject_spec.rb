@@ -52,4 +52,14 @@ RSpec.describe ProjectNotificationSubject do
     expect(approved).to eq("Your refund request for Project was approved")
     expect(rejected).to eq("Your refund request for Project was rejected")
   end
+
+  it "builds the pm subject for reopened orders" do
+    client = workspace_account(:client, name: "Client")
+    pm = workspace_account(:pm, name: "PM")
+    project = Project.create!(owner: client, participant: pm, name: "Project", raw_footage_url: "https://example.com/raw.mov", status: :cancelled)
+
+    subject = described_class.call(project: project, recipient_role: :pm, event_type: :project_reopened)
+
+    expect(subject).to eq("Order reopened: Project")
+  end
 end

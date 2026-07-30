@@ -30,7 +30,7 @@ module Fulfillment
         attr_reader :order, :event
 
         def allowed_events
-          %i[accept complete cancel]
+          %i[accept complete cancel reopen]
         end
 
         def broadcast_refresh?
@@ -49,6 +49,8 @@ module Fulfillment
             order.public_send("may_#{event}?") && !order.payment_flow_blocked?
           when :cancel
             order.public_send("may_#{event}?") && Ordering::Domain::Policies::OrderCancellationPolicy.allowed?(order)
+          when :reopen
+            order.public_send("may_#{event}?")
           else
             false
           end

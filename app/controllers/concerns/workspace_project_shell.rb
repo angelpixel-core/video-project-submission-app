@@ -2,7 +2,7 @@ module WorkspaceProjectShell
   extend ActiveSupport::Concern
 
   included do
-    before_action :load_project, only: %i[edit update]
+    before_action :load_project, only: %i[edit update reopen]
     before_action :ensure_draft_project, only: %i[edit update]
     before_action :load_workspace_project, only: %i[accept complete cancel request_refund approve_refund_request reject_refund_request]
     before_action :load_video_types, only: %i[edit update]
@@ -61,10 +61,20 @@ module WorkspaceProjectShell
       @selections_json = selections_json_for(@project)
       render :edit, status: :unprocessable_content
     end
-  rescue ActiveRecord::RecordInvalid, ArgumentError, JSON::ParserError, ActionController::ParameterMissing => e
-    @project.errors.add(:base, e.message) if @project.errors.empty?
-    @selections_json = selections_json_for(@project)
-    render :edit, status: :unprocessable_content
+    rescue ActiveRecord::RecordInvalid, ArgumentError, JSON::ParserError, ActionController::ParameterMissing => e
+      @project.errors.add(:base, e.message) if @project.errors.empty?
+      @selections_json = selections_json_for(@project)
+      render :edit, status: :unprocessable_content
+  end
+
+  def reopen
+    result = Orders::ActionService.call(project: @project, event: :reopen)
+
+    if result.success?
+      redirect_to edit_order_path(@project), notice: "Order reopened."
+    else
+      redirect_to order_path(@project), alert: "Only cancelled orders can be reopened."
+    end
   end
 
   def accept

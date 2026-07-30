@@ -227,3 +227,7 @@ Payments docs are centralized at [Payments Index](../payments.md).
 ## 46
 
 - [x] [Data Bootstrap Migrations](./046-data-bootstrap-migrations.md)
+
+## 47
+
+- [x] [Order Reopen and Refund Review Flow](./047-order-reopen-and-refund-review-flow.md)
