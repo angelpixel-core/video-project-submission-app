@@ -22,9 +22,23 @@ require_file() {
 load_env_file() {
   file="$1"
   [ -f "$file" ] || return 0
-  set -a
-  . "$file"
-  set +a
+
+  while IFS= read -r line || [ -n "$line" ]; do
+    case "$line" in
+      ''|'#'*)
+        continue
+        ;;
+    esac
+
+    case "$line" in
+      *=*)
+        key=${line%%=*}
+        value=${line#*=}
+
+        export "$key=$value"
+        ;;
+    esac
+  done < "$file"
 }
 
 build_image() {
