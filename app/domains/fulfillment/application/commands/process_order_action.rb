@@ -44,11 +44,11 @@ module Fulfillment
         def allowed_for_order?
           case event
           when :accept
-            order.public_send("may_#{event}?") && Ordering::Domain::Policies::OrderAcceptancePolicy.allowed?(order)
+            order.public_send("may_#{event}?") && order.can_accept_order?
           when :complete
             order.public_send("may_#{event}?") && !order.payment_flow_blocked?
           when :cancel
-            order.public_send("may_#{event}?") && Ordering::Domain::Policies::OrderCancellationPolicy.allowed?(order)
+            order.public_send("may_#{event}?") && order.can_cancel_order?
           when :reopen
             order.public_send("may_#{event}?")
           else
