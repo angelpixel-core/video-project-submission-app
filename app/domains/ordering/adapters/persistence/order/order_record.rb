@@ -76,15 +76,15 @@ module Ordering
           end
 
           def can_accept_order?
-            pending? && payment_paid? && !payment_flow_blocked?
+            placed? && payment_paid? && !payment_flow_blocked?
           end
 
           def can_cancel_order?
-            pending? && !payment_paid? && !payment_flow_blocked?
+            (placed? || confirmed?) && !payment_paid? && !payment_flow_blocked?
           end
 
           def can_request_refund?
-            (pending? || in_progress?) && payment_paid? && !refund_request_pending? && !refund_request_processed?
+            (placed? || confirmed?) && payment_paid? && !refund_request_pending? && !refund_request_processed?
           end
 
           def pending?
@@ -93,6 +93,10 @@ module Ordering
 
           def in_progress?
             confirmed?
+          end
+
+          def delivered?
+            delivery_status == "delivered"
           end
 
           def status_badge_text

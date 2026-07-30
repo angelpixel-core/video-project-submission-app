@@ -3,7 +3,7 @@ module Ordering
     module Policies
       class OrderCompletionPolicy
         def self.allowed?(order)
-          order.in_progress? && !order.payment_flow_blocked?
+          order.confirmed? && order.delivered? && !order.payment_flow_blocked?
         end
       end
     end

@@ -3,7 +3,7 @@ module Ordering
     module Policies
       class OrderAcceptancePolicy
         def self.allowed?(order)
-          order.pending? && order.payment_paid? && !order.payment_flow_blocked?
+          order.placed? && order.payment_paid? && !order.payment_flow_blocked?
         end
       end
     end
