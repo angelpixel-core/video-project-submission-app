@@ -2,4 +2,4 @@ enforce_dependencies: true
 dependencies:
   - app/domains/shared
   - app/domains/identity
-  - app/domains/billing
+  - app/domains/ordering
