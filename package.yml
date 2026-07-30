@@ -4,6 +4,7 @@ dependencies:
   - app/domains/identity
   - app/domains/catalog
   - app/domains/capacity
+  - app/domains/billing
   - app/domains/ordering
   - app/domains/fulfillment
   - app/domains/notifications
