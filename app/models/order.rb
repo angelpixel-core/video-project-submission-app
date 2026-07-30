@@ -1,6 +1,7 @@
 class Order < ApplicationRecord
   include AASM
 
+  # TODO(cleanup): Drop the legacy `projects` table name once compatibility shims are retired.
   self.table_name = "projects"
 
   belongs_to :owner, class_name: "Identity::Domain::Aggregates::Account", foreign_key: :owner_account_id

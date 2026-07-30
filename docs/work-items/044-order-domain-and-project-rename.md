@@ -104,3 +104,4 @@ title: Order Domain and Project Rename
 - Legacy model/service names remain only as internal compatibility; the public `/projects` shell is gone.
 - `/projects` was removed as a public route and the legacy `projects` view tree was deleted in favor of `orders`.
 - Comment anchors now use `order-comments` to match the new surface.
+- TODO(cleanup): Remove remaining legacy ids, filenames, and compatibility aliases only after the rest of the domain matrix is stable.
