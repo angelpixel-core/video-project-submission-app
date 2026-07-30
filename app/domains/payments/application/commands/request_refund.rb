@@ -20,7 +20,7 @@ module Payments
             payment_method_reference: payment.payment_method_reference,
             provider: payment.provider,
             provider_reference: "refund-request-#{SecureRandom.uuid}",
-            status: :pending,
+            status: :refund_pending,
             amount_cents: amount_cents,
             reason: reason
           )

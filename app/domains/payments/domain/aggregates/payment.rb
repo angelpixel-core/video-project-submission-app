@@ -19,6 +19,7 @@ module Payments
         before_validation :normalize_currency
 
         after_commit :enqueue_invoice_generation_job, on: :update
+        after_commit :broadcast_project_payment_state, on: :update
 
         validates :status, presence: true, inclusion: { in: STATUSES }
         validates :provider, presence: true
@@ -81,6 +82,12 @@ module Payments
           return unless saved_change_to_status? && succeeded?
 
           Payments::Application::Handlers::GenerateInvoiceJob.perform_later(id)
+        end
+
+        def broadcast_project_payment_state
+          return unless previous_changes.key?("status")
+
+          project&.broadcast_status_badge!
         end
 
         def only_one_active_payment_per_project

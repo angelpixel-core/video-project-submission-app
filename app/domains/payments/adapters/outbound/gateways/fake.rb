@@ -30,6 +30,28 @@ module Payments
               }
             )
           end
+
+          def self.refund(payment:, refund:)
+            provider_reference = "refund-#{refund.provider_reference.presence || payment.idempotency_key}"
+
+            Core::Result::Success.(
+              data: {
+                provider_reference: provider_reference,
+                provider_status: "accepted",
+                request_payload: {
+                  payment_id: payment.id,
+                  project_id: payment.project_id,
+                  refund_id: refund.id,
+                  amount_cents: refund.amount_cents,
+                  reason: refund.reason
+                },
+                response_payload: {
+                  provider_reference: provider_reference,
+                  status: "accepted"
+                }
+              }
+            )
+          end
         end
       end
     end

@@ -35,7 +35,7 @@ module Orders
       when :request_refund
         :project_refund_requested
       when :approve_refund_request
-        :project_refund_approved
+        :project_refund_processing
       when :reject_refund_request
         :project_refund_rejected
       end
@@ -76,7 +76,7 @@ module Orders
       return result if result.failure?
 
       project.sync_order_listing!
-      Orders::Notifications::Service.call(project:, event_type: approved ? :project_refund_approved : :project_refund_rejected)
+      Orders::Notifications::Service.call(project:, event_type: approved ? :project_refund_processing : :project_refund_rejected)
 
       Core::Result::Success.(data: { payment: payment, refund: result.data.fetch(:refund), broadcast_refresh: false })
     end

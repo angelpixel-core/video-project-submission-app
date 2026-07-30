@@ -3,7 +3,7 @@ module Payments
     module ValueObjects
       class PaymentStatus
         ACTIVE_STATUSES = %w[pending processing].freeze
-        TERMINAL_STATUSES = %w[succeeded failed canceled].freeze
+        TERMINAL_STATUSES = %w[succeeded failed canceled refunded].freeze
         ALLOWED_VALUES = (ACTIVE_STATUSES + TERMINAL_STATUSES).freeze
 
         def self.valid?(value)
@@ -45,6 +45,10 @@ module Payments
 
         def canceled?
           value == "canceled"
+        end
+
+        def refunded?
+          value == "refunded"
         end
 
         def ==(other)

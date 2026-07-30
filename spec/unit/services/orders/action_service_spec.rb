@@ -111,8 +111,8 @@ RSpec.describe Orders::ActionService do
     result = described_class.call(project: project, event: :approve_refund_request)
 
     expect(result).to be_success
-    expect(project.reload.refund_request_processed?).to be(true)
-    expect(Notification.where(project: project, kind: "project_refund_approved")).to exist
+    expect(project.reload.refund_request_processing?).to be(true)
+    expect(Notification.where(project: project, kind: "project_refund_processing")).to exist
   end
 
   it "rejects a pending refund request" do

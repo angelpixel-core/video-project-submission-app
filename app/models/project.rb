@@ -83,11 +83,15 @@ class Project < ApplicationRecord
   end
 
   def refund_request_pending?
-    payments.joins(:refunds).merge(Payments::Domain::Entities::Refund.pending).exists?
+    payments.joins(:refunds).merge(Payments::Domain::Entities::Refund.refund_pending).exists?
   end
 
-  def refund_request_processed?
-    payments.joins(:refunds).merge(Payments::Domain::Entities::Refund.processed).exists?
+  def refund_request_processing?
+    payments.joins(:refunds).merge(Payments::Domain::Entities::Refund.refund_processing).exists?
+  end
+
+  def refund_request_refunded?
+    payments.joins(:refunds).merge(Payments::Domain::Entities::Refund.refunded).exists?
   end
 
   def refund_request_failed?
@@ -95,7 +99,7 @@ class Project < ApplicationRecord
   end
 
   def payment_flow_blocked?
-    refund_request_pending? || refund_request_processed?
+    refund_request_pending? || refund_request_processing? || refund_request_refunded?
   end
 
   def can_accept_order?
@@ -107,7 +111,7 @@ class Project < ApplicationRecord
   end
 
   def can_request_refund?
-    (pending? || in_progress?) && payment_paid? && !refund_request_pending? && !refund_request_processed?
+    (pending? || in_progress?) && payment_paid? && !refund_request_pending? && !refund_request_processing? && !refund_request_refunded?
   end
 
   def can_reopen_order?
@@ -169,6 +173,17 @@ class Project < ApplicationRecord
 
   def status_badge_dom_id
     ActionView::RecordIdentifier.dom_id(self, :status_badge)
+  end
+
+  def payment_badge_dom_id
+    ActionView::RecordIdentifier.dom_id(self, :payment_badge)
+  end
+
+  def payment_history_html
+    ApplicationController.render(
+      partial: "orders/payment_history",
+      locals: { payments: payments.order(created_at: :desc) }
+    )
   end
 
   def sync_order_listing!
@@ -247,7 +262,8 @@ class Project < ApplicationRecord
 
   def payment_badge_text
     return "Solicitud de reembolso" if refund_request_pending?
-    return "Reembolsado" if refund_request_processed?
+    return "Reembolso en proceso" if refund_request_processing?
+    return "Reembolsado" if refund_request_refunded?
     return "Reembolso rechazado" if refund_request_failed?
 
     case payment_status_for_listing
@@ -272,6 +288,7 @@ class Project < ApplicationRecord
 
   def payment_badge_class
     return "text-bg-warning" if refund_request_pending?
+    return "text-bg-info" if refund_request_processing?
 
     case payment_status_for_listing
     when "unpaid", "pending"
@@ -306,12 +323,22 @@ class Project < ApplicationRecord
   def broadcast_status_badge
     return unless previous_changes.key?("status")
 
+    broadcast_status_badge!
+  end
+
+  public
+
+  def broadcast_status_badge!
+    current_project = reload
+
     ActionCable.server.broadcast(
       "order_status_#{id}",
       {
         type: "status_updated",
         project_id: id,
-        status_badge_html: ApplicationController.render(partial: "orders/status_badge", locals: { project: self })
+        status_badge_html: ApplicationController.render(partial: "orders/status_badge", locals: { project: current_project }),
+        payment_badge_html: ApplicationController.render(partial: "orders/workspace_order_payment_badge", locals: { project: current_project }),
+        payment_history_html: current_project.payment_history_html
       }
     )
   end

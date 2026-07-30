@@ -31,7 +31,8 @@ title: Order Reopen and Refund Review Flow
 - Allow the client to cancel before payment success.
 - Block cancel once `payment.succeeded` has happened.
 - Allow the client to request a refund only when the feature flag is enabled.
-- Keep PM/operator as the only actor that can approve, reject, and process the refund.
+- Keep PM/operator as the only actor that can approve, reject, and forward the refund.
+- Show the refund as "en proceso" immediately after PM approval while the provider/webhook path finishes it.
 
 ## State Model
 
@@ -60,8 +61,8 @@ title: Order Reopen and Refund Review Flow
 
 | State | Meaning |
 | --- | --- |
-| `pending` | Operator review pending |
-| `processed` | Operator approved and refund executed |
+| `refund_pending` | Operator review pending |
+| `refund_processing` | Operator approved and provider/webhook processing is in flight |
 | `failed` | Operator rejected or refund processing failed |
 
 ## Action Matrix
@@ -71,9 +72,9 @@ title: Order Reopen and Refund Review Flow
 | Client | `cancel-order` | Order is `pending` or `in_progress`, and no `payment.succeeded` exists | `pending|in_progress -> cancelled` | Stop any further order progress; no refund is created |
 | PM | `cancel-order` | Same as client cancel, if the PM needs to intervene on an unpaid order | `pending|in_progress -> cancelled` | Stop any further order progress; no refund is created |
 | Client | `retomar-orden` | Order is `cancelled` | `cancelled -> draft` | Restore editing flow |
-| Client | `request-refund` | Feature flag enabled, order has `payment.succeeded`, and no pending/processed refund exists | `payment.succeeded -> refund.pending` | Notify PM/operator, block new payment attempts |
-| PM | `approve-refund-request` | Refund request exists in `pending` | `refund.pending -> refund.processed` | Execute refund, notify client |
-| PM | `reject-refund-request` | Refund request exists in `pending` | `refund.pending -> refund.failed` | Keep payment outcome unchanged, notify client |
+| Client | `request-refund` | Feature flag enabled, order has `payment.succeeded`, and no pending/processing refund exists | `payment.succeeded -> refund_pending` | Notify PM/operator, block new payment attempts |
+| PM | `approve-refund-request` | Refund request exists in `refund_pending` | `refund_pending -> refund_processing` | Forward refund to provider, show "refund en proceso", notify client |
+| PM | `reject-refund-request` | Refund request exists in `refund_pending` | `refund_pending -> refund.failed` | Keep payment outcome unchanged, notify client |
 | PM | `accept-order` | Order is `pending` and payment already succeeded | `pending -> in_progress` | Notify client and PM |
 | PM | `complete-order` | Order is `in_progress` | `in_progress -> completed` | Notify client and PM |
 
@@ -83,8 +84,8 @@ title: Order Reopen and Refund Review Flow
 - `retomar-orden` must always return to `draft`.
 - `request-refund` is only a request; it never executes the refund directly.
 - `approve-refund-request` and `reject-refund-request` are PM/operator-only.
-- New payment attempts must be blocked while a refund is `pending` or `processed`.
-- Once a refund is `processed`, the order should be treated as closed from the payment side.
+- New payment attempts must be blocked while a refund is `refund_pending` or `refund_processing`.
+- Once a refund is `refund_processing`, the order should be treated as closed from the payment side until the provider/webhook resolves it.
 
 ## Current Codebase
 
@@ -105,5 +106,5 @@ title: Order Reopen and Refund Review Flow
 ## Notes
 
 - The client should never execute the refund directly.
-- The PM/operator owns the refund decision and execution.
+- The PM/operator owns the refund decision and forwarding step; the provider/webhook finishes the money movement.
 - `cancelled` is an editing pause, not a terminal business end-state.

@@ -59,6 +59,7 @@ RSpec.describe "Orders requests (detailed)" do
     pm = find_workspace_account(:pm, email: "pm@example.com")
     highlight_reel = VideoType.find_by!(name: "Highlight Reel")
     social_cut = VideoType.find_by!(name: "Social Cut")
+    cookies[:workspace_role] = "pm"
 
     travel_to 2.days.ago do
       older_project = Project.create!(owner: client, participant: pm, name: "Older Project", raw_footage_url: "https://example.com/older.mov", status: :pending)
@@ -88,6 +89,7 @@ RSpec.describe "Orders requests (detailed)" do
   it "shows pm table sort links" do
     client = find_workspace_account(:client, email: "client@example.com")
     pm = find_workspace_account(:pm, email: "pm@example.com")
+    cookies[:workspace_role] = "pm"
 
     Project.create!(owner: client, participant: pm, name: "Project Alpha", raw_footage_url: "https://example.com/alpha.mov", status: :pending)
 
@@ -107,6 +109,7 @@ RSpec.describe "Orders requests (detailed)" do
   it "keeps the page when generating pm table sort links" do
     client = find_workspace_account(:client, email: "client@example.com")
     pm = find_workspace_account(:pm, email: "pm@example.com")
+    cookies[:workspace_role] = "pm"
 
     11.times do |index|
       Project.create!(owner: client, participant: pm, name: "Project #{index + 1}", raw_footage_url: "https://example.com/#{index + 1}.mov", status: :pending)
@@ -124,6 +127,7 @@ RSpec.describe "Orders requests (detailed)" do
   it "shows pm pagination links and loads the second page" do
     client = find_workspace_account(:client, email: "client@example.com")
     pm = find_workspace_account(:pm, email: "pm@example.com")
+    cookies[:workspace_role] = "pm"
 
     11.times do |index|
       travel_to (10 - index).minutes.ago do
@@ -150,6 +154,7 @@ RSpec.describe "Orders requests (detailed)" do
   it "shows a pm order detail page" do
     client = find_workspace_account(:client, email: "client@example.com")
     pm = find_workspace_account(:pm, email: "pm@example.com")
+    cookies[:workspace_role] = "pm"
     project = Project.create!(owner: client, participant: pm, name: "Project Alpha", raw_footage_url: "https://example.com/raw.mov", status: :pending)
 
     get order_path(project)
@@ -240,6 +245,7 @@ RSpec.describe "Orders requests (detailed)" do
   end
 
   it "accepts a pending order as the pm" do
+    cookies[:workspace_role] = "pm"
     project = Project.create!(owner: find_workspace_account(:client, email: "client@example.com"), participant: find_workspace_account(:pm, email: "pm@example.com"), name: "Project Pending", raw_footage_url: "https://example.com/pending.mov", status: :pending)
 
     patch accept_order_path(project)
@@ -251,23 +257,25 @@ RSpec.describe "Orders requests (detailed)" do
   end
 
   it "accepts a pending order asynchronously" do
+    cookies[:workspace_role] = "pm"
     project = Project.create!(owner: find_workspace_account(:client, email: "client@example.com"), participant: find_workspace_account(:pm, email: "pm@example.com"), name: "Project Async", raw_footage_url: "https://example.com/async.mov", status: :pending)
 
     patch accept_order_path(project), headers: { "X-Workspace-Async-Action" => "1" }
 
     expect(response).to have_http_status(:ok)
-    expect(JSON.parse(response.body)).to include(
-      "project_id" => project.id,
-      "status_badge_text" => "En progreso",
-      "status_badge_class" => "text-bg-info",
-      "action" => "complete"
-    )
+    payload = JSON.parse(response.body)
+
+    expect(payload["project_id"]).to eq(project.id)
+    expect(payload["status_badge_text"]).to eq("En progreso")
+    expect(payload["status_badge_class"]).to eq("text-bg-info")
+    expect(payload["action_cell_html"]).to include("Marcar como completado")
 
     project.reload
     expect(project.status).to eq("in_progress")
   end
 
   it "rejects stale asynchronous pm row actions" do
+    cookies[:workspace_role] = "pm"
     project = Project.create!(owner: find_workspace_account(:client, email: "client@example.com"), participant: find_workspace_account(:pm, email: "pm@example.com"), name: "Project Async Stale", raw_footage_url: "https://example.com/stale.mov", status: :pending)
 
     patch accept_order_path(project), headers: { "X-Workspace-Async-Action" => "1" }
@@ -278,6 +286,7 @@ RSpec.describe "Orders requests (detailed)" do
   end
 
   it "completes an in-progress order as the pm" do
+    cookies[:workspace_role] = "pm"
     project = Project.create!(owner: find_workspace_account(:client, email: "client@example.com"), participant: find_workspace_account(:pm, email: "pm@example.com"), name: "Project Active", raw_footage_url: "https://example.com/active.mov", status: :in_progress)
 
     patch complete_order_path(project)
@@ -291,6 +300,7 @@ RSpec.describe "Orders requests (detailed)" do
   it "creates a client notification when a pending order is accepted" do
     client = find_workspace_account(:client, email: "client@example.com")
     pm = find_workspace_account(:pm, email: "pm@example.com")
+    cookies[:workspace_role] = "pm"
     project = Project.create!(owner: client, participant: pm, name: "Project Client Update", raw_footage_url: "https://example.com/client-update.mov", status: :pending)
 
     expect do
@@ -308,6 +318,7 @@ RSpec.describe "Orders requests (detailed)" do
   it "creates a client notification when an in-progress order is completed" do
     client = find_workspace_account(:client, email: "client@example.com")
     pm = find_workspace_account(:pm, email: "pm@example.com")
+    cookies[:workspace_role] = "pm"
     project = Project.create!(owner: client, participant: pm, name: "Project Client Complete", raw_footage_url: "https://example.com/client-complete.mov", status: :in_progress)
 
     expect do
@@ -323,17 +334,18 @@ RSpec.describe "Orders requests (detailed)" do
   end
 
   it "completes an in-progress order asynchronously" do
+    cookies[:workspace_role] = "pm"
     project = Project.create!(owner: find_workspace_account(:client, email: "client@example.com"), participant: find_workspace_account(:pm, email: "pm@example.com"), name: "Project Async Complete", raw_footage_url: "https://example.com/complete.mov", status: :in_progress)
 
     patch complete_order_path(project), headers: { "X-Workspace-Async-Action" => "1" }
 
     expect(response).to have_http_status(:ok)
-    expect(JSON.parse(response.body)).to include(
-      "project_id" => project.id,
-      "status_badge_text" => "Completado",
-      "status_badge_class" => "text-bg-success",
-      "action" => nil
-    )
+    payload = JSON.parse(response.body)
+
+    expect(payload["project_id"]).to eq(project.id)
+    expect(payload["status_badge_text"]).to eq("Completado")
+    expect(payload["status_badge_class"]).to eq("text-bg-success")
+    expect(payload["action_cell_html"]).to include("d-inline-flex flex-wrap gap-2 justify-content-end")
 
     project.reload
     expect(project.status).to eq("completed")

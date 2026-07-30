@@ -5,14 +5,19 @@ module Payments
         belongs_to :payment, class_name: "Payments::Domain::Aggregates::Payment"
         belongs_to :payment_method_reference, class_name: "Payments::Domain::Entities::PaymentMethodReference"
 
-        STATUSES = %w[pending processed failed].freeze
+        STATUSES = %w[refund_pending refund_processing refunded failed].freeze
 
-        scope :pending, -> { where(status: "pending") }
-        scope :processed, -> { where(status: "processed") }
+        scope :refund_pending, -> { where(status: "refund_pending") }
+        scope :refund_processing, -> { where(status: "refund_processing") }
+        scope :refunded, -> { where(status: "refunded") }
         scope :failed, -> { where(status: "failed") }
+
+        scope :pending, -> { refund_pending }
+        scope :processed, -> { refunded }
 
         before_validation :normalize_provider
         before_validation :normalize_status
+        after_commit :broadcast_payment_project_status
 
         validates :status, presence: true, inclusion: { in: STATUSES }
         validates :provider, presence: true
@@ -27,13 +32,17 @@ module Payments
         end
 
         def normalize_status
-          self.status = status.to_s.strip.downcase.presence || "pending"
+          self.status = status.to_s.strip.downcase.presence || "refund_pending"
         end
 
         def payment_method_reference_belongs_to_payment
           return if payment_method_reference.blank? || payment_method_reference.payment_id == payment_id
 
           errors.add(:payment_method_reference, "must belong to the same payment")
+        end
+
+        def broadcast_payment_project_status
+          payment&.project&.broadcast_status_badge!
         end
       end
     end

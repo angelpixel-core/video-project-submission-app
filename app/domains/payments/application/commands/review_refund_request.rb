@@ -13,16 +13,20 @@ module Payments
         end
 
         def call
-          refund = payment.refunds.pending.order(created_at: :desc).first
+          refund = payment.refunds.refund_pending.order(created_at: :desc).first
           return failure("Refund request not found.", :not_found) unless refund.present?
 
           if approved
-            refund.update!(status: :processed, processed_at: Time.current, reason: reason)
-            Core::Result::Success.(data: { payment: payment, refund: refund })
+            result = Payments::Application::Commands::RefundPayment.call(payment:, refund:)
+            return result if result.failure?
+
+            Core::Result::Success.(data: { payment: payment, refund: result.data.fetch(:refund) })
           else
             refund.update!(status: :failed, processed_at: Time.current, reason: reason.presence || refund.reason)
             Core::Result::Success.(data: { payment: payment, refund: refund })
           end
+        rescue ActiveRecord::RecordInvalid => e
+          failure(e.message, :refund_update_failed)
         end
 
         private
