@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_30_000001) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_30_123000) do
   create_table "accounts", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "email", null: false
@@ -159,6 +159,42 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_30_000001) do
     t.datetime "updated_at", null: false
     t.index ["tenant_id", "slug"], name: "index_organizations_on_tenant_id_and_slug", unique: true
     t.index ["tenant_id"], name: "index_organizations_on_tenant_id"
+  end
+
+  create_table "billing_credit_notes", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.integer "amount_cents", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.bigint "invoice_id", null: false
+    t.datetime "issued_at", null: false
+    t.string "number", null: false
+    t.string "reason", null: false
+    t.string "status", default: "issued", null: false
+    t.datetime "updated_at", null: false
+    t.index ["invoice_id"], name: "index_billing_credit_notes_on_invoice_id"
+    t.index ["number"], name: "index_billing_credit_notes_on_number", unique: true
+  end
+
+  create_table "billing_invoices", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.json "billing_identity_json"
+    t.datetime "created_at", null: false
+    t.text "content", null: false
+    t.string "content_type", default: "text/html", null: false
+    t.datetime "issued_at", null: false
+    t.json "lines_json", null: false
+    t.bigint "order_id", null: false
+    t.string "order_name", null: false
+    t.bigint "payment_id", null: false
+    t.string "recipient_email", null: false
+    t.string "recipient_name", null: false
+    t.datetime "paid_at"
+    t.string "status", default: "issued", null: false
+    t.integer "tax_amount_cents", default: 0, null: false
+    t.integer "total_cents", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.string "number", null: false
+    t.index ["number"], name: "index_billing_invoices_on_number", unique: true
+    t.index ["order_id"], name: "index_billing_invoices_on_order_id"
+    t.index ["payment_id"], name: "index_billing_invoices_on_payment_id"
   end
 
   create_table "payment_attempts", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
@@ -395,6 +431,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_30_000001) do
   add_foreign_key "notifications", "accounts", column: "client_id"
   add_foreign_key "notifications", "accounts", column: "pm_id"
   add_foreign_key "notifications", "projects"
+  add_foreign_key "billing_credit_notes", "billing_invoices", column: "invoice_id"
+  add_foreign_key "billing_invoices", "orders", column: "order_id"
+  add_foreign_key "billing_invoices", "payments"
   add_foreign_key "order_lines", "orders"
   add_foreign_key "orders", "accounts", column: "owner_account_id"
   add_foreign_key "orders", "accounts", column: "participant_account_id"

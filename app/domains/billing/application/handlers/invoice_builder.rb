@@ -12,6 +12,7 @@ module Billing
 
         def call
           Billing::Domain::Aggregates::Invoice.new(
+            payment_id: payment.id,
             number: invoice_number,
             order_id: payment.project.id,
             order_name: payment.project.name,

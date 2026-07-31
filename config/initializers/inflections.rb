@@ -19,4 +19,5 @@ ActiveSupport::Inflector.inflections(:en) do |inflect|
   inflect.acronym "PM"
   inflect.acronym "DTO"
   inflect.acronym "MercadoPago"
+  inflect.acronym "ARCA"
 end

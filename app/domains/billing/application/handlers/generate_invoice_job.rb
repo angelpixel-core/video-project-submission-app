@@ -10,7 +10,10 @@ module Billing
           return unless payment.succeeded?
           return if payment.payment_invoice_delivery_intents.exists?
 
-          invoice = InvoiceBuilder.call(payment: payment)
+          invoice_result = Billing::Application::Commands::IssueInvoice.call(payment: payment)
+          return if invoice_result.failure?
+
+          invoice = invoice_result.data.fetch(:invoice)
 
           payment.with_lock do
             return if payment.payment_invoice_delivery_intents.exists?
