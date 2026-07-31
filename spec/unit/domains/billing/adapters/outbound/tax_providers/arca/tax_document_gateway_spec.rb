@@ -11,7 +11,7 @@ RSpec.describe Billing::Adapters::Outbound::TaxProviders::ARCA::TaxDocumentGatew
       order_name: "Project Draft",
       recipient_name: "Client",
       recipient_email: "client@example.com",
-      lines: [Billing::Domain::Entities::InvoiceLine.new(description: "Highlight Reel", quantity: 2, unit_amount_cents: 25_000)],
+      lines: [ Billing::Domain::Entities::InvoiceLine.new(description: "Highlight Reel", quantity: 2, unit_amount_cents: 25_000) ],
       content: "<html></html>",
       billing_identity: identity
     )
