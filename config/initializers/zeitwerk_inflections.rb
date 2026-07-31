@@ -7,6 +7,7 @@ Rails.autoloaders.each do |autoloader|
     "reservation_id" => "ReservationID",
     "payment_id" => "PaymentID",
     "order_id" => "OrderID",
+    "invoice_id" => "InvoiceID",
     "arca" => "ARCA"
   )
 end
