@@ -36,3 +36,4 @@ Use this page as the single entry point for payment-related docs.
 - [Project Documentation Overview](./overview.md)
 - [Changes Index](./changes/index.md)
 - [Work Items Index](./work-items/index.md)
+- [Payments Route Map](../app/domains/payments/README.md)
