@@ -9,6 +9,7 @@ RSpec.describe "payments rake tasks" do
 
   around do |example|
     original_env = {
+      "APP_PORT" => ENV["APP_PORT"],
       "WEBHOOK_URL" => ENV["WEBHOOK_URL"],
       "PROJECT_ID" => ENV["PROJECT_ID"],
       "PROVIDER" => ENV["PROVIDER"],
@@ -32,9 +33,13 @@ RSpec.describe "payments rake tasks" do
     Rake::Task["payments:replay_failed_webhook_events"].reenable
   end
 
+  def default_webhook_url
+    "http://localhost:#{ENV.fetch("APP_PORT", 4000)}/payments/webhooks/fake/events"
+  end
+
   it "defaults to localhost and forwards env vars to the simulator" do
     expect(Payments::Adapters::Outbound::Webhooks::WebhookSimulator).to receive(:call).with(
-      webhook_url: "http://localhost:3000/payments/webhooks/fake/events",
+      webhook_url: default_webhook_url,
       provider: "fake",
       event_id: "evt_123",
       type: "payment.succeeded",
@@ -48,7 +53,7 @@ RSpec.describe "payments rake tasks" do
 
   it "sends a signed fake webhook with a succeeded default type" do
     expect(Payments::Adapters::Outbound::Webhooks::WebhookSimulator).to receive(:call).with(
-      webhook_url: "http://localhost:3000/payments/webhooks/fake/events",
+      webhook_url: default_webhook_url,
       provider: "fake",
       event_id: "evt_123",
       type: "payment.succeeded",
@@ -87,7 +92,7 @@ RSpec.describe "payments rake tasks" do
     ENV["PROJECT_ID"] = project.id.to_s
 
     expect(Payments::Adapters::Outbound::Webhooks::WebhookSimulator).to receive(:call).with(
-      webhook_url: "http://localhost:3000/payments/webhooks/fake/events",
+      webhook_url: default_webhook_url,
       provider: "fake",
       event_id: "evt_123",
       type: "payment.succeeded",
@@ -117,7 +122,7 @@ RSpec.describe "payments rake tasks" do
     ENV["PROJECT_ID"] = project.id.to_s
 
     expect(Payments::Adapters::Outbound::Webhooks::WebhookSimulator).to receive(:call).with(
-      webhook_url: "http://localhost:3000/payments/webhooks/fake/events",
+      webhook_url: default_webhook_url,
       provider: "fake",
       event_id: "evt_123",
       type: "payment.succeeded",
@@ -139,7 +144,7 @@ RSpec.describe "payments rake tasks" do
     ENV["AMOUNT_CENTS"] = ""
 
     expect(Payments::Adapters::Outbound::Webhooks::WebhookSimulator).to receive(:call).with(
-      webhook_url: "http://localhost:3000/payments/webhooks/fake/events",
+      webhook_url: default_webhook_url,
       provider: "fake",
       event_id: "evt_123",
       type: "payment.succeeded",
@@ -171,7 +176,7 @@ RSpec.describe "payments rake tasks" do
     ENV["DEMO_FAIL_ONCE"] = "1"
 
     expect(Payments::Adapters::Outbound::Webhooks::WebhookSimulator).to receive(:call).with(
-      webhook_url: "http://localhost:3000/payments/webhooks/fake/events",
+      webhook_url: default_webhook_url,
       provider: "fake",
       event_id: "evt_123",
       type: "payment.succeeded",
@@ -188,7 +193,7 @@ RSpec.describe "payments rake tasks" do
     ENV["DEMO_FAIL_ALWAYS"] = "1"
 
     expect(Payments::Adapters::Outbound::Webhooks::WebhookSimulator).to receive(:call).with(
-      webhook_url: "http://localhost:3000/payments/webhooks/fake/events",
+      webhook_url: default_webhook_url,
       provider: "fake",
       event_id: "evt_123",
       type: "payment.succeeded",

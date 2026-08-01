@@ -23,4 +23,6 @@ if [ "${RUN_DB_PREPARE:-0}" = "1" ] && [ -f /app/bin/rails ]; then
   bundle exec rails db:prepare
 fi
 
+export PORT="${APP_PORT:-${PORT:-4000}}"
+
 exec "$@"
