@@ -231,3 +231,7 @@ Payments docs are centralized at [Payments Index](../payments.md).
 ## 47
 
 - [x] [Order Reopen and Refund Review Flow](./047-order-reopen-and-refund-review-flow.md)
+
+## 48
+
+- [x] [Billing Presentation and Adapter Taxonomy](./048-billing-presentation-and-adapter-taxonomy.md)
