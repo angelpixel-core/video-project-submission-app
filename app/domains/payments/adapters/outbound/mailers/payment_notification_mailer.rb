@@ -1,7 +1,7 @@
 module Payments
   module Adapters
     module Outbound
-      module Email
+      module Mailers
         class PaymentNotificationMailer < ApplicationMailer
           def payment_status_changed(intent, recipient_role:)
             @intent = intent

@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe Payments::Adapters::Outbound::Email::PaymentNotificationMailer do
+RSpec.describe Payments::Adapters::Outbound::Mailers::PaymentNotificationMailer do
   describe "payment_status_changed" do
     it "sends a compact text email for a succeeded payment to the client" do
       client = workspace_account(:client, name: "Client")
