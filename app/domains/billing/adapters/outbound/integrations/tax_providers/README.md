@@ -1,4 +1,4 @@
-# Billing Tax Providers
+# Billing Tax Provider Integrations
 
 Fiscal providers are outbound integrations.
 

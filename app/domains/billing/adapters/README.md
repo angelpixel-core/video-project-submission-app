@@ -16,6 +16,6 @@ Adapters connect billing to the outside world.
 ## Current Physical Paths
 
 - `inbound/event_consumers/`
-- `outbound/email/`
-- `outbound/tax_providers/`
+- `outbound/mailers/`
+- `outbound/integrations/tax_providers/`
 - `outbound/persistence/`

@@ -14,14 +14,26 @@ billing/
   domain/
   application/
   adapters/
+    inbound/
+      event_consumers/
+    outbound/
+      mailers/
+      integrations/
+        tax_providers/
+          arca/
+      persistence/
   presentation/
+    html/
+    json/
+    stream/
+    binary/
 ```
 
 ## Current Physical Subtrees
 
 - `adapters/inbound/event_consumers/`
-- `adapters/outbound/email/`
-- `adapters/outbound/tax_providers/`
+- `adapters/outbound/mailers/`
+- `adapters/outbound/integrations/tax_providers/`
 - `adapters/outbound/persistence/`
 - `presentation/html/`
 - `presentation/json/`

@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe Billing::Adapters::Outbound::Email::InvoiceMailer do
+RSpec.describe Billing::Adapters::Outbound::Mailers::InvoiceMailer do
   describe "invoice_ready" do
     it "sends the invoice email with an attachment link" do
       client = workspace_account(:client, name: "Client")

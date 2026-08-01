@@ -1,8 +1,8 @@
 require "rails_helper"
 
-require Rails.root.join("app/domains/billing/adapters/outbound/tax_providers/arca/tax_document_gateway")
+require Rails.root.join("app/domains/billing/adapters/outbound/integrations/tax_providers/arca/tax_document_gateway")
 
-RSpec.describe Billing::Adapters::Outbound::TaxProviders::ARCA::TaxDocumentGateway do
+RSpec.describe Billing::Adapters::Outbound::Integrations::TaxProviders::ARCA::TaxDocumentGateway do
   it "calculates tax for an AR invoice" do
     identity = Billing::Domain::ValueObjects::BillingIdentity.new(name: "Client", country_code: "AR")
     invoice = Billing::Domain::Aggregates::Invoice.new(

@@ -1,7 +1,7 @@
 module Billing
   module Adapters
     module Outbound
-      module Email
+      module Mailers
         class InvoiceMailer < ApplicationMailer
           def invoice_ready(intent)
             @intent = intent
