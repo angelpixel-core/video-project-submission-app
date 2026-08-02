@@ -4,7 +4,7 @@ set -e
 echo "Waiting for MySQL..."
 
 MYSQL_HOST="${DB_HOST:-${MYSQL_HOST:-db}}"
-MYSQL_PORT="${DB_PORT:-${MYSQL_PORT:-3306}}"
+MYSQL_PORT="${DB_PORT:-${MYSQL_PORT:-4001}}"
 MYSQL_USER="${DB_USER:-${MYSQL_USER:-app}}"
 MYSQL_PASSWORD="${DB_PASSWORD:-${MYSQL_PASSWORD:-app_password}}"
 

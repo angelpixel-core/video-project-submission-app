@@ -86,14 +86,14 @@ run_in_image() {
       --env-file "$TEST_APP_DB_ENV_FILE" \
       --env "DATABASE_URL=${DATABASE_URL}" \
       "$IMAGE_NAME" \
-      sh -lc "set -e; until nc -z \"${DB_HOST:-db}\" \"${DB_PORT:-3306}\" >/dev/null 2>&1; do sleep 1; done; $command" sh "$@"
+      sh -lc "set -e; until nc -z \"${DB_HOST:-db}\" \"${DB_PORT:-4001}\" >/dev/null 2>&1; do sleep 1; done; $command" sh "$@"
   else
     docker run --rm \
       --network video_project_submission_app_net \
       --env-file "$TEST_APP_CORE_ENV_FILE" \
       --env-file "$TEST_APP_DB_ENV_FILE" \
       "$IMAGE_NAME" \
-      sh -lc "set -e; until nc -z \"${DB_HOST:-db}\" \"${DB_PORT:-3306}\" >/dev/null 2>&1; do sleep 1; done; $command" sh "$@"
+      sh -lc "set -e; until nc -z \"${DB_HOST:-db}\" \"${DB_PORT:-4001}\" >/dev/null 2>&1; do sleep 1; done; $command" sh "$@"
   fi
 }
 
