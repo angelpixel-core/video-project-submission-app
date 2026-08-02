@@ -27,7 +27,7 @@ RSpec.describe Billing::Application::Commands::IssueInvoice do
     expect(@result).to be_success
     invoice = @result.data.fetch(:invoice)
 
-    expect(invoice.number).to eq("INV-00000#{payment.id}")
+    expect(invoice.number).to eq("INV-000000#{payment.id}")
     expect(invoice.tax_amount_cents).to eq(10_500)
     expect(invoice.status).to eq("issued")
     expect(invoice.billing_identity).to be_a(Billing::Domain::ValueObjects::BillingIdentity)

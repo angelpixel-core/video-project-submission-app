@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe Project do
   it "is an ActiveRecord model" do
-    expect(described_class.superclass).to eq(ApplicationRecord)
+    expect(described_class.superclass).to eq(Order)
   end
 
   it "belongs to an owner and participant and starts as draft" do

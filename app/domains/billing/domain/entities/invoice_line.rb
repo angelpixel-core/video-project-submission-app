@@ -12,11 +12,11 @@ module Billing
           )
         end
 
-        def initialize(description:, quantity:, unit_amount_cents:)
+        def initialize(description:, quantity:, unit_amount_cents:, line_total_cents: nil)
           @description = description.to_s.strip
           @quantity = quantity.to_i
           @unit_amount_cents = unit_amount_cents.to_i
-          @line_total_cents = @quantity * @unit_amount_cents
+          @line_total_cents = line_total_cents.present? ? line_total_cents.to_i : @quantity * @unit_amount_cents
         end
 
         def to_h

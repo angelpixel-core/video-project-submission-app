@@ -32,7 +32,7 @@ module Billing
         attr_reader :payment, :repository, :tax_gateway, :billing_identity
 
         def invoice_number
-          payment.invoice_number.presence || "INV-#{payment.id.to_s.rjust(6, '0')}"
+          payment.invoice_number.presence || "INV-#{payment.id.to_s.rjust(7, '0')}"
         end
 
         def failure(message, code)

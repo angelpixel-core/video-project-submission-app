@@ -30,7 +30,7 @@ module Billing
         attr_reader :payment
 
         def invoice_number
-          payment.invoice_number.presence || "INV-#{payment.id.to_s.rjust(6, '0')}"
+          payment.invoice_number.presence || "INV-#{payment.id.to_s.rjust(7, '0')}"
         end
 
         def invoice_lines

@@ -13,7 +13,7 @@ module Billing
           @recipient_name = recipient_name.to_s.strip
           @recipient_email = recipient_email.to_s.strip
           @lines = Array(lines).map do |line|
-            line.respond_to?(:to_h) ? line : Billing::Domain::Entities::InvoiceLine.new(**line)
+            line.is_a?(Billing::Domain::Entities::InvoiceLine) ? line : Billing::Domain::Entities::InvoiceLine.new(**line)
           end
           @content = content.to_s
           @content_type = content_type.to_s.strip.presence || "text/html"
