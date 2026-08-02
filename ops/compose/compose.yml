@@ -129,7 +129,7 @@ services:
       MYSQL_USER: "${MYSQL_USER:-app}"
       MYSQL_PASSWORD: "${MYSQL_PASSWORD:-app_password}"
     ports:
-      - "${MYSQL_PORT:-3306}:3306"
+      - "${MYSQL_PORT:-4400}:3306"
     volumes:
       - db_data:/var/lib/mysql
       - ../containers/db/entrypoint/initdb.d:/docker-entrypoint-initdb.d:ro
