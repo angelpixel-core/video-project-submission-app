@@ -6,7 +6,7 @@ RSpec.describe Catalog::Application::Queries::ListPublicVideoTypes do
     item_type = OfferItemType.create!(key: "video_type", name: "Video Type", description: "Selectable video editing component", input_kind: "selection")
     variant = OfferVariant.create!(offer:, offer_item_type: item_type, key: "highlight_reel", name: "Highlight Reel", description: "Polished highlight package", price_cents: 25_000, output_format: "mp4")
 
-    allow(Catalog::Domain::Repositories::OfferRepository).to receive(:public_variants).and_return([variant])
+    allow(Catalog::Domain::Repositories::OfferRepository).to receive(:public_variants).and_return([ variant ])
     allow(Catalog::Domain::Policies::VisibilityPolicy).to receive(:visible_to?).and_return(true)
 
     result = described_class.call(account: instance_double("Account"))

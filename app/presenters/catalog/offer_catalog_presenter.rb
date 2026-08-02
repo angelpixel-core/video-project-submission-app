@@ -7,9 +7,9 @@ module Catalog
     def initialize(variants:)
       grouped_variants = variants.group_by(&:offer_id)
 
-      @groups = grouped_variants.sort_by { |_offer_id, offer_variants| [offer_variants.first.offer.name, offer_variants.first.offer.id] }.map do |_offer_id, offer_variants|
+      @groups = grouped_variants.sort_by { |_offer_id, offer_variants| [ offer_variants.first.offer.name, offer_variants.first.offer.id ] }.map do |_offer_id, offer_variants|
         offer = offer_variants.first.offer
-        OfferGroup.new(offer:, variants: offer_variants.sort_by { |variant| [variant.position, variant.name] })
+        OfferGroup.new(offer:, variants: offer_variants.sort_by { |variant| [ variant.position, variant.name ] })
       end
     end
 
