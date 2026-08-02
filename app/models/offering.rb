@@ -1,2 +1,2 @@
-class Offering < Catalog::Domain::Aggregates::Offering
+class Offering < Offer
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_30_123000) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_02_090000) do
   create_table "accounts", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "email", null: false
@@ -155,6 +155,63 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_30_123000) do
     t.index ["pm_id"], name: "index_notifications_on_pm_id"
     t.index ["project_id"], name: "index_notifications_on_project_id"
     t.check_constraint "((`pm_id` is not null) and (`client_id` is null)) or ((`pm_id` is null) and (`client_id` is not null))", name: "notifications_single_recipient"
+  end
+
+  create_table "offer_item_type_assignments", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.integer "max_selections"
+    t.integer "min_selections"
+    t.bigint "offer_id", null: false
+    t.bigint "offer_item_type_id", null: false
+    t.integer "position", default: 0, null: false
+    t.boolean "required", default: false, null: false
+    t.datetime "updated_at", null: false
+    t.index ["offer_id", "offer_item_type_id"], name: "index_offer_item_type_assignments_on_offer_and_item_type", unique: true
+    t.index ["offer_id", "position"], name: "index_offer_item_type_assignments_on_offer_id_and_position"
+    t.index ["offer_id"], name: "index_offer_item_type_assignments_on_offer_id"
+    t.index ["offer_item_type_id"], name: "index_offer_item_type_assignments_on_offer_item_type_id"
+  end
+
+  create_table "offer_item_types", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.boolean "active", default: true, null: false
+    t.datetime "created_at", null: false
+    t.text "description", null: false
+    t.string "input_kind", default: "selection", null: false
+    t.string "key", null: false
+    t.string "name", null: false
+    t.datetime "updated_at", null: false
+    t.index ["key"], name: "index_offer_item_types_on_key", unique: true
+    t.index ["name"], name: "index_offer_item_types_on_name", unique: true
+  end
+
+  create_table "offer_variants", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.boolean "active", default: true, null: false
+    t.datetime "created_at", null: false
+    t.text "description", null: false
+    t.string "key", null: false
+    t.string "name", null: false
+    t.bigint "offer_id", null: false
+    t.bigint "offer_item_type_id", null: false
+    t.string "output_format"
+    t.integer "position", default: 0, null: false
+    t.integer "price_cents", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_offer_variants_on_name"
+    t.index ["offer_id", "key"], name: "index_offer_variants_on_offer_id_and_key", unique: true
+    t.index ["offer_id", "offer_item_type_id", "position"], name: "index_offer_variants_on_offer_item_type_and_position"
+    t.index ["offer_id"], name: "index_offer_variants_on_offer_id"
+    t.index ["offer_item_type_id"], name: "index_offer_variants_on_offer_item_type_id"
+  end
+
+  create_table "offers", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.boolean "active", default: true, null: false
+    t.datetime "created_at", null: false
+    t.text "description", null: false
+    t.string "key", null: false
+    t.string "name", null: false
+    t.datetime "updated_at", null: false
+    t.index ["key"], name: "index_offers_on_key", unique: true
+    t.index ["name"], name: "index_offers_on_name", unique: true
   end
 
   create_table "order_lines", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
@@ -434,6 +491,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_30_123000) do
   add_foreign_key "notifications", "accounts", column: "client_id"
   add_foreign_key "notifications", "accounts", column: "pm_id"
   add_foreign_key "notifications", "projects"
+  add_foreign_key "offer_item_type_assignments", "offer_item_types"
+  add_foreign_key "offer_item_type_assignments", "offers"
+  add_foreign_key "offer_variants", "offer_item_types"
+  add_foreign_key "offer_variants", "offers"
   add_foreign_key "order_lines", "orders"
   add_foreign_key "orders", "accounts", column: "owner_account_id"
   add_foreign_key "orders", "accounts", column: "participant_account_id"

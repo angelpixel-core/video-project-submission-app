@@ -1,2 +1,2 @@
-class OfferingVariant < Catalog::Domain::Entities::OfferingVariant
+class OfferingVariant < OfferVariant
 end

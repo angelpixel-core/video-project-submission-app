@@ -1,2 +1,3 @@
-class VideoType < OfferingVariant
+class VideoType < OfferVariant
+  validates :output_format, presence: true
 end

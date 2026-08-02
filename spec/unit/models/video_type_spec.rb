@@ -1,8 +1,8 @@
 require "rails_helper"
 
 RSpec.describe VideoType do
-  it "inherits from the catalog video type entity" do
-    expect(described_class.superclass).to eq(OfferingVariant)
+  it "inherits from the offer variant model" do
+    expect(described_class.superclass).to eq(OfferVariant)
   end
 
   it "requires the core attributes" do
