@@ -2,7 +2,7 @@
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h2 class="modal-title h5">Payment details</h2>
+        <h2 class="modal-title h5"><%= order_form.fields.payment_modal_title %></h2>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
@@ -11,7 +11,7 @@
           <strong data-order-form-target="cartTotal">$0.00</strong>
         </div>
 
-        <p class="text-muted small mb-3">This is a simulated payment step for order checkout.</p>
+        <p class="text-muted small mb-3"><%= order_form.fields.payment_modal_description %></p>
 
         <div class="payment-card-stage mb-4">
           <div class="payment-card-shell" data-order-form-target="paymentCardShell">
@@ -55,17 +55,17 @@
         <p id="payment-card-error" class="payment-card-error d-none mb-3" data-order-form-target="paymentCardError" role="alert" aria-live="polite"></p>
 
         <div class="mb-3">
-          <label class="form-label" for="payment-email">Billing email</label>
+          <label class="form-label" for="payment-email"><%= order_form.fields.billing_email_label %></label>
           <input id="payment-email" type="email" class="form-control" data-order-form-target="paymentEmail" data-action="input->order-form#syncFields">
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal"><%= order_form.fields.cancel_button_label %></button>
         <button type="button" class="btn btn-primary" data-action="click->order-form#beginFinalize" data-order-form-target="finalizeButton">
-          <span data-order-form-target="finalizeButtonLabel">Pay and create order</span>
+          <span data-order-form-target="finalizeButtonLabel"><%= order_form.fields.finalize_button_label %></span>
           <span class="d-none d-inline-flex align-items-center gap-2" data-order-form-target="finalizeButtonSpinner">
             <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-            <span>Creating order...</span>
+            <span><%= order_form.fields.finalize_spinner_label %></span>
           </span>
         </button>
       </div>

@@ -190,6 +190,10 @@ RSpec.describe "Orders requests (detailed)" do
     expect(response).to have_http_status(:ok)
     expect(response.body).to include("Resume draft")
     expect(response.body).to include("Highlight Reel")
+    expect(response.body).to include('name="project[name]"')
+    expect(response.body).to include('name="project[raw_footage_url]"')
+    expect(response.body).to include('name="project[selections_json]"')
+    expect(response.body).to include('name="project[finalize]"')
   end
 
   it "autosaves a draft and keeps it in draft status" do

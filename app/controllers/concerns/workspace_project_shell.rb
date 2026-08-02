@@ -39,9 +39,11 @@ module WorkspaceProjectShell
 
   def edit
     @selections_json = selections_json_for(@project)
+    @order_form = order_form_for(@project)
   end
 
   def update
+    @order_form = order_form_for(@project)
     selections = parsed_selections
     finalize = finalize_submission?
 
@@ -162,6 +164,10 @@ module WorkspaceProjectShell
 
   def finalize_submission?
     params.dig(:project, :finalize) == "1"
+  end
+
+  def order_form_for(project)
+    Orders::OrderFormPresenter.new(project:, path: order_path(project))
   end
 
   def process_workspace_action(event:, success_notice:, stale_alert:)
