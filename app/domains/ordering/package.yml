@@ -6,3 +6,4 @@ dependencies:
   - app/domains/payments
   - app/domains/billing
   - app/domains/capacity
+  - .

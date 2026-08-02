@@ -6,33 +6,6 @@
 #
 # bin/packwerk update-todo
 ---
-".":
-  "::ApplicationController":
-    violations:
-    - dependency
-    files:
-    - app/domains/catalog/adapters/inbound/http/admin_video_types_controller.rb
-    - app/domains/catalog/adapters/inbound/http/public_catalog_controller.rb
-  "::ApplicationRecord":
-    violations:
-    - dependency
-    files:
-    - app/domains/catalog/domain/aggregates/offer.rb
-  "::Core::Services::Provider":
-    violations:
-    - dependency
-    files:
-    - app/domains/catalog/application/ports/capacity_gateway.rb
-  "::Project":
-    violations:
-    - dependency
-    files:
-    - app/domains/catalog/domain/aggregates/offer.rb
-  "::VideoTypeSelection":
-    violations:
-    - dependency
-    files:
-    - app/domains/catalog/domain/aggregates/offer.rb
 app/domains/capacity:
   "::Capacity::Application::Queries::CheckCapacity":
     violations:
