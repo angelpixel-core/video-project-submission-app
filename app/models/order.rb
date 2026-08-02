@@ -61,8 +61,12 @@ class Order < ApplicationRecord
     return self[:total_budget_cents] if has_attribute?(:total_budget_cents) && self[:total_budget_cents].present?
 
     video_type_selections.includes(:video_type).sum do |selection|
-      selection.quantity * selection.video_type.price_cents
+      selection.quantity * selection.offer_variant_price_cents
     end
+  end
+
+  def offer_variants
+    video_type_selections.map(&:offer_variant).compact
   end
 
   def submitted?
@@ -218,17 +222,20 @@ class Order < ApplicationRecord
 
     order.order_line_records.delete_all
     video_type_selections.includes(:video_type).each do |selection|
+      offer_variant = selection.offer_variant || selection.video_type
       order.order_line_records.create!(
         offering_snapshot: {
+          offer_variant_id: selection.offer_variant_id || selection.video_type_id,
+          offer_variant_uid: selection.video_type.try(:uid),
+          name: selection.offer_variant_name,
+          description: offer_variant.description,
+          price_cents: selection.offer_variant_price_cents,
+          output_format: offer_variant.output_format,
           offering_id: selection.video_type_id,
-          offering_uid: selection.video_type.try(:uid),
-          name: selection.video_type.name,
-          description: selection.video_type.description,
-          price_cents: selection.video_type.price_cents,
-          output_format: selection.video_type.output_format
+          offering_uid: selection.video_type.try(:uid)
         },
         quantity: selection.quantity,
-        line_total_cents: selection.quantity * selection.video_type.price_cents,
+        line_total_cents: selection.quantity * selection.offer_variant_price_cents,
         created_at: created_at,
         updated_at: updated_at
       )

@@ -57,7 +57,11 @@ module Orders
       end
 
       def available_video_types_title
-        "Available video types"
+        available_offers_title
+      end
+
+      def available_offers_title
+        "Available offers"
       end
 
       def cart_title

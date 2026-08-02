@@ -183,12 +183,17 @@ RSpec.describe "Orders requests (detailed)" do
   end
 
   it "renders the draft editor" do
+    offer = Offer.create!(key: "video_editing", name: "Video Editing", description: "Video editing services")
+    offer_item_type = OfferItemType.create!(key: "video_type", name: "Video Type", description: "Selectable video editing component", input_kind: "selection")
+    OfferVariant.create!(offer:, offer_item_type:, key: "highlight_reel", name: "Highlight Reel", description: "Short edit", price_cents: 25_000, output_format: "mp4")
+
     draft = Project.create!(owner: find_workspace_account(:client, email: "client@example.com"), participant: find_workspace_account(:pm, email: "pm@example.com"), status: :draft)
 
     get edit_order_path(draft)
 
     expect(response).to have_http_status(:ok)
     expect(response.body).to include("Resume draft")
+    expect(response.body).to include("Video Editing")
     expect(response.body).to include("Highlight Reel")
     expect(response.body).to include('name="project[name]"')
     expect(response.body).to include('name="project[raw_footage_url]"')

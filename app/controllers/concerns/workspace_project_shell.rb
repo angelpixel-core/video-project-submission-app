@@ -5,7 +5,7 @@ module WorkspaceProjectShell
     before_action :load_project, only: %i[edit update reopen]
     before_action :ensure_draft_project, only: %i[edit update]
     before_action :load_workspace_project, only: %i[accept complete cancel request_refund approve_refund_request reject_refund_request]
-    before_action :load_video_types, only: %i[edit update]
+    before_action :load_offer_catalog, only: %i[new edit update]
   end
 
   def index
@@ -143,20 +143,21 @@ module WorkspaceProjectShell
 
     data = JSON.parse(raw, symbolize_names: true)
     data.filter_map do |selection|
-      video_type_id = selection[:video_type_id].to_i
+      video_type_id = selection[:offer_variant_id].presence || selection[:video_type_id]
+      video_type_id = video_type_id.to_i
       quantity = selection[:quantity].to_i
       next if video_type_id <= 0 || quantity <= 0
 
-      { video_type_id: video_type_id, quantity: quantity }
+      { offer_variant_id: video_type_id, quantity: quantity }
     end
   end
 
   def selections_json_for(project)
     project.video_type_selections.includes(:video_type).map do |selection|
       {
-        video_type_id: selection.video_type_id,
-        video_type_name: selection.video_type.name,
-        price_cents: selection.video_type.price_cents,
+        offer_variant_id: selection.offer_variant_id,
+        offer_variant_name: selection.offer_variant_name,
+        price_cents: selection.offer_variant_price_cents,
         quantity: selection.quantity
       }
     end.to_json
@@ -201,8 +202,9 @@ module WorkspaceProjectShell
     request.headers["X-Workspace-Async-Action"] == "1"
   end
 
-  def load_video_types
-    @video_types = Catalog::Application::Queries::ListPublicVideoTypes.call(account: workspace_for(:client)).data.fetch(:video_types)
+  def load_offer_catalog
+    result = Catalog::Application::Queries::ListPublicVideoTypes.call(account: workspace_for(:client))
+    @offer_catalog = Catalog::OfferCatalogPresenter.new(variants: result.data.fetch(:video_types))
   end
 
   def ensure_draft_project

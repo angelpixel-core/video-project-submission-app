@@ -19,6 +19,10 @@ module Ordering
             order_line_records.map(&:video_type).compact
           end
 
+          def offer_variants
+            order_line_records.map(&:offer_variant).compact
+          end
+
           def total_budget_cents
             self[:total_budget_cents].presence || order_line_records.sum(&:line_total_cents)
           end

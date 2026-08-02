@@ -27,7 +27,7 @@
       <%= render "raw_footage_preview", project: project, parent_host: request.host, preview_mode: :card if project.raw_footage_previewable? %>
 
       <div class="mb-3">
-        <p class="text-uppercase small text-body-secondary mb-2">Video types</p>
+        <p class="text-uppercase small text-body-secondary mb-2">Selected options</p>
         <% if project.video_types.any? %>
           <ul class="list-unstyled mb-0">
             <% project.video_type_selections.each do |selection| %>

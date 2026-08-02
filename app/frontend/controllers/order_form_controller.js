@@ -58,25 +58,25 @@ export default class extends Controller {
     event.preventDefault();
 
     const button = event.currentTarget;
-    const videoTypeId = Number(button.dataset.videoTypeId);
-    const videoTypeName = button.dataset.videoTypeName;
+    const offerVariantId = Number(button.dataset.offerVariantId);
+    const offerVariantName = button.dataset.offerVariantName;
     const priceCents = Number(button.dataset.priceCents);
     const quantityInput = button
-      .closest("[data-order-form-video-type-card]")
+      .closest("[data-order-form-offer-variant-card]")
       .querySelector("[data-order-form-quantity-input]");
     const quantity = Number(quantityInput.value || 1);
 
-    if (videoTypeId <= 0 || quantity <= 0) return;
+    if (offerVariantId <= 0 || quantity <= 0) return;
 
     const existing = this.cart.items.find(
-      (item) => item.videoTypeId === videoTypeId,
+      (item) => item.offerVariantId === offerVariantId,
     );
     if (existing) {
       existing.quantity += quantity;
     } else {
       this.cart.items.push({
-        videoTypeId,
-        videoTypeName,
+        offerVariantId,
+        offerVariantName,
         priceCents,
         quantity,
       });
@@ -91,9 +91,9 @@ export default class extends Controller {
   removeSelection(event) {
     event.preventDefault();
 
-    const videoTypeId = Number(event.currentTarget.dataset.videoTypeId);
+    const offerVariantId = Number(event.currentTarget.dataset.offerVariantId);
     this.cart.items = this.cart.items.filter(
-      (item) => item.videoTypeId !== videoTypeId,
+      (item) => item.offerVariantId !== offerVariantId,
     );
     this.scheduleAutosave();
     this.renderCart();
@@ -181,7 +181,7 @@ export default class extends Controller {
   prepareSubmit() {
     this.syncFields();
     const selections = this.cart.items.map((item) => ({
-      video_type_id: item.videoTypeId,
+      offer_variant_id: item.offerVariantId,
       quantity: item.quantity,
     }));
 
@@ -240,8 +240,8 @@ export default class extends Controller {
         paymentEmail: this.paymentEmailTarget?.value || "",
         items: rawSelections
           ? JSON.parse(rawSelections).map((item) => ({
-              videoTypeId: Number(item.video_type_id),
-              videoTypeName: item.video_type_name || "",
+              offerVariantId: Number(item.offer_variant_id),
+              offerVariantName: item.offer_variant_name || "",
               priceCents: Number(item.price_cents || 0),
               quantity: Number(item.quantity || 0),
             }))
@@ -254,7 +254,7 @@ export default class extends Controller {
 
   renderCart() {
     const selections = this.cart.items.map((item) => ({
-      video_type_id: item.videoTypeId,
+      offer_variant_id: item.offerVariantId,
       quantity: item.quantity,
     }));
 
@@ -267,10 +267,10 @@ export default class extends Controller {
               (item) => `
           <li class="list-group-item d-flex justify-content-between align-items-start">
             <div class="me-2">
-              <div class="fw-semibold">${this.escapeHtml(item.videoTypeName)}</div>
+              <div class="fw-semibold">${this.escapeHtml(item.offerVariantName)}</div>
               <small class="text-body-secondary">Qty ${item.quantity} · $${(item.priceCents / 100).toFixed(2)} each</small>
             </div>
-            <button class="btn btn-sm btn-outline-danger" type="button" data-video-type-id="${item.videoTypeId}" data-action="click->order-form#removeSelection">Remove</button>
+            <button class="btn btn-sm btn-outline-danger" type="button" data-offer-variant-id="${item.offerVariantId}" data-action="click->order-form#removeSelection">Remove</button>
           </li>
         `,
             )
@@ -308,7 +308,7 @@ export default class extends Controller {
       "project[selections_json]",
       JSON.stringify(
         this.cart.items.map((item) => ({
-          video_type_id: item.videoTypeId,
+          offer_variant_id: item.offerVariantId,
           quantity: item.quantity,
         })),
       ),
@@ -420,7 +420,7 @@ export default class extends Controller {
 
   getReviewBlockReason() {
     if (this.cart.items.length === 0)
-      return "Add at least one video type before paying.";
+      return "Add at least one offer variant before paying.";
     if ((this.nameTarget?.value || "").trim().length === 0)
       return "Add a project name before paying.";
     if ((this.rawFootageUrlTarget?.value || "").trim().length === 0)

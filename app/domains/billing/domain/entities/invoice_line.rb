@@ -6,9 +6,9 @@ module Billing
 
         def self.from_selection(selection)
           new(
-            description: selection.video_type.name,
+            description: selection.offer_variant_name,
             quantity: selection.quantity,
-            unit_amount_cents: selection.video_type.price_cents
+            unit_amount_cents: selection.offer_variant_price_cents
           )
         end
 
