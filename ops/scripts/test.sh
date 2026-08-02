@@ -53,6 +53,7 @@ build_image() {
 
 ensure_database() {
   require_file "$TEST_DB_BOOTSTRAP_ENV_FILE"
+  load_env_file "$TEST_DB_BOOTSTRAP_ENV_FILE"
   docker network inspect video_project_submission_app_net >/dev/null 2>&1 || \
     docker network create --driver bridge video_project_submission_app_net >/dev/null
   docker rm -f video-project-submission-app-db >/dev/null 2>&1 || true
@@ -70,6 +71,29 @@ ensure_database() {
   }
 
   trap cleanup_database EXIT INT TERM
+
+  wait_for_database
+}
+
+wait_for_database() {
+  host="${DB_HOST:-db}"
+  port="${DB_PORT:-4001}"
+  root_password="${MYSQL_ROOT_PASSWORD:-root_password}"
+  max_attempts="${DB_WAIT_ATTEMPTS:-300}"
+  attempt=1
+
+  while [ "$attempt" -le "$max_attempts" ]; do
+    if docker exec "$TEST_DB_CONTAINER_NAME" mysqladmin ping -h 127.0.0.1 -P "$port" -uroot -p"$root_password" --silent >/dev/null 2>&1; then
+      return 0
+    fi
+
+    sleep 1
+    attempt=$((attempt + 1))
+  done
+
+  echo "Timed out waiting for database on ${host}:${port}" >&2
+  docker logs "$TEST_DB_CONTAINER_NAME" >&2 || true
+  return 1
 }
 
 run_in_image() {
@@ -86,14 +110,14 @@ run_in_image() {
       --env-file "$TEST_APP_DB_ENV_FILE" \
       --env "DATABASE_URL=${DATABASE_URL}" \
       "$IMAGE_NAME" \
-      sh -lc "set -e; until nc -z \"${DB_HOST:-db}\" \"${DB_PORT:-4001}\" >/dev/null 2>&1; do sleep 1; done; $command" sh "$@"
+      sh -lc "$command" sh "$@"
   else
     docker run --rm \
       --network video_project_submission_app_net \
       --env-file "$TEST_APP_CORE_ENV_FILE" \
       --env-file "$TEST_APP_DB_ENV_FILE" \
       "$IMAGE_NAME" \
-      sh -lc "set -e; until nc -z \"${DB_HOST:-db}\" \"${DB_PORT:-4001}\" >/dev/null 2>&1; do sleep 1; done; $command" sh "$@"
+      sh -lc "$command" sh "$@"
   fi
 }
 

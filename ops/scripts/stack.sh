@@ -64,7 +64,7 @@ sync_file_to_vercel() {
 case "${1:-}" in
   up)
     shift
-    run_compose up --build "$@"
+    run_compose up "$@"
     ;;
   down)
     shift
