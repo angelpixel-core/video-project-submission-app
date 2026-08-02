@@ -235,3 +235,7 @@ Payments docs are centralized at [Payments Index](../payments.md).
 ## 48
 
 - [x] [Billing Presentation and Adapter Taxonomy](./048-billing-presentation-and-adapter-taxonomy.md)
+
+## 49
+
+- [ ] [Availability Policy Per Marketplace](./049-availability-policy-per-marketplace.md)
