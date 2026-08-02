@@ -53,6 +53,7 @@ build_image() {
 
 ensure_database() {
   require_file "$TEST_DB_BOOTSTRAP_ENV_FILE"
+  load_env_file "$TEST_APP_DB_ENV_FILE"
   load_env_file "$TEST_DB_BOOTSTRAP_ENV_FILE"
   docker network inspect video_project_submission_app_net >/dev/null 2>&1 || \
     docker network create --driver bridge video_project_submission_app_net >/dev/null
@@ -64,7 +65,7 @@ ensure_database() {
     --network-alias db \
     --env-file "$TEST_DB_BOOTSTRAP_ENV_FILE" \
     -v "${ROOT_DIR}/ops/containers/db/entrypoint/initdb.d:/docker-entrypoint-initdb.d:ro" \
-    mysql:8.4 >/dev/null
+    mysql:8.4 mysqld --port="${DB_PORT:-4001}" >/dev/null
 
   cleanup_database() {
     docker rm -f "$TEST_DB_CONTAINER_NAME" >/dev/null 2>&1 || true
