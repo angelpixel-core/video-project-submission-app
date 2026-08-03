@@ -6,6 +6,7 @@ module Ordering
           submission:,
           payment_command: Payments::Application::Commands::CreatePayment,
           payment_gateway: nil,
+          availability_policy: Catalog::Domain::Policies::AvailabilityPolicy,
           capacity_reserve_command: Capacity::Application::Commands::ReserveCapacity,
           capacity_commit_command: Capacity::Application::Commands::CommitCapacity,
           capacity_release_command: Capacity::Application::Commands::ReleaseCapacity
@@ -14,16 +15,18 @@ module Ordering
             submission:,
             payment_command:,
             payment_gateway:,
+            availability_policy:,
             capacity_reserve_command:,
             capacity_commit_command:,
             capacity_release_command:
           ).call
         end
 
-        def initialize(submission:, payment_command:, payment_gateway: nil, capacity_reserve_command:, capacity_commit_command:, capacity_release_command:)
+        def initialize(submission:, payment_command:, payment_gateway: nil, availability_policy:, capacity_reserve_command:, capacity_commit_command:, capacity_release_command:)
           @submission = submission
           @payment_command = payment_command
           @payment_gateway = payment_gateway
+          @availability_policy = availability_policy
           @capacity_reserve_command = capacity_reserve_command
           @capacity_commit_command = capacity_commit_command
           @capacity_release_command = capacity_release_command
@@ -32,6 +35,9 @@ module Ordering
         def call
           validation_failure = validate_submission
           return validation_failure if validation_failure
+
+          availability_failure = validate_availability
+          return availability_failure if availability_failure
 
           reservation_result = reserve_capacity
           return capacity_failure(reservation_result) if reservation_result.failure?
@@ -57,7 +63,7 @@ module Ordering
 
         private
 
-        attr_reader :submission, :payment_command, :payment_gateway, :capacity_reserve_command, :capacity_commit_command, :capacity_release_command
+        attr_reader :submission, :payment_command, :payment_gateway, :availability_policy, :capacity_reserve_command, :capacity_commit_command, :capacity_release_command
 
         def validate_submission
           return failure("Submission requires an order", :invalid_record) if submission.order.nil?
@@ -126,8 +132,8 @@ module Ordering
           )
         end
 
-        def failure(message, code)
-          Core::Result::Failure.(message: message, code: code, data: { submission: submission, order: submission.order })
+        def failure(message, code, data = {})
+          Core::Result::Failure.(message: message, code: code, data: { submission: submission, order: submission.order }.merge(data))
         end
 
         def capacity_failure(result)
@@ -140,6 +146,36 @@ module Ordering
 
         def reserved_units
           submission.line_items.sum { |line_item| line_item.quantity.to_i }
+        end
+
+        def validate_availability
+          submission.line_items.each do |line_item|
+            offerable = line_item.respond_to?(:offer_variant) ? line_item.offer_variant : nil
+            offerable ||= line_item.video_type if line_item.respond_to?(:video_type)
+
+            result = availability_policy.evaluate(
+              offerable,
+              quantity: line_item.quantity,
+              context: availability_context
+            )
+
+            return failure("Order is not available for submission", :unavailable, availability_failure_data(line_item, result)) if result.unavailable?
+          end
+
+          nil
+        end
+
+        def availability_context
+          { order_id: submission.order.id }
+        end
+
+        def availability_failure_data(line_item, result)
+          {
+            submission: submission,
+            order: submission.order,
+            line_item: line_item,
+            availability: result
+          }
         end
       end
     end
