@@ -52,7 +52,7 @@ title: Availability Policy Per Marketplace
 - [x] Define the `AvailabilityPolicy` contract and rule composition model.
 - [x] Decide whether the implementation namespace should be `capacity` or `availability` and rename accordingly.
 - [x] Wire submit-time checks to the marketplace-selected availability policy.
-- [ ] Add rule coverage for variant, offer, resource, and combination-based scenarios.
+- [x] Add rule coverage for variant, offer, resource, and combination-based scenarios.
 - [ ] Update docs and specs to reflect the new terminology.
 
 ## Expected Result
