@@ -14,7 +14,7 @@ depends_on:
   - order-domain-and-project-rename
 order: 49
 phase: work-items
-status: planned
+status: done
 title: Availability Policy Per Marketplace
 ---
 
@@ -78,7 +78,7 @@ title: Availability Policy Per Marketplace
 
 ## Checklist
 
-- [ ] Availability is modeled per marketplace.
+- [x] Availability is modeled per marketplace.
 - [x] Rules can be composed by variant, offer, resource, and combinations.
 - [x] Submit is the only binding reservation point.
 - [x] The naming decision is reflected consistently in docs and code.
@@ -86,9 +86,14 @@ title: Availability Policy Per Marketplace
 ## Validation
 
 - [x] Specs cover rule composition and submit-time reservation behavior.
-- [ ] No ambiguity remains between catalog vocabulary and availability vocabulary.
+- [x] No ambiguity remains between catalog vocabulary and availability vocabulary.
+- [x] Define a marketplace-specific availability policy that composes rules by `OfferVariant`, `Offer`, operational resource, or combinations of those dimensions.
 
 ## Notes
 
 - This work item is intentionally separate from the reservation lifecycle work item.
 - The reservation workflow remains valid; this item changes the policy that decides when a reservation should happen.
+- Next step: plan the domain redistribution under the new `Commerce` / `Operations` / `Finance` umbrella using the versioned bounded-context map.
+- This item is resolved at the architecture level; implementation work continues in the follow-up restructuring effort.
+- Resolution: catalog and availability vocabulary are now separated in the new bounded-context map.
+- Follow-up: finalize the domain migration and terminology cleanup in the next architecture pass.
