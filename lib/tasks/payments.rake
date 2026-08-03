@@ -4,11 +4,6 @@ namespace :payments do
     deliver_signed_webhook(default_type: "payment.succeeded")
   end
 
-  desc "Send a signed fake payment webhook delivery"
-  task send_signed_fake_webhook: :environment do
-    deliver_signed_webhook(default_type: "payment.succeeded")
-  end
-
   desc "Replay a single webhook event by provider event id"
   task replay_webhook_event: :environment do
     replay_webhook_events([ ENV.fetch("EVENT_ID") ])
@@ -21,7 +16,7 @@ namespace :payments do
 end
 
 def deliver_signed_webhook(default_type:)
-  webhook_url = ENV["WEBHOOK_URL"].presence || "http://localhost:3000/payments/webhooks/fake/events"
+  webhook_url = ENV["WEBHOOK_URL"].presence || "http://localhost:#{ENV.fetch("APP_PORT", 4000)}/payments/webhooks/fake/events"
   payment = resolved_payment_from_env
   simulator_args = {
     webhook_url: webhook_url,

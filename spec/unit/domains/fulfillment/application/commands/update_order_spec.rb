@@ -9,7 +9,7 @@ RSpec.describe Fulfillment::Application::Commands::UpdateOrder do
     attributes = { name: "Draft" }
     selections = []
     repository = instance_double("Repository")
-    result = Core::Result::Success.(data: { project: order })
+    result = Core::Result::Success.(data: { order: order })
 
     expect(Fulfillment::Application::Commands::AutosaveDraftOrder).to receive(:call).with(order: order, participant: participant, attributes: attributes, selections: selections, repository: repository).and_return(result)
 

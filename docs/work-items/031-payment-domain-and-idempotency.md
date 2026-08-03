@@ -23,10 +23,10 @@ title: Payment Domain and Idempotency
 
 ## Scope
 
-- Introduce a `Payment` record separate from `Project`.
+- Introduce a `Payment` record separate from `Order`.
 - Track payment attempts, provider references, and a durable idempotency key.
 - Prevent duplicate payment creation when the client retries submission.
-- Allow multiple historical payments per project while keeping one active payment at a time.
+- Allow multiple historical payments per order while keeping one active payment at a time.
 - Keep the payment state machine small and explicit.
 
 ## Operational Note
@@ -67,5 +67,5 @@ title: Payment Domain and Idempotency
 
 ## Notes
 
-- Keep the `Project` model focused on project lifecycle; payment state should live in the payment domain.
-- One active payment per project is enforced in the service/model layer; completed or failed payments remain historical.
+- Keep the `Order` model focused on order lifecycle; payment state should live in the payment domain.
+- One active payment per order is enforced in the service/model layer; completed or failed payments remain historical.

@@ -3,6 +3,7 @@ class ApplicationController < ActionController::Base
   allow_browser versions: :modern
 
   helper_method :workspace_for, :workspace_notifications_for, :workspace_role
+  helper_method :feature_enabled?, :client_refund_request_enabled?
 
   private
 
@@ -21,5 +22,13 @@ class ApplicationController < ActionController::Base
   def workspace_notifications_for(role)
     @workspace_notifications ||= {}
     @workspace_notifications[role.to_sym] ||= workspace_for(role).notifications.unread.includes(project: role == :pm ? :owner : :participant).order(created_at: :desc)
+  end
+
+  def feature_enabled?(key)
+    ENV.fetch(key.to_s.upcase, "false") == "true"
+  end
+
+  def client_refund_request_enabled?
+    feature_enabled?(:client_refund_request_enabled)
   end
 end

@@ -82,8 +82,28 @@ module Ordering
           status.placed?
         end
 
+        def pending?
+          placed?
+        end
+
         def confirmed?
           status.confirmed?
+        end
+
+        def payment_paid?
+          payment_status.paid?
+        end
+
+        def payment_flow_blocked?
+          false
+        end
+
+        def in_progress?
+          confirmed?
+        end
+
+        def delivered?
+          delivery_status.delivered?
         end
 
         def cancelled?

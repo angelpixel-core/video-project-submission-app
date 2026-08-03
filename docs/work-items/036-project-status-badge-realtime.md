@@ -15,21 +15,21 @@ depends_on:
 order: 36
 phase: work-items
 status: done
-title: Project Status Badge Realtime
+title: Order Status Badge Realtime
 ---
 
-# Project Status Badge Realtime
+# Order Status Badge Realtime
 
 ## Goal
 
-- [x] Keep project status badges in sync in realtime for client and PM views when the project lifecycle changes.
+- [x] Keep order status badges in sync in realtime for client and PM views when the order lifecycle changes.
 
 ## Scope
 
-- Broadcast project status changes over ActionCable.
+- Broadcast order status changes over ActionCable.
 - Render the status badge through a shared partial so client and detail views stay consistent.
-- Subscribe client project cards and the project show page to live status updates.
-- Reuse the new badge helpers in PM project cards and table rows for consistent labels.
+- Subscribe client order cards and the order show page to live status updates.
+- Reuse the new badge helpers in PM order cards and table rows for consistent labels.
 - Add a regression system spec that verifies the badge updates without a full reload.
 
 ## Operational Note
@@ -39,11 +39,11 @@ title: Project Status Badge Realtime
 
 ## Implementation Plan
 
-- [x] Add a `ProjectStatusChannel` that streams updates per project id.
-- [x] Broadcast rendered badge HTML from `Project` after status changes.
+- [x] Add an `OrderStatusChannel` that streams updates per order id.
+- [x] Broadcast rendered badge HTML from `Order` after status changes.
 - [x] Add a shared `projects/_status_badge` partial.
-- [x] Mount the badge in the client project card and project show page.
-- [x] Subscribe the frontend entrypoint to project status updates.
+- [x] Mount the badge in the client order card and order show page.
+- [x] Subscribe the frontend entrypoint to order status updates.
 - [x] Add a system spec for the live badge update flow.
 
 ## Affected Docs
@@ -67,10 +67,10 @@ title: Project Status Badge Realtime
 
 ## Checklist
 
-- [x] Changing a project status broadcasts a live update.
-- [x] Client project cards show the new status without reload.
-- [x] Project show updates its status badge without reload.
-- [x] PM project views reuse the same badge labels.
+- [x] Changing an order status broadcasts a live update.
+- [x] Client order cards show the new status without reload.
+- [x] Order show updates its status badge without reload.
+- [x] PM order views reuse the same badge labels.
 
 ## Validation
 

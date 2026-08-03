@@ -21,14 +21,14 @@ title: Sprint 0 Client Views
 
 ## Goal
 
-- [x] Implement the client-facing project index and order flow for Sprint 0.
+- [x] Implement the client-facing order index and order flow for Sprint 0.
 
 ## Scope
 
-- Project index view for the logged-in client.
-- Order project view for selecting video types and entering project details.
+- Order index view for the logged-in client.
+- Order create view for selecting video types and entering order details.
 - Payment modal UI for the simulated checkout step.
-- Submission behavior that creates the project, persists video type selections, and redirects back to the project index.
+- Submission behavior that creates the order, persists video type selections, and redirects back to the order index.
 - Keep the flow aligned with the Sprint 0 data model already implemented.
 
 ## Operational Note
@@ -38,11 +38,11 @@ title: Sprint 0 Client Views
 
 ## Implementation Plan
 
-- [x] Add the project index and order project screens.
+- [x] Add the order index and order create screens.
 - [x] Wire the video type selection UI to the existing `VideoType` and `VideoTypeSelection` models.
 - [x] Add the payment modal and submission flow.
-- [x] Create the project and selection records on submit.
-- [x] Redirect back to the project index after a successful submission.
+- [x] Create the order and selection records on submit.
+- [x] Redirect back to the order index after a successful submission.
 - [x] Add minimal UI or controller specs needed to protect the flow.
 
 ## Affected Docs
@@ -61,7 +61,7 @@ title: Sprint 0 Client Views
 
 ## Checklist
 
-- [x] The client can see a project index.
+- [x] The client can see an order index.
 - [x] The client can start an order from the UI.
 - [x] Video type selections are persisted through the existing data model.
 - [x] The payment step completes and redirects successfully.

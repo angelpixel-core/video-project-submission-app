@@ -24,10 +24,22 @@ module Fulfillment
 
             selections.each do |selection|
               order.video_type_selections.create!(
-                video_type_id: selection.fetch(:video_type_id),
+                video_type_id: resolve_video_type_id(selection),
                 quantity: selection.fetch(:quantity)
               )
             end
+          end
+
+          private
+
+          def resolve_video_type_id(selection)
+            legacy_video_type_id = selection[:video_type_id].presence || selection[:offer_variant_id].presence
+            raise KeyError, "video type id is required" if legacy_video_type_id.blank?
+
+            return legacy_video_type_id.to_i if VideoType.exists?(id: legacy_video_type_id)
+
+            offer_variant = OfferVariant.find(legacy_video_type_id)
+            VideoType.find_by!(name: offer_variant.name).id
           end
         end
       end

@@ -1,11 +1,11 @@
 module Payments
   module Domain
     module Entities
-      class PaymentWebhookEvent < ApplicationRecord
+        class PaymentWebhookEvent < ApplicationRecord
         STATUSES = %w[received processed failed].freeze
 
         belongs_to :payment, class_name: "Payments::Domain::Aggregates::Payment", optional: true
-        belongs_to :project, optional: true
+        belongs_to :project, class_name: "Order", foreign_key: :project_id, optional: true
         has_many :processing_attempts, class_name: "Payments::Domain::Entities::PaymentWebhookEventAttempt", dependent: :destroy
 
         before_validation :normalize_provider
@@ -63,6 +63,14 @@ module Payments
           update!(payment: payment, project: payment.project) if self.payment_id != payment.id || self.project_id != payment.project_id
         end
 
+        def order
+          project
+        end
+
+        def order=(value)
+          self.project = value
+        end
+
         private
 
         def normalize_provider
@@ -80,7 +88,7 @@ module Payments
         def stamp_received_at
           self.received_at ||= Time.current
         end
-      end
+        end
     end
   end
 end

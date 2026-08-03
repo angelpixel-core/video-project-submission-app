@@ -24,7 +24,7 @@ RSpec.describe Payments::Adapters::Inbound::Webhooks::Event::Handler do
       provider_reference: payment.provider_reference,
       request_payload: {
         payment_id: payment.id,
-        project_id: payment.project_id,
+        order_id: payment.project_id,
         amount_cents: payment.amount_cents,
         currency: payment.currency,
         idempotency_key: payment.idempotency_key
@@ -175,5 +175,28 @@ RSpec.describe Payments::Adapters::Inbound::Webhooks::Event::Handler do
     expect(failure_event.processing_attempts_count).to eq(1)
     expect(failure_event.processing_attempts.first.status).to eq("succeeded")
     expect(payment.payment_notification_intents.count).to eq(1)
+  end
+
+  it "processes a refunded event and marks the refund as refunded" do
+    payment = build_payment
+    refund = payment.refunds.create!(
+      payment_method_reference: payment.payment_method_reference || Payments::Domain::Entities::PaymentMethodReference.create!(payment: payment, provider: payment.provider, method_type: "card", reference: "pm_ref_123"),
+      provider: payment.provider,
+      provider_reference: "refund-123",
+      status: :refund_processing,
+      amount_cents: payment.amount_cents,
+      reason: "approved_by_operator"
+    )
+    event = build_event(payment: payment, event_type: "payment.refunded", event_id: "evt_refunded")
+    event.update!(payload: event.payload.deep_merge("type" => "payment.refunded", "data" => { "refund_id" => refund.id, "provider_reference" => refund.provider_reference }))
+
+    result = described_class.(event: event)
+
+    expect(result).to be_success
+    expect(result.data[:applied]).to eq(true)
+    expect(result.data[:refund].status).to eq("refunded")
+    expect(payment.reload.status).to eq("refunded")
+    expect(refund.reload.status).to eq("refunded")
+    expect(payment.payment_notification_intents.last.event_type).to eq("payment.refunded")
   end
 end

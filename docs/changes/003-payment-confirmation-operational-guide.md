@@ -21,27 +21,27 @@ tags:
 
 ## Overview
 
-- Use this when a project is stuck in `processing` and you need to confirm the webhook pipeline end to end.
+- Use this when an order is stuck in `processing` and you need to confirm the webhook pipeline end to end.
 - Use this for local development, QA demos, and troubleshooting payment confirmations.
 - The trigger sends a signed `payment.succeeded` webhook and resolves the payment from `PROJECT_ID` when available.
 
 ## Prerequisites
 
-- A project with at least one payment.
+- An order with at least one payment.
 - The web app and worker running.
-- `DEFAULT_CLIENT_EMAIL` and `DEFAULT_PM_EMAIL` set in the environment.
+- `DEFAULT_CLIENT_WORKSPACE_EMAIL` and `DEFAULT_PM_WORKSPACE_EMAIL` set in the environment.
 
 ## Local Dev
 
-1. Create or pick a project with a payment.
-2. Confirm the current payment state in the project show page.
+1. Create or pick an order with a payment.
+2. Confirm the current payment state in the order show page.
 3. Run the signed trigger from the repo root:
 
 ```bash
 make payments/send_signed_fake_webhook PROJECT_ID=<project_id>
 ```
 
-4. Example with a real local project id:
+4. Example with a real local order id:
 
 ```bash
 make payments/send_signed_fake_webhook PROJECT_ID=4
@@ -58,7 +58,7 @@ make payments/send_signed_fake_webhook PAYMENT_ID=4
 - `Enqueued Payments::ProcessWebhookEventJob`
 - `Performed Payments::ProcessWebhookEventJob`
 
-7. Refresh the project show page.
+7. Refresh the order show page.
 8. Confirm:
 - payment status becomes `succeeded`
 - `confirmed_at` is present
@@ -67,20 +67,20 @@ make payments/send_signed_fake_webhook PAYMENT_ID=4
 
 ## QA Demo
 
-1. Use a QA project that is still waiting on payment confirmation.
-2. Point the trigger at the QA webhook endpoint and the QA project id:
+1. Use a QA order that is still waiting on payment confirmation.
+2. Point the trigger at the QA webhook endpoint and the QA order id:
 
 ```bash
 WEBHOOK_URL=https://qa.example.com/payments/webhooks/fake/events \
   make payments/send_signed_fake_webhook PROJECT_ID=4
 ```
 
-3. If the project has no active payment, the trigger falls back to the most recent payment.
+3. If the order has no active payment, the trigger falls back to the most recent payment.
 4. Confirm the PM view shows the payment history and the client view does not.
 
 ## Retry Demo
 
-1. Pick a project with an active or recent payment.
+1. Pick an order with an active or recent payment.
 2. Run the signed trigger with the demo fail flag:
 
 ```bash
@@ -108,9 +108,9 @@ EVENT_ID=evt_retry make payments/replay_webhook_event
 ## Troubleshooting
 
 - If the payment stays `processing`, check whether the worker is running.
-- If the task aborts with no payment, confirm the project id and payment history.
+- If the task aborts with no payment, confirm the order id and payment history.
 - If the webhook logs appear but nothing changes, inspect the worker logs for `Payments::ProcessWebhookEventJob`.
-- If the project is already terminal, the webhook event may be accepted but treated as stale.
+- If the order is already terminal, the webhook event may be accepted but treated as stale.
 
 ## Notes
 

@@ -3,7 +3,7 @@ module Ordering
     module Policies
       class OrderCancellationPolicy
         def self.allowed?(order)
-          !order.completed? && !order.cancelled?
+          (order.placed? || order.confirmed?) && !order.payment_paid? && !order.payment_flow_blocked?
         end
       end
     end

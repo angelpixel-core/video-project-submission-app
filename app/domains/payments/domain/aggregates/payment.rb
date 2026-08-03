@@ -2,7 +2,7 @@ module Payments
   module Domain
     module Aggregates
       class Payment < ApplicationRecord
-        belongs_to :project
+        belongs_to :project, class_name: "Order", foreign_key: :project_id
         has_one_attached :invoice_document
         has_many :payment_attempts, class_name: "Payments::Domain::Entities::PaymentAttempt", dependent: :destroy
         has_one :payment_method_reference, class_name: "Payments::Domain::Entities::PaymentMethodReference", dependent: :destroy
@@ -19,6 +19,7 @@ module Payments
         before_validation :normalize_currency
 
         after_commit :enqueue_invoice_generation_job, on: :update
+        after_commit :broadcast_project_payment_state, on: :update
 
         validates :status, presence: true, inclusion: { in: STATUSES }
         validates :provider, presence: true
@@ -80,14 +81,28 @@ module Payments
         def enqueue_invoice_generation_job
           return unless saved_change_to_status? && succeeded?
 
-          Payments::Application::Handlers::GenerateInvoiceJob.perform_later(id)
+          Billing::Application::Handlers::GenerateInvoiceJob.perform_later(id)
+        end
+
+        def broadcast_project_payment_state
+          return unless previous_changes.key?("status")
+
+          project&.broadcast_status_badge!
         end
 
         def only_one_active_payment_per_project
           return unless active?
           return unless project&.payments&.active&.exists?
 
-          errors.add(:base, "Project already has an active payment")
+          errors.add(:base, "Order already has an active payment")
+        end
+
+        def order
+          project
+        end
+
+        def order=(value)
+          self.project = value
         end
       end
     end

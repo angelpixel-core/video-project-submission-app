@@ -14,7 +14,7 @@ RSpec.describe Fulfillment::Application::Commands::CreateDraftOrder do
     result = described_class.call(client_workspace: client, pm_workspace: pm, repository: repository)
 
     expect(result).to be_success
-    expect(result.data.fetch(:project)).to eq(draft)
+    expect(result.data.fetch(:order)).to eq(draft)
     expect(Project.where(status: :draft).count).to eq(1)
   end
 
@@ -29,6 +29,6 @@ RSpec.describe Fulfillment::Application::Commands::CreateDraftOrder do
     result = described_class.call(client_workspace: client, pm_workspace: pm, repository: repository)
 
     expect(result).to be_success
-    expect(result.data.fetch(:project)).to eq(draft)
+    expect(result.data.fetch(:order)).to eq(draft)
   end
 end

@@ -41,7 +41,7 @@ DEMO_FAIL_ONCE=1 make payments/send_signed_fake_webhook PROJECT_ID=<project_id> 
 
 ## Verify
 
-1. Refresh the PM payment history on the project show page.
+1. Refresh the PM payment history on the order show page.
 2. Confirm the event shows the retry metadata.
 3. Confirm the payment itself is still only created once and ends in `succeeded`.
 

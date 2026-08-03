@@ -44,7 +44,7 @@ RSpec.describe "Comments requests" do
     comment = Comment.order(:created_at).last
 
     expect(response).to redirect_to(order_path(project, anchor: "order-comments"))
-    expect(comment.project).to eq(project)
+    expect(comment.project.id).to eq(project.id)
     expect(comment.author).to eq(client)
     expect(comment.body).to eq("Client note")
 
@@ -71,7 +71,7 @@ RSpec.describe "Comments requests" do
     comment = Comment.order(:created_at).last
 
     expect(response).to redirect_to(order_path(project, anchor: "order-comments"))
-    expect(comment.project).to eq(project)
+    expect(comment.project.id).to eq(project.id)
     expect(comment.author).to eq(pm)
     expect(comment.body).to eq("PM note")
 

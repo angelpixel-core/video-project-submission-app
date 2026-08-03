@@ -39,7 +39,7 @@ module Fulfillment
                 fulfillment_account: participant,
                 payment_provider: payment_provider,
                 payment_method_type: payment_method_type,
-                metadata: { project_id: order.id }
+                metadata: { order_id: order.id }
               )
 
               payment_result = Ordering::Application::Commands::ProcessSubmission.call(submission: submission, payment_gateway: payment_gateway)
@@ -55,10 +55,10 @@ module Fulfillment
 
           return payment_failure(payment_result) if payment_failed
 
-          Core::Result::Success.(data: { project: order, payment: payment, submission: payment_result.data.fetch(:submission) })
+          Core::Result::Success.(data: { order: order, payment: payment, submission: payment_result.data.fetch(:submission) })
         rescue AASM::InvalidTransition, ActiveRecord::RecordInvalid => e
           order.errors.add(:base, e.message) if order.errors.empty?
-          Core::Result::Failure.(message: e.message, code: :invalid_record, data: { project_id: order.id })
+          Core::Result::Failure.(message: e.message, code: :invalid_record, data: { order_id: order.id })
         end
 
         private
@@ -67,11 +67,11 @@ module Fulfillment
 
         def missing_selections_failure
           order.errors.add(:base, "Add at least one video type")
-          Core::Result::Failure.(message: "Add at least one video type", code: :invalid_record, data: { project_id: order.id })
+          Core::Result::Failure.(message: "Add at least one video type", code: :invalid_record, data: { order_id: order.id })
         end
 
         def payment_failure(payment_result)
-          Core::Result::Failure.(message: payment_result.message, code: payment_result.code, data: payment_result.data.merge(project_id: order.id))
+          Core::Result::Failure.(message: payment_result.message, code: payment_result.code, data: payment_result.data.merge(order_id: order.id))
         end
       end
     end

@@ -18,6 +18,7 @@ RSpec.describe Payments::Adapters::Outbound::Gateways::Fake do
 
     expect(result).to be_success
     expect(result.data[:provider_reference]).to eq("fake-payment-key")
+    expect(result.data[:request_payload]).to include(order_id: project.id)
     expect(result.data[:response_payload]).to eq(
       {
         provider_reference: "fake-payment-key",

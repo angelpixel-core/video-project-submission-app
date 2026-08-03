@@ -10,14 +10,16 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_29_100000) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_02_090000) do
   create_table "accounts", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "email", null: false
     t.string "name", null: false
+    t.bigint "organization_id"
     t.string "role", null: false
     t.datetime "updated_at", null: false
     t.index ["email", "role"], name: "index_accounts_on_email_and_role", unique: true
+    t.index ["organization_id"], name: "index_accounts_on_organization_id"
     t.index ["role"], name: "index_accounts_on_role"
   end
 
@@ -49,12 +51,48 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_29_100000) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
-  create_table "capacity_reservations", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "billing_credit_notes", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.integer "amount_cents", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.bigint "invoice_id", null: false
+    t.datetime "issued_at", null: false
+    t.string "number", null: false
+    t.string "reason", null: false
+    t.string "status", default: "issued", null: false
+    t.datetime "updated_at", null: false
+    t.index ["invoice_id"], name: "index_billing_credit_notes_on_invoice_id"
+    t.index ["number"], name: "index_billing_credit_notes_on_number", unique: true
+  end
+
+  create_table "billing_invoices", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.json "billing_identity_json"
+    t.text "content", null: false
+    t.string "content_type", default: "text/html", null: false
+    t.datetime "created_at", null: false
+    t.datetime "issued_at", null: false
+    t.json "lines_json", null: false
+    t.string "number", null: false
     t.bigint "order_id", null: false
+    t.string "order_name", null: false
+    t.datetime "paid_at"
+    t.bigint "payment_id", null: false
+    t.string "recipient_email", null: false
+    t.string "recipient_name", null: false
+    t.string "status", default: "issued", null: false
+    t.integer "tax_amount_cents", default: 0, null: false
+    t.integer "total_cents", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.index ["number"], name: "index_billing_invoices_on_number", unique: true
+    t.index ["order_id"], name: "index_billing_invoices_on_order_id"
+    t.index ["payment_id"], name: "index_billing_invoices_on_payment_id"
+  end
+
+  create_table "capacity_reservations", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.datetime "committed_at"
     t.datetime "created_at", null: false
     t.datetime "expired_at"
     t.datetime "expires_at"
+    t.bigint "order_id", null: false
     t.datetime "released_at"
     t.string "status", default: "reserved", null: false
     t.integer "units", null: false
@@ -83,6 +121,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_29_100000) do
     t.index ["author_account_id"], name: "index_comments_on_author_account_id"
     t.index ["author_type", "author_id"], name: "index_comments_on_author_type_and_author_id"
     t.index ["project_id"], name: "index_comments_on_project_id"
+  end
+
+  create_table "data_migrations", primary_key: "version", id: :string, charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
   end
 
   create_table "memberships", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
@@ -116,6 +157,63 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_29_100000) do
     t.check_constraint "((`pm_id` is not null) and (`client_id` is null)) or ((`pm_id` is null) and (`client_id` is not null))", name: "notifications_single_recipient"
   end
 
+  create_table "offer_item_type_assignments", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.integer "max_selections"
+    t.integer "min_selections"
+    t.bigint "offer_id", null: false
+    t.bigint "offer_item_type_id", null: false
+    t.integer "position", default: 0, null: false
+    t.boolean "required", default: false, null: false
+    t.datetime "updated_at", null: false
+    t.index ["offer_id", "offer_item_type_id"], name: "index_offer_item_type_assignments_on_offer_and_item_type", unique: true
+    t.index ["offer_id", "position"], name: "index_offer_item_type_assignments_on_offer_id_and_position"
+    t.index ["offer_id"], name: "index_offer_item_type_assignments_on_offer_id"
+    t.index ["offer_item_type_id"], name: "index_offer_item_type_assignments_on_offer_item_type_id"
+  end
+
+  create_table "offer_item_types", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.boolean "active", default: true, null: false
+    t.datetime "created_at", null: false
+    t.text "description", null: false
+    t.string "input_kind", default: "selection", null: false
+    t.string "key", null: false
+    t.string "name", null: false
+    t.datetime "updated_at", null: false
+    t.index ["key"], name: "index_offer_item_types_on_key", unique: true
+    t.index ["name"], name: "index_offer_item_types_on_name", unique: true
+  end
+
+  create_table "offer_variants", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.boolean "active", default: true, null: false
+    t.datetime "created_at", null: false
+    t.text "description", null: false
+    t.string "key", null: false
+    t.string "name", null: false
+    t.bigint "offer_id", null: false
+    t.bigint "offer_item_type_id", null: false
+    t.string "output_format"
+    t.integer "position", default: 0, null: false
+    t.integer "price_cents", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_offer_variants_on_name"
+    t.index ["offer_id", "key"], name: "index_offer_variants_on_offer_id_and_key", unique: true
+    t.index ["offer_id", "offer_item_type_id", "position"], name: "index_offer_variants_on_offer_item_type_and_position"
+    t.index ["offer_id"], name: "index_offer_variants_on_offer_id"
+    t.index ["offer_item_type_id"], name: "index_offer_variants_on_offer_item_type_id"
+  end
+
+  create_table "offers", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.boolean "active", default: true, null: false
+    t.datetime "created_at", null: false
+    t.text "description", null: false
+    t.string "key", null: false
+    t.string "name", null: false
+    t.datetime "updated_at", null: false
+    t.index ["key"], name: "index_offers_on_key", unique: true
+    t.index ["name"], name: "index_offers_on_name", unique: true
+  end
+
   create_table "order_lines", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.integer "line_total_cents", default: 0, null: false
@@ -144,6 +242,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_29_100000) do
     t.index ["participant_account_id"], name: "index_orders_on_participant_account_id"
     t.index ["status"], name: "index_orders_on_status"
     t.index ["uid"], name: "index_orders_on_uid", unique: true
+  end
+
+  create_table "organizations", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "name", null: false
+    t.string "slug", null: false
+    t.bigint "tenant_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["tenant_id", "slug"], name: "index_organizations_on_tenant_id_and_slug", unique: true
+    t.index ["tenant_id"], name: "index_organizations_on_tenant_id"
   end
 
   create_table "payment_attempts", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
@@ -322,6 +430,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_29_100000) do
     t.index ["order_id"], name: "index_source_videos_on_order_id"
   end
 
+  create_table "tenants", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "name", null: false
+    t.string "slug", null: false
+    t.datetime "updated_at", null: false
+    t.index ["slug"], name: "index_tenants_on_slug", unique: true
+  end
+
   create_table "users", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "access_state", default: "active", null: false
     t.datetime "created_at", null: false
@@ -360,8 +476,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_29_100000) do
     t.index ["name"], name: "index_video_types_on_name", unique: true
   end
 
+  add_foreign_key "accounts", "organizations"
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "billing_credit_notes", "billing_invoices", column: "invoice_id"
+  add_foreign_key "billing_invoices", "payments"
+  add_foreign_key "billing_invoices", "projects", column: "order_id"
   add_foreign_key "capacity_reservations", "orders"
   add_foreign_key "comments", "accounts", column: "author_account_id"
   add_foreign_key "comments", "projects"
@@ -371,9 +491,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_29_100000) do
   add_foreign_key "notifications", "accounts", column: "client_id"
   add_foreign_key "notifications", "accounts", column: "pm_id"
   add_foreign_key "notifications", "projects"
+  add_foreign_key "offer_item_type_assignments", "offer_item_types"
+  add_foreign_key "offer_item_type_assignments", "offers"
+  add_foreign_key "offer_variants", "offer_item_types"
+  add_foreign_key "offer_variants", "offers"
   add_foreign_key "order_lines", "orders"
   add_foreign_key "orders", "accounts", column: "owner_account_id"
   add_foreign_key "orders", "accounts", column: "participant_account_id"
+  add_foreign_key "organizations", "tenants"
   add_foreign_key "payment_attempts", "payments"
   add_foreign_key "payment_invoice_delivery_intents", "payments"
   add_foreign_key "payment_method_references", "payments"

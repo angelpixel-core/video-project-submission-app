@@ -21,6 +21,6 @@ Recommended naming:
 - [x] [002 Notification Job and Queue Runtime](./002-notification-job-and-queue-runtime.md)
 - [x] [003 Payment Confirmation Operational Guide](./003-payment-confirmation-operational-guide.md)
 - [x] [004 Payment Retry Demo Runbook](./004-payment-retry-demo-runbook.md)
-- [x] [005 Project Data Reset Runbook](./005-project-data-reset-runbook.md)
+- [x] [005 Order Data Reset Runbook](./005-order-data-reset-runbook.md)
 
 - [ ] Each change document should explain what is changing, why, and which Sprint 0 docs it affects.

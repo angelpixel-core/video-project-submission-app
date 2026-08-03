@@ -13,7 +13,7 @@ module Fulfillment
         end
 
         def call
-          Core::Result::Success.(data: { project: draft_order })
+          Core::Result::Success.(data: { order: draft_order })
         end
 
         private

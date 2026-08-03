@@ -1,8 +1,8 @@
 require "rails_helper"
 
 RSpec.describe VideoType do
-  it "inherits from the catalog video type entity" do
-    expect(described_class.superclass).to eq(Catalog::Domain::Entities::VideoType)
+  it "inherits from the application record base" do
+    expect(described_class.superclass).to eq(ApplicationRecord)
   end
 
   it "requires the core attributes" do

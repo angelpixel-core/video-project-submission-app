@@ -16,14 +16,14 @@ depends_on:
 order: 23
 phase: work-items
 status: done
-title: PM Projects Table Interactions
+title: PM Orders Table Interactions
 ---
 
-# PM Projects Table Interactions
+# PM Orders Table Interactions
 
 ## Goal
 
-- [x] Add pagination, column sorting, and non-reloading row actions to the PM projects table.
+- [x] Add pagination, column sorting, and non-reloading row actions to the PM orders table.
 
 ## Decision Link
 
@@ -31,18 +31,18 @@ title: PM Projects Table Interactions
 
 ## Scope
 
-- Paginate the PM projects table with 10 records per page.
+- Paginate the PM orders table with 10 records per page.
 - Keep pagination on the PM side only.
 - Allow sorting by `ID`, `Created at`, and `Total budget`.
 - Execute PM row actions without a full page reload.
 - Preserve the current PM table layout and the client view.
 - Keep realtime updates aligned with the active page and sort order.
-- If a new project arrives and belongs on the current page, insert it in sorted position.
+- If a new order arrives and belongs on the current page, insert it in sorted position.
 - If that insertion pushes the last row off the page, carry it to the next page and continue the chain as needed.
 
 ## Operational Note
 
-- This is a PM-only interaction layer on top of the existing PM projects table.
+- This is a PM-only interaction layer on top of the existing PM orders table.
 - Server-side pagination and sorting are preferred so the URL remains the source of truth.
 - Realtime updates should respect the current sort and page state instead of appending blindly.
 - Hotwire/Turbo is a strong fit for non-reloading actions and partial table updates.
@@ -87,7 +87,7 @@ title: PM Projects Table Interactions
 
 - [x] Request spec verifies page size, sorting, and async row-action behavior.
 - [x] System spec verifies actions work without reload.
-- [x] System spec verifies a realtime project insertion lands in the correct sorted location.
+- [x] System spec verifies a realtime order insertion lands in the correct sorted location.
 - [x] System spec verifies page overflow/cascade behavior when inserting at the bottom of a page.
 
 ## Notes

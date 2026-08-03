@@ -15,6 +15,14 @@ module Ordering
           )
         end
 
+        def self.from_offering(offering)
+          from_offer(offering)
+        end
+
+        def self.from_variant(variant)
+          from_offer(variant)
+        end
+
         def initialize(offering_id:, name:, description:, price_cents:, output_format:, offering_uid: nil)
           @offering_id = offering_id&.to_i
           @offering_uid = offering_uid&.to_s

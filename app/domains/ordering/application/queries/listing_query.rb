@@ -53,7 +53,7 @@ module Ordering
         end
 
         def relation
-          order_scope.includes(:owner, :participant)
+          order_scope.includes(:owner, :participant, payments: :refunds)
         end
 
         def order_scope

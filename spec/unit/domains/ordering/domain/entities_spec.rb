@@ -3,10 +3,18 @@ require "rails_helper"
 RSpec.describe "Ordering entities" do
   it "keeps customer and offering snapshots historical" do
     customer = Ordering::Domain::Entities::CustomerSnapshot.new(account_id: 1, name: "Client", email: "CLIENT@example.com", role: "client")
-    offering = Ordering::Domain::Entities::OfferingSnapshot.new(offering_id: 7, name: "Highlight Reel", description: "Short edit", price_cents: 25_000, output_format: "mp4")
+    offering = Struct.new(:id, :uid, :name, :description, :price_cents, :output_format, keyword_init: true).new(
+      id: 7,
+      uid: "off_7",
+      name: "Highlight Reel",
+      description: "Short edit",
+      price_cents: 25_000,
+      output_format: "mp4"
+    )
+    snapshot = Ordering::Domain::Entities::OfferingSnapshot.from_offering(offering)
 
     expect(customer.to_h).to eq(account_id: 1, name: "Client", email: "client@example.com", role: "client")
-    expect(offering.to_h).to eq(offering_id: 7, name: "Highlight Reel", description: "Short edit", price_cents: 25_000, output_format: "mp4")
+    expect(snapshot.to_h).to eq(offering_id: 7, offering_uid: "off_7", name: "Highlight Reel", description: "Short edit", price_cents: 25_000, output_format: "mp4")
   end
 
   it "builds source videos without requiring them in draft" do

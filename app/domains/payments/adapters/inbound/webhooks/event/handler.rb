@@ -8,7 +8,8 @@ module Payments
 
             HANDLED_EVENT_TYPES = {
               "payment.succeeded" => Succeeded,
-              "payment.failed" => Failed
+              "payment.failed" => Failed,
+              "payment.refunded" => Refunded
             }.freeze
 
             def self.call(event:)

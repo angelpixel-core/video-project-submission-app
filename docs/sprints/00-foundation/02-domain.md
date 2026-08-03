@@ -15,7 +15,7 @@ tags:
 ## Models
 
 - [x] Client
-- [x] Project
+- [x] Order
 - [x] PM (Project Manager)
 - [x] Video Type
 - [x] Video Type Selection
@@ -24,7 +24,7 @@ tags:
 ## Relationships
 
 - [x] A Client has many Projects.
-- [x] A Project has many Video Type Selections.
+- [x] An Order has many Video Type Selections.
 - [x] A Video Type has many Video Type Selections.
-- [x] A Project belongs to a PM.
+- [x] An Order belongs to a PM.
 - [x] A PM has many Notifications.

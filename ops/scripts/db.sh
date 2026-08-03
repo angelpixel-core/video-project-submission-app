@@ -24,16 +24,16 @@ case "${1:-}" in
     shift
     run_compose exec web bundle exec rails db:seed "$@"
     ;;
-  maintenance/reset_project_data)
+  maintenance/reset_order_data)
     shift
-    run_compose exec web env DRY_RUN="${DRY_RUN:-}" CONFIRM="${CONFIRM:-}" bundle exec rake maintenance:reset_project_data "$@"
+    run_compose exec web env DRY_RUN="${DRY_RUN:-}" CONFIRM="${CONFIRM:-}" bundle exec rake maintenance:reset_order_data "$@"
     ;;
   console)
     shift
     run_compose exec web bundle exec rails console "$@"
     ;;
   *)
-    echo "Usage: db.sh {seeds|maintenance/reset_project_data|console}" >&2
+    echo "Usage: db.sh {seeds|maintenance/reset_order_data|console}" >&2
     exit 1
     ;;
 esac

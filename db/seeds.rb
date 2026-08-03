@@ -8,15 +8,15 @@
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
 
-default_pm = Identity::Domain::Aggregates::Account.find_or_create_by!(email: "pm@example.com", role: :pm) do |pm|
-  pm.name = "Default PM"
-  pm.role = :pm
-end
+default_pm = Identity::Domain::Aggregates::Account.find_by!(
+  email: ENV.fetch("DEFAULT_PM_WORKSPACE_EMAIL", "pm@example.com"),
+  role: :pm
+)
 
-default_client = Identity::Domain::Aggregates::Account.find_or_create_by!(email: "client@example.com", role: :client) do |client|
-  client.name = "Default Client"
-  client.role = :client
-end
+default_client = Identity::Domain::Aggregates::Account.find_by!(
+  email: ENV.fetch("DEFAULT_CLIENT_WORKSPACE_EMAIL", "client@example.com"),
+  role: :client
+)
 
 video_types = [
   { name: "Social Cut", description: "Short-form edit for social channels", price_cents: 15_000, output_format: "mp4" },

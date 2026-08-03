@@ -31,7 +31,7 @@ title: Order Domain and Project Rename
 - Move orchestration and listing concerns into an ordering-oriented namespace.
 - Keep client-visible behavior stable during transition.
 - Introduce explicit boundaries for:
-  - `catalog` = sellable bundle
+  - `catalog` = sellable offer
   - `ordering` = customer order / submission
   - `fulfillment` = internal work
   - `delivery` = final output
@@ -42,8 +42,8 @@ title: Order Domain and Project Rename
 - `Project` is legacy vocabulary, not the target domain name.
 - `Order` should be the root business concept for the customer request lifecycle.
 - `Submission` should be the explicit act of sending an order into payment and follow-up processing.
-- `Bundle` should represent what the customer chooses from the catalog.
-- `LineItem` should represent each selected bundle inside the order.
+- `Offer` should represent what the customer chooses from the catalog.
+- `OfferVariant` should represent each selected catalog option inside the order.
 - `Project` should represent fulfillment work derived from the order.
 - `Delivery` should represent the final artifact returned to the customer plus closure/confirmation notifications.
 
@@ -53,16 +53,17 @@ title: Order Domain and Project Rename
 - `Submission`: the workflow event that sends an order into payment and downstream processing.
 - `Project`: the internal fulfillment work item derived from a submission.
 - `Delivery`: the final artifact returned to the customer, plus closure and confirmation notifications.
-- `Bundle`: the sellable catalog choice the customer adds to an order.
-- `LineItem`: a chosen bundle inside an order, with quantity.
+- `Offer`: the sellable catalog choice the customer adds to an order.
+- `OfferItemType`: the reusable global type of component an offer can contain.
+- `OfferVariant`: a chosen catalog option inside an order, with quantity.
 
 ## Proposed Naming
 
-- `catalog.bundle`
-- `catalog.bundle_item`
-- `catalog.bundle_variant`
+- `catalog.offer`
+- `catalog.offer_item_type`
+- `catalog.offer_variant`
 - `ordering.order`
-- `ordering.line_item`
+- `ordering.offer_variant_selection`
 - `ordering.submission`
 - `fulfillment.project`
 - `fulfillment.task`
@@ -104,3 +105,5 @@ title: Order Domain and Project Rename
 - Legacy model/service names remain only as internal compatibility; the public `/projects` shell is gone.
 - `/projects` was removed as a public route and the legacy `projects` view tree was deleted in favor of `orders`.
 - Comment anchors now use `order-comments` to match the new surface.
+- `OfferItemType` is the global taxonomy, and `OfferVariant` is the concrete selectable option.
+- TODO(cleanup): Remove remaining legacy ids, filenames, and compatibility aliases only after the rest of the domain matrix is stable.

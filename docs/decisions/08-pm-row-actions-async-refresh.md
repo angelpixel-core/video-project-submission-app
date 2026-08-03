@@ -22,14 +22,14 @@ Implement PM row actions (`accept` and `complete`) as progressively enhanced asy
 
 ## Context
 
-The PM projects table already supports server-side pagination and sorting. The remaining gap is that the row actions still submit as normal forms and reload the page. The desired behavior is to keep the PM workspace in sync after a row action while preserving a normal non-JS fallback.
+The PM orders table already supports server-side pagination and sorting. The remaining gap is that the row actions still submit as normal forms and reload the page. The desired behavior is to keep the PM workspace in sync after a row action while preserving a normal non-JS fallback.
 
 ## Rationale
 
 - The app already refreshes PM workspace fragments from the current HTML for notification updates, so the same model fits row-action updates.
 - The existing Rails app does not use Turbo Streams, so introducing Turbo only for this edge would add a new pattern without enough payoff.
 - `Stimulus + fetch` keeps the implementation small and matches the existing frontend stack.
-- A database lock on the project row is sufficient to prevent concurrent transitions from racing each other.
+- A database lock on the order row is sufficient to prevent concurrent transitions from racing each other.
 - Returning `204 No Content` for async success keeps the UI path simple; the client refreshes the workspace from the current page state afterward.
 
 ## Strategy
@@ -59,7 +59,7 @@ The PM projects table already supports server-side pagination and sorting. The r
 PM clicks Accept/Complete
   -> Stimulus intercepts submit
   -> fetch PATCH /projects/:id/{accept|complete} with async header
-  -> ProjectsController locks project and transitions state
+  -> ProjectsController locks the order and transitions state
   -> returns 204 on success
   -> frontend refreshes PM workspace fragments from current HTML
   -> table row, badge, and notification panel stay in sync

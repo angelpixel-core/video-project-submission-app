@@ -4,7 +4,7 @@ set -e
 echo "Waiting for MySQL..."
 
 MYSQL_HOST="${DB_HOST:-${MYSQL_HOST:-db}}"
-MYSQL_PORT="${DB_PORT:-${MYSQL_PORT:-3306}}"
+MYSQL_PORT="${DB_PORT:-${MYSQL_PORT:-4001}}"
 MYSQL_USER="${DB_USER:-${MYSQL_USER:-app}}"
 MYSQL_PASSWORD="${DB_PASSWORD:-${MYSQL_PASSWORD:-app_password}}"
 
@@ -22,5 +22,7 @@ done
 if [ "${RUN_DB_PREPARE:-0}" = "1" ] && [ -f /app/bin/rails ]; then
   bundle exec rails db:prepare
 fi
+
+export PORT="${APP_PORT:-${PORT:-4000}}"
 
 exec "$@"
