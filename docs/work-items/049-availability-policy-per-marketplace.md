@@ -53,7 +53,7 @@ title: Availability Policy Per Marketplace
 - [x] Decide whether the implementation namespace should be `capacity` or `availability` and rename accordingly.
 - [x] Wire submit-time checks to the marketplace-selected availability policy.
 - [x] Add rule coverage for variant, offer, resource, and combination-based scenarios.
-- [ ] Update docs and specs to reflect the new terminology.
+- [x] Update docs and specs to reflect the new terminology.
 
 ## Expected Result
 
@@ -85,7 +85,7 @@ title: Availability Policy Per Marketplace
 
 ## Validation
 
-- [ ] Specs cover rule composition and submit-time reservation behavior.
+- [x] Specs cover rule composition and submit-time reservation behavior.
 - [ ] No ambiguity remains between catalog vocabulary and availability vocabulary.
 
 ## Notes
