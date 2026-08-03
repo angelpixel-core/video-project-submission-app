@@ -19,7 +19,7 @@ RSpec.describe Catalog::Domain::Policies::AvailabilityPolicy do
     offer = instance_double(VideoType)
     passing_rule = instance_double("AvailabilityRule", evaluate: Catalog::Domain::ValueObjects::Availability.new(available: true, details: { rule: :passing }))
     failing_rule = instance_double("AvailabilityRule", evaluate: Catalog::Domain::ValueObjects::Availability.new(available: false, reason: :blocked, details: { rule: :failing }))
-    rule_set = described_class::RuleSet.new(groups: [[passing_rule, failing_rule], [passing_rule]])
+    rule_set = described_class::RuleSet.new(groups: [ [ passing_rule, failing_rule ], [ passing_rule ] ])
 
     result = described_class.evaluate(offer, quantity: 1, context: { marketplace: :default }, rule_set: rule_set)
 

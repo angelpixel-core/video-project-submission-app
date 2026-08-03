@@ -239,3 +239,7 @@ Payments docs are centralized at [Payments Index](../payments.md).
 ## 49
 
 - [ ] [Availability Policy Per Marketplace](./049-availability-policy-per-marketplace.md)
+
+## 50
+
+- [ ] [Grouped RuboCop Reporting](./050-grouped-rubocop-reporting.md)
