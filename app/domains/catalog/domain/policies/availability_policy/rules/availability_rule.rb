@@ -3,7 +3,7 @@ module Catalog
     module Policies
       class AvailabilityPolicy
         module Rules
-          class CapacityRule
+          class AvailabilityRule
             def evaluate(offerable, quantity:, context: {})
               requested_units = quantity.to_i
               available_units = Capacity::Domain::Policies::CapacityCalculationPolicy.available_units_for(offerable)

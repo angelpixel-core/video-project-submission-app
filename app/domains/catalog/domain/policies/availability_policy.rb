@@ -11,7 +11,7 @@ module Catalog
         end
 
         def self.default_rule_set
-          RuleSet.new(groups: [[Rules::CapacityRule.new]])
+          RuleSet.new(groups: [[Rules::AvailabilityRule.new]])
         end
       end
     end
