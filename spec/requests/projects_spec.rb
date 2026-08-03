@@ -156,6 +156,10 @@ RSpec.describe "Orders requests (detailed)" do
     pm = find_workspace_account(:pm, email: "pm@example.com")
     cookies[:workspace_role] = "pm"
     project = Project.create!(owner: client, participant: pm, name: "Project Alpha", raw_footage_url: "https://example.com/raw.mov", status: :pending)
+    video_type = VideoType.find_by!(name: "Highlight Reel")
+    project.video_type_selections.create!(video_type: video_type, quantity: 1)
+    payment = Payments::Application::Commands::CreatePayment.call(project: project).data.fetch(:payment)
+    payment.update!(status: :succeeded)
 
     get order_path(project)
 
@@ -256,6 +260,10 @@ RSpec.describe "Orders requests (detailed)" do
   it "accepts a pending order as the pm" do
     cookies[:workspace_role] = "pm"
     project = Project.create!(owner: find_workspace_account(:client, email: "client@example.com"), participant: find_workspace_account(:pm, email: "pm@example.com"), name: "Project Pending", raw_footage_url: "https://example.com/pending.mov", status: :pending)
+    video_type = VideoType.find_by!(name: "Highlight Reel")
+    project.video_type_selections.create!(video_type: video_type, quantity: 1)
+    payment = Payments::Application::Commands::CreatePayment.call(project: project).data.fetch(:payment)
+    payment.update!(status: :succeeded)
 
     patch accept_order_path(project)
 
@@ -268,6 +276,10 @@ RSpec.describe "Orders requests (detailed)" do
   it "accepts a pending order asynchronously" do
     cookies[:workspace_role] = "pm"
     project = Project.create!(owner: find_workspace_account(:client, email: "client@example.com"), participant: find_workspace_account(:pm, email: "pm@example.com"), name: "Project Async", raw_footage_url: "https://example.com/async.mov", status: :pending)
+    video_type = VideoType.find_by!(name: "Highlight Reel")
+    project.video_type_selections.create!(video_type: video_type, quantity: 1)
+    payment = Payments::Application::Commands::CreatePayment.call(project: project).data.fetch(:payment)
+    payment.update!(status: :succeeded)
 
     patch accept_order_path(project), headers: { "X-Workspace-Async-Action" => "1" }
 
@@ -286,6 +298,10 @@ RSpec.describe "Orders requests (detailed)" do
   it "rejects stale asynchronous pm row actions" do
     cookies[:workspace_role] = "pm"
     project = Project.create!(owner: find_workspace_account(:client, email: "client@example.com"), participant: find_workspace_account(:pm, email: "pm@example.com"), name: "Project Async Stale", raw_footage_url: "https://example.com/stale.mov", status: :pending)
+    video_type = VideoType.find_by!(name: "Highlight Reel")
+    project.video_type_selections.create!(video_type: video_type, quantity: 1)
+    payment = Payments::Application::Commands::CreatePayment.call(project: project).data.fetch(:payment)
+    payment.update!(status: :succeeded)
 
     patch accept_order_path(project), headers: { "X-Workspace-Async-Action" => "1" }
     patch accept_order_path(project), headers: { "X-Workspace-Async-Action" => "1" }
@@ -311,6 +327,10 @@ RSpec.describe "Orders requests (detailed)" do
     pm = find_workspace_account(:pm, email: "pm@example.com")
     cookies[:workspace_role] = "pm"
     project = Project.create!(owner: client, participant: pm, name: "Project Client Update", raw_footage_url: "https://example.com/client-update.mov", status: :pending)
+    video_type = VideoType.find_by!(name: "Highlight Reel")
+    project.video_type_selections.create!(video_type: video_type, quantity: 1)
+    payment = Payments::Application::Commands::CreatePayment.call(project: project).data.fetch(:payment)
+    payment.update!(status: :succeeded)
 
     expect do
       patch accept_order_path(project)
