@@ -16,4 +16,4 @@ app/domains/capacity:
     violations:
     - dependency
     files:
-    - app/domains/catalog/domain/policies/availability_policy.rb
+    - app/domains/catalog/domain/policies/availability_policy/rules/availability_rule.rb
