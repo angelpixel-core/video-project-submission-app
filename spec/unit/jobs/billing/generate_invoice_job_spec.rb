@@ -21,8 +21,8 @@ RSpec.describe Billing::Application::Handlers::GenerateInvoiceJob do
 
     payment.reload
     expect(payment.invoice_generated_at).to be_present
-    expect(payment.invoice_number).to eq("INV-000000#{payment.id}")
+    expect(payment.invoice_number).to eq("INV-#{payment.id.to_s.rjust(7, '0')}")
     expect(payment.invoice_document).to be_attached
-    expect(payment.invoice_document.filename.to_s).to eq("INV-000000#{payment.id}.html")
+    expect(payment.invoice_document.filename.to_s).to eq("INV-#{payment.id.to_s.rjust(7, '0')}.html")
   end
 end
