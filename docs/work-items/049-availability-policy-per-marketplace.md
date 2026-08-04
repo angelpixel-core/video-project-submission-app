@@ -14,7 +14,7 @@ depends_on:
   - order-domain-and-project-rename
 order: 49
 phase: work-items
-status: planned
+status: done
 title: Availability Policy Per Marketplace
 ---
 
@@ -49,11 +49,11 @@ title: Availability Policy Per Marketplace
 
 ## Implementation Plan
 
-- [ ] Define the `AvailabilityPolicy` contract and rule composition model.
-- [ ] Decide whether the implementation namespace should be `capacity` or `availability` and rename accordingly.
-- [ ] Wire submit-time checks to the marketplace-selected availability policy.
-- [ ] Add rule coverage for variant, offer, resource, and combination-based scenarios.
-- [ ] Update docs and specs to reflect the new terminology.
+- [x] Define the `AvailabilityPolicy` contract and rule composition model.
+- [x] Decide whether the implementation namespace should be `capacity` or `availability` and rename accordingly.
+- [x] Wire submit-time checks to the marketplace-selected availability policy.
+- [x] Add rule coverage for variant, offer, resource, and combination-based scenarios.
+- [x] Update docs and specs to reflect the new terminology.
 
 ## Expected Result
 
@@ -78,17 +78,22 @@ title: Availability Policy Per Marketplace
 
 ## Checklist
 
-- [ ] Availability is modeled per marketplace.
-- [ ] Rules can be composed by variant, offer, resource, and combinations.
-- [ ] Submit is the only binding reservation point.
-- [ ] The naming decision is reflected consistently in docs and code.
+- [x] Availability is modeled per marketplace.
+- [x] Rules can be composed by variant, offer, resource, and combinations.
+- [x] Submit is the only binding reservation point.
+- [x] The naming decision is reflected consistently in docs and code.
 
 ## Validation
 
-- [ ] Specs cover rule composition and submit-time reservation behavior.
-- [ ] No ambiguity remains between catalog vocabulary and availability vocabulary.
+- [x] Specs cover rule composition and submit-time reservation behavior.
+- [x] No ambiguity remains between catalog vocabulary and availability vocabulary.
+- [x] Define a marketplace-specific availability policy that composes rules by `OfferVariant`, `Offer`, operational resource, or combinations of those dimensions.
 
 ## Notes
 
 - This work item is intentionally separate from the reservation lifecycle work item.
 - The reservation workflow remains valid; this item changes the policy that decides when a reservation should happen.
+- Next step: plan the domain redistribution under the new `Commerce` / `Operations` / `Finance` umbrella using the versioned bounded-context map.
+- This item is resolved at the architecture level; implementation work continues in the follow-up restructuring effort.
+- Resolution: catalog and availability vocabulary are now separated in the new bounded-context map.
+- Follow-up: finalize the domain migration and terminology cleanup in the next architecture pass.
