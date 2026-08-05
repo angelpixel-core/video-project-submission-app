@@ -48,3 +48,10 @@
 - **Why**: To make database/runtime boundaries explicit and keep infrastructure portable and reproducible across environments.
 - **Where**: `ops/infra/render/`, `ops/infra/render/components/{web,worker,database,dns}/`, `ops/infra/render/envs/{qa,staging,prod}/`, `.github/workflows/promote-staging.yml`, `Gemfile.lock`
 - **Learned**: Keep `dev/test` on MySQL and `qa` on PostgreSQL, adopt live Render resources via Terraform instead of recreating them, and leave staging/prod disabled until the workspace plan changes.
+
+## 008 Render Stack Portability
+
+- **What**: Parameterized the Render/Terraform stack so it can be reused across Render accounts by externalizing account-specific values.
+- **Why**: To make the infrastructure portable without hardcoding workspace-specific IDs into reusable defaults.
+- **Where**: `.github/workflows/infra-render.yml`, `Makefile`, `ops/scripts/secrets.sh`, `ops/infra/render/envs/{qa,staging,prod}/providers.tf`, `variables.tf`
+- **Learned**: Keep the workspace owner ID, API key, and resource IDs as inputs; portability means configuration reuse, not bypassing the current Hobby-plan limits.
