@@ -55,3 +55,10 @@
 - **Why**: To make the infrastructure portable without hardcoding workspace-specific IDs into reusable defaults.
 - **Where**: `.github/workflows/infra-render.yml`, `Makefile`, `ops/scripts/secrets.sh`, `ops/infra/render/envs/{qa,staging,prod}/providers.tf`, `variables.tf`
 - **Learned**: Keep the workspace owner ID, API key, and resource IDs as inputs; portability means configuration reuse, not bypassing the current Hobby-plan limits.
+
+## 009 Render Portability Validation
+
+- **What**: Defined the proof step for verifying the stack on a second GitHub account and Render workspace without changing source code.
+- **Why**: To confirm the portability work actually survives a fresh account/workspace setup.
+- **Where**: GitHub repository settings, GitHub Actions secrets/variables, Render dashboard/workspace settings, `.github/workflows/`
+- **Learned**: Validation should prove the same Terraform/workflow source works in another account; account-specific bootstrap belongs elsewhere.
