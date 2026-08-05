@@ -41,3 +41,10 @@
 - **Why**: To make the production hosting target explicit and unblock the remaining deployment promotion work.
 - **Where**: Render workspace and services, GitHub Actions deployment workflow, DNS/registrar, `docs/decisions/05-render-infrastructure-target.md`, `docs/decisions/06-database-engine-matrix.md`, `docs/decisions/07-infrastructure-as-code-strategy.md`
 - **Learned**: Treat the current `-qa` slug as a legacy naming artifact, keep DNS selection and backup policy explicit, and use Render-managed PostgreSQL for production.
+
+## 007 Database Engine and IaC Strategy
+
+- **What**: Defined the database engine matrix and Terraform-based infra strategy, starting with QA adoption on Render and scaffolding staging/prod for later rollout.
+- **Why**: To make database/runtime boundaries explicit and keep infrastructure portable and reproducible across environments.
+- **Where**: `ops/infra/render/`, `ops/infra/render/components/{web,worker,database,dns}/`, `ops/infra/render/envs/{qa,staging,prod}/`, `.github/workflows/promote-staging.yml`, `Gemfile.lock`
+- **Learned**: Keep `dev/test` on MySQL and `qa` on PostgreSQL, adopt live Render resources via Terraform instead of recreating them, and leave staging/prod disabled until the workspace plan changes.
