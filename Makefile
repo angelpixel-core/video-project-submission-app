@@ -5,11 +5,12 @@ SECRETS_SCRIPT := ops/scripts/secrets.sh
 REPO_SCRIPT := ops/scripts/repo/create.sh
 TEST_SCRIPT := ops/scripts/test.sh
 TEST_ARGS ?=
+STACK_ARGS ?=
 ENV ?= $(STACK_ENV)
 
 .PHONY: stack/%
 stack/%:
-	@STACK_ENV="$(STACK_ENV)" sh $(STACK_SCRIPT) "$*"
+	@STACK_ENV="$(STACK_ENV)" sh $(STACK_SCRIPT) "$*" $(STACK_ARGS)
 
 .PHONY: secrets/%
 secrets/%:
