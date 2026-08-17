@@ -65,6 +65,13 @@
 
 ## 010 Render Bootstrap Guide
 
+- **What**: Documented the bootstrap runbook for creating the repo, wiring Render, and ordering the initial workflows in a fresh account.
+- **Why**: To make first-time setup reproducible without relying on prior session memory.
+- **Where**: GitHub repository creation, Render workspace/project creation, GitHub Actions secrets and repository variables, `make secrets/*`
+- **Learned**: Keep the guide operational rather than architectural, and list the manual checkpoints explicitly so a new operator can follow it end to end.
+
+## 010 Render Bootstrap Guide
+
 - **What**: Documented the manual and semi-automated first-time bootstrap steps for a fresh GitHub and Render account.
 - **Why**: To make the stack reproducible without relying on memory from prior sessions.
 - **Where**: GitHub repository creation, GitHub Actions secrets/variables, Render workspace/project creation, `make secrets/*`
