@@ -62,3 +62,10 @@
 - **Why**: To confirm the portability work actually survives a fresh account/workspace setup.
 - **Where**: GitHub repository settings, GitHub Actions secrets/variables, Render dashboard/workspace settings, `.github/workflows/`
 - **Learned**: Validation should prove the same Terraform/workflow source works in another account; account-specific bootstrap belongs elsewhere.
+
+## 010 Render Bootstrap Guide
+
+- **What**: Documented the manual and semi-automated first-time bootstrap steps for a fresh GitHub and Render account.
+- **Why**: To make the stack reproducible without relying on memory from prior sessions.
+- **Where**: GitHub repository creation, GitHub Actions secrets/variables, Render workspace/project creation, `make secrets/*`
+- **Learned**: Keep the guide operational rather than architectural, and include the exact execution order plus the remaining manual checkpoints.
