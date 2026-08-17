@@ -34,7 +34,7 @@ RSpec.describe "payments rake tasks" do
   end
 
   def default_webhook_url
-    "http://localhost:#{ENV.fetch("APP_PORT", 4000)}/payments/webhooks/fake/events"
+    "http://localhost:#{ENV.fetch("APP_HOST_PORT", ENV.fetch("APP_PORT", 4000))}/payments/webhooks/fake/events"
   end
 
   it "defaults to localhost and forwards env vars to the simulator" do

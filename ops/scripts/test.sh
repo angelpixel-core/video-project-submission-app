@@ -65,7 +65,7 @@ ensure_database() {
     --network-alias db \
     --env-file "$TEST_DB_BOOTSTRAP_ENV_FILE" \
     -v "${ROOT_DIR}/ops/containers/db/entrypoint/initdb.d:/docker-entrypoint-initdb.d:ro" \
-    mysql:8.4 mysqld --port="${DB_PORT:-4001}" >/dev/null
+    mysql:8.4 mysqld --port="${DB_PORT:-3306}" >/dev/null
 
   cleanup_database() {
     docker rm -f "$TEST_DB_CONTAINER_NAME" >/dev/null 2>&1 || true
@@ -78,7 +78,7 @@ ensure_database() {
 
 wait_for_database() {
   host="${DB_HOST:-db}"
-  port="${DB_PORT:-4001}"
+  port="${DB_PORT:-3306}"
   root_password="${MYSQL_ROOT_PASSWORD:-root_password}"
   max_attempts="${DB_WAIT_ATTEMPTS:-300}"
   attempt=1
