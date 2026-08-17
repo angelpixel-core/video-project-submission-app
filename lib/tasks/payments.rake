@@ -16,7 +16,8 @@ namespace :payments do
 end
 
 def deliver_signed_webhook(default_type:)
-  webhook_url = ENV["WEBHOOK_URL"].presence || "http://localhost:#{ENV.fetch("APP_PORT", 4000)}/payments/webhooks/fake/events"
+  webhook_port = ENV.fetch("APP_HOST_PORT", ENV.fetch("APP_PORT", 3000))
+  webhook_url = ENV["WEBHOOK_URL"].presence || "http://localhost:#{webhook_port}/payments/webhooks/fake/events"
   payment = resolved_payment_from_env
   simulator_args = {
     webhook_url: webhook_url,
