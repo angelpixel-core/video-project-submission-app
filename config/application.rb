@@ -32,6 +32,14 @@ module VideoProjectSubmissionApp
     config.autoload_paths << shared_domain_root
     config.eager_load_paths << shared_domain_root
 
+    require Rails.root.join("lib/middleware/locale_middleware")
+
+    config.i18n.available_locales = %i[en es]
+    config.i18n.default_locale = :en
+    config.i18n.fallbacks = true
+
+    config.middleware.use ::LocaleMiddleware
+
     config.active_storage.variant_processor = :mini_magick
 
     # Configuration for the application, engines, and railties goes here.

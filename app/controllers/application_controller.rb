@@ -2,7 +2,7 @@ class ApplicationController < ActionController::Base
   # Only allow modern browsers supporting webp images, web push, badges, CSS nesting, and CSS :has.
   allow_browser versions: :modern
 
-  helper_method :workspace_for, :workspace_notifications_for, :workspace_role
+  helper_method :workspace_for, :workspace_notifications_for, :workspace_role, :current_locale
   helper_method :feature_enabled?, :client_refund_request_enabled?
 
   private
@@ -17,6 +17,14 @@ class ApplicationController < ActionController::Base
 
   def workspace_role
     @workspace_role ||= cookies[:workspace_role].presence_in(%w[client pm])&.to_sym || :client
+  end
+
+  def current_locale
+    request.env.fetch(LocaleMiddleware::LOCALE_ENV_KEY, I18n.default_locale).to_sym
+  end
+
+  def default_url_options
+    super.merge(current_locale == I18n.default_locale ? {} : { locale: current_locale })
   end
 
   def workspace_notifications_for(role)

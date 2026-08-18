@@ -13,10 +13,26 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   # root "posts#index"
   mount ActionCable.server => "/cable"
-  root "orders#index"
-  resource :profile, only: %i[show update], controller: "profile"
+  scope "(:locale)", locale: /[a-z]{2}(?:-[a-z]{2})?/i do
+    root "orders#index"
+    resource :profile, only: %i[show update], controller: "profile"
 
-  resources :notifications, only: %i[update]
+    resources :notifications, only: %i[update]
+
+    resources :orders, only: %i[index show new edit update] do
+      member do
+        patch :accept
+        patch :cancel
+        patch :complete
+        patch :reopen
+        patch :request_refund
+        patch :approve_refund_request
+        patch :reject_refund_request
+      end
+
+      resources :comments, only: :create, controller: "comments"
+    end
+  end
 
   if Rails.env.development?
     mount LetterOpenerWeb::Engine, at: "/letter_opener"
@@ -24,19 +40,5 @@ Rails.application.routes.draw do
 
   namespace :payments do
     post "webhooks/:provider/events", to: "adapters/inbound/webhooks/payment_webhooks#create", as: :webhook_events
-  end
-
-  resources :orders, only: %i[index show new edit update] do
-    member do
-      patch :accept
-      patch :cancel
-      patch :complete
-      patch :reopen
-      patch :request_refund
-      patch :approve_refund_request
-      patch :reject_refund_request
-    end
-
-    resources :comments, only: :create, controller: "comments"
   end
 end
