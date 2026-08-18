@@ -243,3 +243,7 @@ Payments docs are centralized at [Payments Index](../payments.md).
 ## 50
 
 - [ ] [Grouped RuboCop Reporting](./050-grouped-rubocop-reporting.md)
+
+## 51
+
+- [ ] [Localization Routing and Internationalization Plan](./051-localization-routing-and-internationalization-plan.md)
