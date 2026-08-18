@@ -1,3 +1,9 @@
+---
+id: BITACORA
+aliases: []
+tags: []
+---
+
 # Bitacora de Work Items
 
 ## 001 Bootstrap and Environment

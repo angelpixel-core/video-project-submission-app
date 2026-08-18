@@ -1,5 +1,5 @@
 namespace :maintenance do
-  desc "Reset order-owned data while keeping clients, PMs, and video types"
+  desc "Reset order-owned data and workspace fixtures while keeping video types"
   task reset_order_data: :environment do
     reset_order_data!
   end
@@ -10,6 +10,8 @@ def reset_order_data!
   confirm = ENV["CONFIRM"].to_s.upcase == "YES"
 
   tables = [
+    [ "clients", reset_data_model("clients") ],
+    [ "pms", reset_data_model("pms") ],
     [ "payment_webhook_event_attempts", Payments::Domain::Entities::PaymentWebhookEventAttempt ],
     [ "payment_notification_intents", Payments::Domain::Entities::PaymentNotificationIntent ],
     [ "payment_attempts", Payments::Domain::Entities::PaymentAttempt ],
@@ -44,5 +46,10 @@ def reset_order_data!
     end
   end
 
-  puts "Order data reset complete. Clients, PMs, and video types were preserved."
+  puts "Order data reset complete. Order data and demo workspace records were removed; video types were preserved."
+end
+
+def reset_data_model(table_name)
+  @reset_data_models ||= {}
+  @reset_data_models[table_name] ||= Class.new(ApplicationRecord) { self.table_name = table_name }
 end
