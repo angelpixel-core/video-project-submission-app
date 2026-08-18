@@ -20,7 +20,7 @@ for i in 1 2 3 4 5 6 7 8 9 10; do
 done
 
 if [ "${RUN_DB_PREPARE:-0}" = "1" ] && [ -f /app/bin/rails ]; then
-  bundle exec rails db:prepare
+  bundle exec rails db:prepare:with_data
 fi
 
 export PORT="${APP_PORT:-${PORT:-3000}}"

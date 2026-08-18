@@ -6,6 +6,5 @@ namespace :db do
     end
   end
 
-  Rake::Task["db:prepare"].enhance([ "db:data:migrate" ])
   Rake::Task["db:seed"].enhance([ "db:data:migrate" ])
 end
