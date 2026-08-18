@@ -16,12 +16,12 @@ tags:
 
 ## Goal
 
-- [x] Reset all order-owned data while preserving clients, PMs, and video types.
+- [x] Reset all order-owned data and demo workspace records while preserving video types.
 
 ## When To Use
 
-- Rebuild a local demo database from scratch without recreating users.
-- Clear stale orders, payments, notifications, comments, and webhook history.
+- Rebuild a local demo database from scratch.
+- Clear stale orders, payments, notifications, comments, webhook history, and demo workspace records.
 - Prepare a clean environment for validating order setup flows.
 
 ## What Gets Removed
@@ -38,10 +38,7 @@ tags:
 
 ## What Stays
 
-- `clients`
-- `pms`
 - `video_types`
-- attached avatars on clients and PMs
 
 ## Command
 
@@ -55,13 +52,13 @@ make maintenance/reset_order_data CONFIRM=YES
 
 ## Expected Result
 
-- The dry run prints row counts for every order-owned table.
+- The dry run prints row counts for every order-owned table and workspace fixture table.
 - The confirmed run deletes those rows in dependency-safe order.
-- Clients, PMs, and video types remain untouched.
+- Video types remain untouched.
 
 ## Verify
 
-1. Open a Rails console and confirm `Client.count`, `PM.count`, and `VideoType.count` stay non-zero.
+1. Open a Rails console and confirm the `clients` and `pms` tables are empty while `VideoType.count` remains non-zero.
 2. Confirm `Order.count`, `Payment.count`, `Comment.count`, and `Notification.count` are `0`.
 3. Confirm `PaymentWebhookEvent.count` and `PaymentNotificationIntent.count` are `0`.
 
@@ -69,4 +66,4 @@ make maintenance/reset_order_data CONFIRM=YES
 
 - Run this only when you really want to wipe all order data.
 - `DRY_RUN=1` is safe and prints what will be deleted without changing the database.
-- The task intentionally skips clients, PMs, and video types so demo users and catalog data can be reused.
+- The task now removes demo workspace records too, so fresh runs should bootstrap users again if needed.
