@@ -2,7 +2,7 @@
   <div class="card h-100 shadow-sm border-0 client-order-card">
     <div class="card-body">
       <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
-        <% details_path = project.draft? ? edit_order_path(project) : order_path(project) %>
+        <% details_path = project.draft? ? edit_order_path(id: project) : order_path(id: project) %>
         <% show_raw_footage_url = !project.raw_footage_previewable? %>
         <div>
           <h2 class="h5 mb-1">
@@ -19,7 +19,7 @@
             <%= render "status_badge", project: project %>
           </div>
           <% if project.draft? %>
-            <%= link_to "Reanudar", edit_order_path(project), class: "btn btn-sm btn-outline-primary", data: { role_scope: "client" } %>
+            <%= link_to "Reanudar", edit_order_path(id: project), class: "btn btn-sm btn-outline-primary", data: { role_scope: "client" } %>
           <% end %>
         </div>
       </div>

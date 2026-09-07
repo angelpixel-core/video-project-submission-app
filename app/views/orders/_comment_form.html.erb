@@ -1,5 +1,5 @@
 <div data-controller="comment-form" class="border rounded-3 p-3">
-  <%= form_with url: order_comments_path(project), scope: :comment, local: true, data: { action: "submit->comment-form#submit" } do |form| %>
+  <%= form_with url: order_comments_path(order_id: project), scope: :comment, local: true, data: { action: "submit->comment-form#submit" } do |form| %>
     <% if comment.errors.any? %>
       <div class="alert alert-danger">
         <strong>Please fix the following:</strong>

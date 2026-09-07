@@ -73,9 +73,9 @@ module WorkspaceProjectShell
     result = Orders::ActionService.call(project: @project, event: :reopen)
 
     if result.success?
-      redirect_to edit_order_path(@project), notice: "Order reopened."
+      redirect_to edit_order_path(id: @project), notice: "Order reopened."
     else
-      redirect_to order_path(@project), alert: "Only cancelled orders can be reopened."
+      redirect_to order_path(id: @project), alert: "Only cancelled orders can be reopened."
     end
   end
 
@@ -168,7 +168,7 @@ module WorkspaceProjectShell
   end
 
   def order_form_for(project)
-    Orders::OrderFormPresenter.new(project:, path: order_path(project))
+    Orders::OrderFormPresenter.new(project:, path: order_path(id: project))
   end
 
   def process_workspace_action(event:, success_notice:, stale_alert:)

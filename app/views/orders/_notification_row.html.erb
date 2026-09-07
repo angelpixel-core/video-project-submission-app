@@ -5,7 +5,7 @@
 
 <div class="dropdown-item-text px-3 py-2 border-bottom <%= prefix %>-notification-item <%= prefix %>-notification-row <%= bg_class %>" data-controller="notification-action" data-role-scope="<%= role %>" data-notification-item>
   <div class="d-flex align-items-start gap-3">
-    <%= link_to order_path(notification.project), class: "flex-grow-1 text-reset text-decoration-none d-block min-w-0", data: { action: "click->notification-action#open", notification_read_url: read_url } do %>
+    <%= link_to order_path(id: notification.project), class: "flex-grow-1 text-reset text-decoration-none d-block min-w-0", data: { action: "click->notification-action#open", notification_read_url: read_url } do %>
       <p class="text-uppercase text-body-secondary small mb-1">Order update</p>
       <h3 class="h6 mb-1 <%= prefix %>-notification-project-name text-truncate"><%= notification.project.name %></h3>
       <p class="mb-0 text-body-secondary text-truncate"><%= notification.body %></p>
