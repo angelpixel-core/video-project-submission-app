@@ -102,7 +102,7 @@ The default adapters may continue to call the current jobs. This first slice mus
 
 - [x] Keep `ProcessSubmission` behavior unchanged while introducing explicit follow-up dependencies.
 - [x] Add specs for follow-up success, failure, and non-execution paths.
-- [ ] Document the result contract for success and failure.
+- [x] Document the result contract for success and failure.
 - [ ] Confirm the current order lifecycle states and transition policies.
 
 ### Phase 2: Reduce downstream coupling

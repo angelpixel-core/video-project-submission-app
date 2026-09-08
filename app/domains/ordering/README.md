@@ -119,6 +119,51 @@ The current public contract for `ordering` is:
 - `Ordering::Presentation::OrderFormPresenter`
 - `Ordering::Domain::Repositories::Order::Contract`
 
+## Result Contract
+
+`Ordering::Application::Commands::ProcessSubmission` always returns a `Core::Result`.
+
+### Success
+
+Successful submissions return `Core::Result::Success` with:
+
+```ruby
+{
+  submission:,
+  order:,
+  payment:,
+  reservation:
+}
+```
+
+The `payment` has passed the success checkpoint, the `reservation` has been committed, and follow-up dependencies have been invoked.
+
+### Failure
+
+Failed submissions return `Core::Result::Failure` with:
+
+```ruby
+{
+  message: String,
+  code: Symbol,
+  data: {
+    submission:,
+    order:,
+    # Optional: payment, reservation, line_item, availability
+  }
+}
+```
+
+The failure `data` always carries the submission context when the command has one. Stage-specific details may be added without changing the base contract.
+
+Current failure codes include:
+
+- `:invalid_record` for invalid input, invalid transitions, or checkpoint failures.
+- `:unavailable` when an order line cannot be submitted under the availability policy.
+- Capacity or payment codes propagated from their respective application contracts.
+
+This contract documents the current behavior. It does not yet introduce a specialized submission result type.
+
 ## Plan de refinamiento
 
 ### Phase 1: Clarify the boundary
