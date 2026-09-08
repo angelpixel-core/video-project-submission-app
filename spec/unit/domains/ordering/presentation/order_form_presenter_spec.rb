@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe Orders::OrderFormPresenter do
+RSpec.describe Ordering::Presentation::OrderFormPresenter do
   let(:project) { instance_double(Project, draft?: true) }
 
   it "builds the project param namespace and uses draft copy" do

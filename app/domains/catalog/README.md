@@ -86,7 +86,7 @@ catalog/
 ## Physical Presentation Layer
 
 - `app/presenters/catalog/offer_catalog_presenter.rb`
-- `app/presenters/orders/order_form_presenter.rb` is a separate presentation example for ordering.
+- `app/domains/ordering/presentation/order_form_presenter.rb` is a separate presentation example for ordering.
 
 ## What `presentation` Means Here
 

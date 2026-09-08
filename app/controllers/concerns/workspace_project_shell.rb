@@ -168,7 +168,7 @@ module WorkspaceProjectShell
   end
 
   def order_form_for(project)
-    Orders::OrderFormPresenter.new(project:, path: order_path(id: project))
+    Ordering::Presentation::OrderFormPresenter.new(project:, path: order_path(id: project))
   end
 
   def process_workspace_action(event:, success_notice:, stale_alert:)

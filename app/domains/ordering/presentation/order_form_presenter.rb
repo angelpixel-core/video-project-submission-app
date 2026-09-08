@@ -1,5 +1,6 @@
-module Orders
-  class OrderFormPresenter
+module Ordering
+  module Presentation
+    class OrderFormPresenter
     attr_reader :project, :path, :param_key, :context, :fields
 
     def initialize(project:, path:, context: :edit, param_key: :project, fields: Fields.new)
@@ -23,7 +24,7 @@ module Orders
       "#{param_key}[#{field}]"
     end
 
-    class Fields
+      class Fields
       def new_order_title
         "Create a new order"
       end
@@ -98,6 +99,7 @@ module Orders
 
       def finalize_spinner_label
         "Creating order..."
+      end
       end
     end
   end
