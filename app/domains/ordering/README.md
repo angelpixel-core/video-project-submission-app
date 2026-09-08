@@ -6,7 +6,7 @@
 
 - modela el aggregate root `Order`
 - administra estados de draft, placed, confirmed, cancelled y completed
-- coordina la submission workflow con payment, capacity y billing follow-up
+- coordina la submission workflow con payment, capacity e invoicing follow-up
 - mantiene snapshots de customer, line items y source video
 - expone listing y mutaciones de órdenes para el storefront y el backoffice operativo
 - shapea la UI del formulario de órdenes a través de `presentation`
