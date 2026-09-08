@@ -19,6 +19,7 @@ RSpec.describe "Ordering policies" do
 
     expect(Ordering::Domain::Policies::OrderCompletionPolicy.allowed?(order)).to be(false)
 
+    order.mark_production_completed!
     order.mark_delivery_ready!
     order.mark_delivered!
 
@@ -34,6 +35,7 @@ RSpec.describe "Ordering policies" do
 
     expect(Ordering::Domain::Policies::OrderCancellationPolicy.allowed?(order)).to be(true)
     order.confirm!
+    order.mark_production_completed!
     order.mark_delivery_ready!
     order.mark_delivered!
     order.complete!

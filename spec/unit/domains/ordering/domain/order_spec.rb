@@ -45,6 +45,7 @@ RSpec.describe Ordering::Domain::Aggregates::Order do
     order.place!
     order.confirm!
     order.start_production!
+    order.mark_production_completed!
     order.mark_delivery_ready!
     order.mark_delivered!
     order.complete!
