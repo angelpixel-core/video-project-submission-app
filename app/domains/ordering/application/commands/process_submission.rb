@@ -9,7 +9,17 @@ module Ordering
           availability_policy: Catalog::Domain::Policies::AvailabilityPolicy,
           capacity_reserve_command: Capacity::Application::Commands::ReserveCapacity,
           capacity_commit_command: Capacity::Application::Commands::CommitCapacity,
-          capacity_release_command: Capacity::Application::Commands::ReleaseCapacity
+          capacity_release_command: Capacity::Application::Commands::ReleaseCapacity,
+          invoice_follow_up: ->(payment) {
+            # TODO(cleanup): Replace this compatibility adapter with the standalone
+            # Invoicing boundary contract once invoicing is extracted from billing.
+            Billing::Application::Handlers::GenerateInvoiceJob.perform_later(payment.id)
+          },
+          notification_follow_up: ->(order) {
+            # TODO(cleanup): Move NotificationJob under the Notifications boundary
+            # before extracting ordering. Keep this adapter until that contract is stable.
+            NotificationJob.perform_later(order.id)
+          }
         )
           new(
             submission:,
@@ -18,11 +28,13 @@ module Ordering
             availability_policy:,
             capacity_reserve_command:,
             capacity_commit_command:,
-            capacity_release_command:
+            capacity_release_command:,
+            invoice_follow_up:,
+            notification_follow_up:
           ).call
         end
 
-        def initialize(submission:, payment_command:, payment_gateway: nil, availability_policy:, capacity_reserve_command:, capacity_commit_command:, capacity_release_command:)
+        def initialize(submission:, payment_command:, payment_gateway: nil, availability_policy:, capacity_reserve_command:, capacity_commit_command:, capacity_release_command:, invoice_follow_up:, notification_follow_up:)
           @submission = submission
           @payment_command = payment_command
           @payment_gateway = payment_gateway
@@ -30,6 +42,8 @@ module Ordering
           @capacity_reserve_command = capacity_reserve_command
           @capacity_commit_command = capacity_commit_command
           @capacity_release_command = capacity_release_command
+          @invoice_follow_up = invoice_follow_up
+          @notification_follow_up = notification_follow_up
         end
 
         def call
@@ -63,7 +77,7 @@ module Ordering
 
         private
 
-        attr_reader :submission, :payment_command, :payment_gateway, :availability_policy, :capacity_reserve_command, :capacity_commit_command, :capacity_release_command
+        attr_reader :submission, :payment_command, :payment_gateway, :availability_policy, :capacity_reserve_command, :capacity_commit_command, :capacity_release_command, :invoice_follow_up, :notification_follow_up
 
         def validate_submission
           return failure("Submission requires an order", :invalid_record) if submission.order.nil?
@@ -120,8 +134,8 @@ module Ordering
         end
 
         def enqueue_follow_up_work(payment)
-          Billing::Application::Handlers::GenerateInvoiceJob.perform_later(payment.id)
-          NotificationJob.perform_later(submission.order.id)
+          invoice_follow_up.call(payment)
+          notification_follow_up.call(submission.order)
         end
 
         def payment_failure(payment_result)
