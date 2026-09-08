@@ -102,6 +102,7 @@ ordering/
 - `OrderFormPresenter` belongs to `presentation`, not `domain`.
 - `Domain::Policies` decide whether an order can transition.
 - `Adapters::Persistence` own database mapping and repositories.
+- Completion requires a confirmed order, completed production, delivered output, and no payment-flow blocker.
 
 ## Workflow Boundaries
 
