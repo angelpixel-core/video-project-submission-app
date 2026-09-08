@@ -22,6 +22,12 @@ En el storefront vertical, eso se traduce como `availability`.
 - contener lógica de ordering más allá de la reserva de capacity
 - mezclar reglas de availability con rendering o navegación
 
+## Regla práctica
+
+- Si el boundary solo calcula availability, reserva o expira recursos, no necesita `presentation` todavía.
+- Si en el futuro shapea datos para UI, entonces sí conviene separar una capa `presentation`.
+- Hoy `capacity` no tiene una capa `presentation` propia y no hace falta agregarla por ahora.
+
 ## Current Tree
 
 ```text

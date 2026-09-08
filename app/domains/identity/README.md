@@ -64,6 +64,12 @@ identity/
 - Presentation concerns
 - UI o controller behavior del shell app
 
+## Regla práctica
+
+- Si el boundary solo resuelve, valida o muta estado, no necesita `presentation` todavía.
+- Si empieza a shapear datos para HTML, JSON o view models, ahí sí corresponde separar `presentation`.
+- Hoy `identity` no tiene una capa `presentation` propia y no hace falta agregarla por ahora.
+
 ## Current Rules
 
 - `WorkspaceResolver` es el entrypoint hacia el shell para client/pm workspace lookup.
