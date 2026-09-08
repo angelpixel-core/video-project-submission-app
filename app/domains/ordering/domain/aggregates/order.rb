@@ -106,6 +106,10 @@ module Ordering
           delivery_status.delivered?
         end
 
+        def production_completed?
+          production_status.completed?
+        end
+
         def cancelled?
           status.cancelled?
         end

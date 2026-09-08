@@ -1,7 +1,7 @@
 <% role = local_assigns.fetch(:role, :pm).to_s %>
 <% prefix = role == "pm" ? "pm" : "client" %>
 <% counterpart_label = role == "pm" ? "Client" : "PM" %>
-<% read_url = notification_path(notification) %>
+<% read_url = notification_path(id: notification.id) %>
 
 <div class="card border-0 shadow-sm <%= prefix %>-notification-item <%= prefix %>-notification-toast" data-controller="notification-action" data-role-scope="<%= role %>" data-notification-item>
   <div class="card-body p-3">

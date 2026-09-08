@@ -50,7 +50,7 @@ class Order < ApplicationRecord
     end
 
     event :reopen do
-      transitions from: :cancelled, to: :draft
+      transitions from: :cancelled, to: :draft, after: :reset_operational_statuses
     end
   end
 
@@ -117,6 +117,11 @@ class Order < ApplicationRecord
     pending? && payment_paid? && !payment_flow_blocked?
   end
 
+  # TODO(cleanup): Replace this legacy state alias with the canonical ordering status.
+  def confirmed?
+    in_progress?
+  end
+
   def can_cancel_order?
     pending? && !payment_paid? && !payment_flow_blocked?
   end
@@ -127,6 +132,14 @@ class Order < ApplicationRecord
 
   def can_reopen_order?
     cancelled?
+  end
+
+  def production_completed?
+    production_status == "completed"
+  end
+
+  def delivered?
+    delivery_status == "delivered"
   end
 
   def raw_footage_metadata_hash
@@ -321,17 +334,17 @@ class Order < ApplicationRecord
   private
 
   def production_status_for_listing
-    return "not_started" if draft? || pending?
-    return "in_progress" if in_progress?
-
-    "completed"
+    production_status
   end
 
   def delivery_status_for_listing
-    return "not_ready" if draft? || pending?
-    return "ready" if in_progress?
+    delivery_status
+  end
 
-    "delivered"
+  def reset_operational_statuses
+    self.production_status = "not_started"
+    self.delivery_status = "not_ready"
+    save!
   end
 
   def broadcast_status_badge

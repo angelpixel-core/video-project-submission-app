@@ -193,6 +193,7 @@ RSpec.describe "Orders requests" do
 
   it "completes an in-progress order as the pm" do
     project = Project.create!(owner: find_workspace_account(:client, email: "client@example.com"), participant: find_workspace_account(:pm, email: "pm@example.com"), name: "Project Active", raw_footage_url: "https://example.com/active.mov", status: :in_progress)
+    project.update!(production_status: "completed", delivery_status: "delivered")
 
     patch complete_order_path(project)
 
@@ -200,5 +201,25 @@ RSpec.describe "Orders requests" do
 
     project.reload
     expect(project.status).to eq("completed")
+  end
+
+  it "does not complete an in-progress order before production and delivery are complete" do
+    project = Project.create!(owner: find_workspace_account(:client, email: "client@example.com"), participant: find_workspace_account(:pm, email: "pm@example.com"), name: "Project Active", raw_footage_url: "https://example.com/active.mov", status: :in_progress)
+
+    patch complete_order_path(project)
+
+    expect(response).to redirect_to(orders_path)
+    expect(project.reload.status).to eq("in_progress")
+  end
+
+  it "resets operational statuses when reopening a cancelled order" do
+    project = Project.create!(owner: find_workspace_account(:client, email: "client@example.com"), participant: find_workspace_account(:pm, email: "pm@example.com"), name: "Project Cancelled", raw_footage_url: "https://example.com/cancelled.mov", status: :cancelled, production_status: "completed", delivery_status: "delivered")
+
+    patch reopen_order_path(project)
+
+    project.reload
+    expect(project.status).to eq("draft")
+    expect(project.production_status).to eq("not_started")
+    expect(project.delivery_status).to eq("not_ready")
   end
 end

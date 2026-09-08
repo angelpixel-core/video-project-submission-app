@@ -103,6 +103,7 @@ ordering/
 - `Domain::Policies` decide whether an order can transition.
 - `Adapters::Persistence` own database mapping and repositories.
 - Completion requires a confirmed order, completed production, delivered output, and no payment-flow blocker.
+- Legacy `pending` and `in_progress` states map to canonical `placed` and `confirmed` states; `reopen` remains a legacy fulfillment action and resets operational checkpoints.
 
 ## Workflow Boundaries
 

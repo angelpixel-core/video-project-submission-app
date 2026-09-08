@@ -1,7 +1,7 @@
 <% role = local_assigns.fetch(:role, :pm).to_s %>
 <% prefix = role == "pm" ? "pm" : "client" %>
 <% bg_class = role == "pm" ? "bg-primary-subtle" : "bg-info-subtle" %>
-<% read_url = notification_path(notification) %>
+<% read_url = notification_path(id: notification.id) %>
 
 <div class="dropdown-item-text px-3 py-2 border-bottom <%= prefix %>-notification-item <%= prefix %>-notification-row <%= bg_class %>" data-controller="notification-action" data-role-scope="<%= role %>" data-notification-item>
   <div class="d-flex align-items-start gap-3">

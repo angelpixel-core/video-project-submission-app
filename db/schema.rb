@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_08_120000) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_08_121000) do
   create_table "accounts", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "email", null: false
@@ -411,9 +411,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_08_120000) do
 
   create_table "projects", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.datetime "created_at", null: false
+    t.string "delivery_status", default: "not_ready", null: false
     t.string "name"
     t.bigint "owner_account_id", null: false
     t.bigint "participant_account_id", null: false
+    t.string "production_status", default: "not_started", null: false
     t.json "raw_footage_metadata"
     t.string "raw_footage_url"
     t.string "status", default: "draft", null: false

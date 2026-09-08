@@ -46,7 +46,7 @@ module Fulfillment
           when :accept
             order.public_send("may_#{event}?") && order.can_accept_order?
           when :complete
-            order.public_send("may_#{event}?") && !order.payment_flow_blocked?
+            order.public_send("may_#{event}?") && Ordering::Domain::Policies::OrderCompletionPolicy.allowed?(order)
           when :cancel
             order.public_send("may_#{event}?") && order.can_cancel_order?
           when :reopen

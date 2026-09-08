@@ -96,10 +96,12 @@ module Ordering
           end
 
           def pending?
+            # TODO(cleanup): Remove this legacy alias once callers use placed?.
             placed?
           end
 
           def in_progress?
+            # TODO(cleanup): Remove this legacy alias once callers use confirmed?.
             confirmed?
           end
 
