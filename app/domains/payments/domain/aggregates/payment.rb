@@ -10,6 +10,7 @@ module Payments
         has_many :payment_webhook_events, class_name: "Payments::Domain::Entities::PaymentWebhookEvent", dependent: :nullify
         has_many :payment_notification_intents, class_name: "Payments::Domain::Entities::PaymentNotificationIntent", dependent: :destroy
         has_many :payment_invoice_delivery_intents, class_name: "Payments::Domain::Entities::PaymentInvoiceDeliveryIntent", dependent: :destroy
+        has_many :payment_reconciliation_results, class_name: "Payments::Domain::Entities::PaymentReconciliationResult", dependent: :destroy
 
         ACTIVE_STATUSES = Payments::Domain::ValueObjects::PaymentStatus::ACTIVE_STATUSES
         TERMINAL_STATUSES = Payments::Domain::ValueObjects::PaymentStatus::TERMINAL_STATUSES
@@ -48,6 +49,23 @@ module Payments
 
         def invoice_generated?
           invoice_generated_at.present?
+        end
+
+        def record_reconciliation_result!(status:, snapshot:, result_code: nil, expected_status: nil, actual_status: nil, provider_reference: nil, message: nil, details: nil, reconciled_at: Time.current)
+          self.payment_reconciliation_snapshot = snapshot.to_h
+          save! if changed?
+
+          payment_reconciliation_results.create!(
+            status: status,
+            result_code: result_code,
+            expected_status: expected_status,
+            actual_status: actual_status,
+            provider_reference: provider_reference,
+            message: message,
+            snapshot: snapshot.to_h,
+            details: details&.to_h,
+            reconciled_at: reconciled_at
+          )
         end
 
         def current_payment_method_type

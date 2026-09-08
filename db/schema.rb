@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_02_090000) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_08_120000) do
   create_table "accounts", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "email", null: false
@@ -291,7 +291,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_02_090000) do
     t.string "provider", default: "fake", null: false
     t.string "reference", null: false
     t.datetime "updated_at", null: false
-    t.index ["payment_id"], name: "index_payment_method_references_on_payment_id"
+    t.index ["payment_id"], name: "index_payment_method_references_on_payment_id", unique: true
     t.index ["provider", "method_type"], name: "index_payment_method_references_on_provider_and_method_type"
     t.index ["reference"], name: "index_payment_method_references_on_reference", unique: true
   end
@@ -314,6 +314,24 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_02_090000) do
     t.index ["payment_id"], name: "index_payment_notification_intents_on_payment_id"
     t.index ["project_id"], name: "index_payment_notification_intents_on_project_id"
     t.index ["status", "scheduled_at"], name: "index_payment_notification_intents_on_status_and_scheduled_at"
+  end
+
+  create_table "payment_reconciliation_results", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.string "actual_status"
+    t.datetime "created_at", null: false
+    t.json "details"
+    t.string "expected_status"
+    t.text "message"
+    t.bigint "payment_id", null: false
+    t.string "provider_reference"
+    t.datetime "reconciled_at", null: false
+    t.string "result_code"
+    t.json "snapshot", null: false
+    t.string "status", null: false
+    t.datetime "updated_at", null: false
+    t.index ["payment_id", "reconciled_at"], name: "index_payment_reconciliation_results_on_payment_and_time"
+    t.index ["payment_id"], name: "index_payment_reconciliation_results_on_payment_id"
+    t.index ["status"], name: "index_payment_reconciliation_results_on_status"
   end
 
   create_table "payment_webhook_event_attempts", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
@@ -370,6 +388,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_02_090000) do
     t.datetime "invoice_emailed_at"
     t.datetime "invoice_generated_at"
     t.string "invoice_number"
+    t.json "payment_reconciliation_snapshot"
     t.bigint "project_id", null: false
     t.string "provider", default: "fake", null: false
     t.string "provider_reference"
@@ -417,7 +436,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_02_090000) do
     t.string "status", default: "pending", null: false
     t.datetime "updated_at", null: false
     t.index ["payment_id", "status"], name: "index_refunds_on_payment_id_and_status"
+    t.index ["payment_id"], name: "index_refunds_on_payment_id"
     t.index ["payment_method_reference_id", "status"], name: "index_refunds_on_payment_method_reference_id_and_status"
+    t.index ["payment_method_reference_id"], name: "index_refunds_on_payment_method_reference_id"
     t.index ["provider_reference"], name: "index_refunds_on_provider_reference", unique: true
   end
 
@@ -504,6 +525,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_02_090000) do
   add_foreign_key "payment_method_references", "payments"
   add_foreign_key "payment_notification_intents", "payments"
   add_foreign_key "payment_notification_intents", "projects"
+  add_foreign_key "payment_reconciliation_results", "payments"
   add_foreign_key "payment_webhook_event_attempts", "payment_webhook_events"
   add_foreign_key "payment_webhook_events", "payments"
   add_foreign_key "payment_webhook_events", "projects"
