@@ -234,7 +234,7 @@ Payments docs are centralized at [Payments Index](../payments.md).
 
 ## 48
 
-- [x] [Billing Presentation and Adapter Taxonomy](./048-billing-presentation-and-adapter-taxonomy.md)
+- [x] [Invoicing Presentation and Adapter Taxonomy](./048-invoicing-presentation-and-adapter-taxonomy.md)
 
 ## 49
 
