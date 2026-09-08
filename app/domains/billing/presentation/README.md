@@ -2,6 +2,8 @@
 
 Presentation turns billing data into a deliverable shape.
 
+The folder still lives under `billing/`; the product-facing vocabulary is `invoicing`.
+
 ## Contents
 
 - `html/` - ERB, ViewComponent, partial, or document renderers.

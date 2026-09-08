@@ -2,6 +2,8 @@
 
 Email delivery adapters for billing live here.
 
+This folder is still physically under `billing/`; the public product name is `invoicing`.
+
 Current adapter:
 
 - `invoice_mailer.rb`

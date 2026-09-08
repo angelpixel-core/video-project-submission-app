@@ -2,6 +2,8 @@
 
 Use this folder for HTML-shaped billing output.
 
+This is part of the physical `billing/` tree, even though the target product name is `invoicing`.
+
 Examples:
 
 - ERB templates

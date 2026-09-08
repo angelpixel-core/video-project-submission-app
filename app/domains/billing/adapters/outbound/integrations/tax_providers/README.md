@@ -2,6 +2,8 @@
 
 Fiscal providers are outbound integrations.
 
+The physical path stays under `billing/`; `invoicing` is the name we want to use in product-facing docs.
+
 Current provider family:
 
 - `arca/`

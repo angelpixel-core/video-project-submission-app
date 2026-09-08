@@ -2,6 +2,8 @@
 
 Outbound adapters are called by billing when it needs something outside the core.
 
+The filesystem boundary remains `billing/` for now, while `invoicing` is the target vocabulary.
+
 ## Contents
 
 - `mailers/` - email delivery adapters.

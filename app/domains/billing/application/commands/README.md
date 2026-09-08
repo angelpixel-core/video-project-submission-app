@@ -2,6 +2,8 @@
 
 Commands are billing write use cases.
 
+This folder stays under the physical `billing/` tree even though the product vocabulary is `invoicing`.
+
 Current commands:
 
 - `issue_credit_note.rb`

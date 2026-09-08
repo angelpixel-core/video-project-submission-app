@@ -2,6 +2,8 @@
 
 Immutable billing concepts belong here.
 
+This remains the physical `billing/` namespace; `invoicing` is the target product vocabulary.
+
 Current value objects:
 
 - `billing_identity.rb`

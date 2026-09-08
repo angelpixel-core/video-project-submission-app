@@ -2,6 +2,8 @@
 
 The application layer coordinates billing use cases.
 
+This is the physical `billing/` tree; the product vocabulary moving forward is `invoicing`.
+
 ## Contents
 
 - `commands/` - state-changing use cases.

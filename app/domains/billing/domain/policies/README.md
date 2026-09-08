@@ -2,6 +2,8 @@
 
 Business policies and decision rules for billing belong here.
 
+The code remains under `billing/` physically, but the public product vocabulary is `invoicing`.
+
 Current policies:
 
 - `invoice_generation_policy.rb`

@@ -2,6 +2,8 @@
 
 Billing domain events belong here.
 
+This is still the physical `billing/` event tree; `invoicing` is the product-facing name.
+
 Current events:
 
 - `credit_note_issued.rb`

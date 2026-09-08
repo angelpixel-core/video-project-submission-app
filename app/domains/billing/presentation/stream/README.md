@@ -2,6 +2,8 @@
 
 Use this folder for realtime or streamed billing output.
 
+The directory stays under `billing/` physically while the product vocabulary moves to `invoicing`.
+
 Examples:
 
 - Turbo Streams

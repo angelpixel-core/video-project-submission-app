@@ -2,6 +2,8 @@
 
 Use this folder for binary billing output.
 
+This remains in the physical `billing/` tree; the public product name is `invoicing`.
+
 Examples:
 
 - PDFs

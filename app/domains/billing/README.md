@@ -1,5 +1,9 @@
 # Billing Route Map
 
+`billing` es el nombre físico actual del boundary.
+El vocabulario público del producto apunta a `invoicing`, pero la migración física todavía no se hizo.
+Ver también `app/domains/invoicing/README.md` para el contrato conceptual objetivo.
+
 Billing is split into four layers:
 
 - `domain/` for pure business rules.
@@ -47,3 +51,4 @@ billing/
 - Inbound adapters receive external events, requests, or protocol messages.
 - Outbound adapters call external systems or local persistence.
 - Presentation turns billing data into a deliverable shape for the edge of the app.
+- The long-term product name for this boundary is `invoicing`; keep that in mind when adding new docs or public contracts.

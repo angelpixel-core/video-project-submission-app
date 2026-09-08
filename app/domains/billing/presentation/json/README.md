@@ -2,6 +2,8 @@
 
 Use this folder for JSON-shaped billing output.
 
+Keep the physical path as `billing/`; use `invoicing` in product-facing language.
+
 Examples:
 
 - API presenters

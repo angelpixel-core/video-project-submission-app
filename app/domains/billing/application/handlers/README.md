@@ -2,6 +2,8 @@
 
 Handlers coordinate multi-step billing work.
 
+The code lives in `billing/` physically; `invoicing` is the long-term public name.
+
 Current handlers:
 
 - `dispatch_invoice_job.rb`

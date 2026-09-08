@@ -2,6 +2,8 @@
 
 Adapters connect billing to the outside world.
 
+Physically this tree stays under `billing/`; conceptually the product language is shifting to `invoicing`.
+
 ## Contents
 
 - `inbound/` - entry points that bring external events or requests into billing.

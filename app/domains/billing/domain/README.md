@@ -2,6 +2,8 @@
 
 Pure billing rules live here.
 
+This is the current physical `billing/` domain tree; the product vocabulary is moving to `invoicing`.
+
 ## Contents
 
 - `aggregates/` - aggregate roots and lifecycle behavior.
