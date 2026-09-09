@@ -1,6 +1,26 @@
 require "rails_helper"
 
 RSpec.describe "Ordering outbound ports" do
+  it "keeps concrete invoicing and notification implementations out of the workflow core" do
+    source = File.read(Rails.root.join("app/domains/ordering/application/commands/process_submission.rb"))
+
+    expect(source).not_to include("Billing::")
+    expect(source).not_to include("NotificationJob")
+    expect(source).not_to include("Adapters::Outbound::Billing")
+    expect(source).not_to include("Adapters::Outbound::Notifications")
+    expect(source).to include("Ordering::Application::Ports::InvoicingPort")
+    expect(source).to include("Ordering::Application::Ports::NotificationPort")
+  end
+
+  it "keeps concrete follow-up wiring at the fulfillment composition root" do
+    source = File.read(Rails.root.join("app/domains/fulfillment/application/commands/submit_order.rb"))
+
+    expect(source).to include("Ordering::Adapters::Outbound::Billing::InvoiceFollowUp")
+    expect(source).to include("Ordering::Adapters::Outbound::Notifications::NotificationJob")
+    expect(source).to include("invoicing_port: invoicing_port")
+    expect(source).to include("notification_port: notification_port")
+  end
+
   it "uses explicit provider contracts for each downstream capability" do
     expect(Ordering::Application::Ports::PaymentPort).to be < Core::Services::Provider
     expect(Ordering::Application::Ports::AvailabilityPort).to be < Core::Services::Provider

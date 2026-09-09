@@ -109,6 +109,7 @@ The default adapters may continue to call the current jobs. This first slice mus
 
 - [x] Define payment, availability, capacity, invoicing, and notification ports at the correct boundary.
 - [x] Remove concrete `Billing::` and `NotificationJob` references from the ordering workflow core.
+- [x] Add architecture specs for ordering port boundaries and composition-root wiring.
 - [ ] Decide whether the submission saga belongs outside the ordering boundary.
 - [ ] Break package cycles through contracts, events, or read models.
 
