@@ -6,7 +6,7 @@ RSpec.describe LocaleMiddleware do
     lambda do |env|
       captured[:locale] = I18n.locale
       captured[:env_locale] = env[described_class::LOCALE_ENV_KEY]
-      [200, { "Content-Type" => "text/plain" }, ["ok"]]
+      [ 200, { "Content-Type" => "text/plain" }, [ "ok" ] ]
     end
   end
 
