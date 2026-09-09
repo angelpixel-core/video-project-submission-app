@@ -15,8 +15,8 @@ module Ordering
           payment_port: Ordering::Adapters::Outbound::Payments::PaymentCommand,
           availability_port: Ordering::Adapters::Outbound::Catalog::AvailabilityPolicy,
           capacity_port: Ordering::Adapters::Outbound::Capacity::Commands.new,
-          invoicing_port: Ordering::Adapters::Outbound::Billing::InvoiceFollowUp,
-          notification_port: Ordering::Adapters::Outbound::Notifications::NotificationJob
+          invoicing_port: Ordering::Application::Ports::InvoicingPort,
+          notification_port: Ordering::Application::Ports::NotificationPort
         )
           new(
             submission:,

@@ -2,16 +2,18 @@ module Fulfillment
   module Application
     module Commands
       class SubmitOrder
-        def self.call(order:, participant:, attributes:, selections:, repository:)
-          new(order:, participant:, attributes:, selections:, repository:).call
+        def self.call(order:, participant:, attributes:, selections:, repository:, invoicing_port: Ordering::Adapters::Outbound::Billing::InvoiceFollowUp, notification_port: Ordering::Adapters::Outbound::Notifications::NotificationJob)
+          new(order:, participant:, attributes:, selections:, repository:, invoicing_port:, notification_port:).call
         end
 
-        def initialize(order:, participant:, attributes:, selections:, repository:)
+        def initialize(order:, participant:, attributes:, selections:, repository:, invoicing_port:, notification_port:)
           @order = order
           @participant = participant
           @attributes = attributes
           @selections = selections
           @repository = repository
+          @invoicing_port = invoicing_port
+          @notification_port = notification_port
         end
 
         def call
@@ -42,7 +44,12 @@ module Fulfillment
                 metadata: { order_id: order.id }
               )
 
-              payment_result = Ordering::Application::Commands::ProcessSubmission.call(submission: submission, payment_gateway: payment_gateway)
+              payment_result = Ordering::Application::Commands::ProcessSubmission.call(
+                submission: submission,
+                payment_gateway: payment_gateway,
+                invoicing_port: invoicing_port,
+                notification_port: notification_port
+              )
               if payment_result.failure?
                 order.errors.add(:base, payment_result.message)
                 payment_failed = true
@@ -63,7 +70,7 @@ module Fulfillment
 
         private
 
-        attr_reader :order, :participant, :attributes, :selections, :repository
+        attr_reader :order, :participant, :attributes, :selections, :repository, :invoicing_port, :notification_port
 
         def missing_selections_failure
           order.errors.add(:base, "Add at least one video type")

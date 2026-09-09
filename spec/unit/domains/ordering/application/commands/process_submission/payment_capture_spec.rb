@@ -31,7 +31,9 @@ RSpec.describe Ordering::Application::Commands::ProcessSubmission do
       payment_gateway: payment_gateway,
       capacity_reserve_command: reserve_command,
       capacity_commit_command: commit_command,
-      capacity_release_command: release_command
+      capacity_release_command: release_command,
+      invoice_follow_up: ->(_payment) { },
+      notification_follow_up: ->(_order) { }
     )
 
     expect(result).to be_success
@@ -69,7 +71,9 @@ RSpec.describe Ordering::Application::Commands::ProcessSubmission do
       payment_command: payment_command,
       capacity_reserve_command: reserve_command,
       capacity_commit_command: commit_command,
-      capacity_release_command: release_command
+      capacity_release_command: release_command,
+      invoice_follow_up: ->(_payment) { },
+      notification_follow_up: ->(_order) { }
     )
 
     expect(result).to be_failure
@@ -107,7 +111,9 @@ RSpec.describe Ordering::Application::Commands::ProcessSubmission do
       payment_command: payment_command,
       capacity_reserve_command: reserve_command,
       capacity_commit_command: commit_command,
-      capacity_release_command: release_command
+      capacity_release_command: release_command,
+      invoice_follow_up: ->(_payment) { },
+      notification_follow_up: ->(_order) { }
     )
 
     expect(result).to be_success
