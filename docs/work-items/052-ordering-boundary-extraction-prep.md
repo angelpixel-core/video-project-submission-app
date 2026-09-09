@@ -143,6 +143,52 @@ Migration sequence:
 9. Remove `Ordering::Application::Commands::ProcessSubmission` after all callers migrate.
 10. Remove the temporary fulfillment facade and update package dependencies after the workflow boundary is stable.
 
+Implementation phases:
+
+### Checkout Phase 1: Add the workflow
+
+- [ ] Create `Marketplace::Application::Workflows::Checkout`.
+- [ ] Require explicit payment, availability, capacity, invoicing, and notification ports.
+- [ ] Preserve the current `Core::Result` success and failure contract.
+- [ ] Preserve the order of reserve, payment, commit, and follow-up operations.
+- [ ] Preserve capacity compensation after payment or checkpoint failure.
+- [ ] Add parity specs without deleting `ProcessSubmission` yet.
+
+Commit sequence:
+
+1. `feat: add Marketplace Checkout workflow`
+2. `test: cover Checkout workflow parity`
+
+### Checkout Phase 2: Move ownership and wiring
+
+- [ ] Move the workflow-facing ports to `Marketplace::Application::Ports`.
+- [ ] Move or recreate outbound adapters under `Marketplace::Adapters::Outbound`.
+- [ ] Keep downstream implementation details out of the Checkout workflow.
+- [ ] Make `Fulfillment::Application::Commands::SubmitOrder` delegate to Checkout.
+- [ ] Keep SubmitOrder as a temporary compatibility facade for controller callers.
+- [ ] Add architecture specs for Marketplace port ownership and composition-root wiring.
+
+Commit sequence:
+
+1. `refactor: move Checkout ports to Marketplace`
+2. `refactor: wire SubmitOrder through Checkout`
+3. `test: guard Marketplace workflow boundaries`
+
+### Checkout Phase 3: Retire the ordering saga
+
+- [ ] Migrate all direct `ProcessSubmission` callers to Checkout or the compatibility facade.
+- [ ] Confirm no production callers depend on `Ordering::Application::Commands::ProcessSubmission`.
+- [ ] Remove the duplicated ProcessSubmission orchestration.
+- [ ] Remove obsolete Ordering ports and adapters after all consumers migrate.
+- [ ] Remove the temporary Fulfillment facade if no longer needed.
+- [ ] Update package dependencies and verify there are no cycles.
+
+Commit sequence:
+
+1. `refactor: migrate submission callers to Checkout`
+2. `refactor: remove ordering submission saga`
+3. `docs: finalize Checkout boundary`
+
 Responsibility boundaries:
 
 - `Marketplace::Application::Workflows::Checkout`: cross-domain orchestration and compensation.
