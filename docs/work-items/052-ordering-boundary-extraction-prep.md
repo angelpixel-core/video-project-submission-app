@@ -107,7 +107,7 @@ The default adapters may continue to call the current jobs. This first slice mus
 
 ### Phase 2: Reduce downstream coupling
 
-- [ ] Define payment, availability, capacity, invoicing, and notification ports at the correct boundary.
+- [x] Define payment, availability, capacity, invoicing, and notification ports at the correct boundary.
 - [ ] Remove concrete `Billing::` and `NotificationJob` references from the ordering workflow core.
 - [ ] Decide whether the submission saga belongs outside the ordering boundary.
 - [ ] Break package cycles through contracts, events, or read models.

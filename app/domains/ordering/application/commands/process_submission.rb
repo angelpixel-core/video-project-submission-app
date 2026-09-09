@@ -4,37 +4,37 @@ module Ordering
       class ProcessSubmission
         def self.call(
           submission:,
-          payment_command: Payments::Application::Commands::CreatePayment,
+          payment_command: nil,
           payment_gateway: nil,
-          availability_policy: Catalog::Domain::Policies::AvailabilityPolicy,
-          capacity_reserve_command: Capacity::Application::Commands::ReserveCapacity,
-          capacity_commit_command: Capacity::Application::Commands::CommitCapacity,
-          capacity_release_command: Capacity::Application::Commands::ReleaseCapacity,
-          invoice_follow_up: ->(payment) {
-            # TODO(cleanup): Replace this compatibility adapter with the standalone
-            # Invoicing boundary contract once invoicing is extracted from billing.
-            Billing::Application::Handlers::GenerateInvoiceJob.perform_later(payment.id)
-          },
-          notification_follow_up: ->(order) {
-            # TODO(cleanup): Move NotificationJob under the Notifications boundary
-            # before extracting ordering. Keep this adapter until that contract is stable.
-            NotificationJob.perform_later(order.id)
-          }
+          availability_policy: nil,
+          capacity_reserve_command: nil,
+          capacity_commit_command: nil,
+          capacity_release_command: nil,
+          invoice_follow_up: nil,
+          notification_follow_up: nil,
+          payment_port: Ordering::Adapters::Outbound::Payments::PaymentCommand,
+          availability_port: Ordering::Adapters::Outbound::Catalog::AvailabilityPolicy,
+          capacity_port: Ordering::Adapters::Outbound::Capacity::Commands.new,
+          invoicing_port: Ordering::Adapters::Outbound::Billing::InvoiceFollowUp,
+          notification_port: Ordering::Adapters::Outbound::Notifications::NotificationJob
         )
           new(
             submission:,
-            payment_command:,
+            payment_command: payment_command || payment_port,
             payment_gateway:,
-            availability_policy:,
+            availability_policy: availability_policy || availability_port,
             capacity_reserve_command:,
             capacity_commit_command:,
             capacity_release_command:,
             invoice_follow_up:,
-            notification_follow_up:
+            notification_follow_up:,
+            invoicing_port:,
+            notification_port:,
+            capacity_port:
           ).call
         end
 
-        def initialize(submission:, payment_command:, payment_gateway: nil, availability_policy:, capacity_reserve_command:, capacity_commit_command:, capacity_release_command:, invoice_follow_up:, notification_follow_up:)
+        def initialize(submission:, payment_command:, payment_gateway: nil, availability_policy:, capacity_reserve_command:, capacity_commit_command:, capacity_release_command:, invoice_follow_up:, notification_follow_up:, capacity_port:, invoicing_port:, notification_port:)
           @submission = submission
           @payment_command = payment_command
           @payment_gateway = payment_gateway
@@ -44,6 +44,9 @@ module Ordering
           @capacity_release_command = capacity_release_command
           @invoice_follow_up = invoice_follow_up
           @notification_follow_up = notification_follow_up
+          @capacity_port = capacity_port
+          @invoicing_port = invoicing_port
+          @notification_port = notification_port
         end
 
         def call
@@ -77,7 +80,7 @@ module Ordering
 
         private
 
-        attr_reader :submission, :payment_command, :payment_gateway, :availability_policy, :capacity_reserve_command, :capacity_commit_command, :capacity_release_command, :invoice_follow_up, :notification_follow_up
+        attr_reader :submission, :payment_command, :payment_gateway, :availability_policy, :capacity_reserve_command, :capacity_commit_command, :capacity_release_command, :invoice_follow_up, :notification_follow_up, :capacity_port, :invoicing_port, :notification_port
 
         def validate_submission
           return failure("Submission requires an order", :invalid_record) if submission.order.nil?
@@ -99,7 +102,7 @@ module Ordering
         end
 
         def capture_or_confirm_payment
-          payment_command.(
+          payment_command.call(
             order: submission.order,
             provider: submission.payment_provider,
             payment_method_type: submission.payment_method_type,
@@ -108,14 +111,18 @@ module Ordering
         end
 
         def reserve_capacity
-          capacity_reserve_command.(
+          return capacity_reserve_command.call(
             order_id: submission.order.id,
             units: reserved_units
-          )
+          ) if capacity_reserve_command
+
+          capacity_port.reserve(order_id: submission.order.id, units: reserved_units)
         end
 
         def release_capacity(reservation)
-          capacity_release_command.(order_id: reservation.order_id)
+          return capacity_release_command.call(order_id: reservation.order_id) if capacity_release_command
+
+          capacity_port.release(reservation: reservation)
         end
 
         def success_checkpoint(payment, reservation:)
@@ -130,12 +137,14 @@ module Ordering
         end
 
         def commit_capacity(reservation)
-          capacity_commit_command.(order_id: reservation.order_id)
+          return capacity_commit_command.call(order_id: reservation.order_id) if capacity_commit_command
+
+          capacity_port.commit(reservation: reservation)
         end
 
         def enqueue_follow_up_work(payment)
-          invoice_follow_up.call(payment)
-          notification_follow_up.call(submission.order)
+          invoice_follow_up ? invoice_follow_up.call(payment) : invoicing_port.call(payment: payment)
+          notification_follow_up ? notification_follow_up.call(submission.order) : notification_port.call(order: submission.order)
         end
 
         def payment_failure(payment_result)
