@@ -16,8 +16,8 @@ RSpec.describe Ordering::Application::Commands::ProcessSubmission do
       capacity_reserve_command: ->(**) { reservation_success },
       capacity_commit_command: ->(**) { reservation_success },
       capacity_release_command: ->(**) { raise "release should not be called" },
-      invoice_follow_up: ->(_payment) { },
-      notification_follow_up: ->(_order) { }
+      invoicing_port: ->(payment:) { },
+      notification_port: ->(order:) { }
     )
 
     expect(result).to be_success
@@ -35,8 +35,8 @@ RSpec.describe Ordering::Application::Commands::ProcessSubmission do
     result = described_class.call(
       submission: submission,
       payment_command: ->(**) { raise "payment should not be called" },
-      invoice_follow_up: ->(_payment) { raise "follow-up should not be called" },
-      notification_follow_up: ->(_order) { raise "follow-up should not be called" }
+      invoicing_port: ->(payment:) { raise "follow-up should not be called" },
+      notification_port: ->(order:) { raise "follow-up should not be called" }
     )
 
     expect(result).to be_failure

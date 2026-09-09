@@ -108,7 +108,7 @@ The default adapters may continue to call the current jobs. This first slice mus
 ### Phase 2: Reduce downstream coupling
 
 - [x] Define payment, availability, capacity, invoicing, and notification ports at the correct boundary.
-- [ ] Remove concrete `Billing::` and `NotificationJob` references from the ordering workflow core.
+- [x] Remove concrete `Billing::` and `NotificationJob` references from the ordering workflow core.
 - [ ] Decide whether the submission saga belongs outside the ordering boundary.
 - [ ] Break package cycles through contracts, events, or read models.
 
@@ -173,5 +173,6 @@ Each commit should preserve the current runtime behavior and remain independentl
 
 - This is a preparation plan, not an extraction implementation.
 - The first code slice is intentionally small: replace direct follow-up job calls with explicit ports.
+- `ProcessSubmission` no longer accepts legacy follow-up keywords; concrete invoicing and notification adapters are composed by `SubmitOrder`.
 - `billing` remains the physical namespace; `invoicing` remains the product vocabulary.
 - The main unresolved architectural boundary is the split between `ordering` submission workflow and `fulfillment` operational work.

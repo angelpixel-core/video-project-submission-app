@@ -18,15 +18,15 @@ RSpec.describe Ordering::Application::Commands::ProcessSubmission do
     commit_command = instance_double("CommitCapacity")
     release_command = instance_double("ReleaseCapacity")
     payment_command = instance_double("PaymentCommand")
-    invoice_follow_up = instance_double("InvoiceFollowUp")
-    notification_follow_up = instance_double("NotificationFollowUp")
+    invoicing_port = instance_double("InvoicingPort")
+    notification_port = instance_double("NotificationPort")
 
     expect(reserve_command).to receive(:call).with(order_id: project.id, units: 1).and_return(reserve_result)
     expect(payment_command).to receive(:call).and_return(payment_result)
     expect(commit_command).to receive(:call).with(order_id: project.id).and_return(commit_result)
     expect(release_command).not_to receive(:call)
-    expect(invoice_follow_up).to receive(:call).with(payment)
-    expect(notification_follow_up).to receive(:call).with(project)
+    expect(invoicing_port).to receive(:call).with(payment: payment)
+    expect(notification_port).to receive(:call).with(order: project)
 
     result = described_class.call(
       submission: submission,
@@ -34,8 +34,8 @@ RSpec.describe Ordering::Application::Commands::ProcessSubmission do
       capacity_reserve_command: reserve_command,
       capacity_commit_command: commit_command,
       capacity_release_command: release_command,
-      invoice_follow_up: invoice_follow_up,
-      notification_follow_up: notification_follow_up
+      invoicing_port: invoicing_port,
+      notification_port: notification_port
     )
 
     expect(result).to be_success
@@ -57,15 +57,15 @@ RSpec.describe Ordering::Application::Commands::ProcessSubmission do
     commit_command = instance_double("CommitCapacity")
     release_command = instance_double("ReleaseCapacity")
     payment_command = instance_double("PaymentCommand")
-    invoice_follow_up = instance_double("InvoiceFollowUp")
-    notification_follow_up = instance_double("NotificationFollowUp")
+    invoicing_port = instance_double("InvoicingPort")
+    notification_port = instance_double("NotificationPort")
 
     expect(reserve_command).to receive(:call).with(order_id: project.id, units: 1).and_return(reserve_result)
     expect(payment_command).to receive(:call).and_return(payment_result)
     expect(commit_command).not_to receive(:call)
     expect(release_command).to receive(:call).with(order_id: project.id)
-    expect(invoice_follow_up).not_to receive(:call)
-    expect(notification_follow_up).not_to receive(:call)
+    expect(invoicing_port).not_to receive(:call)
+    expect(notification_port).not_to receive(:call)
 
     result = described_class.call(
       submission: submission,
@@ -73,8 +73,8 @@ RSpec.describe Ordering::Application::Commands::ProcessSubmission do
       capacity_reserve_command: reserve_command,
       capacity_commit_command: commit_command,
       capacity_release_command: release_command,
-      invoice_follow_up: invoice_follow_up,
-      notification_follow_up: notification_follow_up
+      invoicing_port: invoicing_port,
+      notification_port: notification_port
     )
 
     expect(result).to be_failure

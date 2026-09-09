@@ -105,6 +105,7 @@ ordering/
 - Completion requires a confirmed order, completed production, delivered output, and no payment-flow blocker.
 - Legacy `pending` and `in_progress` states map to canonical `placed` and `confirmed` states; `reopen` remains a legacy fulfillment action and resets operational checkpoints.
 - Ordering owns outbound ports for payment, availability, capacity, invoicing, and notifications; concrete downstream commands remain in ordering adapters.
+- `ProcessSubmission` receives invoicing and notification ports; concrete adapters are supplied by the fulfillment composition root.
 
 ## Workflow Boundaries
 
