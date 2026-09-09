@@ -110,7 +110,7 @@ The default adapters may continue to call the current jobs. This first slice mus
 - [x] Define payment, availability, capacity, invoicing, and notification ports at the correct boundary.
 - [x] Remove concrete `Billing::` and `NotificationJob` references from the ordering workflow core.
 - [x] Add architecture specs for ordering port boundaries and composition-root wiring.
-- [ ] Decide whether the submission saga belongs outside the ordering boundary.
+- [x] Decide whether the submission saga belongs outside the ordering boundary.
 - [ ] Break package cycles through contracts, events, or read models.
 
 ### Phase 3: Normalize submission input
@@ -119,6 +119,40 @@ The default adapters may continue to call the current jobs. This first slice mus
 - [ ] Define the minimum order, customer, line item, source video, payment, and fulfillment identity data required by submission.
 - [ ] Keep Rails models and legacy `Project` objects at the adapter edge.
 - [ ] Add contract specs for the normalized submission DTO.
+
+### Submission Saga Migration Plan
+
+The submission saga belongs outside `ordering` because it coordinates availability, capacity, payment, invoicing, and notifications. The target owner is the neutral marketplace workflow boundary:
+
+```text
+Marketplace::Application::Workflows::Checkout
+```
+
+`Checkout` owns orchestration and compensation, while `ordering` owns the order aggregate, lifecycle rules, submission input contract, and order lifecycle facts.
+
+Migration sequence:
+
+1. Create `Marketplace::Application::Workflows::Checkout` with the current `Core::Result` contract.
+2. Move the orchestration currently implemented by `Ordering::Application::Commands::ProcessSubmission` into `Checkout`.
+3. Keep payment, availability, capacity, invoicing, and notification ports as workflow dependencies.
+4. Turn `Fulfillment::Application::Commands::SubmitOrder` into a temporary compatibility facade that prepares the order and delegates to `Checkout`.
+5. Move order/selections preparation into an ordering-owned command where it is not already part of the aggregate contract.
+6. Update controllers and application callers to invoke `Checkout` directly.
+7. Preserve compensation behavior: release capacity after payment or checkpoint failure, and enqueue invoice/notification work only after capacity commit.
+8. Add workflow specs for step ordering, compensation, result mapping, and port isolation.
+9. Remove `Ordering::Application::Commands::ProcessSubmission` after all callers migrate.
+10. Remove the temporary fulfillment facade and update package dependencies after the workflow boundary is stable.
+
+Responsibility boundaries:
+
+- `Marketplace::Application::Workflows::Checkout`: cross-domain orchestration and compensation.
+- `Ordering`: order lifecycle, order data, submission validation, and lifecycle events.
+- `Catalog`: offering availability rules.
+- `Capacity`: reservations, commits, releases, and expiration.
+- `Payments`: payment lifecycle, gateways, refunds, and reconciliation.
+- `Billing`: invoice generation and invoice delivery.
+- `Notifications`: notification creation, channels, dispatch, and retry.
+- `Fulfillment`: production and delivery operations after checkout.
 
 ### Phase 4: Separate persistence ownership
 
